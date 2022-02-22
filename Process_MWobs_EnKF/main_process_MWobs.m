@@ -26,62 +26,112 @@
 % Anyvariable: per scan line.
 % -Tc: per channel, per pixel along per scan line.
 
-% -------------- Control variables ----------------------
-control = struct;
+% There are two ways to represent text in MATLAB: Characters V.S. Strings
+% Character: Single quoted. Eg. str = ['123','3456'] --> str = '1233456'
+% String: Double quoted. Eg. str = ["123","456"] --> str = 1×2 string array "123"    "3456"
 
+% -------------- Control variables ----------------------
+% By default, control variables prefer cell-array type.
+control = struct;
+% ----Path
 control.obs_dir = '../../Obs/Microwave/';
-control.obs_used_dir = '../../Obs/MW_used/'
+control.obs_used_dir = '../../Obs/MW_used/';
 control.bestrack_dir = '../../Obs/Bestrack/';
-control.storm_phase = {'Irma2ndRI',}
-%control.storm_phase = {'Irma2ndRI','JoseRI','MariaRI'};
-control.period = {{'201709030600','201709050600'},}
+% ---Storm information
+control.storm_phase = {'Irma2ndRI',};
+%control.storm_phase = ["Irma2ndRI",'JoseRI','MariaRI'};
+control.period = {{'201709030600','201709050600'},};
 %control.period = {{'201709030600','201709050600'},{'201709050600','201709070600'},{'201709160000','201709180000'}}; %YYYYMMDDHHmm
+% ---Satellite informaiton
 control.sensor = {'AMSR2','ATMS','GMI','MHS','SAPHIR','SSMIS'};
 control.platform = {{'GCOMW1'}, {'NPP'}, {'GPM'}, {'METOPA','METOPB','NOAA18','NOAA19'}, {'MT1'}, {'F16','F17','F18'}};
 
 control.favCh = {'18.7GHzV-Pol','183.31+/-7GHzV-Pol','183.31+-7GHzH-Pol'}; % favorite frequencies
 control.favCh_sup = {'19.35GHzV-Pol','89GHzV-PolA-Scan','89GHzV-PolB-Scan','183.31+/-6.6GHzH-Pol','183.31+/-6.8GHz','190.31GHzV-Pol'};
+% --- WRF setup
+control.nx = 297; % number of grid points along X direction
+control.ny = 297; % number of grid points along Y direction
+control.dx = 3; % WRF resolution: 3 km
+% --- Other
+control.domain_buffer = 1.5; % scaling factor
+control.search_buffer = 0.2; % degrees: lat/lon
+control.filter_ratio = [6,6];
+control.roi_oh = {[200,0], [60,60]}; % roi [other variables, hydrometeors]
 
 
 % ---------- Loop through each storm_phase -------------------
 for istorm = 1:length(control.storm_phase)
 
     % --- Find time and location of the storm in Best track file
-    bestrack_dir = [control.bestrack_dir,control.storm_phase{istorm},'/*'];
-    bestrack_dir = ls(bestrack_dir);
-    bestrack_file = regexprep(bestrack_dir,'\n$','');
-    fid = fopen(bestrack_file);
-    best_track = textscan(fid,'%s','delimiter','');
-    fclose(fid);
-    % For every record, separate substrings(values)
-    best_track_str_vec = string(best_track{1,1}(:));
-    len_record = length(best_track{1,1}(:)); % how many records there are
-    % Keep necessary information
-    bestrack_str = cell(len_record,3); %time,lat,lon
-    for ir=1:len_record 
-        record_substr = strsplit(best_track_str_vec(ir),',');
-        %Time
-        bestrack_str{ir,1} = append(erase(record_substr(1,3),' '),'00'); 
-        %Latitude 
-        bestrack_str{ir,2} = record_substr(1,7); %Latitude for the DTG: 0 - 900 tenths of degrees
-        bestrack_str{ir,2} = str2double(strrep(bestrack_str{ir,2},'N',''))/10; % 0 - 90 degree
-        %Longitude
-        bestrack_str{ir,3} = record_substr(1,8); %Longitude for the DTG: 0 - 1800 tenths of degrees
-        if contains(bestrack_str{ir,3},'W')
-            bestrack_str{ir,3} =  0-str2double(strrep(bestrack_str{ir,3},'W',''))/10;
-        else
-            bestrack_str{ir,3} = str2double(strrep(bestrack_str{ir,3},'W',''))/10;
-        end
-    end 
+	bestrack_str = Bestrack_read(istorm, control);
+
+    % --- Gather useful files of all sensors into a directory
+	[Tbfile_name,Swath_used,ChIdx_ps,ChName_ps,if_swath_good,DAtime_ps,loc_DAtime_ps] = Gather_MW_useful(istorm, bestrack_str, control); % ps: per swath
+
+    % --- loop through each useful Tb file via a symbolic link
+	Tb_dir = [control.obs_used_dir,'/*'];
+	Tb_files = regexprep(ls(Tb_dir),'\n$', '');
+	Tb_files = regexp(Tb_files,'\n','split');
+	for i = 1:length(Tb_files)
+		Tb_file = Tb_files{i};
+		if ~contains(Tb_file, Tbfile_name{i})
+			disp('Error matching attributes with the Tb file!');
+		end
+		disp(['Processing level 1C file: ',Tbfile_name{i},'...............']);	
+		disp(['DA Channels: ',ChName_ps{i}(if_swath_good{i})]);
+		disp(['DA time: ', DAtime_ps{i}]);
+		% --- Get area that we will be getting observations for 
+		nx = control.nx*control.domain_buffer;
+		ny = control.ny*control.domain_buffer;
+		min_XLONG = loc_DAtime_ps{i}(1) - (nx/2*dx)/111;
+		max_XLONG = loc_DAtime_ps{i}(1) + (nx/2*dx)/111;
+		min_XLAT = loc_DAtime_ps{i}(2) - (ny/2*dx)/(cos(loc_DAtime_ps{i}(2)*(pi/180))*111);
+		max_XLAT = loc_DAtime_ps{i}(2) + (ny/2*dx)/(cos(loc_DAtime_ps{i}(2)*(pi/180))*111);
+		disp(['min of xlong: ',min_XLONG, ', max of xlong: ',max_XLONG]);
+		disp(['min of xlat: ',min_XLAT, ', max of xlat: ',max_XLAT]);
+		latitudes  = linspace(min_XLAT,max_XLAT,ny);
+		longitudes = linspace(min_XLONG,max_XLONG,nx);
+		[XLAT, XLONG] = meshgrid(latitudes,longitudes);	
+		% --- 
+	
 
 
-    % --- Gather files into a directory
-    Gather_MW_useful(istorm,bestrack_str,control);
 
 
 
-    % --- loop through each useful Tb file
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+	end
 
 
 

@@ -1,8 +1,20 @@
-function [] = Gather_MW_useful(istorm, bestrack_str, control)
-    
-    % -------- Clean existing symbolic files -----------
+function [all_Tbfile_name,all_Swath_used,all_ChIdx_perSwath,all_ChName_perSwath,all_if_swath_good,all_DAtime_perSwath,all_loc_storm_DAtime] = Gather_MW_useful(istorm, bestrack_str, control)
+
+% This function loops through all level 1c files directly downloaded from NASA GES DISC website 
+% It picks files that meet the requirement and symbolically links these files to a directory
+% It also returns 7 useful attributes for each useful Tb files
+ 
+    % Clean existing symbolic files 
     destination = [control.obs_used_dir,control.storm_phase{istorm},'/']; 
     [status,~] = system(['rm ',destination,'*']); % Tricky part: it seems that it can't delete unsuccessful links
+	% Define empty cells (final length of each cell is the number of useful Tbs)
+	all_Tbfile_name = ""; % (strings)
+	all_Swath_used = {};
+	all_ChIdx_perSwath = {};
+	all_ChName_perSwath = {};
+	all_if_swath_good = {};
+	all_DAtime_perSwath = {};
+	all_loc_storm_DAtime = {};
     % --------- Loop through each sensor ---------------
     for isensor = 1:length(control.sensor)
         plfs_eachsensor = control.platform{isensor};
@@ -23,16 +35,23 @@ function [] = Gather_MW_useful(istorm, bestrack_str, control)
                     continue;
                 else
                     % subroutine to obtain swaths and channel indices under each swath
-                    [Swath_used, ChIdx_perSwath, ChName_perSwath] = Swath_Channel(Tb_file, control);
+                    [Swath_used, ChIdx_perSwath, ChName_perSwath] = Swath_Channel(Tb_file, control); % (strings) (double) (strings)
                     % subroutine to identify the best DA time
-                    [if_swath_good, DAtime_perSwath, loc_storm_DAtime] = Find_DAtime_loc(bestrack_str,Swath_used,Tb_file, control);
+                    [if_swath_good, DAtime_perSwath, loc_storm_DAtime] = Find_DAtime_loc(bestrack_str,Swath_used,Tb_file, control); % (logical) (strings) (cell{double})
                     if sum(if_swath_good) == 0
                         disp('Microwave observations do not exist in the area of interest at DA time! Skip this file.');
                         continue;
                     else
+						% ----- find the useful Tb file!!
                         [filepath,filename,filext] = fileparts(Tb_file);
                         source_file = erase(Tb_file,'Obs/');
-                        command = ['ln -s ',source_file,' ',destination,filename,filext]; % Symbolic link's path -> source file. The relatively path of source file is relative to symbolic link's path.
+                        % A potential BUG which doesn't need to be taken care of at this point
+						% The current code assumes that for all channels the best-track location and DA time are the same
+						if (strlength(DAtime_perSwath) > 1) & (DAtime_perSwath(1) ~= DAtime_perSwath(2))
+							disp('Error renaming the Tb file! Potential risk exists!');
+						end
+						newfile_name = ['DAt',char(DAtime_perSwath(1)),'_1C.',control.platform{isensor}{isensor_plf},'.',control.sensor{isensor},'.HDF5']
+						command = ['ln -s ',source_file,' ',destination,newfile_name]; % Symbolic link's path -> source file. The relatively path of source file is relative to symbolic link's path.
                         [status,~] = system(command);
                         if status == 0
                             disp([filename,filext, ' is gathered.']);
@@ -40,25 +59,34 @@ function [] = Gather_MW_useful(istorm, bestrack_str, control)
                             disp('Error gathering Tb file!');
                         
                         end
-
-                        % display necessary information
-                       % for item=1:length(Swath_used)
-                       %     if if_swath_good(item)
-                       %         disp([ChName_perSwath{item}, ' can be DAed at ', DAtime_perSwath{item}]);
-                       %     end
-                       % end
-
-                       % ----- Special treatment to AMSR2 ----
-                        %if contains(control.sensor{isensor}, 'AMSR2')
-                        %[if_swath_good, ChName_perSwath] = Combine_AMSR2(control.storm_phase{istorm}, plfs_eachsensor{isensor_plf}, control.sensor{isensor}, min_lat_dpy, max_lat_dpy, min_lon_dpy, max_lon_dpy, time, loc_storm_DAtime, Swath_used, if_swath_good, DAtime_perSwath, ChIdx_perSwath, ChName_perSwath, Tb_file, control);
-                        %end
+						% store useful information
+						all_Tbfile_name = [all_Tbfile_name, newfile_name]; % (strings)
+						all_Swath_used{end+1} = Swath_used; % (cell{strings})
+						all_ChIdx_perSwath{end+1} = ChIdx_perSwath; % (cell{single})
+						all_ChName_perSwath{end+1} = ChName_perSwath; % (cell{strings})
+						all_if_swath_good{end+1} = if_swath_good; % (cell{logical})
+						all_DAtime_perSwath{end+1} = DAtime_perSwath; % (cell{strings})
+						all_loc_storm_DAtime{end+1} = loc_storm_DAtime; % (cell{cell{double}})
                     end
                 end
             end
         end
     end
 
+	% Sanity check
+	if strlength(all_Tbfile_name) ~= length(all_Swath_used) | strlength(all_Tbfile_name) ~= length(all_if_swath_good) 		
+		disp('Error gathering useful attributes for Tb files!');
+	end
 
+	% --- Mark satellite overpass 
+	overpass_mark = strings(1,length(all_Tbfile_name));
+	for f = 1:length(all_Tbfile_name)
+		
+
+
+
+
+	end
 
 
 

@@ -3,9 +3,9 @@ function [Swath_used, ChIdx_perSwath, ChName_perSwath] = Swath_Channel(Tb_file, 
     file_info = h5info(Tb_file);
     num_swath = length(file_info.Groups); % total number of swaths per file
 
-    Swath_used= {}; % names of swaths which include the channels of interest
-    ChIdx_perSwath = []; % index of channels of interest under these swaths
-    ChName_perSwath = {}; % names of channels of interest under these swaths
+    Swath_used= ""; % (strings) names of swaths which include the channels of interest
+    ChIdx_perSwath = []; % (double) index of channels of interest under these swaths
+    ChName_perSwath = ""; % (strings) names of channels of interest under these swaths
 
 
     % First go over favoriate Channels
@@ -18,8 +18,8 @@ function [Swath_used, ChIdx_perSwath, ChName_perSwath] = Swath_Channel(Tb_file, 
                oneCh_name_idx_start = strfind(AllCh_name_good,control.favCh{i_ch});
                idx_one_Ch = cellfun(@str2num, extractBetween(AllCh_name_good,oneCh_name_idx_start-2,oneCh_name_idx_start-2));
                % Save
-               Swath_used{end+1} = file_info.Groups(i_sw).Name;
-               ChName_perSwath{end+1} = control.favCh{i_ch};
+               Swath_used = [Swath_used,file_info.Groups(i_sw).Name]; %file_info.Groups(i_sw).Name is Character. It is converted to strings in this case.
+               ChName_perSwath = [ChName_perSwath, control.favCh{i_ch}];
                ChIdx_perSwath = [ChIdx_perSwath,idx_one_Ch];
             else
                continue;
@@ -39,8 +39,8 @@ function [Swath_used, ChIdx_perSwath, ChName_perSwath] = Swath_Channel(Tb_file, 
                    oneCh_name_idx_start = strfind(AllCh_name_good, control.favCh_sup{i_ch});
                    idx_one_Ch = cellfun(@str2num, extractBetween(AllCh_name_good,oneCh_name_idx_start-2,oneCh_name_idx_start-2));
                    % Save
-                   Swath_used{end+1} = file_info.Groups(i_sw).Name;
-                   ChName_perSwath{end+1} =  control.favCh_sup{i_ch};
+				   Swath_used = [Swath_used,file_info.Groups(i_sw).Name];
+				   ChName_perSwath = [ChName_perSwath, control.favCh_sup{i_ch}];           
                    ChIdx_perSwath = [ChIdx_perSwath,idx_one_Ch];
                 else
                    continue;
@@ -52,7 +52,13 @@ function [Swath_used, ChIdx_perSwath, ChName_perSwath] = Swath_Channel(Tb_file, 
     
     disp('Frequencies of interest are:');
     for item = 1:length(ChName_perSwath)
-        disp(['        ',ChName_perSwath{item}]);
+        disp(["        " + ChName_perSwath(item)]);
     end
+	
+	% Sanity Check
+	if length(Swath_used) ~= length(ChName_perSwath) | length(Swath_used) ~= length(ChIdx_perSwath)
+		disp('Error getting used swathes and channels!');
+	end
+
 
 end

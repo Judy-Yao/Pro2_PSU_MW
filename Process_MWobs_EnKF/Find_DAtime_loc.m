@@ -129,9 +129,9 @@ function [if_swath_good,DAtime_perSwath,loc_storm_DAtime] = Find_DAtime_loc(best
     % that square area.
 
     num_useful_scan = [];
-    if_swath_good = [];
-    DAtime_perSwath = {};
-    loc_storm_DAtime = {}; %lat,lon
+    if_swath_good = []; % (logical)
+    DAtime_perSwath = ""; % (strings)
+    loc_storm_DAtime = {}; % lat,lon
 
     for i_sw = 1:length(Swath_used)
         % -For a used Swath, get all scans 
@@ -215,7 +215,7 @@ function [if_swath_good,DAtime_perSwath,loc_storm_DAtime] = Find_DAtime_loc(best
         % DAtime_perSwath(length(Swath_used))
         if sum(num_useful_scan) == 0
             if_swath_good = [if_swath_good, false];
-            DAtime_perSwath =[DAtime_perSwath, NaN];
+            DAtime_perSwath =[DAtime_perSwath, ""];
             loc_storm_DAtime{end+1} = NaN; 
         else
             if_swath_good = [if_swath_good, true];
@@ -223,14 +223,14 @@ function [if_swath_good,DAtime_perSwath,loc_storm_DAtime] = Find_DAtime_loc(best
             if length(idx_DAtime) > 1
                 idx_DAtime = idx_DAtime(1);
             end
-            DAtime_perSwath{end+1} = datestr(DA_per_hhcand{idx_DAtime,1},'yyyymmddhhMM');
+            DAtime_perSwath = [DAtime_perSwath, datestr(DA_per_hhcand{idx_DAtime,1},'yyyymmddhhMM')];
             loc_storm_DAtime{end+1} = loc_storm_DAtime_percand(idx_DAtime,:);
         end   
 
     end
 
     % sanity check
-    if length(DAtime_perSwath) ~= length(Swath_used)
+    if length(if_swath_good) ~= length(Swath_used) | strlength(DAtime_perSwath) ~= length(Swath_used) | length(loc_storm_DAtime) ~= length(Swath_used)
         disp('Error identifying DA time for each swath/channel!');
     end
 
