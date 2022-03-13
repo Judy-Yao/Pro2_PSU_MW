@@ -66,32 +66,61 @@ for istorm = 1:length(control.storm_phase)
 	bestrack_str = Bestrack_read(istorm, control);
 
     % --- Gather useful files of all sensors into a directory
-	[Tbfile_name,Swath_used,ChIdx_ps,ChName_ps,if_swath_good,DAtime_ps,loc_DAtime_ps] = Gather_MW_useful(istorm, bestrack_str, control); % ps: per swath
+	[Tbfile_name,Swath_used,ChIdx_ps,ChName_ps,if_swath_good,DAtime_ps,loc_DAtime_ps,overpass_info] = Gather_MW_useful(istorm, bestrack_str, control); % ps: per swath
 
     % --- loop through each useful Tb file via a symbolic link
 	Tb_dir = [control.obs_used_dir,'/*'];
 	Tb_files = regexprep(ls(Tb_dir),'\n$', '');
 	Tb_files = regexp(Tb_files,'\n','split');
-	for i = 1:length(Tb_files)
+	i = 1;
+	while i <= length(Tb_files)
 		Tb_file = Tb_files{i};
 		if ~contains(Tb_file, Tbfile_name{i})
 			disp('Error matching attributes with the Tb file!');
 		end
-		disp(['Processing level 1C file: ',Tbfile_name{i},'...............']);	
-		disp(['DA Channels: ',ChName_ps{i}(if_swath_good{i})]);
-		disp(['DA time: ', DAtime_ps{i}]);
-		% --- Get area that we will be getting observations for 
-		nx = control.nx*control.domain_buffer;
-		ny = control.ny*control.domain_buffer;
-		min_XLONG = loc_DAtime_ps{i}(1) - (nx/2*dx)/111;
-		max_XLONG = loc_DAtime_ps{i}(1) + (nx/2*dx)/111;
-		min_XLAT = loc_DAtime_ps{i}(2) - (ny/2*dx)/(cos(loc_DAtime_ps{i}(2)*(pi/180))*111);
-		max_XLAT = loc_DAtime_ps{i}(2) + (ny/2*dx)/(cos(loc_DAtime_ps{i}(2)*(pi/180))*111);
-		disp(['min of xlong: ',min_XLONG, ', max of xlong: ',max_XLONG]);
-		disp(['min of xlat: ',min_XLAT, ', max of xlat: ',max_XLAT]);
-		latitudes  = linspace(min_XLAT,max_XLAT,ny);
-		longitudes = linspace(min_XLONG,max_XLONG,nx);
-		[XLAT, XLONG] = meshgrid(latitudes,longitudes);	
+		% over pass	
+		for io =1:length(overpass_mark)
+			if matches(DAtime_ps{i}(1),overpass_mark{io}{1}) % over pass
+				% over pass
+
+
+
+
+
+
+				i = i+overpass_mark{io}{2};
+			else
+				continue;
+			end
+		end
+
+
+
+		% Single pass
+
+
+		i = i+1;
+
+
+
+
+
+
+%		disp(['Processing level 1C file: ',Tbfile_name{i},'...............']);	
+%		disp(['DA Channels: ',ChName_ps{i}(if_swath_good{i})]);
+%		disp(['DA time: ', DAtime_ps{i}]);
+%		% --- Get area that we will be getting observations for 
+%		nx = control.nx*control.domain_buffer;
+%		ny = control.ny*control.domain_buffer;
+%		min_XLONG = loc_DAtime_ps{i}(1) - (nx/2*dx)/111;
+%		max_XLONG = loc_DAtime_ps{i}(1) + (nx/2*dx)/111;
+%		min_XLAT = loc_DAtime_ps{i}(2) - (ny/2*dx)/(cos(loc_DAtime_ps{i}(2)*(pi/180))*111);
+%		max_XLAT = loc_DAtime_ps{i}(2) + (ny/2*dx)/(cos(loc_DAtime_ps{i}(2)*(pi/180))*111);
+%		disp(['min of xlong: ',min_XLONG, ', max of xlong: ',max_XLONG]);
+%		disp(['min of xlat: ',min_XLAT, ', max of xlat: ',max_XLAT]);
+%		latitudes  = linspace(min_XLAT,max_XLAT,ny);
+%		longitudes = linspace(min_XLONG,max_XLONG,nx);
+%		[XLAT, XLONG] = meshgrid(latitudes,longitudes);	
 		% --- 
 	
 

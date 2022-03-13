@@ -1,4 +1,4 @@
-function [all_Tbfile_name,all_Swath_used,all_ChIdx_perSwath,all_ChName_perSwath,all_if_swath_good,all_DAtime_perSwath,all_loc_storm_DAtime] = Gather_MW_useful(istorm, bestrack_str, control)
+function [all_Tbfile_name,all_Swath_used,all_ChIdx_perSwath,all_ChName_perSwath,all_if_swath_good,all_DAtime_perSwath,all_loc_storm_DAtime,overpass_mark] = Gather_MW_useful(istorm, bestrack_str, control)
 
 % This function loops through all level 1c files directly downloaded from NASA GES DISC website 
 % It picks files that meet the requirement and symbolically links these files to a directory
@@ -78,16 +78,22 @@ function [all_Tbfile_name,all_Swath_used,all_ChIdx_perSwath,all_ChName_perSwath,
 		disp('Error gathering useful attributes for Tb files!');
 	end
 
-	% --- Mark satellite overpass 
-	overpass_mark = strings(1,length(all_Tbfile_name));
-	for f = 1:length(all_Tbfile_name)
-		
-
-
-
-
+	% --- Mark satellite overpass
+	% Each Tb file has only one DAtime 
+	overpass_mark = {};
+	strs_date = "";
+	for f = 1:strlength(all_Tbfile_name)
+		strs_date =  [strs_date, all_DAtime_perSwath{f}(1)];
 	end
-
+	unique_date = unique(strs_date);
+	for id = 1:strlength(unique_date)
+		repeate_times = sum(strs_date == unique_date(id));
+		if repeate_times > 1
+			overpass_mark{end+1} = {unique_date(id),repeate_times};
+		else
+			continue;
+		end
+	end
 
 
 end
