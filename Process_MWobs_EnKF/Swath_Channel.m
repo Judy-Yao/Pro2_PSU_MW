@@ -3,9 +3,10 @@ function [Swath_used, ChIdx_perSwath, ChName_perSwath] = Swath_Channel(Tb_file, 
     file_info = h5info(Tb_file);
     num_swath = length(file_info.Groups); % total number of swaths per file
 
-    Swath_used= ""; % (strings) names of swaths which include the channels of interest
+    Swath_used= []; % will be (strings) names of swaths which include the channels of interest
+    ChName_perSwath = []; % will be (strings) names of channels of interest under these swaths
     ChIdx_perSwath = []; % (double) index of channels of interest under these swaths
-    ChName_perSwath = ""; % (strings) names of channels of interest under these swaths
+
 
 
     % First go over favoriate Channels
@@ -18,8 +19,8 @@ function [Swath_used, ChIdx_perSwath, ChName_perSwath] = Swath_Channel(Tb_file, 
                oneCh_name_idx_start = strfind(AllCh_name_good,control.favCh{i_ch});
                idx_one_Ch = cellfun(@str2num, extractBetween(AllCh_name_good,oneCh_name_idx_start-2,oneCh_name_idx_start-2));
                % Save
-               Swath_used = [Swath_used,file_info.Groups(i_sw).Name]; %file_info.Groups(i_sw).Name is Character. It is converted to strings in this case.
-               ChName_perSwath = [ChName_perSwath, control.favCh{i_ch}];
+               Swath_used = [Swath_used,string(file_info.Groups(i_sw).Name)]; %file_info.Groups(i_sw).Name is Character. It is converted to strings in this case.
+               ChName_perSwath = [ChName_perSwath, string(control.favCh{i_ch})];
                ChIdx_perSwath = [ChIdx_perSwath,idx_one_Ch];
             else
                continue;
@@ -39,8 +40,8 @@ function [Swath_used, ChIdx_perSwath, ChName_perSwath] = Swath_Channel(Tb_file, 
                    oneCh_name_idx_start = strfind(AllCh_name_good, control.favCh_sup{i_ch});
                    idx_one_Ch = cellfun(@str2num, extractBetween(AllCh_name_good,oneCh_name_idx_start-2,oneCh_name_idx_start-2));
                    % Save
-				   Swath_used = [Swath_used,file_info.Groups(i_sw).Name];
-				   ChName_perSwath = [ChName_perSwath, control.favCh_sup{i_ch}];           
+				   Swath_used = [Swath_used,string(file_info.Groups(i_sw).Name)];
+				   ChName_perSwath = [ChName_perSwath, string(control.favCh_sup{i_ch})];           
                    ChIdx_perSwath = [ChIdx_perSwath,idx_one_Ch];
                 else
                    continue;

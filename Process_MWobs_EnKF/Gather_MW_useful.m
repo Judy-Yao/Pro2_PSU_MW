@@ -8,7 +8,7 @@ function [all_Tbfile_name,all_Swath_used,all_ChIdx_perSwath,all_ChName_perSwath,
     destination = [control.obs_used_dir,control.storm_phase{istorm},'/']; 
     [status,~] = system(['rm ',destination,'*']); % Tricky part: it seems that it can't delete unsuccessful links
 	% Define empty cells (final length of each cell is the number of useful Tbs)
-	all_Tbfile_name = ""; % (strings)
+	all_Tbfile_name = []; % (strings)
 	all_Swath_used = {};
 	all_ChIdx_perSwath = {};
 	all_ChName_perSwath = {};
@@ -39,6 +39,7 @@ function [all_Tbfile_name,all_Swath_used,all_ChIdx_perSwath,all_ChName_perSwath,
                     [Swath_used, ChIdx_perSwath, ChName_perSwath] = Swath_Channel(Tb_file, control); % (strings) (double) (strings)
                     % subroutine to identify the best DA time for each item
                     [if_swath_good, DAtime_perSwath, loc_storm_DAtime] = Find_DAtime_loc(bestrack_str,Swath_used,Tb_file, control); % (logical) (strings) (cell{double})
+                    DAtime_perSwath
                     if sum(if_swath_good) == 0
                         disp('Microwave observations do not exist in the area of interest at DA time! Skip this file.');
                         continue;
@@ -48,11 +49,11 @@ function [all_Tbfile_name,all_Swath_used,all_ChIdx_perSwath,all_ChName_perSwath,
                         source_file = erase(Tb_file,'Obs/');
                         % A potential BUG exists which doesn't need to be taken care of at this point
 						% The current code assumes that for all channels the best-track location and DA time are the same
-						if (strlength(DAtime_perSwath) > 1) & (DAtime_perSwath(1) ~= DAtime_perSwath(2))
+						if (length(DAtime_perSwath) > 1) & (DAtime_perSwath(1) ~= DAtime_perSwath(2))
 							disp('Error renaming the Tb file! Potential risk exists!');
 						end
-						newfile_name = ['DAt',char(DAtime_perSwath(1)),'_1C.',control.platform{isensor}{isensor_plf},'.',control.sensor{isensor},'.HDF5']
-						command = ['ln -s ',source_file,' ',destination,newfile_name]; % Symbolic link's path -> source file. The relatively path of source file is relative to symbolic link's path.
+						newfile_name = ['DAt' + DAtime_perSwath(1) + '_1C.' + control.platform{isensor}{isensor_plf} + '.' + control.sensor{isensor} + '.HDF5']
+                        command = ["ln -s " + source_file + " " + destination + newfile_name];% Symbolic link's path -> source file. The relatively path of source file is relative to symbolic link's path.
                         [status,~] = system(command);
                         if status == 0
                             disp([filename,filext, ' is gathered.']);
@@ -60,7 +61,7 @@ function [all_Tbfile_name,all_Swath_used,all_ChIdx_perSwath,all_ChName_perSwath,
                             disp('Error gathering Tb file!');
                         end
 						% store useful information
-						all_Tbfile_name = [all_Tbfile_name, newfile_name]; % (strings)
+						all_Tbfile_name(end+1) = string(newfile_name); % (strings)
 						all_Swath_used{end+1} = Swath_used; % (cell{strings})
 						all_ChIdx_perSwath{end+1} = ChIdx_perSwath; % (cell{single})
 						all_ChName_perSwath{end+1} = ChName_perSwath; % (cell{strings})
@@ -74,7 +75,7 @@ function [all_Tbfile_name,all_Swath_used,all_ChIdx_perSwath,all_ChName_perSwath,
     end
 
 	% Sanity check
-	if (strlength(all_Tbfile_name) ~= length(all_Swath_used)) | (strlength(all_Tbfile_name) ~= length(all_if_swath_good))		
+	if (length(all_Tbfile_name) ~= length(all_Swath_used)) | (length(all_Tbfile_name) ~= length(all_if_swath_good))		
 		disp('Error gathering useful attributes for Tb files!');
 	end
 
@@ -83,11 +84,11 @@ function [all_Tbfile_name,all_Swath_used,all_ChIdx_perSwath,all_ChName_perSwath,
 	overpass = "";
 	singlepass = "";
 	strs_date = "";
-	for f = 1:strlength(all_Tbfile_name)
+	for f = 1:length(all_Tbfile_name)
 		strs_date =  [strs_date, all_DAtime_perSwath{f}(1)];
 	end
 	unique_date = unique(strs_date);
-	for id = 1:strlength(unique_date)
+	for id = 1:length(unique_date)
 		repeate_times = sum(strs_date == unique_date(id));
 		if repeate_times == 1
 			singlepass = [singlepass, unique_date(id)];

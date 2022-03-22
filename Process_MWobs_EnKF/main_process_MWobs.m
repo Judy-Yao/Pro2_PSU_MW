@@ -8,7 +8,7 @@ control = struct;
 control.obs_dir = '../../Obs/Microwave/';
 control.obs_used_dir = '../../Obs/MW_used/';
 control.bestrack_dir = '../../Obs/Bestrack/';
-control.output_dir = '../../Obs/MW_EnKF/';
+control.output_dir = '../../toEnKFobs/';
 % ---Storm information
 control.storm_phase = {'Irma2ndRI',};
 %control.storm_phase = ["Irma2ndRI",'JoseRI','MariaRI'};
@@ -51,7 +51,7 @@ for istorm = 1:length(control.storm_phase)
         for iTb = 1:length(Tb_files)
             Tb_file = Tb_files{iTb};
             if contains(Tb_file,singlepass(is))
-                SinglePass_write(iTb,istorm,Swath_used,ChIdx_ps,ChName_ps,if_swath_good,DAtime_ps,loc_DAtime_ps,Tb_file,control);
+                Singlepass_write(iTb,istorm,Swath_used,ChIdx_ps,ChName_ps,if_swath_good,DAtime_ps,loc_DAtime_ps,Tb_file,control);
             else
                 continue;
             end
@@ -59,14 +59,14 @@ for istorm = 1:length(control.storm_phase)
 
     end
 	% - Output overpass
-	Tb_overpass = "";
-	idx_usedTb = [];
+	Tb_overpass = ""; % (strings)
+	idx_usedTb = []; % (integer)
 	for io = 1:length(overpass_mark) 
 		for iTb = 1:length(Tb_files)
 			Tb_file = Tb_files{iTb};
 			% gather names of overpass Tb files
 			if contains(Tb_file,overpass(io))
-				Tb_overpass = [Tb_overpass, Tb_file];
+				Tb_overpass = [Tb_overpass, string(Tb_file)];
 				idx_usedTb(end+1) = iTb;
 			else
 				continue;
@@ -76,7 +76,7 @@ for istorm = 1:length(control.storm_phase)
 		Overpass_write(Tb_overpass,idx_usedTb,Swath_used,ChIdx_ps,ChName_ps,if_swath_good,DAtime_ps,loc_DAtime_ps,Tb_file,control);			
 
 	end	
-
+end
 
 
 
@@ -147,7 +147,6 @@ for istorm = 1:length(control.storm_phase)
 
 
 
-	end
 
 
 
@@ -163,7 +162,6 @@ for istorm = 1:length(control.storm_phase)
 
 
 
-end
 
 
 
