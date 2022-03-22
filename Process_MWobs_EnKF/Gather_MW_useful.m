@@ -1,4 +1,4 @@
-function [all_Tbfile_name,all_Swath_used,all_ChIdx_perSwath,all_ChName_perSwath,all_if_swath_good,all_DAtime_perSwath,all_loc_storm_DAtime,overpass_mark] = Gather_MW_useful(istorm, bestrack_str, control)
+function [all_Tbfile_name,all_Swath_used,all_ChIdx_perSwath,all_ChName_perSwath,all_if_swath_good,all_DAtime_perSwath,all_loc_storm_DAtime,overpass,singlepass] = Gather_MW_useful(istorm, bestrack_str, control)
 
 % This function loops through all level 1c files directly downloaded from NASA GES DISC website 
 % It picks files that meet the requirement and symbolically links these files to a directory
@@ -15,6 +15,7 @@ function [all_Tbfile_name,all_Swath_used,all_ChIdx_perSwath,all_ChName_perSwath,
 	all_if_swath_good = {};
 	all_DAtime_perSwath = {};
 	all_loc_storm_DAtime = {};
+
     % --------- Loop through each sensor ---------------
     for isensor = 1:length(control.sensor)
         plfs_eachsensor = control.platform{isensor};
@@ -28,24 +29,24 @@ function [all_Tbfile_name,all_Swath_used,all_ChIdx_perSwath,all_ChName_perSwath,
             % ---- Loop through each file for each sensor on a specific platform ---
             for i = 1:length(Tb_files)
                 Tb_file = Tb_files{i};
-                % subroutine to judge if this Tb is within the period of interest
-                [use_Tb_file] = Filter_file_out_period(istorm, Tb_file, control);
+                % subroutine to determine if this Tb is within the period of interest
+                [use_Tb_file] = Filter_file_out_period(istorm, Tb_file, control); %(logical)
                 if use_Tb_file == 0
                     disp('Microwave observations are not within the period of interest! Skip this file.');
                     continue;
                 else
                     % subroutine to obtain swaths and channel indices under each swath
                     [Swath_used, ChIdx_perSwath, ChName_perSwath] = Swath_Channel(Tb_file, control); % (strings) (double) (strings)
-                    % subroutine to identify the best DA time
+                    % subroutine to identify the best DA time for each item
                     [if_swath_good, DAtime_perSwath, loc_storm_DAtime] = Find_DAtime_loc(bestrack_str,Swath_used,Tb_file, control); % (logical) (strings) (cell{double})
                     if sum(if_swath_good) == 0
                         disp('Microwave observations do not exist in the area of interest at DA time! Skip this file.');
                         continue;
                     else
-						% ----- find the useful Tb file!!
+						% ----- Gather the useful Tb file of all sensors !!
                         [filepath,filename,filext] = fileparts(Tb_file);
                         source_file = erase(Tb_file,'Obs/');
-                        % A potential BUG which doesn't need to be taken care of at this point
+                        % A potential BUG exists which doesn't need to be taken care of at this point
 						% The current code assumes that for all channels the best-track location and DA time are the same
 						if (strlength(DAtime_perSwath) > 1) & (DAtime_perSwath(1) ~= DAtime_perSwath(2))
 							disp('Error renaming the Tb file! Potential risk exists!');
@@ -57,7 +58,6 @@ function [all_Tbfile_name,all_Swath_used,all_ChIdx_perSwath,all_ChName_perSwath,
                             disp([filename,filext, ' is gathered.']);
                         else
                             disp('Error gathering Tb file!');
-                        
                         end
 						% store useful information
 						all_Tbfile_name = [all_Tbfile_name, newfile_name]; % (strings)
@@ -74,13 +74,14 @@ function [all_Tbfile_name,all_Swath_used,all_ChIdx_perSwath,all_ChName_perSwath,
     end
 
 	% Sanity check
-	if strlength(all_Tbfile_name) ~= length(all_Swath_used) | strlength(all_Tbfile_name) ~= length(all_if_swath_good) 		
+	if (strlength(all_Tbfile_name) ~= length(all_Swath_used)) | (strlength(all_Tbfile_name) ~= length(all_if_swath_good))		
 		disp('Error gathering useful attributes for Tb files!');
 	end
 
-	% --- Mark satellite overpass
-	% Each Tb file has only one DAtime 
-	overpass_mark = {};
+	% --- Mark satellite overpass and single-pass
+	% Only works only if Each Tb file has only one DAtime 
+	overpass = "";
+	singlepass = "";
 	strs_date = "";
 	for f = 1:strlength(all_Tbfile_name)
 		strs_date =  [strs_date, all_DAtime_perSwath{f}(1)];
@@ -88,10 +89,10 @@ function [all_Tbfile_name,all_Swath_used,all_ChIdx_perSwath,all_ChName_perSwath,
 	unique_date = unique(strs_date);
 	for id = 1:strlength(unique_date)
 		repeate_times = sum(strs_date == unique_date(id));
-		if repeate_times > 1
-			overpass_mark{end+1} = {unique_date(id),repeate_times};
+		if repeate_times == 1
+			singlepass = [singlepass, unique_date(id)];
 		else
-			continue;
+			overpass = [overpass, unique_date(id)];
 		end
 	end
 

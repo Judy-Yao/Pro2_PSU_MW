@@ -6,9 +6,7 @@ echo ${CRTM_DIR}
 
 
 mpif90 -f90=ifort -c -i4 -w -ftz -align all -fno-alias -fp-model precise -assume realloc_lhs -convert big_endian -traceback -MIC -AVX512 -FR -I$NETCDF/include -I$CRTM_DIR/include ChofSensor.f90
-# apparently replace the above line with below if using newer netcdfs
 mpif90 -o sensor.exe ChofSensor.o -L$CRTM_DIR/lib -lcrtm -L$NETCDF/lib -lnetcdff 
-#mpif90 -o crtm.exe mpi_module.o module_netcdf.o main_crtm.o -L$CRTM_DIR/lib -lCRTM -L$NETCDF/lib -lnetcdf -lnetcdff 
 
 
 
