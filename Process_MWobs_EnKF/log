@@ -29,13 +29,6 @@ Frequencies of interest are:
         89GHzV-PolB-Scan
 DA_time candidate: 201709030600
 Effective observations are from 2017090305:30 to 2017090306:30
-
-DAtime_perSwath = 
-
-  1x3 string array
-
-    ""    ""    ""
-
 Microwave observations do not exist in the area of interest at DA time! Skip this file.
 Start Granule Time:
 2017-09-03T06:45
@@ -49,13 +42,6 @@ DA_time candidate: 201709030700
 Effective observations are from 2017090306:45 to 2017090307:30
 DA_time candidate: 201709030800
 Effective observations are from 2017090307:30 to 2017090308:24
-
-DAtime_perSwath = 
-
-  1x3 string array
-
-    ""    ""    ""
-
 Microwave observations do not exist in the area of interest at DA time! Skip this file.
 Start Granule Time:
 2017-09-03T08:24
@@ -69,13 +55,6 @@ DA_time candidate: 201709030900
 Effective observations are from 2017090308:30 to 2017090309:30
 DA_time candidate: 201709031000
 Effective observations are from 2017090309:30 to 2017090310:03
-
-DAtime_perSwath = 
-
-  1x3 string array
-
-    ""    ""    ""
-
 Microwave observations do not exist in the area of interest at DA time! Skip this file.
 Start Granule Time:
 2017-09-03T10:03
@@ -87,13 +66,6 @@ Frequencies of interest are:
         89GHzV-PolB-Scan
 DA_time candidate: 201709031100
 Effective observations are from 2017090310:30 to 2017090311:30
-
-DAtime_perSwath = 
-
-  1x3 string array
-
-    ""    ""    ""
-
 Microwave observations do not exist in the area of interest at DA time! Skip this file.
 Start Granule Time:
 2017-09-03T11:42
@@ -107,13 +79,6 @@ DA_time candidate: 201709031200
 Effective observations are from 2017090311:42 to 2017090312:30
 DA_time candidate: 201709031300
 Effective observations are from 2017090312:30 to 2017090313:21
-
-DAtime_perSwath = 
-
-  1x3 string array
-
-    ""    ""    ""
-
 Microwave observations do not exist in the area of interest at DA time! Skip this file.
 Start Granule Time:
 2017-09-03T13:21
@@ -127,13 +92,6 @@ DA_time candidate: 201709031400
 Effective observations are from 2017090313:30 to 2017090314:30
 DA_time candidate: 201709031500
 Effective observations are from 2017090314:30 to 2017090315:00
-
-DAtime_perSwath = 
-
-  1x3 string array
-
-    ""    ""    ""
-
 Microwave observations do not exist in the area of interest at DA time! Skip this file.
 Start Granule Time:
 2017-09-03T15:00
@@ -145,13 +103,6 @@ Frequencies of interest are:
         89GHzV-PolB-Scan
 DA_time candidate: 201709031600
 Effective observations are from 2017090315:30 to 2017090316:30
-
-DAtime_perSwath = 
-
-  1x3 string array
-
-    ""    ""    ""
-
 Microwave observations do not exist in the area of interest at DA time! Skip this file.
 Start Granule Time:
 2017-09-03T16:39
@@ -165,13 +116,6 @@ DA_time candidate: 201709031700
 Effective observations are from 2017090316:39 to 2017090317:30
 DA_time candidate: 201709031800
 Effective observations are from 2017090317:30 to 2017090318:17
-
-DAtime_perSwath = 
-
-  1x3 string array
-
-    ""    ""    ""
-
 Microwave observations do not exist in the area of interest at DA time! Skip this file.
 Start Granule Time:
 2017-09-03T18:17
@@ -183,13 +127,6 @@ Frequencies of interest are:
         89GHzV-PolB-Scan
 DA_time candidate: 201709031900
 Effective observations are from 2017090318:30 to 2017090319:30
-
-DAtime_perSwath = 
-
-  1x3 string array
-
-    ""    ""    ""
-
 Microwave observations do not exist in the area of interest at DA time! Skip this file.
 Start Granule Time:
 2017-09-03T19:56
@@ -203,13 +140,6 @@ DA_time candidate: 201709032000
 Effective observations are from 2017090319:56 to 2017090320:30
 DA_time candidate: 201709032100
 Effective observations are from 2017090320:30 to 2017090321:30
-
-DAtime_perSwath = 
-
-  1x3 string array
-
-    ""    ""    ""
-
 Microwave observations do not exist in the area of interest at DA time! Skip this file.
 Start Granule Time:
 2017-09-03T21:35
@@ -223,13 +153,6 @@ DA_time candidate: 201709032200
 Effective observations are from 2017090321:35 to 2017090322:30
 DA_time candidate: 201709032300
 Effective observations are from 2017090322:30 to 2017090323:14
-
-DAtime_perSwath = 
-
-  1x3 string array
-
-    ""    ""    ""
-
 Microwave observations do not exist in the area of interest at DA time! Skip this file.
 Start Granule Time:
 2017-09-03T23:14
@@ -241,13 +164,6 @@ Frequencies of interest are:
         89GHzV-PolB-Scan
 DA_time candidate: 201709040000
 Effective observations are from 2017090323:30 to 2017090400:30
-
-DAtime_perSwath = 
-
-  1x3 string array
-
-    ""    ""    ""
-
 Microwave observations do not exist in the area of interest at DA time! Skip this file.
 Start Granule Time:
 2017-09-04T00:53
@@ -261,13 +177,6 @@ DA_time candidate: 201709040100
 Effective observations are from 2017090400:53 to 2017090401:30
 DA_time candidate: 201709040200
 Effective observations are from 2017090401:30 to 2017090402:30
-
-DAtime_perSwath = 
-
-  1x3 string array
-
-    ""    ""    ""
-
 Microwave observations do not exist in the area of interest at DA time! Skip this file.
 Start Granule Time:
 2017-09-04T02:32
@@ -281,13 +190,6 @@ DA_time candidate: 201709040300
 Effective observations are from 2017090402:32 to 2017090403:30
 DA_time candidate: 201709040400
 Effective observations are from 2017090403:30 to 2017090404:11
-
-DAtime_perSwath = 
-
-  1x3 string array
-
-    ""    ""    ""
-
 Microwave observations do not exist in the area of interest at DA time! Skip this file.
 Start Granule Time:
 2017-09-04T04:11
@@ -299,18 +201,6 @@ Frequencies of interest are:
         89GHzV-PolB-Scan
 DA_time candidate: 201709040500
 Effective observations are from 2017090404:30 to 2017090405:30
-
-DAtime_perSwath = 
-
-  1x3 string array
-
-    "201709040500"    "201709040500"    "201709040500"
-
-
-newfile_name = 
-
-    "DAt201709040500_1C.GCOMW1.AMSR2.HDF5"
-
 1C.GCOMW1.AMSR2.XCAL2016-V.20170904-S041112-E055004.028188.V05A.HDF5 is gathered.
 Start Granule Time:
 2017-09-04T05:50
@@ -324,13 +214,6 @@ DA_time candidate: 201709040600
 Effective observations are from 2017090405:50 to 2017090406:30
 DA_time candidate: 201709040700
 Effective observations are from 2017090406:30 to 2017090407:28
-
-DAtime_perSwath = 
-
-  1x3 string array
-
-    ""    ""    ""
-
 Microwave observations do not exist in the area of interest at DA time! Skip this file.
 Start Granule Time:
 2017-09-04T07:28
@@ -344,13 +227,6 @@ DA_time candidate: 201709040800
 Effective observations are from 2017090407:30 to 2017090408:30
 DA_time candidate: 201709040900
 Effective observations are from 2017090408:30 to 2017090409:07
-
-DAtime_perSwath = 
-
-  1x3 string array
-
-    ""    ""    ""
-
 Microwave observations do not exist in the area of interest at DA time! Skip this file.
 Start Granule Time:
 2017-09-04T09:07
@@ -362,13 +238,6 @@ Frequencies of interest are:
         89GHzV-PolB-Scan
 DA_time candidate: 201709041000
 Effective observations are from 2017090409:30 to 2017090410:30
-
-DAtime_perSwath = 
-
-  1x3 string array
-
-    ""    ""    ""
-
 Microwave observations do not exist in the area of interest at DA time! Skip this file.
 Start Granule Time:
 2017-09-04T10:46
@@ -382,13 +251,6 @@ DA_time candidate: 201709041100
 Effective observations are from 2017090410:46 to 2017090411:30
 DA_time candidate: 201709041200
 Effective observations are from 2017090411:30 to 2017090412:25
-
-DAtime_perSwath = 
-
-  1x3 string array
-
-    ""    ""    ""
-
 Microwave observations do not exist in the area of interest at DA time! Skip this file.
 Start Granule Time:
 2017-09-04T12:25
@@ -402,13 +264,6 @@ DA_time candidate: 201709041300
 Effective observations are from 2017090412:30 to 2017090413:30
 DA_time candidate: 201709041400
 Effective observations are from 2017090413:30 to 2017090414:04
-
-DAtime_perSwath = 
-
-  1x3 string array
-
-    ""    ""    ""
-
 Microwave observations do not exist in the area of interest at DA time! Skip this file.
 Start Granule Time:
 2017-09-04T14:04
@@ -420,13 +275,6 @@ Frequencies of interest are:
         89GHzV-PolB-Scan
 DA_time candidate: 201709041500
 Effective observations are from 2017090414:30 to 2017090415:30
-
-DAtime_perSwath = 
-
-  1x3 string array
-
-    ""    ""    ""
-
 Microwave observations do not exist in the area of interest at DA time! Skip this file.
 Start Granule Time:
 2017-09-04T15:43
@@ -440,13 +288,6 @@ DA_time candidate: 201709041600
 Effective observations are from 2017090415:43 to 2017090416:30
 DA_time candidate: 201709041700
 Effective observations are from 2017090416:30 to 2017090417:22
-
-DAtime_perSwath = 
-
-  1x3 string array
-
-    ""    ""    ""
-
 Microwave observations do not exist in the area of interest at DA time! Skip this file.
 Start Granule Time:
 2017-09-04T17:22
@@ -460,13 +301,6 @@ DA_time candidate: 201709041800
 Effective observations are from 2017090417:30 to 2017090418:30
 DA_time candidate: 201709041900
 Effective observations are from 2017090418:30 to 2017090419:01
-
-DAtime_perSwath = 
-
-  1x3 string array
-
-    ""    ""    ""
-
 Microwave observations do not exist in the area of interest at DA time! Skip this file.
 Start Granule Time:
 2017-09-04T19:01
@@ -478,13 +312,6 @@ Frequencies of interest are:
         89GHzV-PolB-Scan
 DA_time candidate: 201709042000
 Effective observations are from 2017090419:30 to 2017090420:30
-
-DAtime_perSwath = 
-
-  1x3 string array
-
-    ""    ""    ""
-
 Microwave observations do not exist in the area of interest at DA time! Skip this file.
 Start Granule Time:
 2017-09-04T20:40
@@ -498,13 +325,6 @@ DA_time candidate: 201709042100
 Effective observations are from 2017090420:40 to 2017090421:30
 DA_time candidate: 201709042200
 Effective observations are from 2017090421:30 to 2017090422:18
-
-DAtime_perSwath = 
-
-  1x3 string array
-
-    ""    ""    ""
-
 Microwave observations do not exist in the area of interest at DA time! Skip this file.
 Start Granule Time:
 2017-09-04T22:18
@@ -516,13 +336,6 @@ Frequencies of interest are:
         89GHzV-PolB-Scan
 DA_time candidate: 201709042300
 Effective observations are from 2017090422:30 to 2017090423:30
-
-DAtime_perSwath = 
-
-  1x3 string array
-
-    ""    ""    ""
-
 Microwave observations do not exist in the area of interest at DA time! Skip this file.
 Start Granule Time:
 2017-09-04T23:57
@@ -536,13 +349,6 @@ DA_time candidate: 201709050000
 Effective observations are from 2017090423:57 to 2017090500:30
 DA_time candidate: 201709050100
 Effective observations are from 2017090500:30 to 2017090501:30
-
-DAtime_perSwath = 
-
-  1x3 string array
-
-    ""    ""    ""
-
 Microwave observations do not exist in the area of interest at DA time! Skip this file.
 Start Granule Time:
 2017-09-05T01:36
@@ -556,13 +362,6 @@ DA_time candidate: 201709050200
 Effective observations are from 2017090501:36 to 2017090502:30
 DA_time candidate: 201709050300
 Effective observations are from 2017090502:30 to 2017090503:15
-
-DAtime_perSwath = 
-
-  1x3 string array
-
-    ""    ""    ""
-
 Microwave observations do not exist in the area of interest at DA time! Skip this file.
 Start Granule Time:
 2017-09-05T03:15
@@ -574,13 +373,6 @@ Frequencies of interest are:
         89GHzV-PolB-Scan
 DA_time candidate: 201709050400
 Effective observations are from 2017090503:30 to 2017090504:30
-
-DAtime_perSwath = 
-
-  1x3 string array
-
-    ""    ""    ""
-
 Microwave observations do not exist in the area of interest at DA time! Skip this file.
 Start Granule Time:
 2017-09-05T04:54
@@ -594,13 +386,6 @@ DA_time candidate: 201709050500
 Effective observations are from 2017090504:54 to 2017090505:30
 DA_time candidate: 201709050600
 Effective observations are from 2017090505:30 to 2017090506:30
-
-DAtime_perSwath = 
-
-  1x3 string array
-
-    ""    ""    ""
-
 Microwave observations do not exist in the area of interest at DA time! Skip this file.
 Start Granule Time:
 2017-09-05T06:33
@@ -687,11 +472,6 @@ DA_time candidate: 201709030600
 Effective observations are from 2017090305:30 to 2017090306:30
 DA_time candidate: 201709030700
 Effective observations are from 2017090306:30 to 2017090307:03
-
-DAtime_perSwath = 
-
-  0x0 empty string array
-
 Microwave observations do not exist in the area of interest at DA time! Skip this file.
 Start Granule Time:
 2017-09-03T07:03
@@ -700,11 +480,6 @@ End Granule Time:
 Frequencies of interest are:
 DA_time candidate: 201709030800
 Effective observations are from 2017090307:30 to 2017090308:30
-
-DAtime_perSwath = 
-
-  0x0 empty string array
-
 Microwave observations do not exist in the area of interest at DA time! Skip this file.
 Start Granule Time:
 2017-09-03T08:44
@@ -715,11 +490,6 @@ DA_time candidate: 201709030900
 Effective observations are from 2017090308:44 to 2017090309:30
 DA_time candidate: 201709031000
 Effective observations are from 2017090309:30 to 2017090310:26
-
-DAtime_perSwath = 
-
-  0x0 empty string array
-
 Microwave observations do not exist in the area of interest at DA time! Skip this file.
 Start Granule Time:
 2017-09-03T10:26
@@ -730,11 +500,6 @@ DA_time candidate: 201709031100
 Effective observations are from 2017090310:30 to 2017090311:30
 DA_time candidate: 201709031200
 Effective observations are from 2017090311:30 to 2017090312:07
-
-DAtime_perSwath = 
-
-  0x0 empty string array
-
 Microwave observations do not exist in the area of interest at DA time! Skip this file.
 Start Granule Time:
 2017-09-03T12:07
@@ -743,11 +508,6 @@ End Granule Time:
 Frequencies of interest are:
 DA_time candidate: 201709031300
 Effective observations are from 2017090312:30 to 2017090313:30
-
-DAtime_perSwath = 
-
-  0x0 empty string array
-
 Microwave observations do not exist in the area of interest at DA time! Skip this file.
 Start Granule Time:
 2017-09-03T13:49
@@ -758,11 +518,6 @@ DA_time candidate: 201709031400
 Effective observations are from 2017090313:49 to 2017090314:30
 DA_time candidate: 201709031500
 Effective observations are from 2017090314:30 to 2017090315:30
-
-DAtime_perSwath = 
-
-  0x0 empty string array
-
 Microwave observations do not exist in the area of interest at DA time! Skip this file.
 Start Granule Time:
 2017-09-03T15:30
@@ -773,11 +528,6 @@ DA_time candidate: 201709031600
 Effective observations are from 2017090315:30 to 2017090316:30
 DA_time candidate: 201709031700
 Effective observations are from 2017090316:30 to 2017090317:12
-
-DAtime_perSwath = 
-
-  0x0 empty string array
-
 Microwave observations do not exist in the area of interest at DA time! Skip this file.
 Start Granule Time:
 2017-09-03T17:12
@@ -786,11 +536,6 @@ End Granule Time:
 Frequencies of interest are:
 DA_time candidate: 201709031800
 Effective observations are from 2017090317:30 to 2017090318:30
-
-DAtime_perSwath = 
-
-  0x0 empty string array
-
 Microwave observations do not exist in the area of interest at DA time! Skip this file.
 Start Granule Time:
 2017-09-03T18:53
@@ -801,11 +546,6 @@ DA_time candidate: 201709031900
 Effective observations are from 2017090318:53 to 2017090319:30
 DA_time candidate: 201709032000
 Effective observations are from 2017090319:30 to 2017090320:30
-
-DAtime_perSwath = 
-
-  0x0 empty string array
-
 Microwave observations do not exist in the area of interest at DA time! Skip this file.
 Start Granule Time:
 2017-09-03T20:35
@@ -816,11 +556,6 @@ DA_time candidate: 201709032100
 Effective observations are from 2017090320:35 to 2017090321:30
 DA_time candidate: 201709032200
 Effective observations are from 2017090321:30 to 2017090322:16
-
-DAtime_perSwath = 
-
-  0x0 empty string array
-
 Microwave observations do not exist in the area of interest at DA time! Skip this file.
 Start Granule Time:
 2017-09-03T22:16
@@ -829,11 +564,6 @@ End Granule Time:
 Frequencies of interest are:
 DA_time candidate: 201709032300
 Effective observations are from 2017090322:30 to 2017090323:30
-
-DAtime_perSwath = 
-
-  0x0 empty string array
-
 Microwave observations do not exist in the area of interest at DA time! Skip this file.
 Start Granule Time:
 2017-09-03T23:58
@@ -844,11 +574,6 @@ DA_time candidate: 201709040000
 Effective observations are from 2017090323:58 to 2017090400:30
 DA_time candidate: 201709040100
 Effective observations are from 2017090400:30 to 2017090401:30
-
-DAtime_perSwath = 
-
-  0x0 empty string array
-
 Microwave observations do not exist in the area of interest at DA time! Skip this file.
 Start Granule Time:
 2017-09-04T01:39
@@ -859,11 +584,6 @@ DA_time candidate: 201709040200
 Effective observations are from 2017090401:39 to 2017090402:30
 DA_time candidate: 201709040300
 Effective observations are from 2017090402:30 to 2017090403:21
-
-DAtime_perSwath = 
-
-  0x0 empty string array
-
 Microwave observations do not exist in the area of interest at DA time! Skip this file.
 Start Granule Time:
 2017-09-04T03:21
@@ -874,11 +594,6 @@ DA_time candidate: 201709040400
 Effective observations are from 2017090403:30 to 2017090404:30
 DA_time candidate: 201709040500
 Effective observations are from 2017090404:30 to 2017090405:02
-
-DAtime_perSwath = 
-
-  0x0 empty string array
-
 Microwave observations do not exist in the area of interest at DA time! Skip this file.
 Start Granule Time:
 2017-09-04T05:02
@@ -887,11 +602,6 @@ End Granule Time:
 Frequencies of interest are:
 DA_time candidate: 201709040600
 Effective observations are from 2017090405:30 to 2017090406:30
-
-DAtime_perSwath = 
-
-  0x0 empty string array
-
 Microwave observations do not exist in the area of interest at DA time! Skip this file.
 Start Granule Time:
 2017-09-04T06:44
@@ -902,11 +612,6 @@ DA_time candidate: 201709040700
 Effective observations are from 2017090406:44 to 2017090407:30
 DA_time candidate: 201709040800
 Effective observations are from 2017090407:30 to 2017090408:25
-
-DAtime_perSwath = 
-
-  0x0 empty string array
-
 Microwave observations do not exist in the area of interest at DA time! Skip this file.
 Start Granule Time:
 2017-09-04T08:25
@@ -917,11 +622,6 @@ DA_time candidate: 201709040900
 Effective observations are from 2017090408:30 to 2017090409:30
 DA_time candidate: 201709041000
 Effective observations are from 2017090409:30 to 2017090410:07
-
-DAtime_perSwath = 
-
-  0x0 empty string array
-
 Microwave observations do not exist in the area of interest at DA time! Skip this file.
 Start Granule Time:
 2017-09-04T10:07
@@ -930,11 +630,6 @@ End Granule Time:
 Frequencies of interest are:
 DA_time candidate: 201709041100
 Effective observations are from 2017090410:30 to 2017090411:30
-
-DAtime_perSwath = 
-
-  0x0 empty string array
-
 Microwave observations do not exist in the area of interest at DA time! Skip this file.
 Start Granule Time:
 2017-09-04T11:48
@@ -945,11 +640,6 @@ DA_time candidate: 201709041200
 Effective observations are from 2017090411:48 to 2017090412:30
 DA_time candidate: 201709041300
 Effective observations are from 2017090412:30 to 2017090413:30
-
-DAtime_perSwath = 
-
-  0x0 empty string array
-
 Microwave observations do not exist in the area of interest at DA time! Skip this file.
 Start Granule Time:
 2017-09-04T13:30
@@ -960,11 +650,6 @@ DA_time candidate: 201709041400
 Effective observations are from 2017090413:30 to 2017090414:30
 DA_time candidate: 201709041500
 Effective observations are from 2017090414:30 to 2017090415:11
-
-DAtime_perSwath = 
-
-  0x0 empty string array
-
 Microwave observations do not exist in the area of interest at DA time! Skip this file.
 Start Granule Time:
 2017-09-04T15:11
@@ -973,11 +658,6 @@ End Granule Time:
 Frequencies of interest are:
 DA_time candidate: 201709041600
 Effective observations are from 2017090415:30 to 2017090416:30
-
-DAtime_perSwath = 
-
-  0x0 empty string array
-
 Microwave observations do not exist in the area of interest at DA time! Skip this file.
 Start Granule Time:
 2017-09-04T16:53
@@ -988,11 +668,6 @@ DA_time candidate: 201709041700
 Effective observations are from 2017090416:53 to 2017090417:30
 DA_time candidate: 201709041800
 Effective observations are from 2017090417:30 to 2017090418:30
-
-DAtime_perSwath = 
-
-  0x0 empty string array
-
 Microwave observations do not exist in the area of interest at DA time! Skip this file.
 Start Granule Time:
 2017-09-04T18:34
@@ -1003,11 +678,6 @@ DA_time candidate: 201709041900
 Effective observations are from 2017090418:34 to 2017090419:30
 DA_time candidate: 201709042000
 Effective observations are from 2017090419:30 to 2017090420:16
-
-DAtime_perSwath = 
-
-  0x0 empty string array
-
 Microwave observations do not exist in the area of interest at DA time! Skip this file.
 Start Granule Time:
 2017-09-04T20:16
@@ -1016,11 +686,6 @@ End Granule Time:
 Frequencies of interest are:
 DA_time candidate: 201709042100
 Effective observations are from 2017090420:30 to 2017090421:30
-
-DAtime_perSwath = 
-
-  0x0 empty string array
-
 Microwave observations do not exist in the area of interest at DA time! Skip this file.
 Start Granule Time:
 2017-09-04T21:57
@@ -1031,11 +696,6 @@ DA_time candidate: 201709042200
 Effective observations are from 2017090421:57 to 2017090422:30
 DA_time candidate: 201709042300
 Effective observations are from 2017090422:30 to 2017090423:30
-
-DAtime_perSwath = 
-
-  0x0 empty string array
-
 Microwave observations do not exist in the area of interest at DA time! Skip this file.
 Start Granule Time:
 2017-09-04T23:39
@@ -1046,11 +706,6 @@ DA_time candidate: 201709050000
 Effective observations are from 2017090423:39 to 2017090500:30
 DA_time candidate: 201709050100
 Effective observations are from 2017090500:30 to 2017090501:20
-
-DAtime_perSwath = 
-
-  0x0 empty string array
-
 Microwave observations do not exist in the area of interest at DA time! Skip this file.
 Start Granule Time:
 2017-09-05T01:20
@@ -1061,11 +716,6 @@ DA_time candidate: 201709050200
 Effective observations are from 2017090501:30 to 2017090502:30
 DA_time candidate: 201709050300
 Effective observations are from 2017090502:30 to 2017090503:02
-
-DAtime_perSwath = 
-
-  0x0 empty string array
-
 Microwave observations do not exist in the area of interest at DA time! Skip this file.
 Start Granule Time:
 2017-09-05T03:02
@@ -1074,11 +724,6 @@ End Granule Time:
 Frequencies of interest are:
 DA_time candidate: 201709050400
 Effective observations are from 2017090503:30 to 2017090504:30
-
-DAtime_perSwath = 
-
-  0x0 empty string array
-
 Microwave observations do not exist in the area of interest at DA time! Skip this file.
 Start Granule Time:
 2017-09-05T04:43
@@ -1089,11 +734,6 @@ DA_time candidate: 201709050500
 Effective observations are from 2017090504:43 to 2017090505:30
 DA_time candidate: 201709050600
 Effective observations are from 2017090505:30 to 2017090506:25
-
-DAtime_perSwath = 
-
-  0x0 empty string array
-
 Microwave observations do not exist in the area of interest at DA time! Skip this file.
 Start Granule Time:
 2017-09-05T06:25
@@ -1180,18 +820,6 @@ Frequencies of interest are:
         183.31+/-7GHzV-Pol
 DA_time candidate: 201709030600
 Effective observations are from 2017090305:30 to 2017090306:30
-
-DAtime_perSwath = 
-
-  1x2 string array
-
-    "201709030600"    "201709030600"
-
-
-newfile_name = 
-
-    "DAt201709030600_1C.GPM.GMI.HDF5"
-
 1C.GPM.GMI.XCAL2016-C.20170903-S050821-E064055.019969.V05A.HDF5 is gathered.
 Start Granule Time:
 2017-09-03T06:40
@@ -1204,13 +832,6 @@ DA_time candidate: 201709030700
 Effective observations are from 2017090306:40 to 2017090307:30
 DA_time candidate: 201709030800
 Effective observations are from 2017090307:30 to 2017090308:13
-
-DAtime_perSwath = 
-
-  1x2 string array
-
-    ""    ""
-
 Microwave observations do not exist in the area of interest at DA time! Skip this file.
 Start Granule Time:
 2017-09-03T08:13
@@ -1221,13 +842,6 @@ Frequencies of interest are:
         183.31+/-7GHzV-Pol
 DA_time candidate: 201709030900
 Effective observations are from 2017090308:30 to 2017090309:30
-
-DAtime_perSwath = 
-
-  1x2 string array
-
-    ""    ""
-
 Microwave observations do not exist in the area of interest at DA time! Skip this file.
 Start Granule Time:
 2017-09-03T09:46
@@ -1240,13 +854,6 @@ DA_time candidate: 201709031000
 Effective observations are from 2017090309:46 to 2017090310:30
 DA_time candidate: 201709031100
 Effective observations are from 2017090310:30 to 2017090311:18
-
-DAtime_perSwath = 
-
-  1x2 string array
-
-    ""    ""
-
 Microwave observations do not exist in the area of interest at DA time! Skip this file.
 Start Granule Time:
 2017-09-03T11:18
@@ -1257,13 +864,6 @@ Frequencies of interest are:
         183.31+/-7GHzV-Pol
 DA_time candidate: 201709031200
 Effective observations are from 2017090311:30 to 2017090312:30
-
-DAtime_perSwath = 
-
-  1x2 string array
-
-    ""    ""
-
 Microwave observations do not exist in the area of interest at DA time! Skip this file.
 Start Granule Time:
 2017-09-03T12:51
@@ -1276,13 +876,6 @@ DA_time candidate: 201709031300
 Effective observations are from 2017090312:51 to 2017090313:30
 DA_time candidate: 201709031400
 Effective observations are from 2017090313:30 to 2017090314:23
-
-DAtime_perSwath = 
-
-  1x2 string array
-
-    ""    ""
-
 Microwave observations do not exist in the area of interest at DA time! Skip this file.
 Start Granule Time:
 2017-09-03T14:23
@@ -1293,13 +886,6 @@ Frequencies of interest are:
         183.31+/-7GHzV-Pol
 DA_time candidate: 201709031500
 Effective observations are from 2017090314:30 to 2017090315:30
-
-DAtime_perSwath = 
-
-  1x2 string array
-
-    ""    ""
-
 Microwave observations do not exist in the area of interest at DA time! Skip this file.
 Start Granule Time:
 2017-09-03T15:56
@@ -1312,13 +898,6 @@ DA_time candidate: 201709031600
 Effective observations are from 2017090315:56 to 2017090316:30
 DA_time candidate: 201709031700
 Effective observations are from 2017090316:30 to 2017090317:29
-
-DAtime_perSwath = 
-
-  1x2 string array
-
-    ""    ""
-
 Microwave observations do not exist in the area of interest at DA time! Skip this file.
 Start Granule Time:
 2017-09-03T17:29
@@ -1331,13 +910,6 @@ DA_time candidate: 201709031800
 Effective observations are from 2017090317:30 to 2017090318:30
 DA_time candidate: 201709031900
 Effective observations are from 2017090318:30 to 2017090319:01
-
-DAtime_perSwath = 
-
-  1x2 string array
-
-    ""    ""
-
 Microwave observations do not exist in the area of interest at DA time! Skip this file.
 Start Granule Time:
 2017-09-03T19:01
@@ -1348,13 +920,6 @@ Frequencies of interest are:
         183.31+/-7GHzV-Pol
 DA_time candidate: 201709032000
 Effective observations are from 2017090319:30 to 2017090320:30
-
-DAtime_perSwath = 
-
-  1x2 string array
-
-    ""    ""
-
 Microwave observations do not exist in the area of interest at DA time! Skip this file.
 Start Granule Time:
 2017-09-03T20:34
@@ -1367,13 +932,6 @@ DA_time candidate: 201709032100
 Effective observations are from 2017090320:34 to 2017090321:30
 DA_time candidate: 201709032200
 Effective observations are from 2017090321:30 to 2017090322:06
-
-DAtime_perSwath = 
-
-  1x2 string array
-
-    ""    ""
-
 Microwave observations do not exist in the area of interest at DA time! Skip this file.
 Start Granule Time:
 2017-09-03T22:06
@@ -1384,13 +942,6 @@ Frequencies of interest are:
         183.31+/-7GHzV-Pol
 DA_time candidate: 201709032300
 Effective observations are from 2017090322:30 to 2017090323:30
-
-DAtime_perSwath = 
-
-  1x2 string array
-
-    ""    ""
-
 Microwave observations do not exist in the area of interest at DA time! Skip this file.
 Start Granule Time:
 2017-09-03T23:39
@@ -1403,13 +954,6 @@ DA_time candidate: 201709040000
 Effective observations are from 2017090323:39 to 2017090400:30
 DA_time candidate: 201709040100
 Effective observations are from 2017090400:30 to 2017090401:12
-
-DAtime_perSwath = 
-
-  1x2 string array
-
-    ""    ""
-
 Microwave observations do not exist in the area of interest at DA time! Skip this file.
 Start Granule Time:
 2017-09-04T01:12
@@ -1420,13 +964,6 @@ Frequencies of interest are:
         183.31+/-7GHzV-Pol
 DA_time candidate: 201709040200
 Effective observations are from 2017090401:30 to 2017090402:30
-
-DAtime_perSwath = 
-
-  1x2 string array
-
-    ""    ""
-
 Microwave observations do not exist in the area of interest at DA time! Skip this file.
 Start Granule Time:
 2017-09-04T02:44
@@ -1439,13 +976,6 @@ DA_time candidate: 201709040300
 Effective observations are from 2017090402:44 to 2017090403:30
 DA_time candidate: 201709040400
 Effective observations are from 2017090403:30 to 2017090404:17
-
-DAtime_perSwath = 
-
-  1x2 string array
-
-    ""    ""
-
 Microwave observations do not exist in the area of interest at DA time! Skip this file.
 Start Granule Time:
 2017-09-04T04:17
@@ -1456,13 +986,6 @@ Frequencies of interest are:
         183.31+/-7GHzV-Pol
 DA_time candidate: 201709040500
 Effective observations are from 2017090404:30 to 2017090405:30
-
-DAtime_perSwath = 
-
-  1x2 string array
-
-    ""    ""
-
 Microwave observations do not exist in the area of interest at DA time! Skip this file.
 Start Granule Time:
 2017-09-04T05:49
@@ -1475,13 +998,6 @@ DA_time candidate: 201709040600
 Effective observations are from 2017090405:49 to 2017090406:30
 DA_time candidate: 201709040700
 Effective observations are from 2017090406:30 to 2017090407:22
-
-DAtime_perSwath = 
-
-  1x2 string array
-
-    ""    ""
-
 Microwave observations do not exist in the area of interest at DA time! Skip this file.
 Start Granule Time:
 2017-09-04T07:22
@@ -1492,13 +1008,6 @@ Frequencies of interest are:
         183.31+/-7GHzV-Pol
 DA_time candidate: 201709040800
 Effective observations are from 2017090407:30 to 2017090408:30
-
-DAtime_perSwath = 
-
-  1x2 string array
-
-    ""    ""
-
 Microwave observations do not exist in the area of interest at DA time! Skip this file.
 Start Granule Time:
 2017-09-04T08:54
@@ -1511,13 +1020,6 @@ DA_time candidate: 201709040900
 Effective observations are from 2017090408:54 to 2017090409:30
 DA_time candidate: 201709041000
 Effective observations are from 2017090409:30 to 2017090410:27
-
-DAtime_perSwath = 
-
-  1x2 string array
-
-    ""    ""
-
 Microwave observations do not exist in the area of interest at DA time! Skip this file.
 Start Granule Time:
 2017-09-04T10:27
@@ -1530,13 +1032,6 @@ DA_time candidate: 201709041100
 Effective observations are from 2017090410:30 to 2017090411:30
 DA_time candidate: 201709041200
 Effective observations are from 2017090411:30 to 2017090412:00
-
-DAtime_perSwath = 
-
-  1x2 string array
-
-    ""    ""
-
 Microwave observations do not exist in the area of interest at DA time! Skip this file.
 Start Granule Time:
 2017-09-04T12:00
@@ -1547,13 +1042,6 @@ Frequencies of interest are:
         183.31+/-7GHzV-Pol
 DA_time candidate: 201709041300
 Effective observations are from 2017090412:30 to 2017090413:30
-
-DAtime_perSwath = 
-
-  1x2 string array
-
-    ""    ""
-
 Microwave observations do not exist in the area of interest at DA time! Skip this file.
 Start Granule Time:
 2017-09-04T13:32
@@ -1566,13 +1054,6 @@ DA_time candidate: 201709041400
 Effective observations are from 2017090413:32 to 2017090414:30
 DA_time candidate: 201709041500
 Effective observations are from 2017090414:30 to 2017090415:05
-
-DAtime_perSwath = 
-
-  1x2 string array
-
-    ""    ""
-
 Microwave observations do not exist in the area of interest at DA time! Skip this file.
 Start Granule Time:
 2017-09-04T15:05
@@ -1583,13 +1064,6 @@ Frequencies of interest are:
         183.31+/-7GHzV-Pol
 DA_time candidate: 201709041600
 Effective observations are from 2017090415:30 to 2017090416:30
-
-DAtime_perSwath = 
-
-  1x2 string array
-
-    ""    ""
-
 Microwave observations do not exist in the area of interest at DA time! Skip this file.
 Start Granule Time:
 2017-09-04T16:37
@@ -1602,13 +1076,6 @@ DA_time candidate: 201709041700
 Effective observations are from 2017090416:37 to 2017090417:30
 DA_time candidate: 201709041800
 Effective observations are from 2017090417:30 to 2017090418:10
-
-DAtime_perSwath = 
-
-  1x2 string array
-
-    ""    ""
-
 Microwave observations do not exist in the area of interest at DA time! Skip this file.
 Start Granule Time:
 2017-09-04T18:10
@@ -1619,13 +1086,6 @@ Frequencies of interest are:
         183.31+/-7GHzV-Pol
 DA_time candidate: 201709041900
 Effective observations are from 2017090418:30 to 2017090419:30
-
-DAtime_perSwath = 
-
-  1x2 string array
-
-    ""    ""
-
 Microwave observations do not exist in the area of interest at DA time! Skip this file.
 Start Granule Time:
 2017-09-04T19:43
@@ -1638,13 +1098,6 @@ DA_time candidate: 201709042000
 Effective observations are from 2017090419:43 to 2017090420:30
 DA_time candidate: 201709042100
 Effective observations are from 2017090420:30 to 2017090421:15
-
-DAtime_perSwath = 
-
-  1x2 string array
-
-    ""    ""
-
 Microwave observations do not exist in the area of interest at DA time! Skip this file.
 Start Granule Time:
 2017-09-04T21:15
@@ -1655,13 +1108,6 @@ Frequencies of interest are:
         183.31+/-7GHzV-Pol
 DA_time candidate: 201709042200
 Effective observations are from 2017090421:30 to 2017090422:30
-
-DAtime_perSwath = 
-
-  1x2 string array
-
-    ""    ""
-
 Microwave observations do not exist in the area of interest at DA time! Skip this file.
 Start Granule Time:
 2017-09-04T22:48
@@ -1674,13 +1120,6 @@ DA_time candidate: 201709042300
 Effective observations are from 2017090422:48 to 2017090423:30
 DA_time candidate: 201709050000
 Effective observations are from 2017090423:30 to 2017090500:20
-
-DAtime_perSwath = 
-
-  1x2 string array
-
-    ""    ""
-
 Microwave observations do not exist in the area of interest at DA time! Skip this file.
 Start Granule Time:
 2017-09-05T00:20
@@ -1691,13 +1130,6 @@ Frequencies of interest are:
         183.31+/-7GHzV-Pol
 DA_time candidate: 201709050100
 Effective observations are from 2017090500:30 to 2017090501:30
-
-DAtime_perSwath = 
-
-  1x2 string array
-
-    ""    ""
-
 Microwave observations do not exist in the area of interest at DA time! Skip this file.
 Start Granule Time:
 2017-09-05T01:53
@@ -1710,13 +1142,6 @@ DA_time candidate: 201709050200
 Effective observations are from 2017090501:53 to 2017090502:30
 DA_time candidate: 201709050300
 Effective observations are from 2017090502:30 to 2017090503:26
-
-DAtime_perSwath = 
-
-  1x2 string array
-
-    ""    ""
-
 Microwave observations do not exist in the area of interest at DA time! Skip this file.
 Start Granule Time:
 2017-09-05T03:26
@@ -1727,13 +1152,6 @@ Frequencies of interest are:
         183.31+/-7GHzV-Pol
 DA_time candidate: 201709050400
 Effective observations are from 2017090503:30 to 2017090504:30
-
-DAtime_perSwath = 
-
-  1x2 string array
-
-    ""    ""
-
 Microwave observations do not exist in the area of interest at DA time! Skip this file.
 Start Granule Time:
 2017-09-05T04:58
@@ -1746,13 +1164,6 @@ DA_time candidate: 201709050500
 Effective observations are from 2017090504:58 to 2017090505:30
 DA_time candidate: 201709050600
 Effective observations are from 2017090505:30 to 2017090506:30
-
-DAtime_perSwath = 
-
-  1x2 string array
-
-    ""    ""
-
 Microwave observations do not exist in the area of interest at DA time! Skip this file.
 Start Granule Time:
 2017-09-05T06:31
@@ -1840,11 +1251,6 @@ DA_time candidate: 201709030500
 Effective observations are from 2017090304:30 to 2017090305:30
 DA_time candidate: 201709030600
 Effective observations are from 2017090305:30 to 2017090306:04
-
-DAtime_perSwath = 
-
-    ""
-
 Microwave observations do not exist in the area of interest at DA time! Skip this file.
 Start Granule Time:
 2017-09-03T06:04
@@ -1854,11 +1260,6 @@ Frequencies of interest are:
         190.31GHzV-Pol
 DA_time candidate: 201709030700
 Effective observations are from 2017090306:30 to 2017090307:30
-
-DAtime_perSwath = 
-
-    ""
-
 Microwave observations do not exist in the area of interest at DA time! Skip this file.
 Start Granule Time:
 2017-09-03T07:45
@@ -1870,11 +1271,6 @@ DA_time candidate: 201709030800
 Effective observations are from 2017090307:45 to 2017090308:30
 DA_time candidate: 201709030900
 Effective observations are from 2017090308:30 to 2017090309:27
-
-DAtime_perSwath = 
-
-    ""
-
 Microwave observations do not exist in the area of interest at DA time! Skip this file.
 Start Granule Time:
 2017-09-03T09:27
@@ -1886,11 +1282,6 @@ DA_time candidate: 201709031000
 Effective observations are from 2017090309:30 to 2017090310:30
 DA_time candidate: 201709031100
 Effective observations are from 2017090310:30 to 2017090311:08
-
-DAtime_perSwath = 
-
-    ""
-
 Microwave observations do not exist in the area of interest at DA time! Skip this file.
 Start Granule Time:
 2017-09-03T11:08
@@ -1900,16 +1291,6 @@ Frequencies of interest are:
         190.31GHzV-Pol
 DA_time candidate: 201709031200
 Effective observations are from 2017090311:30 to 2017090312:30
-
-DAtime_perSwath = 
-
-    "201709031200"
-
-
-newfile_name = 
-
-    "DAt201709031200_1C.METOPA.MHS.HDF5"
-
 1C.METOPA.MHS.XCAL2016-V.20170903-S110842-E125002.056426.V05A.HDF5 is gathered.
 Start Granule Time:
 2017-09-03T12:50
@@ -1921,11 +1302,6 @@ DA_time candidate: 201709031300
 Effective observations are from 2017090312:50 to 2017090313:30
 DA_time candidate: 201709031400
 Effective observations are from 2017090313:30 to 2017090314:30
-
-DAtime_perSwath = 
-
-    ""
-
 Microwave observations do not exist in the area of interest at DA time! Skip this file.
 Start Granule Time:
 2017-09-03T14:31
@@ -1937,11 +1313,6 @@ DA_time candidate: 201709031500
 Effective observations are from 2017090314:31 to 2017090315:30
 DA_time candidate: 201709031600
 Effective observations are from 2017090315:30 to 2017090316:12
-
-DAtime_perSwath = 
-
-    ""
-
 Microwave observations do not exist in the area of interest at DA time! Skip this file.
 Start Granule Time:
 2017-09-03T16:12
@@ -1951,11 +1322,6 @@ Frequencies of interest are:
         190.31GHzV-Pol
 DA_time candidate: 201709031700
 Effective observations are from 2017090316:30 to 2017090317:30
-
-DAtime_perSwath = 
-
-    ""
-
 Microwave observations do not exist in the area of interest at DA time! Skip this file.
 Start Granule Time:
 2017-09-03T17:54
@@ -1967,11 +1333,6 @@ DA_time candidate: 201709031800
 Effective observations are from 2017090317:54 to 2017090318:30
 DA_time candidate: 201709031900
 Effective observations are from 2017090318:30 to 2017090319:30
-
-DAtime_perSwath = 
-
-    ""
-
 Microwave observations do not exist in the area of interest at DA time! Skip this file.
 Start Granule Time:
 2017-09-03T19:35
@@ -1983,11 +1344,6 @@ DA_time candidate: 201709032000
 Effective observations are from 2017090319:35 to 2017090320:30
 DA_time candidate: 201709032100
 Effective observations are from 2017090320:30 to 2017090321:16
-
-DAtime_perSwath = 
-
-    ""
-
 Microwave observations do not exist in the area of interest at DA time! Skip this file.
 Start Granule Time:
 2017-09-03T21:16
@@ -1997,11 +1353,6 @@ Frequencies of interest are:
         190.31GHzV-Pol
 DA_time candidate: 201709032200
 Effective observations are from 2017090321:30 to 2017090322:30
-
-DAtime_perSwath = 
-
-    ""
-
 Microwave observations do not exist in the area of interest at DA time! Skip this file.
 Start Granule Time:
 2017-09-03T22:58
@@ -2013,11 +1364,6 @@ DA_time candidate: 201709032300
 Effective observations are from 2017090322:58 to 2017090323:30
 DA_time candidate: 201709040000
 Effective observations are from 2017090323:30 to 2017090400:30
-
-DAtime_perSwath = 
-
-    ""
-
 Microwave observations do not exist in the area of interest at DA time! Skip this file.
 Start Granule Time:
 2017-09-04T00:39
@@ -2029,11 +1375,6 @@ DA_time candidate: 201709040100
 Effective observations are from 2017090400:39 to 2017090401:30
 DA_time candidate: 201709040200
 Effective observations are from 2017090401:30 to 2017090402:20
-
-DAtime_perSwath = 
-
-    ""
-
 Microwave observations do not exist in the area of interest at DA time! Skip this file.
 Start Granule Time:
 2017-09-04T02:20
@@ -2045,11 +1386,6 @@ DA_time candidate: 201709040300
 Effective observations are from 2017090402:30 to 2017090403:30
 DA_time candidate: 201709040400
 Effective observations are from 2017090403:30 to 2017090404:02
-
-DAtime_perSwath = 
-
-    ""
-
 Microwave observations do not exist in the area of interest at DA time! Skip this file.
 Start Granule Time:
 2017-09-04T04:02
@@ -2059,11 +1395,6 @@ Frequencies of interest are:
         190.31GHzV-Pol
 DA_time candidate: 201709040500
 Effective observations are from 2017090404:30 to 2017090405:30
-
-DAtime_perSwath = 
-
-    ""
-
 Microwave observations do not exist in the area of interest at DA time! Skip this file.
 Start Granule Time:
 2017-09-04T05:43
@@ -2075,11 +1406,6 @@ DA_time candidate: 201709040600
 Effective observations are from 2017090405:43 to 2017090406:30
 DA_time candidate: 201709040700
 Effective observations are from 2017090406:30 to 2017090407:24
-
-DAtime_perSwath = 
-
-    ""
-
 Microwave observations do not exist in the area of interest at DA time! Skip this file.
 Start Granule Time:
 2017-09-04T07:24
@@ -2091,11 +1417,6 @@ DA_time candidate: 201709040800
 Effective observations are from 2017090407:30 to 2017090408:30
 DA_time candidate: 201709040900
 Effective observations are from 2017090408:30 to 2017090409:06
-
-DAtime_perSwath = 
-
-    ""
-
 Microwave observations do not exist in the area of interest at DA time! Skip this file.
 Start Granule Time:
 2017-09-04T09:06
@@ -2105,11 +1426,6 @@ Frequencies of interest are:
         190.31GHzV-Pol
 DA_time candidate: 201709041000
 Effective observations are from 2017090409:30 to 2017090410:30
-
-DAtime_perSwath = 
-
-    ""
-
 Microwave observations do not exist in the area of interest at DA time! Skip this file.
 Start Granule Time:
 2017-09-04T10:47
@@ -2121,11 +1437,6 @@ DA_time candidate: 201709041100
 Effective observations are from 2017090410:47 to 2017090411:30
 DA_time candidate: 201709041200
 Effective observations are from 2017090411:30 to 2017090412:29
-
-DAtime_perSwath = 
-
-    ""
-
 Microwave observations do not exist in the area of interest at DA time! Skip this file.
 Start Granule Time:
 2017-09-04T12:29
@@ -2137,16 +1448,6 @@ DA_time candidate: 201709041300
 Effective observations are from 2017090412:30 to 2017090413:30
 DA_time candidate: 201709041400
 Effective observations are from 2017090413:30 to 2017090414:10
-
-DAtime_perSwath = 
-
-    "201709041400"
-
-
-newfile_name = 
-
-    "DAt201709041400_1C.METOPA.MHS.HDF5"
-
 1C.METOPA.MHS.XCAL2016-V.20170904-S122904-E141024.056441.V05A.HDF5 is gathered.
 Start Granule Time:
 2017-09-04T14:10
@@ -2156,11 +1457,6 @@ Frequencies of interest are:
         190.31GHzV-Pol
 DA_time candidate: 201709041500
 Effective observations are from 2017090414:30 to 2017090415:30
-
-DAtime_perSwath = 
-
-    ""
-
 Microwave observations do not exist in the area of interest at DA time! Skip this file.
 Start Granule Time:
 2017-09-04T15:51
@@ -2172,11 +1468,6 @@ DA_time candidate: 201709041600
 Effective observations are from 2017090415:51 to 2017090416:30
 DA_time candidate: 201709041700
 Effective observations are from 2017090416:30 to 2017090417:30
-
-DAtime_perSwath = 
-
-    ""
-
 Microwave observations do not exist in the area of interest at DA time! Skip this file.
 Start Granule Time:
 2017-09-04T17:33
@@ -2188,11 +1479,6 @@ DA_time candidate: 201709041800
 Effective observations are from 2017090417:33 to 2017090418:30
 DA_time candidate: 201709041900
 Effective observations are from 2017090418:30 to 2017090419:14
-
-DAtime_perSwath = 
-
-    ""
-
 Microwave observations do not exist in the area of interest at DA time! Skip this file.
 Start Granule Time:
 2017-09-04T19:14
@@ -2202,11 +1488,6 @@ Frequencies of interest are:
         190.31GHzV-Pol
 DA_time candidate: 201709042000
 Effective observations are from 2017090419:30 to 2017090420:30
-
-DAtime_perSwath = 
-
-    ""
-
 Microwave observations do not exist in the area of interest at DA time! Skip this file.
 Start Granule Time:
 2017-09-04T20:55
@@ -2218,11 +1499,6 @@ DA_time candidate: 201709042100
 Effective observations are from 2017090420:55 to 2017090421:30
 DA_time candidate: 201709042200
 Effective observations are from 2017090421:30 to 2017090422:30
-
-DAtime_perSwath = 
-
-    ""
-
 Microwave observations do not exist in the area of interest at DA time! Skip this file.
 Start Granule Time:
 2017-09-04T22:37
@@ -2234,11 +1510,6 @@ DA_time candidate: 201709042300
 Effective observations are from 2017090422:37 to 2017090423:30
 DA_time candidate: 201709050000
 Effective observations are from 2017090423:30 to 2017090500:18
-
-DAtime_perSwath = 
-
-    ""
-
 Microwave observations do not exist in the area of interest at DA time! Skip this file.
 Start Granule Time:
 2017-09-05T00:18
@@ -2248,16 +1519,6 @@ Frequencies of interest are:
         190.31GHzV-Pol
 DA_time candidate: 201709050100
 Effective observations are from 2017090500:30 to 2017090501:30
-
-DAtime_perSwath = 
-
-    "201709050100"
-
-
-newfile_name = 
-
-    "DAt201709050100_1C.METOPA.MHS.HDF5"
-
 1C.METOPA.MHS.XCAL2016-V.20170905-S001834-E015955.056448.V05A.HDF5 is gathered.
 Start Granule Time:
 2017-09-05T01:59
@@ -2269,11 +1530,6 @@ DA_time candidate: 201709050200
 Effective observations are from 2017090501:59 to 2017090502:30
 DA_time candidate: 201709050300
 Effective observations are from 2017090502:30 to 2017090503:30
-
-DAtime_perSwath = 
-
-    ""
-
 Microwave observations do not exist in the area of interest at DA time! Skip this file.
 Start Granule Time:
 2017-09-05T03:41
@@ -2285,11 +1541,6 @@ DA_time candidate: 201709050400
 Effective observations are from 2017090503:41 to 2017090504:30
 DA_time candidate: 201709050500
 Effective observations are from 2017090504:30 to 2017090505:22
-
-DAtime_perSwath = 
-
-    ""
-
 Microwave observations do not exist in the area of interest at DA time! Skip this file.
 Start Granule Time:
 2017-09-05T05:22
@@ -2301,11 +1552,6 @@ DA_time candidate: 201709050600
 Effective observations are from 2017090505:30 to 2017090506:30
 DA_time candidate: 201709050700
 Effective observations are from 2017090506:30 to 2017090507:04
-
-DAtime_perSwath = 
-
-    ""
-
 Microwave observations do not exist in the area of interest at DA time! Skip this file.
 Start Granule Time:
 2017-09-05T07:04
@@ -2391,11 +1637,6 @@ Frequencies of interest are:
         190.31GHzV-Pol
 DA_time candidate: 201709030600
 Effective observations are from 2017090305:30 to 2017090306:30
-
-DAtime_perSwath = 
-
-    ""
-
 Microwave observations do not exist in the area of interest at DA time! Skip this file.
 Start Granule Time:
 2017-09-03T06:59
@@ -2407,11 +1648,6 @@ DA_time candidate: 201709030700
 Effective observations are from 2017090306:59 to 2017090307:30
 DA_time candidate: 201709030800
 Effective observations are from 2017090307:30 to 2017090308:30
-
-DAtime_perSwath = 
-
-    ""
-
 Microwave observations do not exist in the area of interest at DA time! Skip this file.
 Start Granule Time:
 2017-09-03T08:40
@@ -2423,11 +1659,6 @@ DA_time candidate: 201709030900
 Effective observations are from 2017090308:40 to 2017090309:30
 DA_time candidate: 201709031000
 Effective observations are from 2017090309:30 to 2017090310:21
-
-DAtime_perSwath = 
-
-    ""
-
 Microwave observations do not exist in the area of interest at DA time! Skip this file.
 Start Granule Time:
 2017-09-03T10:21
@@ -2439,11 +1670,6 @@ DA_time candidate: 201709031100
 Effective observations are from 2017090310:30 to 2017090311:30
 DA_time candidate: 201709031200
 Effective observations are from 2017090311:30 to 2017090312:03
-
-DAtime_perSwath = 
-
-    ""
-
 Microwave observations do not exist in the area of interest at DA time! Skip this file.
 Start Granule Time:
 2017-09-03T12:03
@@ -2453,16 +1679,6 @@ Frequencies of interest are:
         190.31GHzV-Pol
 DA_time candidate: 201709031300
 Effective observations are from 2017090312:30 to 2017090313:30
-
-DAtime_perSwath = 
-
-    "201709031300"
-
-
-newfile_name = 
-
-    "DAt201709031300_1C.METOPB.MHS.HDF5"
-
 1C.METOPB.MHS.XCAL2016-V.20170903-S120320-E134440.025740.V05A.HDF5 is gathered.
 Start Granule Time:
 2017-09-03T13:44
@@ -2474,11 +1690,6 @@ DA_time candidate: 201709031400
 Effective observations are from 2017090313:44 to 2017090314:30
 DA_time candidate: 201709031500
 Effective observations are from 2017090314:30 to 2017090315:26
-
-DAtime_perSwath = 
-
-    ""
-
 Microwave observations do not exist in the area of interest at DA time! Skip this file.
 Start Granule Time:
 2017-09-03T15:26
@@ -2490,11 +1701,6 @@ DA_time candidate: 201709031600
 Effective observations are from 2017090315:30 to 2017090316:30
 DA_time candidate: 201709031700
 Effective observations are from 2017090316:30 to 2017090317:07
-
-DAtime_perSwath = 
-
-    ""
-
 Microwave observations do not exist in the area of interest at DA time! Skip this file.
 Start Granule Time:
 2017-09-03T17:07
@@ -2504,11 +1710,6 @@ Frequencies of interest are:
         190.31GHzV-Pol
 DA_time candidate: 201709031800
 Effective observations are from 2017090317:30 to 2017090318:30
-
-DAtime_perSwath = 
-
-    ""
-
 Microwave observations do not exist in the area of interest at DA time! Skip this file.
 Start Granule Time:
 2017-09-03T18:48
@@ -2520,11 +1721,6 @@ DA_time candidate: 201709031900
 Effective observations are from 2017090318:48 to 2017090319:30
 DA_time candidate: 201709032000
 Effective observations are from 2017090319:30 to 2017090320:30
-
-DAtime_perSwath = 
-
-    ""
-
 Microwave observations do not exist in the area of interest at DA time! Skip this file.
 Start Granule Time:
 2017-09-03T20:30
@@ -2536,11 +1732,6 @@ DA_time candidate: 201709032100
 Effective observations are from 2017090320:30 to 2017090321:30
 DA_time candidate: 201709032200
 Effective observations are from 2017090321:30 to 2017090322:11
-
-DAtime_perSwath = 
-
-    ""
-
 Microwave observations do not exist in the area of interest at DA time! Skip this file.
 Start Granule Time:
 2017-09-03T22:11
@@ -2550,11 +1741,6 @@ Frequencies of interest are:
         190.31GHzV-Pol
 DA_time candidate: 201709032300
 Effective observations are from 2017090322:30 to 2017090323:30
-
-DAtime_perSwath = 
-
-    ""
-
 Microwave observations do not exist in the area of interest at DA time! Skip this file.
 Start Granule Time:
 2017-09-03T23:52
@@ -2566,16 +1752,6 @@ DA_time candidate: 201709040000
 Effective observations are from 2017090323:52 to 2017090400:30
 DA_time candidate: 201709040100
 Effective observations are from 2017090400:30 to 2017090401:30
-
-DAtime_perSwath = 
-
-    "201709040000"
-
-
-newfile_name = 
-
-    "DAt201709040000_1C.METOPB.MHS.HDF5"
-
 1C.METOPB.MHS.XCAL2016-V.20170903-S235250-E013410.025747.V05A.HDF5 is gathered.
 Start Granule Time:
 2017-09-04T01:34
@@ -2587,11 +1763,6 @@ DA_time candidate: 201709040200
 Effective observations are from 2017090401:34 to 2017090402:30
 DA_time candidate: 201709040300
 Effective observations are from 2017090402:30 to 2017090403:15
-
-DAtime_perSwath = 
-
-    ""
-
 Microwave observations do not exist in the area of interest at DA time! Skip this file.
 Start Granule Time:
 2017-09-04T03:15
@@ -2601,11 +1772,6 @@ Frequencies of interest are:
         190.31GHzV-Pol
 DA_time candidate: 201709040400
 Effective observations are from 2017090403:30 to 2017090404:30
-
-DAtime_perSwath = 
-
-    ""
-
 Microwave observations do not exist in the area of interest at DA time! Skip this file.
 Start Granule Time:
 2017-09-04T04:56
@@ -2617,11 +1783,6 @@ DA_time candidate: 201709040500
 Effective observations are from 2017090404:56 to 2017090405:30
 DA_time candidate: 201709040600
 Effective observations are from 2017090405:30 to 2017090406:30
-
-DAtime_perSwath = 
-
-    ""
-
 Microwave observations do not exist in the area of interest at DA time! Skip this file.
 Start Granule Time:
 2017-09-04T06:38
@@ -2633,11 +1794,6 @@ DA_time candidate: 201709040700
 Effective observations are from 2017090406:38 to 2017090407:30
 DA_time candidate: 201709040800
 Effective observations are from 2017090407:30 to 2017090408:19
-
-DAtime_perSwath = 
-
-    ""
-
 Microwave observations do not exist in the area of interest at DA time! Skip this file.
 Start Granule Time:
 2017-09-04T08:19
@@ -2649,11 +1805,6 @@ DA_time candidate: 201709040900
 Effective observations are from 2017090408:30 to 2017090409:30
 DA_time candidate: 201709041000
 Effective observations are from 2017090409:30 to 2017090410:00
-
-DAtime_perSwath = 
-
-    ""
-
 Microwave observations do not exist in the area of interest at DA time! Skip this file.
 Start Granule Time:
 2017-09-04T10:00
@@ -2663,11 +1814,6 @@ Frequencies of interest are:
         190.31GHzV-Pol
 DA_time candidate: 201709041100
 Effective observations are from 2017090410:30 to 2017090411:30
-
-DAtime_perSwath = 
-
-    ""
-
 Microwave observations do not exist in the area of interest at DA time! Skip this file.
 Start Granule Time:
 2017-09-04T11:42
@@ -2679,16 +1825,6 @@ DA_time candidate: 201709041200
 Effective observations are from 2017090411:42 to 2017090412:30
 DA_time candidate: 201709041300
 Effective observations are from 2017090412:30 to 2017090413:23
-
-DAtime_perSwath = 
-
-    "201709041300"
-
-
-newfile_name = 
-
-    "DAt201709041300_1C.METOPB.MHS.HDF5"
-
 1C.METOPB.MHS.XCAL2016-V.20170904-S114220-E132341.025754.V05A.HDF5 is gathered.
 Start Granule Time:
 2017-09-04T13:23
@@ -2700,11 +1836,6 @@ DA_time candidate: 201709041400
 Effective observations are from 2017090413:30 to 2017090414:30
 DA_time candidate: 201709041500
 Effective observations are from 2017090414:30 to 2017090415:05
-
-DAtime_perSwath = 
-
-    ""
-
 Microwave observations do not exist in the area of interest at DA time! Skip this file.
 Start Granule Time:
 2017-09-04T15:05
@@ -2714,11 +1845,6 @@ Frequencies of interest are:
         190.31GHzV-Pol
 DA_time candidate: 201709041600
 Effective observations are from 2017090415:30 to 2017090416:30
-
-DAtime_perSwath = 
-
-    ""
-
 Microwave observations do not exist in the area of interest at DA time! Skip this file.
 Start Granule Time:
 2017-09-04T16:46
@@ -2730,11 +1856,6 @@ DA_time candidate: 201709041700
 Effective observations are from 2017090416:46 to 2017090417:30
 DA_time candidate: 201709041800
 Effective observations are from 2017090417:30 to 2017090418:27
-
-DAtime_perSwath = 
-
-    ""
-
 Microwave observations do not exist in the area of interest at DA time! Skip this file.
 Start Granule Time:
 2017-09-04T18:27
@@ -2746,11 +1867,6 @@ DA_time candidate: 201709041900
 Effective observations are from 2017090418:30 to 2017090419:30
 DA_time candidate: 201709042000
 Effective observations are from 2017090419:30 to 2017090420:09
-
-DAtime_perSwath = 
-
-    ""
-
 Microwave observations do not exist in the area of interest at DA time! Skip this file.
 Start Granule Time:
 2017-09-04T20:09
@@ -2760,11 +1876,6 @@ Frequencies of interest are:
         190.31GHzV-Pol
 DA_time candidate: 201709042100
 Effective observations are from 2017090420:30 to 2017090421:30
-
-DAtime_perSwath = 
-
-    ""
-
 Microwave observations do not exist in the area of interest at DA time! Skip this file.
 Start Granule Time:
 2017-09-04T21:50
@@ -2776,11 +1887,6 @@ DA_time candidate: 201709042200
 Effective observations are from 2017090421:50 to 2017090422:30
 DA_time candidate: 201709042300
 Effective observations are from 2017090422:30 to 2017090423:30
-
-DAtime_perSwath = 
-
-    ""
-
 Microwave observations do not exist in the area of interest at DA time! Skip this file.
 Start Granule Time:
 2017-09-04T23:31
@@ -2792,11 +1898,6 @@ DA_time candidate: 201709050000
 Effective observations are from 2017090423:31 to 2017090500:30
 DA_time candidate: 201709050100
 Effective observations are from 2017090500:30 to 2017090501:13
-
-DAtime_perSwath = 
-
-    ""
-
 Microwave observations do not exist in the area of interest at DA time! Skip this file.
 Start Granule Time:
 2017-09-05T01:13
@@ -2806,11 +1907,6 @@ Frequencies of interest are:
         190.31GHzV-Pol
 DA_time candidate: 201709050200
 Effective observations are from 2017090501:30 to 2017090502:30
-
-DAtime_perSwath = 
-
-    ""
-
 Microwave observations do not exist in the area of interest at DA time! Skip this file.
 Start Granule Time:
 2017-09-05T02:54
@@ -2822,11 +1918,6 @@ DA_time candidate: 201709050300
 Effective observations are from 2017090502:54 to 2017090503:30
 DA_time candidate: 201709050400
 Effective observations are from 2017090503:30 to 2017090504:30
-
-DAtime_perSwath = 
-
-    ""
-
 Microwave observations do not exist in the area of interest at DA time! Skip this file.
 Start Granule Time:
 2017-09-05T04:35
@@ -2838,11 +1929,6 @@ DA_time candidate: 201709050500
 Effective observations are from 2017090504:35 to 2017090505:30
 DA_time candidate: 201709050600
 Effective observations are from 2017090505:30 to 2017090506:17
-
-DAtime_perSwath = 
-
-    ""
-
 Microwave observations do not exist in the area of interest at DA time! Skip this file.
 Start Granule Time:
 2017-09-05T06:17
@@ -2930,11 +2016,6 @@ DA_time candidate: 201709030600
 Effective observations are from 2017090305:56 to 2017090306:30
 DA_time candidate: 201709030700
 Effective observations are from 2017090306:30 to 2017090307:30
-
-DAtime_perSwath = 
-
-    ""
-
 Microwave observations do not exist in the area of interest at DA time! Skip this file.
 Start Granule Time:
 2017-09-03T07:38
@@ -2946,11 +2027,6 @@ DA_time candidate: 201709030800
 Effective observations are from 2017090307:38 to 2017090308:30
 DA_time candidate: 201709030900
 Effective observations are from 2017090308:30 to 2017090309:20
-
-DAtime_perSwath = 
-
-    ""
-
 Microwave observations do not exist in the area of interest at DA time! Skip this file.
 Start Granule Time:
 2017-09-03T09:20
@@ -2962,16 +2038,6 @@ DA_time candidate: 201709031000
 Effective observations are from 2017090309:30 to 2017090310:30
 DA_time candidate: 201709031100
 Effective observations are from 2017090310:30 to 2017090311:02
-
-DAtime_perSwath = 
-
-    "201709031100"
-
-
-newfile_name = 
-
-    "DAt201709031100_1C.NOAA18.MHS.HDF5"
-
 1C.NOAA18.MHS.XCAL2016-V.20170903-S092053-E110253.063329.V05A.HDF5 is gathered.
 Start Granule Time:
 2017-09-03T11:02
@@ -2981,11 +2047,6 @@ Frequencies of interest are:
         190.31GHzV-Pol
 DA_time candidate: 201709031200
 Effective observations are from 2017090311:30 to 2017090312:30
-
-DAtime_perSwath = 
-
-    ""
-
 Microwave observations do not exist in the area of interest at DA time! Skip this file.
 Start Granule Time:
 2017-09-03T12:44
@@ -2997,11 +2058,6 @@ DA_time candidate: 201709031300
 Effective observations are from 2017090312:44 to 2017090313:30
 DA_time candidate: 201709031400
 Effective observations are from 2017090313:30 to 2017090314:26
-
-DAtime_perSwath = 
-
-    ""
-
 Microwave observations do not exist in the area of interest at DA time! Skip this file.
 Start Granule Time:
 2017-09-03T14:26
@@ -3013,11 +2069,6 @@ DA_time candidate: 201709031500
 Effective observations are from 2017090314:30 to 2017090315:30
 DA_time candidate: 201709031600
 Effective observations are from 2017090315:30 to 2017090316:08
-
-DAtime_perSwath = 
-
-    ""
-
 Microwave observations do not exist in the area of interest at DA time! Skip this file.
 Start Granule Time:
 2017-09-03T16:08
@@ -3027,11 +2078,6 @@ Frequencies of interest are:
         190.31GHzV-Pol
 DA_time candidate: 201709031700
 Effective observations are from 2017090316:30 to 2017090317:30
-
-DAtime_perSwath = 
-
-    ""
-
 Microwave observations do not exist in the area of interest at DA time! Skip this file.
 Start Granule Time:
 2017-09-03T17:50
@@ -3043,11 +2089,6 @@ DA_time candidate: 201709031800
 Effective observations are from 2017090317:50 to 2017090318:30
 DA_time candidate: 201709031900
 Effective observations are from 2017090318:30 to 2017090319:30
-
-DAtime_perSwath = 
-
-    ""
-
 Microwave observations do not exist in the area of interest at DA time! Skip this file.
 Start Granule Time:
 2017-09-03T19:32
@@ -3059,11 +2100,6 @@ DA_time candidate: 201709032000
 Effective observations are from 2017090319:32 to 2017090320:30
 DA_time candidate: 201709032100
 Effective observations are from 2017090320:30 to 2017090321:14
-
-DAtime_perSwath = 
-
-    ""
-
 Microwave observations do not exist in the area of interest at DA time! Skip this file.
 Start Granule Time:
 2017-09-03T21:14
@@ -3073,11 +2109,6 @@ Frequencies of interest are:
         190.31GHzV-Pol
 DA_time candidate: 201709032200
 Effective observations are from 2017090321:30 to 2017090322:30
-
-DAtime_perSwath = 
-
-    ""
-
 Microwave observations do not exist in the area of interest at DA time! Skip this file.
 Start Granule Time:
 2017-09-03T22:57
@@ -3089,11 +2120,6 @@ DA_time candidate: 201709032300
 Effective observations are from 2017090322:57 to 2017090323:30
 DA_time candidate: 201709040000
 Effective observations are from 2017090323:30 to 2017090400:30
-
-DAtime_perSwath = 
-
-    ""
-
 Microwave observations do not exist in the area of interest at DA time! Skip this file.
 Start Granule Time:
 2017-09-04T00:39
@@ -3105,11 +2131,6 @@ DA_time candidate: 201709040100
 Effective observations are from 2017090400:39 to 2017090401:30
 DA_time candidate: 201709040200
 Effective observations are from 2017090401:30 to 2017090402:21
-
-DAtime_perSwath = 
-
-    ""
-
 Microwave observations do not exist in the area of interest at DA time! Skip this file.
 Start Granule Time:
 2017-09-04T02:21
@@ -3121,11 +2142,6 @@ DA_time candidate: 201709040300
 Effective observations are from 2017090402:30 to 2017090403:30
 DA_time candidate: 201709040400
 Effective observations are from 2017090403:30 to 2017090404:03
-
-DAtime_perSwath = 
-
-    ""
-
 Microwave observations do not exist in the area of interest at DA time! Skip this file.
 Start Granule Time:
 2017-09-04T04:03
@@ -3135,11 +2151,6 @@ Frequencies of interest are:
         190.31GHzV-Pol
 DA_time candidate: 201709040500
 Effective observations are from 2017090404:30 to 2017090405:30
-
-DAtime_perSwath = 
-
-    ""
-
 Microwave observations do not exist in the area of interest at DA time! Skip this file.
 Start Granule Time:
 2017-09-04T05:45
@@ -3151,11 +2162,6 @@ DA_time candidate: 201709040600
 Effective observations are from 2017090405:45 to 2017090406:30
 DA_time candidate: 201709040700
 Effective observations are from 2017090406:30 to 2017090407:27
-
-DAtime_perSwath = 
-
-    ""
-
 Microwave observations do not exist in the area of interest at DA time! Skip this file.
 Start Granule Time:
 2017-09-04T07:27
@@ -3167,11 +2173,6 @@ DA_time candidate: 201709040800
 Effective observations are from 2017090407:30 to 2017090408:30
 DA_time candidate: 201709040900
 Effective observations are from 2017090408:30 to 2017090409:09
-
-DAtime_perSwath = 
-
-    ""
-
 Microwave observations do not exist in the area of interest at DA time! Skip this file.
 Start Granule Time:
 2017-09-04T09:09
@@ -3181,16 +2182,6 @@ Frequencies of interest are:
         190.31GHzV-Pol
 DA_time candidate: 201709041000
 Effective observations are from 2017090409:30 to 2017090410:30
-
-DAtime_perSwath = 
-
-    "201709041000"
-
-
-newfile_name = 
-
-    "DAt201709041000_1C.NOAA18.MHS.HDF5"
-
 1C.NOAA18.MHS.XCAL2016-V.20170904-S090905-E105105.063343.V05A.HDF5 is gathered.
 Start Granule Time:
 2017-09-04T10:51
@@ -3202,11 +2193,6 @@ DA_time candidate: 201709041100
 Effective observations are from 2017090410:51 to 2017090411:30
 DA_time candidate: 201709041200
 Effective observations are from 2017090411:30 to 2017090412:30
-
-DAtime_perSwath = 
-
-    ""
-
 Microwave observations do not exist in the area of interest at DA time! Skip this file.
 Start Granule Time:
 2017-09-04T12:33
@@ -3218,11 +2204,6 @@ DA_time candidate: 201709041300
 Effective observations are from 2017090412:33 to 2017090413:30
 DA_time candidate: 201709041400
 Effective observations are from 2017090413:30 to 2017090414:15
-
-DAtime_perSwath = 
-
-    ""
-
 Microwave observations do not exist in the area of interest at DA time! Skip this file.
 Start Granule Time:
 2017-09-04T14:15
@@ -3232,11 +2213,6 @@ Frequencies of interest are:
         190.31GHzV-Pol
 DA_time candidate: 201709041500
 Effective observations are from 2017090414:30 to 2017090415:30
-
-DAtime_perSwath = 
-
-    ""
-
 Microwave observations do not exist in the area of interest at DA time! Skip this file.
 Start Granule Time:
 2017-09-04T15:57
@@ -3248,11 +2224,6 @@ DA_time candidate: 201709041600
 Effective observations are from 2017090415:57 to 2017090416:30
 DA_time candidate: 201709041700
 Effective observations are from 2017090416:30 to 2017090417:30
-
-DAtime_perSwath = 
-
-    ""
-
 Microwave observations do not exist in the area of interest at DA time! Skip this file.
 Start Granule Time:
 2017-09-04T17:39
@@ -3264,11 +2235,6 @@ DA_time candidate: 201709041800
 Effective observations are from 2017090417:39 to 2017090418:30
 DA_time candidate: 201709041900
 Effective observations are from 2017090418:30 to 2017090419:21
-
-DAtime_perSwath = 
-
-    ""
-
 Microwave observations do not exist in the area of interest at DA time! Skip this file.
 Start Granule Time:
 2017-09-04T19:21
@@ -3280,11 +2246,6 @@ DA_time candidate: 201709042000
 Effective observations are from 2017090419:30 to 2017090420:30
 DA_time candidate: 201709042100
 Effective observations are from 2017090420:30 to 2017090421:03
-
-DAtime_perSwath = 
-
-    ""
-
 Microwave observations do not exist in the area of interest at DA time! Skip this file.
 Start Granule Time:
 2017-09-04T21:03
@@ -3294,11 +2255,6 @@ Frequencies of interest are:
         190.31GHzV-Pol
 DA_time candidate: 201709042200
 Effective observations are from 2017090421:30 to 2017090422:30
-
-DAtime_perSwath = 
-
-    ""
-
 Microwave observations do not exist in the area of interest at DA time! Skip this file.
 Start Granule Time:
 2017-09-04T22:45
@@ -3310,16 +2266,6 @@ DA_time candidate: 201709042300
 Effective observations are from 2017090422:45 to 2017090423:30
 DA_time candidate: 201709050000
 Effective observations are from 2017090423:30 to 2017090500:27
-
-DAtime_perSwath = 
-
-    "201709042300"
-
-
-newfile_name = 
-
-    "DAt201709042300_1C.NOAA18.MHS.HDF5"
-
 1C.NOAA18.MHS.XCAL2016-V.20170904-S224512-E002712.063351.V05A.HDF5 is gathered.
 Start Granule Time:
 2017-09-05T00:27
@@ -3331,11 +2277,6 @@ DA_time candidate: 201709050100
 Effective observations are from 2017090500:30 to 2017090501:30
 DA_time candidate: 201709050200
 Effective observations are from 2017090501:30 to 2017090502:09
-
-DAtime_perSwath = 
-
-    ""
-
 Microwave observations do not exist in the area of interest at DA time! Skip this file.
 Start Granule Time:
 2017-09-05T02:09
@@ -3345,11 +2286,6 @@ Frequencies of interest are:
         190.31GHzV-Pol
 DA_time candidate: 201709050300
 Effective observations are from 2017090502:30 to 2017090503:30
-
-DAtime_perSwath = 
-
-    ""
-
 Microwave observations do not exist in the area of interest at DA time! Skip this file.
 Start Granule Time:
 2017-09-05T03:51
@@ -3361,11 +2297,6 @@ DA_time candidate: 201709050400
 Effective observations are from 2017090503:51 to 2017090504:30
 DA_time candidate: 201709050500
 Effective observations are from 2017090504:30 to 2017090505:30
-
-DAtime_perSwath = 
-
-    ""
-
 Microwave observations do not exist in the area of interest at DA time! Skip this file.
 Start Granule Time:
 2017-09-05T05:33
@@ -3377,11 +2308,6 @@ DA_time candidate: 201709050600
 Effective observations are from 2017090505:33 to 2017090506:30
 DA_time candidate: 201709050700
 Effective observations are from 2017090506:30 to 2017090507:15
-
-DAtime_perSwath = 
-
-    ""
-
 Microwave observations do not exist in the area of interest at DA time! Skip this file.
 Start Granule Time:
 2017-09-05T07:15
@@ -3459,11 +2385,6 @@ DA_time candidate: 201709030500
 Effective observations are from 2017090304:30 to 2017090305:30
 DA_time candidate: 201709030600
 Effective observations are from 2017090305:30 to 2017090306:11
-
-DAtime_perSwath = 
-
-    ""
-
 Microwave observations do not exist in the area of interest at DA time! Skip this file.
 Start Granule Time:
 2017-09-03T06:11
@@ -3473,16 +2394,6 @@ Frequencies of interest are:
         190.31GHzV-Pol
 DA_time candidate: 201709030700
 Effective observations are from 2017090306:30 to 2017090307:30
-
-DAtime_perSwath = 
-
-    "201709030700"
-
-
-newfile_name = 
-
-    "DAt201709030700_1C.NOAA19.MHS.HDF5"
-
 1C.NOAA19.MHS.XCAL2016-V.20170903-S061129-E075329.044167.V05A.HDF5 is gathered.
 Start Granule Time:
 2017-09-03T07:53
@@ -3494,11 +2405,6 @@ DA_time candidate: 201709030800
 Effective observations are from 2017090307:53 to 2017090308:30
 DA_time candidate: 201709030900
 Effective observations are from 2017090308:30 to 2017090309:30
-
-DAtime_perSwath = 
-
-    ""
-
 Microwave observations do not exist in the area of interest at DA time! Skip this file.
 Start Granule Time:
 2017-09-03T09:35
@@ -3510,11 +2416,6 @@ DA_time candidate: 201709031000
 Effective observations are from 2017090309:35 to 2017090310:30
 DA_time candidate: 201709031100
 Effective observations are from 2017090310:30 to 2017090311:17
-
-DAtime_perSwath = 
-
-    ""
-
 Microwave observations do not exist in the area of interest at DA time! Skip this file.
 Start Granule Time:
 2017-09-03T11:17
@@ -3524,11 +2425,6 @@ Frequencies of interest are:
         190.31GHzV-Pol
 DA_time candidate: 201709031200
 Effective observations are from 2017090311:30 to 2017090312:30
-
-DAtime_perSwath = 
-
-    ""
-
 Microwave observations do not exist in the area of interest at DA time! Skip this file.
 Start Granule Time:
 2017-09-03T12:59
@@ -3540,11 +2436,6 @@ DA_time candidate: 201709031300
 Effective observations are from 2017090312:59 to 2017090313:30
 DA_time candidate: 201709031400
 Effective observations are from 2017090313:30 to 2017090314:30
-
-DAtime_perSwath = 
-
-    ""
-
 Microwave observations do not exist in the area of interest at DA time! Skip this file.
 Start Granule Time:
 2017-09-03T14:41
@@ -3556,11 +2447,6 @@ DA_time candidate: 201709031500
 Effective observations are from 2017090314:41 to 2017090315:30
 DA_time candidate: 201709031600
 Effective observations are from 2017090315:30 to 2017090316:23
-
-DAtime_perSwath = 
-
-    ""
-
 Microwave observations do not exist in the area of interest at DA time! Skip this file.
 Start Granule Time:
 2017-09-03T16:23
@@ -3572,11 +2458,6 @@ DA_time candidate: 201709031700
 Effective observations are from 2017090316:30 to 2017090317:30
 DA_time candidate: 201709031800
 Effective observations are from 2017090317:30 to 2017090318:05
-
-DAtime_perSwath = 
-
-    ""
-
 Microwave observations do not exist in the area of interest at DA time! Skip this file.
 Start Granule Time:
 2017-09-03T18:05
@@ -3586,16 +2467,6 @@ Frequencies of interest are:
         190.31GHzV-Pol
 DA_time candidate: 201709031900
 Effective observations are from 2017090318:30 to 2017090319:30
-
-DAtime_perSwath = 
-
-    "201709031900"
-
-
-newfile_name = 
-
-    "DAt201709031900_1C.NOAA19.MHS.HDF5"
-
 1C.NOAA19.MHS.XCAL2016-V.20170903-S180539-E194739.044174.V05A.HDF5 is gathered.
 Start Granule Time:
 2017-09-03T19:47
@@ -3607,11 +2478,6 @@ DA_time candidate: 201709032000
 Effective observations are from 2017090319:47 to 2017090320:30
 DA_time candidate: 201709032100
 Effective observations are from 2017090320:30 to 2017090321:29
-
-DAtime_perSwath = 
-
-    ""
-
 Microwave observations do not exist in the area of interest at DA time! Skip this file.
 Start Granule Time:
 2017-09-03T21:29
@@ -3623,11 +2489,6 @@ DA_time candidate: 201709032200
 Effective observations are from 2017090321:30 to 2017090322:30
 DA_time candidate: 201709032300
 Effective observations are from 2017090322:30 to 2017090323:11
-
-DAtime_perSwath = 
-
-    ""
-
 Microwave observations do not exist in the area of interest at DA time! Skip this file.
 Start Granule Time:
 2017-09-03T23:11
@@ -3637,11 +2498,6 @@ Frequencies of interest are:
         190.31GHzV-Pol
 DA_time candidate: 201709040000
 Effective observations are from 2017090323:30 to 2017090400:30
-
-DAtime_perSwath = 
-
-    ""
-
 Microwave observations do not exist in the area of interest at DA time! Skip this file.
 Start Granule Time:
 2017-09-04T00:53
@@ -3653,11 +2509,6 @@ DA_time candidate: 201709040100
 Effective observations are from 2017090400:53 to 2017090401:30
 DA_time candidate: 201709040200
 Effective observations are from 2017090401:30 to 2017090402:30
-
-DAtime_perSwath = 
-
-    ""
-
 Microwave observations do not exist in the area of interest at DA time! Skip this file.
 Start Granule Time:
 2017-09-04T02:35
@@ -3669,11 +2520,6 @@ DA_time candidate: 201709040300
 Effective observations are from 2017090402:35 to 2017090403:30
 DA_time candidate: 201709040400
 Effective observations are from 2017090403:30 to 2017090404:17
-
-DAtime_perSwath = 
-
-    ""
-
 Microwave observations do not exist in the area of interest at DA time! Skip this file.
 Start Granule Time:
 2017-09-04T04:17
@@ -3683,11 +2529,6 @@ Frequencies of interest are:
         190.31GHzV-Pol
 DA_time candidate: 201709040500
 Effective observations are from 2017090404:30 to 2017090405:30
-
-DAtime_perSwath = 
-
-    ""
-
 Microwave observations do not exist in the area of interest at DA time! Skip this file.
 Start Granule Time:
 2017-09-04T05:59
@@ -3699,16 +2540,6 @@ DA_time candidate: 201709040600
 Effective observations are from 2017090405:59 to 2017090406:30
 DA_time candidate: 201709040700
 Effective observations are from 2017090406:30 to 2017090407:30
-
-DAtime_perSwath = 
-
-    "201709040700"
-
-
-newfile_name = 
-
-    "DAt201709040700_1C.NOAA19.MHS.HDF5"
-
 1C.NOAA19.MHS.XCAL2016-V.20170904-S055949-E074150.044181.V05A.HDF5 is gathered.
 Start Granule Time:
 2017-09-04T07:41
@@ -3720,11 +2551,6 @@ DA_time candidate: 201709040800
 Effective observations are from 2017090407:41 to 2017090408:30
 DA_time candidate: 201709040900
 Effective observations are from 2017090408:30 to 2017090409:23
-
-DAtime_perSwath = 
-
-    ""
-
 Microwave observations do not exist in the area of interest at DA time! Skip this file.
 Start Granule Time:
 2017-09-04T09:23
@@ -3736,11 +2562,6 @@ DA_time candidate: 201709041000
 Effective observations are from 2017090409:30 to 2017090410:30
 DA_time candidate: 201709041100
 Effective observations are from 2017090410:30 to 2017090411:05
-
-DAtime_perSwath = 
-
-    ""
-
 Microwave observations do not exist in the area of interest at DA time! Skip this file.
 Start Granule Time:
 2017-09-04T11:05
@@ -3750,11 +2571,6 @@ Frequencies of interest are:
         190.31GHzV-Pol
 DA_time candidate: 201709041200
 Effective observations are from 2017090411:30 to 2017090412:30
-
-DAtime_perSwath = 
-
-    ""
-
 Microwave observations do not exist in the area of interest at DA time! Skip this file.
 Start Granule Time:
 2017-09-04T12:47
@@ -3766,11 +2582,6 @@ DA_time candidate: 201709041300
 Effective observations are from 2017090412:47 to 2017090413:30
 DA_time candidate: 201709041400
 Effective observations are from 2017090413:30 to 2017090414:29
-
-DAtime_perSwath = 
-
-    ""
-
 Microwave observations do not exist in the area of interest at DA time! Skip this file.
 Start Granule Time:
 2017-09-04T14:29
@@ -3782,11 +2593,6 @@ DA_time candidate: 201709041500
 Effective observations are from 2017090414:30 to 2017090415:30
 DA_time candidate: 201709041600
 Effective observations are from 2017090415:30 to 2017090416:11
-
-DAtime_perSwath = 
-
-    ""
-
 Microwave observations do not exist in the area of interest at DA time! Skip this file.
 Start Granule Time:
 2017-09-04T16:11
@@ -3796,11 +2602,6 @@ Frequencies of interest are:
         190.31GHzV-Pol
 DA_time candidate: 201709041700
 Effective observations are from 2017090416:30 to 2017090417:30
-
-DAtime_perSwath = 
-
-    ""
-
 Microwave observations do not exist in the area of interest at DA time! Skip this file.
 Start Granule Time:
 2017-09-04T17:54
@@ -3812,16 +2613,6 @@ DA_time candidate: 201709041800
 Effective observations are from 2017090417:54 to 2017090418:30
 DA_time candidate: 201709041900
 Effective observations are from 2017090418:30 to 2017090419:30
-
-DAtime_perSwath = 
-
-    "201709041800"
-
-
-newfile_name = 
-
-    "DAt201709041800_1C.NOAA19.MHS.HDF5"
-
 1C.NOAA19.MHS.XCAL2016-V.20170904-S175400-E193600.044188.V05A.HDF5 is gathered.
 Start Granule Time:
 2017-09-04T19:36
@@ -3833,11 +2624,6 @@ DA_time candidate: 201709042000
 Effective observations are from 2017090419:36 to 2017090420:30
 DA_time candidate: 201709042100
 Effective observations are from 2017090420:30 to 2017090421:18
-
-DAtime_perSwath = 
-
-    ""
-
 Microwave observations do not exist in the area of interest at DA time! Skip this file.
 Start Granule Time:
 2017-09-04T21:18
@@ -3849,11 +2635,6 @@ DA_time candidate: 201709042200
 Effective observations are from 2017090421:30 to 2017090422:30
 DA_time candidate: 201709042300
 Effective observations are from 2017090422:30 to 2017090423:00
-
-DAtime_perSwath = 
-
-    ""
-
 Microwave observations do not exist in the area of interest at DA time! Skip this file.
 Start Granule Time:
 2017-09-04T23:00
@@ -3863,11 +2644,6 @@ Frequencies of interest are:
         190.31GHzV-Pol
 DA_time candidate: 201709050000
 Effective observations are from 2017090423:30 to 2017090500:30
-
-DAtime_perSwath = 
-
-    ""
-
 Microwave observations do not exist in the area of interest at DA time! Skip this file.
 Start Granule Time:
 2017-09-05T00:42
@@ -3879,11 +2655,6 @@ DA_time candidate: 201709050100
 Effective observations are from 2017090500:42 to 2017090501:30
 DA_time candidate: 201709050200
 Effective observations are from 2017090501:30 to 2017090502:24
-
-DAtime_perSwath = 
-
-    ""
-
 Microwave observations do not exist in the area of interest at DA time! Skip this file.
 Start Granule Time:
 2017-09-05T02:24
@@ -3895,11 +2666,6 @@ DA_time candidate: 201709050300
 Effective observations are from 2017090502:30 to 2017090503:30
 DA_time candidate: 201709050400
 Effective observations are from 2017090503:30 to 2017090504:06
-
-DAtime_perSwath = 
-
-    ""
-
 Microwave observations do not exist in the area of interest at DA time! Skip this file.
 Start Granule Time:
 2017-09-05T04:06
@@ -3909,11 +2675,6 @@ Frequencies of interest are:
         190.31GHzV-Pol
 DA_time candidate: 201709050500
 Effective observations are from 2017090504:30 to 2017090505:30
-
-DAtime_perSwath = 
-
-    ""
-
 Microwave observations do not exist in the area of interest at DA time! Skip this file.
 Start Granule Time:
 2017-09-05T05:48
@@ -3925,11 +2686,6 @@ DA_time candidate: 201709050600
 Effective observations are from 2017090505:48 to 2017090506:30
 DA_time candidate: 201709050700
 Effective observations are from 2017090506:30 to 2017090507:30
-
-DAtime_perSwath = 
-
-    ""
-
 Microwave observations do not exist in the area of interest at DA time! Skip this file.
 Start Granule Time:
 2017-09-05T07:30
@@ -4012,11 +2768,6 @@ DA_time candidate: 201709030600
 Effective observations are from 2017090305:53 to 2017090306:30
 DA_time candidate: 201709030700
 Effective observations are from 2017090306:30 to 2017090307:30
-
-DAtime_perSwath = 
-
-    ""
-
 Microwave observations do not exist in the area of interest at DA time! Skip this file.
 Start Granule Time:
 2017-09-03T07:35
@@ -4028,11 +2779,6 @@ DA_time candidate: 201709030800
 Effective observations are from 2017090307:35 to 2017090308:30
 DA_time candidate: 201709030900
 Effective observations are from 2017090308:30 to 2017090309:17
-
-DAtime_perSwath = 
-
-    ""
-
 Microwave observations do not exist in the area of interest at DA time! Skip this file.
 Start Granule Time:
 2017-09-03T09:17
@@ -4042,16 +2788,6 @@ Frequencies of interest are:
         183.31+/-6.8GHz
 DA_time candidate: 201709031000
 Effective observations are from 2017090309:30 to 2017090310:30
-
-DAtime_perSwath = 
-
-    "201709031000"
-
-
-newfile_name = 
-
-    "DAt201709031000_1C.MT1.SAPHIR.HDF5"
-
 1C.MT1.SAPHIR.XCAL2016-V.20170903-S091737-E105932.030420.V05A.HDF5 is gathered.
 Start Granule Time:
 2017-09-03T10:59
@@ -4063,16 +2799,6 @@ DA_time candidate: 201709031100
 Effective observations are from 2017090310:59 to 2017090311:30
 DA_time candidate: 201709031200
 Effective observations are from 2017090311:30 to 2017090312:30
-
-DAtime_perSwath = 
-
-    "201709031200"
-
-
-newfile_name = 
-
-    "DAt201709031200_1C.MT1.SAPHIR.HDF5"
-
 1C.MT1.SAPHIR.XCAL2016-V.20170903-S105933-E124128.030421.V05A.HDF5 is gathered.
 Start Granule Time:
 2017-09-03T12:41
@@ -4084,16 +2810,6 @@ DA_time candidate: 201709031300
 Effective observations are from 2017090312:41 to 2017090313:30
 DA_time candidate: 201709031400
 Effective observations are from 2017090313:30 to 2017090314:23
-
-DAtime_perSwath = 
-
-    "201709031400"
-
-
-newfile_name = 
-
-    "DAt201709031400_1C.MT1.SAPHIR.HDF5"
-
 1C.MT1.SAPHIR.XCAL2016-V.20170903-S124129-E142324.030422.V05A.HDF5 is gathered.
 Start Granule Time:
 2017-09-03T14:23
@@ -4105,16 +2821,6 @@ DA_time candidate: 201709031500
 Effective observations are from 2017090314:30 to 2017090315:30
 DA_time candidate: 201709031600
 Effective observations are from 2017090315:30 to 2017090316:05
-
-DAtime_perSwath = 
-
-    "201709031500"
-
-
-newfile_name = 
-
-    "DAt201709031500_1C.MT1.SAPHIR.HDF5"
-
 1C.MT1.SAPHIR.XCAL2016-V.20170903-S142325-E160520.030423.V05A.HDF5 is gathered.
 Start Granule Time:
 2017-09-03T16:05
@@ -4124,11 +2830,6 @@ Frequencies of interest are:
         183.31+/-6.8GHz
 DA_time candidate: 201709031700
 Effective observations are from 2017090316:30 to 2017090317:30
-
-DAtime_perSwath = 
-
-    ""
-
 Microwave observations do not exist in the area of interest at DA time! Skip this file.
 Start Granule Time:
 2017-09-03T17:47
@@ -4140,11 +2841,6 @@ DA_time candidate: 201709031800
 Effective observations are from 2017090317:47 to 2017090318:30
 DA_time candidate: 201709031900
 Effective observations are from 2017090318:30 to 2017090319:29
-
-DAtime_perSwath = 
-
-    ""
-
 Microwave observations do not exist in the area of interest at DA time! Skip this file.
 Start Granule Time:
 2017-09-03T19:29
@@ -4156,11 +2852,6 @@ DA_time candidate: 201709032000
 Effective observations are from 2017090319:30 to 2017090320:30
 DA_time candidate: 201709032100
 Effective observations are from 2017090320:30 to 2017090321:11
-
-DAtime_perSwath = 
-
-    ""
-
 Microwave observations do not exist in the area of interest at DA time! Skip this file.
 Start Granule Time:
 2017-09-03T21:11
@@ -4170,11 +2861,6 @@ Frequencies of interest are:
         183.31+/-6.8GHz
 DA_time candidate: 201709032200
 Effective observations are from 2017090321:30 to 2017090322:30
-
-DAtime_perSwath = 
-
-    ""
-
 Microwave observations do not exist in the area of interest at DA time! Skip this file.
 Start Granule Time:
 2017-09-03T22:53
@@ -4186,11 +2872,6 @@ DA_time candidate: 201709032300
 Effective observations are from 2017090322:53 to 2017090323:30
 DA_time candidate: 201709040000
 Effective observations are from 2017090323:30 to 2017090400:30
-
-DAtime_perSwath = 
-
-    ""
-
 Microwave observations do not exist in the area of interest at DA time! Skip this file.
 Start Granule Time:
 2017-09-04T00:35
@@ -4202,11 +2883,6 @@ DA_time candidate: 201709040100
 Effective observations are from 2017090400:35 to 2017090401:30
 DA_time candidate: 201709040200
 Effective observations are from 2017090401:30 to 2017090402:16
-
-DAtime_perSwath = 
-
-    ""
-
 Microwave observations do not exist in the area of interest at DA time! Skip this file.
 Start Granule Time:
 2017-09-04T02:16
@@ -4216,11 +2892,6 @@ Frequencies of interest are:
         183.31+/-6.8GHz
 DA_time candidate: 201709040300
 Effective observations are from 2017090402:30 to 2017090403:30
-
-DAtime_perSwath = 
-
-    ""
-
 Microwave observations do not exist in the area of interest at DA time! Skip this file.
 Start Granule Time:
 2017-09-04T03:58
@@ -4232,11 +2903,6 @@ DA_time candidate: 201709040400
 Effective observations are from 2017090403:58 to 2017090404:30
 DA_time candidate: 201709040500
 Effective observations are from 2017090404:30 to 2017090405:30
-
-DAtime_perSwath = 
-
-    ""
-
 Microwave observations do not exist in the area of interest at DA time! Skip this file.
 Start Granule Time:
 2017-09-04T05:40
@@ -4248,11 +2914,6 @@ DA_time candidate: 201709040600
 Effective observations are from 2017090405:40 to 2017090406:30
 DA_time candidate: 201709040700
 Effective observations are from 2017090406:30 to 2017090407:22
-
-DAtime_perSwath = 
-
-    ""
-
 Microwave observations do not exist in the area of interest at DA time! Skip this file.
 Start Granule Time:
 2017-09-04T07:22
@@ -4264,11 +2925,6 @@ DA_time candidate: 201709040800
 Effective observations are from 2017090407:30 to 2017090408:30
 DA_time candidate: 201709040900
 Effective observations are from 2017090408:30 to 2017090409:04
-
-DAtime_perSwath = 
-
-    ""
-
 Microwave observations do not exist in the area of interest at DA time! Skip this file.
 Start Granule Time:
 2017-09-04T09:04
@@ -4278,16 +2934,6 @@ Frequencies of interest are:
         183.31+/-6.8GHz
 DA_time candidate: 201709041000
 Effective observations are from 2017090409:30 to 2017090410:30
-
-DAtime_perSwath = 
-
-    "201709041000"
-
-
-newfile_name = 
-
-    "DAt201709041000_1C.MT1.SAPHIR.HDF5"
-
 1C.MT1.SAPHIR.XCAL2016-V.20170904-S090439-E104634.030434.V05A.HDF5 is gathered.
 Start Granule Time:
 2017-09-04T10:46
@@ -4299,16 +2945,6 @@ DA_time candidate: 201709041100
 Effective observations are from 2017090410:46 to 2017090411:30
 DA_time candidate: 201709041200
 Effective observations are from 2017090411:30 to 2017090412:28
-
-DAtime_perSwath = 
-
-    "201709041200"
-
-
-newfile_name = 
-
-    "DAt201709041200_1C.MT1.SAPHIR.HDF5"
-
 1C.MT1.SAPHIR.XCAL2016-V.20170904-S104635-E122830.030435.V05A.HDF5 is gathered.
 Start Granule Time:
 2017-09-04T12:28
@@ -4320,16 +2956,6 @@ DA_time candidate: 201709041300
 Effective observations are from 2017090412:30 to 2017090413:30
 DA_time candidate: 201709041400
 Effective observations are from 2017090413:30 to 2017090414:10
-
-DAtime_perSwath = 
-
-    "201709041300"
-
-
-newfile_name = 
-
-    "DAt201709041300_1C.MT1.SAPHIR.HDF5"
-
 1C.MT1.SAPHIR.XCAL2016-V.20170904-S122831-E141026.030436.V05A.HDF5 is gathered.
 Start Granule Time:
 2017-09-04T14:10
@@ -4339,16 +2965,6 @@ Frequencies of interest are:
         183.31+/-6.8GHz
 DA_time candidate: 201709041500
 Effective observations are from 2017090414:30 to 2017090415:30
-
-DAtime_perSwath = 
-
-    "201709041500"
-
-
-newfile_name = 
-
-    "DAt201709041500_1C.MT1.SAPHIR.HDF5"
-
 1C.MT1.SAPHIR.XCAL2016-V.20170904-S141027-E155221.030437.V05A.HDF5 is gathered.
 Start Granule Time:
 2017-09-04T15:52
@@ -4360,11 +2976,6 @@ DA_time candidate: 201709041600
 Effective observations are from 2017090415:52 to 2017090416:30
 DA_time candidate: 201709041700
 Effective observations are from 2017090416:30 to 2017090417:30
-
-DAtime_perSwath = 
-
-    ""
-
 Microwave observations do not exist in the area of interest at DA time! Skip this file.
 Start Granule Time:
 2017-09-04T17:34
@@ -4376,11 +2987,6 @@ DA_time candidate: 201709041800
 Effective observations are from 2017090417:34 to 2017090418:30
 DA_time candidate: 201709041900
 Effective observations are from 2017090418:30 to 2017090419:16
-
-DAtime_perSwath = 
-
-    ""
-
 Microwave observations do not exist in the area of interest at DA time! Skip this file.
 Start Granule Time:
 2017-09-04T19:16
@@ -4390,11 +2996,6 @@ Frequencies of interest are:
         183.31+/-6.8GHz
 DA_time candidate: 201709042000
 Effective observations are from 2017090419:30 to 2017090420:30
-
-DAtime_perSwath = 
-
-    ""
-
 Microwave observations do not exist in the area of interest at DA time! Skip this file.
 Start Granule Time:
 2017-09-04T20:58
@@ -4406,11 +3007,6 @@ DA_time candidate: 201709042100
 Effective observations are from 2017090420:58 to 2017090421:30
 DA_time candidate: 201709042200
 Effective observations are from 2017090421:30 to 2017090422:30
-
-DAtime_perSwath = 
-
-    ""
-
 Microwave observations do not exist in the area of interest at DA time! Skip this file.
 Start Granule Time:
 2017-09-04T22:40
@@ -4422,11 +3018,6 @@ DA_time candidate: 201709042300
 Effective observations are from 2017090422:40 to 2017090423:30
 DA_time candidate: 201709050000
 Effective observations are from 2017090423:30 to 2017090500:22
-
-DAtime_perSwath = 
-
-    ""
-
 Microwave observations do not exist in the area of interest at DA time! Skip this file.
 Start Granule Time:
 2017-09-05T00:22
@@ -4438,11 +3029,6 @@ DA_time candidate: 201709050100
 Effective observations are from 2017090500:30 to 2017090501:30
 DA_time candidate: 201709050200
 Effective observations are from 2017090501:30 to 2017090502:03
-
-DAtime_perSwath = 
-
-    ""
-
 Microwave observations do not exist in the area of interest at DA time! Skip this file.
 Start Granule Time:
 2017-09-05T02:03
@@ -4452,11 +3038,6 @@ Frequencies of interest are:
         183.31+/-6.8GHz
 DA_time candidate: 201709050300
 Effective observations are from 2017090502:30 to 2017090503:30
-
-DAtime_perSwath = 
-
-    ""
-
 Microwave observations do not exist in the area of interest at DA time! Skip this file.
 Start Granule Time:
 2017-09-05T03:45
@@ -4468,11 +3049,6 @@ DA_time candidate: 201709050400
 Effective observations are from 2017090503:45 to 2017090504:30
 DA_time candidate: 201709050500
 Effective observations are from 2017090504:30 to 2017090505:27
-
-DAtime_perSwath = 
-
-    ""
-
 Microwave observations do not exist in the area of interest at DA time! Skip this file.
 Start Granule Time:
 2017-09-05T05:27
@@ -4484,11 +3060,6 @@ DA_time candidate: 201709050600
 Effective observations are from 2017090505:30 to 2017090506:30
 DA_time candidate: 201709050700
 Effective observations are from 2017090506:30 to 2017090507:09
-
-DAtime_perSwath = 
-
-    ""
-
 Microwave observations do not exist in the area of interest at DA time! Skip this file.
 Start Granule Time:
 2017-09-05T07:09
@@ -4572,18 +3143,6 @@ DA_time candidate: 201709030600
 Effective observations are from 2017090305:40 to 2017090306:30
 DA_time candidate: 201709030700
 Effective observations are from 2017090306:30 to 2017090307:22
-
-DAtime_perSwath = 
-
-  1x2 string array
-
-    "201709030700"    "201709030700"
-
-
-newfile_name = 
-
-    "DAt201709030700_1C.F16.SSMIS.HDF5"
-
 1C.F16.SSMIS.XCAL2016-V.20170903-S054042-E072236.071602.V05B.HDF5 is gathered.
 Start Granule Time:
 2017-09-03T07:22
@@ -4596,13 +3155,6 @@ DA_time candidate: 201709030800
 Effective observations are from 2017090307:30 to 2017090308:30
 DA_time candidate: 201709030900
 Effective observations are from 2017090308:30 to 2017090309:04
-
-DAtime_perSwath = 
-
-  1x2 string array
-
-    ""    ""
-
 Microwave observations do not exist in the area of interest at DA time! Skip this file.
 Start Granule Time:
 2017-09-03T09:04
@@ -4613,13 +3165,6 @@ Frequencies of interest are:
         183.31+/-6.6GHzH-Pol
 DA_time candidate: 201709031000
 Effective observations are from 2017090309:30 to 2017090310:30
-
-DAtime_perSwath = 
-
-  1x2 string array
-
-    ""    ""
-
 Microwave observations do not exist in the area of interest at DA time! Skip this file.
 Start Granule Time:
 2017-09-03T10:46
@@ -4632,13 +3177,6 @@ DA_time candidate: 201709031100
 Effective observations are from 2017090310:46 to 2017090311:30
 DA_time candidate: 201709031200
 Effective observations are from 2017090311:30 to 2017090312:28
-
-DAtime_perSwath = 
-
-  1x2 string array
-
-    ""    ""
-
 Microwave observations do not exist in the area of interest at DA time! Skip this file.
 Start Granule Time:
 2017-09-03T12:28
@@ -4651,13 +3189,6 @@ DA_time candidate: 201709031300
 Effective observations are from 2017090312:30 to 2017090313:30
 DA_time candidate: 201709031400
 Effective observations are from 2017090313:30 to 2017090314:10
-
-DAtime_perSwath = 
-
-  1x2 string array
-
-    ""    ""
-
 Microwave observations do not exist in the area of interest at DA time! Skip this file.
 Start Granule Time:
 2017-09-03T14:10
@@ -4668,13 +3199,6 @@ Frequencies of interest are:
         183.31+/-6.6GHzH-Pol
 DA_time candidate: 201709031500
 Effective observations are from 2017090314:30 to 2017090315:30
-
-DAtime_perSwath = 
-
-  1x2 string array
-
-    ""    ""
-
 Microwave observations do not exist in the area of interest at DA time! Skip this file.
 Start Granule Time:
 2017-09-03T15:52
@@ -4687,13 +3211,6 @@ DA_time candidate: 201709031600
 Effective observations are from 2017090315:52 to 2017090316:30
 DA_time candidate: 201709031700
 Effective observations are from 2017090316:30 to 2017090317:30
-
-DAtime_perSwath = 
-
-  1x2 string array
-
-    ""    ""
-
 Microwave observations do not exist in the area of interest at DA time! Skip this file.
 Start Granule Time:
 2017-09-03T17:34
@@ -4706,13 +3223,6 @@ DA_time candidate: 201709031800
 Effective observations are from 2017090317:34 to 2017090318:30
 DA_time candidate: 201709031900
 Effective observations are from 2017090318:30 to 2017090319:16
-
-DAtime_perSwath = 
-
-  1x2 string array
-
-    ""    ""
-
 Microwave observations do not exist in the area of interest at DA time! Skip this file.
 Start Granule Time:
 2017-09-03T19:16
@@ -4723,13 +3233,6 @@ Frequencies of interest are:
         183.31+/-6.6GHzH-Pol
 DA_time candidate: 201709032000
 Effective observations are from 2017090319:30 to 2017090320:30
-
-DAtime_perSwath = 
-
-  1x2 string array
-
-    ""    ""
-
 Microwave observations do not exist in the area of interest at DA time! Skip this file.
 Start Granule Time:
 2017-09-03T20:57
@@ -4742,13 +3245,6 @@ DA_time candidate: 201709032100
 Effective observations are from 2017090320:57 to 2017090321:30
 DA_time candidate: 201709032200
 Effective observations are from 2017090321:30 to 2017090322:30
-
-DAtime_perSwath = 
-
-  1x2 string array
-
-    ""    ""
-
 Microwave observations do not exist in the area of interest at DA time! Skip this file.
 Start Granule Time:
 2017-09-03T22:39
@@ -4761,13 +3257,6 @@ DA_time candidate: 201709032300
 Effective observations are from 2017090322:39 to 2017090323:30
 DA_time candidate: 201709040000
 Effective observations are from 2017090323:30 to 2017090400:21
-
-DAtime_perSwath = 
-
-  1x2 string array
-
-    ""    ""
-
 Microwave observations do not exist in the area of interest at DA time! Skip this file.
 Start Granule Time:
 2017-09-04T00:21
@@ -4780,13 +3269,6 @@ DA_time candidate: 201709040100
 Effective observations are from 2017090400:30 to 2017090401:30
 DA_time candidate: 201709040200
 Effective observations are from 2017090401:30 to 2017090402:03
-
-DAtime_perSwath = 
-
-  1x2 string array
-
-    ""    ""
-
 Microwave observations do not exist in the area of interest at DA time! Skip this file.
 Start Granule Time:
 2017-09-04T02:03
@@ -4797,13 +3279,6 @@ Frequencies of interest are:
         183.31+/-6.6GHzH-Pol
 DA_time candidate: 201709040300
 Effective observations are from 2017090402:30 to 2017090403:30
-
-DAtime_perSwath = 
-
-  1x2 string array
-
-    ""    ""
-
 Microwave observations do not exist in the area of interest at DA time! Skip this file.
 Start Granule Time:
 2017-09-04T03:45
@@ -4816,13 +3291,6 @@ DA_time candidate: 201709040400
 Effective observations are from 2017090403:45 to 2017090404:30
 DA_time candidate: 201709040500
 Effective observations are from 2017090404:30 to 2017090405:27
-
-DAtime_perSwath = 
-
-  1x2 string array
-
-    ""    ""
-
 Microwave observations do not exist in the area of interest at DA time! Skip this file.
 Start Granule Time:
 2017-09-04T05:27
@@ -4835,13 +3303,6 @@ DA_time candidate: 201709040600
 Effective observations are from 2017090405:30 to 2017090406:30
 DA_time candidate: 201709040700
 Effective observations are from 2017090406:30 to 2017090407:09
-
-DAtime_perSwath = 
-
-  1x2 string array
-
-    ""    ""
-
 Microwave observations do not exist in the area of interest at DA time! Skip this file.
 Start Granule Time:
 2017-09-04T07:09
@@ -4852,13 +3313,6 @@ Frequencies of interest are:
         183.31+/-6.6GHzH-Pol
 DA_time candidate: 201709040800
 Effective observations are from 2017090407:30 to 2017090408:30
-
-DAtime_perSwath = 
-
-  1x2 string array
-
-    ""    ""
-
 Microwave observations do not exist in the area of interest at DA time! Skip this file.
 Start Granule Time:
 2017-09-04T08:51
@@ -4871,13 +3325,6 @@ DA_time candidate: 201709040900
 Effective observations are from 2017090408:51 to 2017090409:30
 DA_time candidate: 201709041000
 Effective observations are from 2017090409:30 to 2017090410:30
-
-DAtime_perSwath = 
-
-  1x2 string array
-
-    ""    ""
-
 Microwave observations do not exist in the area of interest at DA time! Skip this file.
 Start Granule Time:
 2017-09-04T10:33
@@ -4890,13 +3337,6 @@ DA_time candidate: 201709041100
 Effective observations are from 2017090410:33 to 2017090411:30
 DA_time candidate: 201709041200
 Effective observations are from 2017090411:30 to 2017090412:15
-
-DAtime_perSwath = 
-
-  1x2 string array
-
-    ""    ""
-
 Microwave observations do not exist in the area of interest at DA time! Skip this file.
 Start Granule Time:
 2017-09-04T12:15
@@ -4907,13 +3347,6 @@ Frequencies of interest are:
         183.31+/-6.6GHzH-Pol
 DA_time candidate: 201709041300
 Effective observations are from 2017090412:30 to 2017090413:30
-
-DAtime_perSwath = 
-
-  1x2 string array
-
-    ""    ""
-
 Microwave observations do not exist in the area of interest at DA time! Skip this file.
 Start Granule Time:
 2017-09-04T13:57
@@ -4926,13 +3359,6 @@ DA_time candidate: 201709041400
 Effective observations are from 2017090413:57 to 2017090414:30
 DA_time candidate: 201709041500
 Effective observations are from 2017090414:30 to 2017090415:30
-
-DAtime_perSwath = 
-
-  1x2 string array
-
-    ""    ""
-
 Microwave observations do not exist in the area of interest at DA time! Skip this file.
 Start Granule Time:
 2017-09-04T15:38
@@ -4945,13 +3371,6 @@ DA_time candidate: 201709041600
 Effective observations are from 2017090415:38 to 2017090416:30
 DA_time candidate: 201709041700
 Effective observations are from 2017090416:30 to 2017090417:20
-
-DAtime_perSwath = 
-
-  1x2 string array
-
-    ""    ""
-
 Microwave observations do not exist in the area of interest at DA time! Skip this file.
 Start Granule Time:
 2017-09-04T17:20
@@ -4964,13 +3383,6 @@ DA_time candidate: 201709041800
 Effective observations are from 2017090417:30 to 2017090418:30
 DA_time candidate: 201709041900
 Effective observations are from 2017090418:30 to 2017090419:02
-
-DAtime_perSwath = 
-
-  1x2 string array
-
-    ""    ""
-
 Microwave observations do not exist in the area of interest at DA time! Skip this file.
 Start Granule Time:
 2017-09-04T19:02
@@ -4981,18 +3393,6 @@ Frequencies of interest are:
         183.31+/-6.6GHzH-Pol
 DA_time candidate: 201709042000
 Effective observations are from 2017090419:30 to 2017090420:30
-
-DAtime_perSwath = 
-
-  1x2 string array
-
-    "201709042000"    "201709042000"
-
-
-newfile_name = 
-
-    "DAt201709042000_1C.F16.SSMIS.HDF5"
-
 1C.F16.SSMIS.XCAL2016-V.20170904-S190249-E204443.071624.V05B.HDF5 is gathered.
 Start Granule Time:
 2017-09-04T20:44
@@ -5005,13 +3405,6 @@ DA_time candidate: 201709042100
 Effective observations are from 2017090420:44 to 2017090421:30
 DA_time candidate: 201709042200
 Effective observations are from 2017090421:30 to 2017090422:26
-
-DAtime_perSwath = 
-
-  1x2 string array
-
-    ""    ""
-
 Microwave observations do not exist in the area of interest at DA time! Skip this file.
 Start Granule Time:
 2017-09-04T22:26
@@ -5024,13 +3417,6 @@ DA_time candidate: 201709042300
 Effective observations are from 2017090422:30 to 2017090423:30
 DA_time candidate: 201709050000
 Effective observations are from 2017090423:30 to 2017090500:08
-
-DAtime_perSwath = 
-
-  1x2 string array
-
-    ""    ""
-
 Microwave observations do not exist in the area of interest at DA time! Skip this file.
 Start Granule Time:
 2017-09-05T00:08
@@ -5041,13 +3427,6 @@ Frequencies of interest are:
         183.31+/-6.6GHzH-Pol
 DA_time candidate: 201709050100
 Effective observations are from 2017090500:30 to 2017090501:30
-
-DAtime_perSwath = 
-
-  1x2 string array
-
-    ""    ""
-
 Microwave observations do not exist in the area of interest at DA time! Skip this file.
 Start Granule Time:
 2017-09-05T01:50
@@ -5060,13 +3439,6 @@ DA_time candidate: 201709050200
 Effective observations are from 2017090501:50 to 2017090502:30
 DA_time candidate: 201709050300
 Effective observations are from 2017090502:30 to 2017090503:30
-
-DAtime_perSwath = 
-
-  1x2 string array
-
-    ""    ""
-
 Microwave observations do not exist in the area of interest at DA time! Skip this file.
 Start Granule Time:
 2017-09-05T03:32
@@ -5079,13 +3451,6 @@ DA_time candidate: 201709050400
 Effective observations are from 2017090503:32 to 2017090504:30
 DA_time candidate: 201709050500
 Effective observations are from 2017090504:30 to 2017090505:14
-
-DAtime_perSwath = 
-
-  1x2 string array
-
-    ""    ""
-
 Microwave observations do not exist in the area of interest at DA time! Skip this file.
 Start Granule Time:
 2017-09-05T05:14
@@ -5096,13 +3461,6 @@ Frequencies of interest are:
         183.31+/-6.6GHzH-Pol
 DA_time candidate: 201709050600
 Effective observations are from 2017090505:30 to 2017090506:30
-
-DAtime_perSwath = 
-
-  1x2 string array
-
-    ""    ""
-
 Microwave observations do not exist in the area of interest at DA time! Skip this file.
 Start Granule Time:
 2017-09-05T06:56
@@ -5189,13 +3547,6 @@ Frequencies of interest are:
         183.31+/-6.6GHzH-Pol
 DA_time candidate: 201709030600
 Effective observations are from 2017090305:30 to 2017090306:30
-
-DAtime_perSwath = 
-
-  1x2 string array
-
-    ""    ""
-
 Microwave observations do not exist in the area of interest at DA time! Skip this file.
 Start Granule Time:
 2017-09-03T06:52
@@ -5208,13 +3559,6 @@ DA_time candidate: 201709030700
 Effective observations are from 2017090306:52 to 2017090307:30
 DA_time candidate: 201709030800
 Effective observations are from 2017090307:30 to 2017090308:30
-
-DAtime_perSwath = 
-
-  1x2 string array
-
-    ""    ""
-
 Microwave observations do not exist in the area of interest at DA time! Skip this file.
 Start Granule Time:
 2017-09-03T08:34
@@ -5227,18 +3571,6 @@ DA_time candidate: 201709030900
 Effective observations are from 2017090308:34 to 2017090309:30
 DA_time candidate: 201709031000
 Effective observations are from 2017090309:30 to 2017090310:16
-
-DAtime_perSwath = 
-
-  1x2 string array
-
-    "201709031000"    "201709031000"
-
-
-newfile_name = 
-
-    "DAt201709031000_1C.F17.SSMIS.HDF5"
-
 1C.F17.SSMIS.XCAL2016-V.20170903-S083443-E101636.055887.V05A.HDF5 is gathered.
 Start Granule Time:
 2017-09-03T10:16
@@ -5249,13 +3581,6 @@ Frequencies of interest are:
         183.31+/-6.6GHzH-Pol
 DA_time candidate: 201709031100
 Effective observations are from 2017090310:30 to 2017090311:30
-
-DAtime_perSwath = 
-
-  1x2 string array
-
-    ""    ""
-
 Microwave observations do not exist in the area of interest at DA time! Skip this file.
 Start Granule Time:
 2017-09-03T11:58
@@ -5268,13 +3593,6 @@ DA_time candidate: 201709031200
 Effective observations are from 2017090311:58 to 2017090312:30
 DA_time candidate: 201709031300
 Effective observations are from 2017090312:30 to 2017090313:30
-
-DAtime_perSwath = 
-
-  1x2 string array
-
-    ""    ""
-
 Microwave observations do not exist in the area of interest at DA time! Skip this file.
 Start Granule Time:
 2017-09-03T13:40
@@ -5287,13 +3605,6 @@ DA_time candidate: 201709031400
 Effective observations are from 2017090313:40 to 2017090314:30
 DA_time candidate: 201709031500
 Effective observations are from 2017090314:30 to 2017090315:22
-
-DAtime_perSwath = 
-
-  1x2 string array
-
-    ""    ""
-
 Microwave observations do not exist in the area of interest at DA time! Skip this file.
 Start Granule Time:
 2017-09-03T15:22
@@ -5306,13 +3617,6 @@ DA_time candidate: 201709031600
 Effective observations are from 2017090315:30 to 2017090316:30
 DA_time candidate: 201709031700
 Effective observations are from 2017090316:30 to 2017090317:04
-
-DAtime_perSwath = 
-
-  1x2 string array
-
-    ""    ""
-
 Microwave observations do not exist in the area of interest at DA time! Skip this file.
 Start Granule Time:
 2017-09-03T17:04
@@ -5323,13 +3627,6 @@ Frequencies of interest are:
         183.31+/-6.6GHzH-Pol
 DA_time candidate: 201709031800
 Effective observations are from 2017090317:30 to 2017090318:30
-
-DAtime_perSwath = 
-
-  1x2 string array
-
-    ""    ""
-
 Microwave observations do not exist in the area of interest at DA time! Skip this file.
 Start Granule Time:
 2017-09-03T18:46
@@ -5342,13 +3639,6 @@ DA_time candidate: 201709031900
 Effective observations are from 2017090318:46 to 2017090319:30
 DA_time candidate: 201709032000
 Effective observations are from 2017090319:30 to 2017090320:28
-
-DAtime_perSwath = 
-
-  1x2 string array
-
-    ""    ""
-
 Microwave observations do not exist in the area of interest at DA time! Skip this file.
 Start Granule Time:
 2017-09-03T20:28
@@ -5361,13 +3651,6 @@ DA_time candidate: 201709032100
 Effective observations are from 2017090320:30 to 2017090321:30
 DA_time candidate: 201709032200
 Effective observations are from 2017090321:30 to 2017090322:09
-
-DAtime_perSwath = 
-
-  1x2 string array
-
-    ""    ""
-
 Microwave observations do not exist in the area of interest at DA time! Skip this file.
 Start Granule Time:
 2017-09-03T22:09
@@ -5378,13 +3661,6 @@ Frequencies of interest are:
         183.31+/-6.6GHzH-Pol
 DA_time candidate: 201709032300
 Effective observations are from 2017090322:30 to 2017090323:30
-
-DAtime_perSwath = 
-
-  1x2 string array
-
-    ""    ""
-
 Microwave observations do not exist in the area of interest at DA time! Skip this file.
 Start Granule Time:
 2017-09-03T23:51
@@ -5397,13 +3673,6 @@ DA_time candidate: 201709040000
 Effective observations are from 2017090323:51 to 2017090400:30
 DA_time candidate: 201709040100
 Effective observations are from 2017090400:30 to 2017090401:30
-
-DAtime_perSwath = 
-
-  1x2 string array
-
-    ""    ""
-
 Microwave observations do not exist in the area of interest at DA time! Skip this file.
 Start Granule Time:
 2017-09-04T01:33
@@ -5416,13 +3685,6 @@ DA_time candidate: 201709040200
 Effective observations are from 2017090401:33 to 2017090402:30
 DA_time candidate: 201709040300
 Effective observations are from 2017090402:30 to 2017090403:15
-
-DAtime_perSwath = 
-
-  1x2 string array
-
-    ""    ""
-
 Microwave observations do not exist in the area of interest at DA time! Skip this file.
 Start Granule Time:
 2017-09-04T03:15
@@ -5433,13 +3695,6 @@ Frequencies of interest are:
         183.31+/-6.6GHzH-Pol
 DA_time candidate: 201709040400
 Effective observations are from 2017090403:30 to 2017090404:30
-
-DAtime_perSwath = 
-
-  1x2 string array
-
-    ""    ""
-
 Microwave observations do not exist in the area of interest at DA time! Skip this file.
 Start Granule Time:
 2017-09-04T04:57
@@ -5452,13 +3707,6 @@ DA_time candidate: 201709040500
 Effective observations are from 2017090404:57 to 2017090405:30
 DA_time candidate: 201709040600
 Effective observations are from 2017090405:30 to 2017090406:30
-
-DAtime_perSwath = 
-
-  1x2 string array
-
-    ""    ""
-
 Microwave observations do not exist in the area of interest at DA time! Skip this file.
 Start Granule Time:
 2017-09-04T06:39
@@ -5471,13 +3719,6 @@ DA_time candidate: 201709040700
 Effective observations are from 2017090406:39 to 2017090407:30
 DA_time candidate: 201709040800
 Effective observations are from 2017090407:30 to 2017090408:21
-
-DAtime_perSwath = 
-
-  1x2 string array
-
-    ""    ""
-
 Microwave observations do not exist in the area of interest at DA time! Skip this file.
 Start Granule Time:
 2017-09-04T08:21
@@ -5490,13 +3731,6 @@ DA_time candidate: 201709040900
 Effective observations are from 2017090408:30 to 2017090409:30
 DA_time candidate: 201709041000
 Effective observations are from 2017090409:30 to 2017090410:03
-
-DAtime_perSwath = 
-
-  1x2 string array
-
-    ""    ""
-
 Microwave observations do not exist in the area of interest at DA time! Skip this file.
 Start Granule Time:
 2017-09-04T10:03
@@ -5507,13 +3741,6 @@ Frequencies of interest are:
         183.31+/-6.6GHzH-Pol
 DA_time candidate: 201709041100
 Effective observations are from 2017090410:30 to 2017090411:30
-
-DAtime_perSwath = 
-
-  1x2 string array
-
-    ""    ""
-
 Microwave observations do not exist in the area of interest at DA time! Skip this file.
 Start Granule Time:
 2017-09-04T11:45
@@ -5526,13 +3753,6 @@ DA_time candidate: 201709041200
 Effective observations are from 2017090411:45 to 2017090412:30
 DA_time candidate: 201709041300
 Effective observations are from 2017090412:30 to 2017090413:27
-
-DAtime_perSwath = 
-
-  1x2 string array
-
-    ""    ""
-
 Microwave observations do not exist in the area of interest at DA time! Skip this file.
 Start Granule Time:
 2017-09-04T13:27
@@ -5545,13 +3765,6 @@ DA_time candidate: 201709041400
 Effective observations are from 2017090413:30 to 2017090414:30
 DA_time candidate: 201709041500
 Effective observations are from 2017090414:30 to 2017090415:08
-
-DAtime_perSwath = 
-
-  1x2 string array
-
-    ""    ""
-
 Microwave observations do not exist in the area of interest at DA time! Skip this file.
 Start Granule Time:
 2017-09-04T15:08
@@ -5562,13 +3775,6 @@ Frequencies of interest are:
         183.31+/-6.6GHzH-Pol
 DA_time candidate: 201709041600
 Effective observations are from 2017090415:30 to 2017090416:30
-
-DAtime_perSwath = 
-
-  1x2 string array
-
-    ""    ""
-
 Microwave observations do not exist in the area of interest at DA time! Skip this file.
 Start Granule Time:
 2017-09-04T16:50
@@ -5581,13 +3787,6 @@ DA_time candidate: 201709041700
 Effective observations are from 2017090416:50 to 2017090417:30
 DA_time candidate: 201709041800
 Effective observations are from 2017090417:30 to 2017090418:30
-
-DAtime_perSwath = 
-
-  1x2 string array
-
-    ""    ""
-
 Microwave observations do not exist in the area of interest at DA time! Skip this file.
 Start Granule Time:
 2017-09-04T18:32
@@ -5600,13 +3799,6 @@ DA_time candidate: 201709041900
 Effective observations are from 2017090418:32 to 2017090419:30
 DA_time candidate: 201709042000
 Effective observations are from 2017090419:30 to 2017090420:14
-
-DAtime_perSwath = 
-
-  1x2 string array
-
-    ""    ""
-
 Microwave observations do not exist in the area of interest at DA time! Skip this file.
 Start Granule Time:
 2017-09-04T20:14
@@ -5617,13 +3809,6 @@ Frequencies of interest are:
         183.31+/-6.6GHzH-Pol
 DA_time candidate: 201709042100
 Effective observations are from 2017090420:30 to 2017090421:30
-
-DAtime_perSwath = 
-
-  1x2 string array
-
-    ""    ""
-
 Microwave observations do not exist in the area of interest at DA time! Skip this file.
 Start Granule Time:
 2017-09-04T21:56
@@ -5636,18 +3821,6 @@ DA_time candidate: 201709042200
 Effective observations are from 2017090421:56 to 2017090422:30
 DA_time candidate: 201709042300
 Effective observations are from 2017090422:30 to 2017090423:30
-
-DAtime_perSwath = 
-
-  1x2 string array
-
-    "201709042200"    "201709042200"
-
-
-newfile_name = 
-
-    "DAt201709042200_1C.F17.SSMIS.HDF5"
-
 1C.F17.SSMIS.XCAL2016-V.20170904-S215630-E233822.055909.V05A.HDF5 is gathered.
 Start Granule Time:
 2017-09-04T23:38
@@ -5660,13 +3833,6 @@ DA_time candidate: 201709050000
 Effective observations are from 2017090423:38 to 2017090500:30
 DA_time candidate: 201709050100
 Effective observations are from 2017090500:30 to 2017090501:20
-
-DAtime_perSwath = 
-
-  1x2 string array
-
-    ""    ""
-
 Microwave observations do not exist in the area of interest at DA time! Skip this file.
 Start Granule Time:
 2017-09-05T01:20
@@ -5679,13 +3845,6 @@ DA_time candidate: 201709050200
 Effective observations are from 2017090501:30 to 2017090502:30
 DA_time candidate: 201709050300
 Effective observations are from 2017090502:30 to 2017090503:02
-
-DAtime_perSwath = 
-
-  1x2 string array
-
-    ""    ""
-
 Microwave observations do not exist in the area of interest at DA time! Skip this file.
 Start Granule Time:
 2017-09-05T03:02
@@ -5696,13 +3855,6 @@ Frequencies of interest are:
         183.31+/-6.6GHzH-Pol
 DA_time candidate: 201709050400
 Effective observations are from 2017090503:30 to 2017090504:30
-
-DAtime_perSwath = 
-
-  1x2 string array
-
-    ""    ""
-
 Microwave observations do not exist in the area of interest at DA time! Skip this file.
 Start Granule Time:
 2017-09-05T04:44
@@ -5715,13 +3867,6 @@ DA_time candidate: 201709050500
 Effective observations are from 2017090504:44 to 2017090505:30
 DA_time candidate: 201709050600
 Effective observations are from 2017090505:30 to 2017090506:25
-
-DAtime_perSwath = 
-
-  1x2 string array
-
-    ""    ""
-
 Microwave observations do not exist in the area of interest at DA time! Skip this file.
 Start Granule Time:
 2017-09-05T06:25
@@ -5810,13 +3955,6 @@ DA_time candidate: 201709030600
 Effective observations are from 2017090305:50 to 2017090306:30
 DA_time candidate: 201709030700
 Effective observations are from 2017090306:30 to 2017090307:30
-
-DAtime_perSwath = 
-
-  1x2 string array
-
-    ""    ""
-
 Microwave observations do not exist in the area of interest at DA time! Skip this file.
 Start Granule Time:
 2017-09-03T07:32
@@ -5829,13 +3967,6 @@ DA_time candidate: 201709030800
 Effective observations are from 2017090307:32 to 2017090308:30
 DA_time candidate: 201709030900
 Effective observations are from 2017090308:30 to 2017090309:14
-
-DAtime_perSwath = 
-
-  1x2 string array
-
-    ""    ""
-
 Microwave observations do not exist in the area of interest at DA time! Skip this file.
 Start Granule Time:
 2017-09-03T09:14
@@ -5846,13 +3977,6 @@ Frequencies of interest are:
         183.31+/-6.6GHzH-Pol
 DA_time candidate: 201709031000
 Effective observations are from 2017090309:30 to 2017090310:30
-
-DAtime_perSwath = 
-
-  1x2 string array
-
-    ""    ""
-
 Microwave observations do not exist in the area of interest at DA time! Skip this file.
 Start Granule Time:
 2017-09-03T10:56
@@ -5865,13 +3989,6 @@ DA_time candidate: 201709031100
 Effective observations are from 2017090310:56 to 2017090311:30
 DA_time candidate: 201709031200
 Effective observations are from 2017090311:30 to 2017090312:30
-
-DAtime_perSwath = 
-
-  1x2 string array
-
-    ""    ""
-
 Microwave observations do not exist in the area of interest at DA time! Skip this file.
 Start Granule Time:
 2017-09-03T12:38
@@ -5884,13 +4001,6 @@ DA_time candidate: 201709031300
 Effective observations are from 2017090312:38 to 2017090313:30
 DA_time candidate: 201709031400
 Effective observations are from 2017090313:30 to 2017090314:20
-
-DAtime_perSwath = 
-
-  1x2 string array
-
-    ""    ""
-
 Microwave observations do not exist in the area of interest at DA time! Skip this file.
 Start Granule Time:
 2017-09-03T14:20
@@ -5903,13 +4013,6 @@ DA_time candidate: 201709031500
 Effective observations are from 2017090314:30 to 2017090315:30
 DA_time candidate: 201709031600
 Effective observations are from 2017090315:30 to 2017090316:02
-
-DAtime_perSwath = 
-
-  1x2 string array
-
-    ""    ""
-
 Microwave observations do not exist in the area of interest at DA time! Skip this file.
 Start Granule Time:
 2017-09-03T16:02
@@ -5920,13 +4023,6 @@ Frequencies of interest are:
         183.31+/-6.6GHzH-Pol
 DA_time candidate: 201709031700
 Effective observations are from 2017090316:30 to 2017090317:30
-
-DAtime_perSwath = 
-
-  1x2 string array
-
-    ""    ""
-
 Microwave observations do not exist in the area of interest at DA time! Skip this file.
 Start Granule Time:
 2017-09-03T17:44
@@ -5939,13 +4035,6 @@ DA_time candidate: 201709031800
 Effective observations are from 2017090317:44 to 2017090318:30
 DA_time candidate: 201709031900
 Effective observations are from 2017090318:30 to 2017090319:26
-
-DAtime_perSwath = 
-
-  1x2 string array
-
-    ""    ""
-
 Microwave observations do not exist in the area of interest at DA time! Skip this file.
 Start Granule Time:
 2017-09-03T19:26
@@ -5958,13 +4047,6 @@ DA_time candidate: 201709032000
 Effective observations are from 2017090319:30 to 2017090320:30
 DA_time candidate: 201709032100
 Effective observations are from 2017090320:30 to 2017090321:08
-
-DAtime_perSwath = 
-
-  1x2 string array
-
-    ""    ""
-
 Microwave observations do not exist in the area of interest at DA time! Skip this file.
 Start Granule Time:
 2017-09-03T21:08
@@ -5975,18 +4057,6 @@ Frequencies of interest are:
         183.31+/-6.6GHzH-Pol
 DA_time candidate: 201709032200
 Effective observations are from 2017090321:30 to 2017090322:30
-
-DAtime_perSwath = 
-
-  1x2 string array
-
-    "201709032200"    "201709032200"
-
-
-newfile_name = 
-
-    "DAt201709032200_1C.F18.SSMIS.HDF5"
-
 1C.F18.SSMIS.XCAL2016-V.20170903-S210812-E225009.040629.V05A.HDF5 is gathered.
 Start Granule Time:
 2017-09-03T22:50
@@ -5999,13 +4069,6 @@ DA_time candidate: 201709032300
 Effective observations are from 2017090322:50 to 2017090323:30
 DA_time candidate: 201709040000
 Effective observations are from 2017090323:30 to 2017090400:30
-
-DAtime_perSwath = 
-
-  1x2 string array
-
-    ""    ""
-
 Microwave observations do not exist in the area of interest at DA time! Skip this file.
 Start Granule Time:
 2017-09-04T00:32
@@ -6018,13 +4081,6 @@ DA_time candidate: 201709040100
 Effective observations are from 2017090400:32 to 2017090401:30
 DA_time candidate: 201709040200
 Effective observations are from 2017090401:30 to 2017090402:14
-
-DAtime_perSwath = 
-
-  1x2 string array
-
-    ""    ""
-
 Microwave observations do not exist in the area of interest at DA time! Skip this file.
 Start Granule Time:
 2017-09-04T02:14
@@ -6035,13 +4091,6 @@ Frequencies of interest are:
         183.31+/-6.6GHzH-Pol
 DA_time candidate: 201709040300
 Effective observations are from 2017090402:30 to 2017090403:30
-
-DAtime_perSwath = 
-
-  1x2 string array
-
-    ""    ""
-
 Microwave observations do not exist in the area of interest at DA time! Skip this file.
 Start Granule Time:
 2017-09-04T03:56
@@ -6054,13 +4103,6 @@ DA_time candidate: 201709040400
 Effective observations are from 2017090403:56 to 2017090404:30
 DA_time candidate: 201709040500
 Effective observations are from 2017090404:30 to 2017090405:30
-
-DAtime_perSwath = 
-
-  1x2 string array
-
-    ""    ""
-
 Microwave observations do not exist in the area of interest at DA time! Skip this file.
 Start Granule Time:
 2017-09-04T05:38
@@ -6073,13 +4115,6 @@ DA_time candidate: 201709040600
 Effective observations are from 2017090405:38 to 2017090406:30
 DA_time candidate: 201709040700
 Effective observations are from 2017090406:30 to 2017090407:19
-
-DAtime_perSwath = 
-
-  1x2 string array
-
-    ""    ""
-
 Microwave observations do not exist in the area of interest at DA time! Skip this file.
 Start Granule Time:
 2017-09-04T07:19
@@ -6092,13 +4127,6 @@ DA_time candidate: 201709040800
 Effective observations are from 2017090407:30 to 2017090408:30
 DA_time candidate: 201709040900
 Effective observations are from 2017090408:30 to 2017090409:01
-
-DAtime_perSwath = 
-
-  1x2 string array
-
-    ""    ""
-
 Microwave observations do not exist in the area of interest at DA time! Skip this file.
 Start Granule Time:
 2017-09-04T09:01
@@ -6109,18 +4137,6 @@ Frequencies of interest are:
         183.31+/-6.6GHzH-Pol
 DA_time candidate: 201709041000
 Effective observations are from 2017090409:30 to 2017090410:30
-
-DAtime_perSwath = 
-
-  1x2 string array
-
-    "201709041000"    "201709041000"
-
-
-newfile_name = 
-
-    "DAt201709041000_1C.F18.SSMIS.HDF5"
-
 1C.F18.SSMIS.XCAL2016-V.20170904-S090155-E104352.040636.V05A.HDF5 is gathered.
 Start Granule Time:
 2017-09-04T10:43
@@ -6133,13 +4149,6 @@ DA_time candidate: 201709041100
 Effective observations are from 2017090410:43 to 2017090411:30
 DA_time candidate: 201709041200
 Effective observations are from 2017090411:30 to 2017090412:25
-
-DAtime_perSwath = 
-
-  1x2 string array
-
-    ""    ""
-
 Microwave observations do not exist in the area of interest at DA time! Skip this file.
 Start Granule Time:
 2017-09-04T12:25
@@ -6152,13 +4161,6 @@ DA_time candidate: 201709041300
 Effective observations are from 2017090412:30 to 2017090413:30
 DA_time candidate: 201709041400
 Effective observations are from 2017090413:30 to 2017090414:07
-
-DAtime_perSwath = 
-
-  1x2 string array
-
-    ""    ""
-
 Microwave observations do not exist in the area of interest at DA time! Skip this file.
 Start Granule Time:
 2017-09-04T14:07
@@ -6169,13 +4171,6 @@ Frequencies of interest are:
         183.31+/-6.6GHzH-Pol
 DA_time candidate: 201709041500
 Effective observations are from 2017090414:30 to 2017090415:30
-
-DAtime_perSwath = 
-
-  1x2 string array
-
-    ""    ""
-
 Microwave observations do not exist in the area of interest at DA time! Skip this file.
 Start Granule Time:
 2017-09-04T15:49
@@ -6188,13 +4183,6 @@ DA_time candidate: 201709041600
 Effective observations are from 2017090415:49 to 2017090416:30
 DA_time candidate: 201709041700
 Effective observations are from 2017090416:30 to 2017090417:30
-
-DAtime_perSwath = 
-
-  1x2 string array
-
-    ""    ""
-
 Microwave observations do not exist in the area of interest at DA time! Skip this file.
 Start Granule Time:
 2017-09-04T17:31
@@ -6207,13 +4195,6 @@ DA_time candidate: 201709041800
 Effective observations are from 2017090417:31 to 2017090418:30
 DA_time candidate: 201709041900
 Effective observations are from 2017090418:30 to 2017090419:13
-
-DAtime_perSwath = 
-
-  1x2 string array
-
-    ""    ""
-
 Microwave observations do not exist in the area of interest at DA time! Skip this file.
 Start Granule Time:
 2017-09-04T19:13
@@ -6224,13 +4205,6 @@ Frequencies of interest are:
         183.31+/-6.6GHzH-Pol
 DA_time candidate: 201709042000
 Effective observations are from 2017090419:30 to 2017090420:30
-
-DAtime_perSwath = 
-
-  1x2 string array
-
-    ""    ""
-
 Microwave observations do not exist in the area of interest at DA time! Skip this file.
 Start Granule Time:
 2017-09-04T20:55
@@ -6243,18 +4217,6 @@ DA_time candidate: 201709042100
 Effective observations are from 2017090420:55 to 2017090421:30
 DA_time candidate: 201709042200
 Effective observations are from 2017090421:30 to 2017090422:30
-
-DAtime_perSwath = 
-
-  1x2 string array
-
-    "201709042100"    "201709042100"
-
-
-newfile_name = 
-
-    "DAt201709042100_1C.F18.SSMIS.HDF5"
-
 1C.F18.SSMIS.XCAL2016-V.20170904-S205538-E223735.040643.V05A.HDF5 is gathered.
 Start Granule Time:
 2017-09-04T22:37
@@ -6267,13 +4229,6 @@ DA_time candidate: 201709042300
 Effective observations are from 2017090422:37 to 2017090423:30
 DA_time candidate: 201709050000
 Effective observations are from 2017090423:30 to 2017090500:19
-
-DAtime_perSwath = 
-
-  1x2 string array
-
-    ""    ""
-
 Microwave observations do not exist in the area of interest at DA time! Skip this file.
 Start Granule Time:
 2017-09-05T00:19
@@ -6286,13 +4241,6 @@ DA_time candidate: 201709050100
 Effective observations are from 2017090500:30 to 2017090501:30
 DA_time candidate: 201709050200
 Effective observations are from 2017090501:30 to 2017090502:01
-
-DAtime_perSwath = 
-
-  1x2 string array
-
-    ""    ""
-
 Microwave observations do not exist in the area of interest at DA time! Skip this file.
 Start Granule Time:
 2017-09-05T02:01
@@ -6303,13 +4251,6 @@ Frequencies of interest are:
         183.31+/-6.6GHzH-Pol
 DA_time candidate: 201709050300
 Effective observations are from 2017090502:30 to 2017090503:30
-
-DAtime_perSwath = 
-
-  1x2 string array
-
-    ""    ""
-
 Microwave observations do not exist in the area of interest at DA time! Skip this file.
 Start Granule Time:
 2017-09-05T03:43
@@ -6322,13 +4263,6 @@ DA_time candidate: 201709050400
 Effective observations are from 2017090503:43 to 2017090504:30
 DA_time candidate: 201709050500
 Effective observations are from 2017090504:30 to 2017090505:25
-
-DAtime_perSwath = 
-
-  1x2 string array
-
-    ""    ""
-
 Microwave observations do not exist in the area of interest at DA time! Skip this file.
 Start Granule Time:
 2017-09-05T05:25
@@ -6341,13 +4275,6 @@ DA_time candidate: 201709050600
 Effective observations are from 2017090505:30 to 2017090506:30
 DA_time candidate: 201709050700
 Effective observations are from 2017090506:30 to 2017090507:07
-
-DAtime_perSwath = 
-
-  1x2 string array
-
-    ""    ""
-
 Microwave observations do not exist in the area of interest at DA time! Skip this file.
 Start Granule Time:
 2017-09-05T07:07
@@ -6399,3 +4326,27 @@ Start Granule Time:
 End Granule Time:
 2017-09-06T00:07
 Microwave observations are not within the period of interest! Skip this file.
+
+Tb_file =
+
+    '../../Obs/MW_used/Irma2ndRI/DAt201709030600_1C.GPM.GMI.HDF5'
+
+
+idx_gatheredTb =
+
+     2
+
+
+ans =
+
+   18.2000  -46.7000
+
+
+ans =
+
+  1x1 cell array
+
+    {1x2 double}
+
+min of xlong: -52.7203, max of xlong: -40.6797
+min of xlat: 11.8627, max of xlat: 24.5373

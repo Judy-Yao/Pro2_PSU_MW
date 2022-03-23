@@ -4,35 +4,36 @@ function [sat_name,myLat,myLon,myTb,mySat_lat,mySat_lon,mySat_alt,mySat_azimuth,
     % ---- Loop through each possibly good channel AND
     % ---- Read characteristics of sensor into memory
     % ---------------------------------------------------------------------
-
+    
     % Preallocating memory
-    lat = cell(size(Swath_used));
-    lon = cell(size(Swath_used));
-    Tb = cell(size(Swath_used));
-    zenith_angle = cell(size(Swath_used));
-    sat_lat = cell(size(Swath_used));
-    sat_lon = cell(size(Swath_used));
-    sat_alt = cell(size(Swath_used));
-    sat_azimuth = cell(size(Swath_used));
-    outime = cell(size(Swath_used));
+    lat = cell(size(Swath_used{iTb}));
+    lon = cell(size(Swath_used{iTb}));
+    Tb = cell(size(Swath_used{iTb}));
+    zenith_angle = cell(size(Swath_used{iTb}));
+    sat_lat = cell(size(Swath_used{iTb}));
+    sat_lon = cell(size(Swath_used{iTb}));
+    sat_alt = cell(size(Swath_used{iTb}));
+    sat_azimuth = cell(size(Swath_used{iTb}));
+    outime = cell(size(Swath_used{iTb}));
 
     % Get platform and sensor information from the new name 
-    ss_info = split(Tb_file,'.'); platform = ss_info(2); sensor = ss_info(3);
-    for it = 1:length(Swath_used) % it: item
+    [filepath,filename,filext] = fileparts(Tb_file);
+    ss_info = split(filename,'.'); platform = ss_info(2); sensor = ss_info(3);
+    for it = 1:length(Swath_used{iTb}) % it: item
         % quality control
-        if if_swath_good(it) == 0
+        if if_swath_good{iTb}(it) == 0
            continue;
         end
         
         % **latitude**
-        lat{it} = h5read(Tb_file,Swath_used(it) + '/Latitude'); % npixel, nscan
+        lat{it} = h5read(Tb_file,Swath_used{iTb}(it) + '/Latitude'); % npixel, nscan
 
         % **longitude**
-        lon{it} = h5read(Tb_file,Swath_used(it) + '/Longitude'); % npixel, nscan
+        lon{it} = h5read(Tb_file,Swath_used{iTb}(it) + '/Longitude'); % npixel, nscan
 
         % **Tb**
-        Tb_allCh = h5read(Tb_file,Swath_used(it) + '/Tc');
-        Tb{it} = squeeze(Tb_allCh(ChIdx_ps({iTb}(it),:,:)); % npixel, nscan
+        Tb_allCh = h5read(Tb_file,Swath_used{iTb}(it) + '/Tc');
+        Tb{it} = squeeze(Tb_allCh(ChIdx_ps{iTb}(it),:,:)); % npixel, nscan
 
         % **zenith angle**: the angle of the satellite from the local zenith as seen at the pixel locatio on the earth
         % Interpretation on nChUIA
@@ -42,8 +43,8 @@ function [sat_name,myLat,myLon,myTb,mySat_lat,mySat_lon,mySat_alt,mySat_azimuth,
         % location, only one value of incidence angle exist for all 9 channels; 
         % If nChUIA1 = n (n >= 2), at a specific location, each channel
         % could in theory reference n values.
-        incidenceAngles = h5read(Tb_file,Swath_used(it) + '/incidenceAngle'); % nChUIA1, npixel, nscan
-        iAIndices = h5read(Tb_file,Swath_used(it) + '/incidenceAngleIndex'); % nchannel, nscan
+        incidenceAngles = h5read(Tb_file,Swath_used{iTb}(it) + '/incidenceAngle'); % nChUIA1, npixel, nscan
+        iAIndices = h5read(Tb_file,Swath_used{iTb}(it) + '/incidenceAngleIndex'); % nchannel, nscan
         if size(incidenceAngles,1) == 1
             zenith_angle{it}(:,:) = squeeze(incidenceAngles(1,:,:));
         else
@@ -54,20 +55,20 @@ function [sat_name,myLat,myLon,myTb,mySat_lat,mySat_lon,mySat_alt,mySat_azimuth,
             end
             if sum(num_unique_perCh) == num_Ch_perSW
                 iAIndices = iAIndices(:,1); % For a channel, all scans are references to the same set of zenith angles
-                zenith_angle{it}(:,:) = squeeze(incidenceAngles(iAIndices(ChIdx_ps(it)),:,:)); % npixel, nscan
+                zenith_angle{it}(:,:) = squeeze(incidenceAngles(iAIndices(ChIdx_ps{iTb}(it)),:,:)); % npixel, nscan
             else
                 disp("Error: current algorithm does not work!! Please modify it.");
             end
         end
 
         % **latitude of satellite scan**
-        sat_lat{it} = h5read(Tb_file,Swath_used(it)+ '/SCstatus/SClatitude'); % nscan
+        sat_lat{it} = h5read(Tb_file,Swath_used{iTb}(it)+ '/SCstatus/SClatitude'); % nscan
 
         % **longitude of satellite scan**
-        sat_lon{it} = h5read(Tb_file,Swath_used(it)+ '/SCstatus/SClongitude'); % nscan
+        sat_lon{it} = h5read(Tb_file,Swath_used{iTb}(it)+ '/SCstatus/SClongitude'); % nscan
 
         % **altitude of satellite scan**
-        sat_alt{it} = h5read(Tb_file,Swath_used(it)+'/SCstatus/SCaltitude'); % nscan (unit: km)
+        sat_alt{it} = h5read(Tb_file,Swath_used{iTb}(it)+'/SCstatus/SCaltitude'); % nscan (unit: km)
 
         % **azimuth of satellite scan (used in CRTM)**: the angle subtended
         % by the horizontal projection of a direct line from the satellite
@@ -85,12 +86,12 @@ function [sat_name,myLat,myLon,myTb,mySat_lat,mySat_lon,mySat_alt,mySat_azimuth,
                                              referenceEllipsoid('WGS 84'));
 
         % **Time** 
-        year   = double(h5read(Tb_file, Swath_used(it) + '/ScanTime/Year')); % nscan
-        month  = double(h5read(Tb_file, Swath_used(it) + '/ScanTime/Month')); % nscan
-        day    = double(h5read(Tb_file, Swath_used(it) + '/ScanTime/DayOfMonth')); % nscan
-        hour   = double(h5read(Tb_file, Swath_used(it) +  '/ScanTime/Hour')); % nscan
-        minute = double(h5read(Tb_file, Swath_used(it) +  '/ScanTime/Minute')); % nscan
-        second = double(h5read(Tb_file, Swath_used(it) +  '/ScanTime/Second')); % nscan
+        year   = double(h5read(Tb_file, Swath_used{iTb}(it) + '/ScanTime/Year')); % nscan
+        month  = double(h5read(Tb_file, Swath_used{iTb}(it) + '/ScanTime/Month')); % nscan
+        day    = double(h5read(Tb_file, Swath_used{iTb}(it) + '/ScanTime/DayOfMonth')); % nscan
+        hour   = double(h5read(Tb_file, Swath_used{iTb}(it) +  '/ScanTime/Hour')); % nscan
+        minute = double(h5read(Tb_file, Swath_used{iTb}(it) +  '/ScanTime/Minute')); % nscan
+        second = double(h5read(Tb_file, Swath_used{iTb}(it) +  '/ScanTime/Second')); % nscan
         
         num_scans= size(Tb{it},2); % number of scans
 
@@ -112,10 +113,12 @@ function [sat_name,myLat,myLon,myTb,mySat_lat,mySat_lon,mySat_alt,mySat_azimuth,
     % Prepare area: best-track location followed
     nx = control.nx*control.domain_buffer; % zoom out
     ny = control.ny*control.domain_buffer; % zoom out
-    min_XLAT = loc_DAtime_ps{iTb}(1) - (ny/2*control.dx)/(cos(loc_DAtime_ps{iTb}(1)*(pi/180))*111);
-    max_XLAT = loc_DAtime_ps{iTb}(1) + (ny/2*control.dx)/(cos(loc_DAtime_ps{iTb}(1)*(pi/180))*111);
-    min_XLONG = loc_DAtime_ps{iTb}(2) - (nx/2*control.dx)/111;
-    max_XLONG = loc_DAtime_ps{iTb}(2) + (nx/2*control.dx)/111;
+    loc_DAtime_ps{iTb}{1}
+    loc_DAtime_ps{iTb}(1)
+    min_XLAT = loc_DAtime_ps{iTb}{1}(1) - (ny/2*control.dx)/(cos(loc_DAtime_ps{iTb}{1}(1)*(pi/180))*111);
+    max_XLAT = loc_DAtime_ps{iTb}{1}(1) + (ny/2*control.dx)/(cos(loc_DAtime_ps{iTb}{1}(1)*(pi/180))*111);
+    min_XLONG = loc_DAtime_ps{iTb}{1}(2) - (nx/2*control.dx)/111;
+    max_XLONG = loc_DAtime_ps{iTb}{1}(2) + (nx/2*control.dx)/111;
     disp(['min of xlong: ',num2str(min_XLONG), ', max of xlong: ',num2str(max_XLONG)]);
     disp(['min of xlat: ',num2str(min_XLAT), ', max of xlat: ',num2str(max_XLAT)]);
     latitudes  = linspace(min_XLAT,max_XLAT,ny);
@@ -129,18 +132,18 @@ function [sat_name,myLat,myLon,myTb,mySat_lat,mySat_lon,mySat_alt,mySat_azimuth,
     %       * * * * *                *   *   * 
     %       * * * * *                          
     %       * * * * *                *   *   * 
-    if length(Swath_used) ~= length(control.filter_ratio)
+    if length(Swath_used{iTb}) ~= length(control.filter_ratio)
         disp('Error: setup for slot separation does not work!');
     else
-        slots_x = cell(size(Swath_used));
-        slots_y = cell(size(Swath_used));
-        obs_index = cell(size(Swath_used));
+        slots_x = cell(size(Swath_used{iTb}));
+        slots_y = cell(size(Swath_used{iTb}));
+        obs_index = cell(size(Swath_used{iTb}));
         
         filter_ratio_grid = control.filter_ratio / control.dx; 
         grid_start_hf =  floor(filter_ratio_grid(2) / 2); % high frequency
         grid_start_lf = grid_start_hf + .5*(2*filter_ratio_grid(2) - filter_ratio_grid(1)); % low frequency
 
-        for it = 1:length(Swath_used)
+        for it = 1:length(Swath_used{iTb})
             if (contains(ChName_ps{iTb}(it), "18.7GHzV-Pol")) || (contains(ChName_ps{iTb}(it), "19.35GHzV-Pol"))
                 slots_x{it} = grid_start_lf:filter_ratio_grid(1):nx;
                 slots_y{it} = grid_start_lf:filter_ratio_grid(1):ny;
@@ -158,25 +161,25 @@ function [sat_name,myLat,myLon,myTb,mySat_lat,mySat_lon,mySat_alt,mySat_azimuth,
     % ---------------------------------------------------------------------
     
     % Preallocating memory
-    DA_lat = cell(size(Swath_used));
-    DA_lon = cell(size(Swath_used));
-    DA_Tb = cell(size(Swath_used));
+    DA_lat = cell(size(Swath_used{iTb}));
+    DA_lon = cell(size(Swath_used{iTb}));
+    DA_Tb = cell(size(Swath_used{iTb}));
 
-    DA_sat_lat = cell(size(Swath_used));
-    DA_sat_lon = cell(size(Swath_used));
-    DA_sat_alt = cell(size(Swath_used));
-    DA_sat_azimuth = cell(size(Swath_used)); 
-    DA_scan_angle = cell(size(Swath_used));
-    DA_zenith_angle = cell(size(Swath_used));
-    DA_fov_crossTrack = cell(size(Swath_used));
-    DA_fov_alongTrack = cell(size(Swath_used));
+    DA_sat_lat = cell(size(Swath_used{iTb}));
+    DA_sat_lon = cell(size(Swath_used{iTb}));
+    DA_sat_alt = cell(size(Swath_used{iTb}));
+    DA_sat_azimuth = cell(size(Swath_used{iTb})); 
+    DA_scan_angle = cell(size(Swath_used{iTb}));
+    DA_zenith_angle = cell(size(Swath_used{iTb}));
+    DA_fov_crossTrack = cell(size(Swath_used{iTb}));
+    DA_fov_alongTrack = cell(size(Swath_used{iTb}));
 
-    DA_times = cell(size(Swath_used));
-    DA_chNum = cell(size(Swath_used));
-    DA_obsError = cell(size(Swath_used));
+    DA_times = cell(size(Swath_used{iTb}));
+    DA_chNum = cell(size(Swath_used{iTb}));
+    DA_obsError = cell(size(Swath_used{iTb}));
 
     % Assign values
-    for it = 1:length(Swath_used) % it: item
+    for it = 1:length(Swath_used{iTb}) % it: item
         obs_index_array = obs_index{it};
         obs_index_1d = obs_index_array(obs_index_array(:) == obs_index_array(:)); % get rid of obs_index with value NaN
 
@@ -197,7 +200,7 @@ function [sat_name,myLat,myLon,myTb,mySat_lat,mySat_lon,mySat_alt,mySat_azimuth,
         all_zenith_angles = reshape(zenith_angle{it},[],1);
         DA_zenith_angle{it} = all_zenith_angles(obs_index_1d);
 
-        [ch_num,fov_alongTrack,fov_crossTrack,max_scan_angle,scan_angles] = SensorInfo_read(sensor,ChName_ps(it));
+        [ch_num,fov_alongTrack,fov_crossTrack,max_scan_angle,scan_angles] = SensorInfo_read(sensor,ChName_ps{iTb}(it));
         DA_scan_angle{it} = scan_angles(scan_position)';
         [DA_fov_crossTrack{it}, DA_fov_alongTrack{it}] = get_channel_resolutions(sensor,ch_num,DA_lat{it},DA_lon{it},DA_zenith_angle{it},DA_sat_lat{it},DA_sat_lon{it},DA_sat_alt{it});
 
@@ -256,9 +259,9 @@ function [sat_name,myLat,myLon,myTb,mySat_lat,mySat_lon,mySat_alt,mySat_azimuth,
         tem_obsErr = cat(1, DA_obsError{:}); myObsErr{ir} = tem_obsErr(randOrder); %clear tem_obsErr
  
         % deal with ROI
-        DA_ROI_other = cell(size(Swath_used));
-        DA_ROI_hydro = cell(size(Swath_used));
-        for it = 1:length(Swath_used) 
+        DA_ROI_other = cell(size(Swath_used{iTb}));
+        DA_ROI_hydro = cell(size(Swath_used{iTb}));
+        for it = 1:length(Swath_used{iTb}) 
             obs_index_array = obs_index{it};
             obs_index_1d = obs_index_array(obs_index_array(:) == obs_index_array(:));
             DA_ROI_other{it} = ones(numel(obs_index_1d),1)*control.roi_oh{ir}(1);

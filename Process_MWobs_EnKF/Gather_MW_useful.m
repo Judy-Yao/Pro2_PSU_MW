@@ -15,7 +15,7 @@ function [all_Tbfile_name,all_Swath_used,all_ChIdx_perSwath,all_ChName_perSwath,
 	all_if_swath_good = {};
 	all_DAtime_perSwath = {};
 	all_loc_storm_DAtime = {};
-
+    
     % --------- Loop through each sensor ---------------
     for isensor = 1:length(control.sensor)
         plfs_eachsensor = control.platform{isensor};
@@ -39,7 +39,6 @@ function [all_Tbfile_name,all_Swath_used,all_ChIdx_perSwath,all_ChName_perSwath,
                     [Swath_used, ChIdx_perSwath, ChName_perSwath] = Swath_Channel(Tb_file, control); % (strings) (double) (strings)
                     % subroutine to identify the best DA time for each item
                     [if_swath_good, DAtime_perSwath, loc_storm_DAtime] = Find_DAtime_loc(bestrack_str,Swath_used,Tb_file, control); % (logical) (strings) (cell{double})
-                    DAtime_perSwath
                     if sum(if_swath_good) == 0
                         disp('Microwave observations do not exist in the area of interest at DA time! Skip this file.');
                         continue;
@@ -52,7 +51,7 @@ function [all_Tbfile_name,all_Swath_used,all_ChIdx_perSwath,all_ChName_perSwath,
 						if (length(DAtime_perSwath) > 1) & (DAtime_perSwath(1) ~= DAtime_perSwath(2))
 							disp('Error renaming the Tb file! Potential risk exists!');
 						end
-						newfile_name = ['DAt' + DAtime_perSwath(1) + '_1C.' + control.platform{isensor}{isensor_plf} + '.' + control.sensor{isensor} + '.HDF5']
+						newfile_name = ['DAt' + DAtime_perSwath(1) + '_1C.' + control.platform{isensor}{isensor_plf} + '.' + control.sensor{isensor} + '.HDF5'];
                         command = ["ln -s " + source_file + " " + destination + newfile_name];% Symbolic link's path -> source file. The relatively path of source file is relative to symbolic link's path.
                         [status,~] = system(command);
                         if status == 0
@@ -61,7 +60,7 @@ function [all_Tbfile_name,all_Swath_used,all_ChIdx_perSwath,all_ChName_perSwath,
                             disp('Error gathering Tb file!');
                         end
 						% store useful information
-						all_Tbfile_name(end+1) = string(newfile_name); % (strings)
+                        all_Tbfile_name = [all_Tbfile_name,newfile_name]; % (strings)
 						all_Swath_used{end+1} = Swath_used; % (cell{strings})
 						all_ChIdx_perSwath{end+1} = ChIdx_perSwath; % (cell{single})
 						all_ChName_perSwath{end+1} = ChName_perSwath; % (cell{strings})
@@ -81,26 +80,29 @@ function [all_Tbfile_name,all_Swath_used,all_ChIdx_perSwath,all_ChName_perSwath,
 
 	% --- Mark satellite overpass and single-pass
 	% Only works only if Each Tb file has only one DAtime 
-	overpass = "";
-	singlepass = "";
-	strs_date = "";
+	overpass = [];
+	singlepass = [];
+	strs_date = [];
 	for f = 1:length(all_Tbfile_name)
-		strs_date =  [strs_date, all_DAtime_perSwath{f}(1)];
+		strs_date =  [strs_date,all_DAtime_perSwath{f}(1)];
 	end
 	unique_date = unique(strs_date);
 	for id = 1:length(unique_date)
 		repeate_times = sum(strs_date == unique_date(id));
 		if repeate_times == 1
-			singlepass = [singlepass, unique_date(id)];
+			singlepass = [singlepass,unique_date(id)];
 		else
-			overpass = [overpass, unique_date(id)];
+			overpass = [overpass,unique_date(id)];
 		end
 	end
 
 
 end
 
-
+% Warning! 
+% If a string is only consisted of number 
+% {test = [];test(end+1) = string} will automatically convert string to the number
+% In this case, it is better to use {test = [];test = [test,string]}
 
 
 

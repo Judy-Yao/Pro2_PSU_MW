@@ -1,4 +1,4 @@
-% This script reads satellite MW Tbs observations and if those Tbs cover the storm at DA time then process them into records that are readable by Penn State EnKF system
+% This script reads satvvellite MW Tbs observations and if those Tbs cover the storm at DA time then process them into records that are readable by Penn State EnKF system
 
 
 % -------------- Control variables ----------------------
@@ -6,7 +6,7 @@
 control = struct;
 % ----Path
 control.obs_dir = '../../Obs/Microwave/';
-control.obs_used_dir = '../../Obs/MW_used/';
+control.obs_used_dir = '../../Obs/MW_used/'; 
 control.bestrack_dir = '../../Obs/Bestrack/';
 control.output_dir = '../../toEnKFobs/';
 % ---Storm information
@@ -39,19 +39,25 @@ for istorm = 1:length(control.storm_phase)
 	bestrack_str = Bestrack_read(istorm, control);
 
     % --- Gather useful files of all sensors into a directory
-	[Tbfile_name,Swath_used,ChIdx_ps,ChName_ps,if_swath_good,DAtime_ps,loc_DAtime_ps,overpass,singlepass] = Gather_MW_useful(istorm, bestrack_str, control); % ps: per swath
+	[Tbfile_names,Swath_used,ChIdx_ps,ChName_ps,if_swath_good,DAtime_ps,loc_DAtime_ps,overpass,singlepass] = Gather_MW_useful(istorm, bestrack_str, control); % ps: per swath
 
     % --- Loop through each useful Tb file via a symbolic link
-	Tb_dir = [control.obs_used_dir,'/*'];
-	Tb_files = regexprep(ls(Tb_dir),'\n$', '');
-	Tb_files = regexp(Tb_files,'\n','split');
+	Tb_dir = [control.obs_used_dir,control.storm_phase{istorm},'/*'];
+	%Tb_files = regexprep(ls(Tb_dir),'\n$', ' ');
+	Tb_files = regexprep(ls(Tb_dir),'\s', '\n');
+    Tb_files = regexp(Tb_files,'\n','split');
 	% --- Output file under two situations: overpass or single-pass
+    % The order of gathering useful Tb files is different from the order of listing gathered Tb files
+    % idx_gatheredTb records the order of Tbs gathered from different sensors & platforms
+    % iTb indicates the order of gathered Tb files with ls command
     % - Output single-pass
     for is = 1:length(singlepass)
         for iTb = 1:length(Tb_files)
-            Tb_file = Tb_files{iTb};
-            if contains(Tb_file,singlepass(is))
-                Singlepass_write(iTb,istorm,Swath_used,ChIdx_ps,ChName_ps,if_swath_good,DAtime_ps,loc_DAtime_ps,Tb_file,control);
+            Tb_file = Tb_files{iTb}
+            [filepath,filename,filext] = fileparts(Tb_file);            
+            if contains(filename,singlepass(is))
+                idx_gatheredTb = find([filename,filext] == Tbfile_names)
+                Singlepass_write(idx_gatheredTb,istorm,Swath_used,ChIdx_ps,ChName_ps,if_swath_good,DAtime_ps,loc_DAtime_ps,Tb_file,control);
             else
                 continue;
             end
@@ -59,15 +65,17 @@ for istorm = 1:length(control.storm_phase)
 
     end
 	% - Output overpass
-	Tb_overpass = ""; % (strings)
+	Tb_overpass = []; % (strings)
 	idx_usedTb = []; % (integer)
 	for io = 1:length(overpass_mark) 
 		for iTb = 1:length(Tb_files)
 			Tb_file = Tb_files{iTb};
+            [filepath,filename,filext] = fileparts(Tb_file);
 			% gather names of overpass Tb files
-			if contains(Tb_file,overpass(io))
-				Tb_overpass = [Tb_overpass, string(Tb_file)];
-				idx_usedTb(end+1) = iTb;
+			if contains(filename,overpass(io))
+                idx_gatheredTb = find([filename,filext] == Tbfile_names);
+				Tb_overpass = [Tb_overpass,string(Tb_file)];
+				idx_usedTb(end+1) = idx_gatheredTb;
 			else
 				continue;
 			end
