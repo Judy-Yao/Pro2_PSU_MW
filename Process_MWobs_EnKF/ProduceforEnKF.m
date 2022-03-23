@@ -113,8 +113,6 @@ function [sat_name,myLat,myLon,myTb,mySat_lat,mySat_lon,mySat_alt,mySat_azimuth,
     % Prepare area: best-track location followed
     nx = control.nx*control.domain_buffer; % zoom out
     ny = control.ny*control.domain_buffer; % zoom out
-    loc_DAtime_ps{iTb}{1}
-    loc_DAtime_ps{iTb}(1)
     min_XLAT = loc_DAtime_ps{iTb}{1}(1) - (ny/2*control.dx)/(cos(loc_DAtime_ps{iTb}{1}(1)*(pi/180))*111);
     max_XLAT = loc_DAtime_ps{iTb}{1}(1) + (ny/2*control.dx)/(cos(loc_DAtime_ps{iTb}{1}(1)*(pi/180))*111);
     min_XLONG = loc_DAtime_ps{iTb}{1}(2) - (nx/2*control.dx)/111;

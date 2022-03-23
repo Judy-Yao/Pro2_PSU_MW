@@ -4336,17 +4336,6 @@ idx_gatheredTb =
 
      2
 
-
-ans =
-
-   18.2000  -46.7000
-
-
-ans =
-
-  1x1 cell array
-
-    {1x2 double}
-
 min of xlong: -52.7203, max of xlong: -40.6797
 min of xlat: 11.8627, max of xlat: 24.5373
+ob did not take ANY candidate at x =17 , y =17
