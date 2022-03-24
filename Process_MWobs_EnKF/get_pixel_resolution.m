@@ -9,8 +9,8 @@ if (strcmp(scantype,'Conical'))
     
 elseif (strcmp(scantype,'Cross-track'))
     
-    crossTrack_degrees = ones(1,length(lat),'double')*fov_crossTrack;
-    alongTrack_degrees = ones(1,length(lat),'double')*fov_alongTrack;
+    crossTrack_degrees = ones(length(lat),1,'double')*fov_crossTrack;
+    alongTrack_degrees = ones(length(lat),1,'double')*fov_alongTrack;
         
     [xEast,yNorth,zUp] = geodetic2enu(sat_lat,sat_lon,1000*sat_alt,lat,lon,0,referenceEllipsoid('WGS 84'));
     slant_distance = sqrt(xEast.^2 + yNorth.^2 + zUp.^2) / 1e3;

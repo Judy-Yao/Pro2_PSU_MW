@@ -25,7 +25,7 @@ function [] = Overpass_write(iTb,istorm,Swath_used,ChIdx_ps,ChName_ps,if_swath_g
         Tb_overpass(io)
 		[filepath,filename,filext] = fileparts(Tb_overpass(io));
 		[sat_name{io},op_lat{io},op_lon{io},op_Tb{io},op_Sat_lat{io},op_Sat_lon{io},op_Sat_alt{io},op_Sat_azimuth{io},op_scan{io},op_zenith{io},op_Fov_crossTrack{io},op_Fov_alongTrack{io},op_times{io},op_chNum{io},op_ROI_other{io},op_ROI_hydro{io},op_ObsErr{io}] = ProduceforEnKF(iTb(io),Swath_used,ChIdx_ps,ChName_ps,if_swath_good,loc_DAtime_ps,Tb_overpass(io),control);
-	end
+        end
 
 	% Gather variables with different ROI into cells
 	myLat = cell(size(control.roi_oh));
@@ -58,7 +58,8 @@ function [] = Overpass_write(iTb,istorm,Swath_used,ChIdx_ps,ChName_ps,if_swath_g
 			tem_scan = [tem_scan;op_scan{io}{ir}]; tem_zenith = [tem_zenith;op_zenith{io}{ir}];			
 			tem_Sat_lat = [tem_Sat_lat;op_Sat_lat{io}{ir}]; tem_Sat_lon = [tem_Sat_lon; op_Sat_lon{io}{ir}];
 			tem_Sat_alt = [tem_Sat_alt; op_Sat_alt{io}{ir}]; tem_Sat_azimuth = [tem_Sat_azimuth;op_Sat_azimuth{io}{ir}];
-			tem_crossTrack = [tem_crossTrack; op_Fov_crossTrack{io}{ir}];
+			disp(['size of op_Fov_crossTrack', num2str(size(op_Fov_crossTrack{io}{ir}))]);
+            tem_crossTrack = [tem_crossTrack; op_Fov_crossTrack{io}{ir}];
 			tem_alongTrack = [tem_alongTrack;op_Fov_alongTrack{io}{ir}];			
 			tem_times = [tem_times; op_times{io}{ir}];
 			tem_chNum = [tem_chNum; op_chNum{io}{ir}]; tem_ROI_other = [tem_ROI_other; op_ROI_other{io}{ir}];

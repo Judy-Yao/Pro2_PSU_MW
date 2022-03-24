@@ -4342,3 +4342,5 @@ ans =
 min of xlong: -52.9203, max of xlong: -40.8797
 min of xlat: 11.8145, max of xlat: 24.4855
 ob did not take ANY candidate at x =15 , y =1
+size of op_Fov_crossTrack3450     1
+size of op_Fov_crossTrack1  1855
