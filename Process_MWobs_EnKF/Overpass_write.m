@@ -1,4 +1,4 @@
-function [] = Overpass_write(Tb_overpass,iTb,Swath_used,ChIdx_ps,ChName_ps,if_swath_good,DAtime_ps,loc_DAtime_ps,Tb_file,control) 
+function [] = Overpass_write(iTb,istorm,Swath_used,ChIdx_ps,ChName_ps,if_swath_good,DAtime_ps,loc_DAtime_ps,Tb_overpass,control) 
 	% Preallocating memory
 	sat_name = cell(size(Tb_overpass));
 	op_lat = cell(size(Tb_overpass));
@@ -22,32 +22,9 @@ function [] = Overpass_write(Tb_overpass,iTb,Swath_used,ChIdx_ps,ChName_ps,if_sw
 
 	% Loop through each overpass Tb file and read variables with different files into cells
 	for io = 1:length(Tb_overpass)
+        Tb_overpass(io)
 		[filepath,filename,filext] = fileparts(Tb_overpass(io));
-		[sat_name{io},op_lat{io},op_lon{io},op_Tb{io},op_Sat_lat{io},op_Sat_lon{io},op_Sat_alt{io},op_Sat_azimuth{io},op_scan{io},op_zenith{io},op_Fov_crossTrack{io},op_Fov_alongTrack{io},op_times{io},op_chNum{io},op_ROI_other{io},op_ROI_hydro{io},op_ObsErr{io}] = ProduceforEnKF(iTb,Swath_used,ChIdx_ps,ChName_ps,if_swath_good,loc_DAtime_ps,filename,control)
-	    % modify satellite-and-sensor name so that it is consistent with what is used in the CRTM package 
-	    if (matches(sat_name{io},'GCOMW1'))
-    	    sat_name{io} = 'amsr2_gcom-w1';
-    	elseif (matches(sat_name{io},'NPP'))
-        	sat_name{io} = 'atms_npp';
-    	elseif (matches(sat_name{io},'GPM'))
-        	sat_name{io} = 'gmi_gpm';
-    	elseif (matches(sat_name{io},'METOPA'))
-        	sat_name{io} = 'mhs_metop-a';
-    	elseif (matches(sat_name{io},'METOPB'))
-        	sat_name{io} = 'mhs_metop-b';
-    	elseif (matches(sat_name{io},'NOAA18'))
-        	sat_name{io} = 'mhs_n18';
-    	elseif (matches(sat_name{io},'NOAA19'))
-        	sat_name{io} = 'mhs_n19';
-    	elseif (matches(sat_name{io},'MT1'))
-        	sat_name{io} = 'saphir_meghat';
-    	elseif (matches(sat_name{io},'F16'))
-        	sat_name{io} = 'ssmis_f16';
-    	elseif (matches(sat_name{io},'F17'))
-        	sat_name{io} = 'ssmis_f17';
-    	elseif (matches(sat_name{io},'F18'))
-        	sat_name{io} = 'ssmis_f18';
-    	end
+		[sat_name{io},op_lat{io},op_lon{io},op_Tb{io},op_Sat_lat{io},op_Sat_lon{io},op_Sat_alt{io},op_Sat_azimuth{io},op_scan{io},op_zenith{io},op_Fov_crossTrack{io},op_Fov_alongTrack{io},op_times{io},op_chNum{io},op_ROI_other{io},op_ROI_hydro{io},op_ObsErr{io}] = ProduceforEnKF(iTb(io),Swath_used,ChIdx_ps,ChName_ps,if_swath_good,loc_DAtime_ps,Tb_overpass(io),control);
 	end
 
 	% Gather variables with different ROI into cells
@@ -72,7 +49,7 @@ function [] = Overpass_write(Tb_overpass,iTb,Swath_used,ChIdx_ps,ChName_ps,if_sw
     myObsErr = cell(size(control.roi_oh));	
 
 	for ir = 1:length(control.roi_oh)
-		tem_lat = []; tem_lon = []; tem_Tb = []; tem_scan = [];
+		tem_lat = []; tem_lon = []; tem_Tb = []; tem_scan = []; tem_zenith = [];
 		tem_Sat_lat = []; tem_Sat_lon = []; tem_Sat_alt = [];
 		tem_Sat_azimuth = []; tem_crossTrack = []; tem_alongTrack = [];
 		tem_times = []; tem_chNum =[ ]; tem_ROI_other = []; tem_ROI_hydro = []; tem_ObsErr = []; tem_Sat_name = [];

@@ -19,6 +19,33 @@ function [sat_name,myLat,myLon,myTb,mySat_lat,mySat_lon,mySat_alt,mySat_azimuth,
     % Get platform and sensor information from the new name 
     [filepath,filename,filext] = fileparts(Tb_file);
     ss_info = split(filename,'.'); platform = ss_info(2); sensor = ss_info(3);
+
+    % modify satellite-and-sensor name so that it is consistent with what is used in the CRTM package 
+    if (matches(platform,'GCOMW1'))
+        sat_name = 'amsr2_gcom-w1';
+    elseif (matches(platform,'NPP'))
+        sat_name = 'atms_npp';
+    elseif (matches(platform,'GPM'))
+        sat_name = 'gmi_gpm';
+    elseif (matches(platform,'METOPA'))
+        sat_name = 'mhs_metop-a';
+    elseif (matches(platform,'METOPB'))
+        sat_name = 'mhs_metop-b';
+    elseif (matches(platform,'NOAA18'))
+        sat_name = 'mhs_n18';
+    elseif (matches(platform,'NOAA19'))
+        sat_name = 'mhs_n19';
+    elseif (matches(platform,'MT1'))
+        sat_name = 'saphir_meghat';
+    elseif (matches(platform,'F16'))
+        sat_name = 'ssmis_f16';
+    elseif (matches(platform,'F17'))
+        sat_name = 'ssmis_f17';
+    elseif (matches(platform,'F18'))
+        sat_name = 'ssmis_f18';
+    end
+
+    % read data from L1C file
     for it = 1:length(Swath_used{iTb}) % it: item
         % quality control
         if if_swath_good{iTb}(it) == 0
@@ -105,6 +132,14 @@ function [sat_name,myLat,myLon,myTb,mySat_lat,mySat_lon,mySat_alt,mySat_azimuth,
 
     end
 
+    % Special treatment to AMSR2 89GHz
+    if (sensor == "AMSR2") & control.comnine_AMSR89GHz
+        [Swath_used,ChIdx_ps,ChName_ps,lat,lon,Tb,zenith_angle,sat_lat,sat_lon,sat_alt,sat_azimuth,outime] = Combine_AMSR2(iTb,Swath_used,ChIdx_ps,ChName_ps,lat,lon,Tb,zenith_angle,sat_lat,sat_lon,sat_alt,sat_azimuth,outime);
+    elseif (sensor == "AMSR2") & (~control.comnine_AMSR89GHz)
+        disp(['Two 89 GHz scans on AMSR2 are not combined!']);
+    end
+
+
     % Time cost to get obs_index for one Channel: 200 ~ 300 seconds 
     % ---------------------------------------------------------------------
     % ---- Define area of interest for simulation AND
@@ -130,27 +165,23 @@ function [sat_name,myLat,myLon,myTb,mySat_lat,mySat_lon,mySat_alt,mySat_azimuth,
     %       * * * * *                *   *   * 
     %       * * * * *                          
     %       * * * * *                *   *   * 
-    if length(Swath_used{iTb}) ~= length(control.filter_ratio)
-        disp('Error: setup for slot separation does not work!');
-    else
-        slots_x = cell(size(Swath_used{iTb}));
-        slots_y = cell(size(Swath_used{iTb}));
-        obs_index = cell(size(Swath_used{iTb}));
+    slots_x = cell(size(Swath_used{iTb}));
+    slots_y = cell(size(Swath_used{iTb}));
+    obs_index = cell(size(Swath_used{iTb}));
         
-        filter_ratio_grid = control.filter_ratio / control.dx; 
-        grid_start_hf =  floor(filter_ratio_grid(2) / 2); % high frequency
-        grid_start_lf = grid_start_hf + .5*(2*filter_ratio_grid(2) - filter_ratio_grid(1)); % low frequency
+    filter_ratio_grid = control.filter_ratio / control.dx; 
+    grid_start_hf =  floor(filter_ratio_grid(2) / 2); % high frequency
+    grid_start_lf = grid_start_hf + .5*(2*filter_ratio_grid(2) - filter_ratio_grid(1)); % low frequency
 
-        for it = 1:length(Swath_used{iTb})
-            if (contains(ChName_ps{iTb}(it), "18.7GHzV-Pol")) || (contains(ChName_ps{iTb}(it), "19.35GHzV-Pol"))
-                slots_x{it} = grid_start_lf:filter_ratio_grid(1):nx;
-                slots_y{it} = grid_start_lf:filter_ratio_grid(1):ny;
-                obs_index{it} = PickRawforCRTM(lat{it},lon{it},Tb{it},min_XLONG,max_XLONG,min_XLAT,max_XLAT,latitudes,longitudes,slots_x{it},slots_y{it},control);
-            else
-                slots_x{it} = grid_start_hf:filter_ratio_grid(2):nx;
-                slots_y{it} = grid_start_hf:filter_ratio_grid(2):ny;
-                obs_index{it} = PickRawforCRTM(lat{it},lon{it},Tb{it},min_XLONG,max_XLONG,min_XLAT,max_XLAT,latitudes,longitudes,slots_x{it},slots_y{it},control);
-            end
+    for it = 1:length(Swath_used{iTb})
+        if (contains(ChName_ps{iTb}(it), "18.7GHzV-Pol")) || (contains(ChName_ps{iTb}(it), "19.35GHzV-Pol"))
+            slots_x{it} = grid_start_lf:filter_ratio_grid(1):nx;
+            slots_y{it} = grid_start_lf:filter_ratio_grid(1):ny;
+            obs_index{it} = PickRawforCRTM(lat{it},lon{it},Tb{it},min_XLONG,max_XLONG,min_XLAT,max_XLAT,latitudes,longitudes,slots_x{it},slots_y{it},control);
+        else
+            slots_x{it} = grid_start_hf:filter_ratio_grid(2):nx;
+            slots_y{it} = grid_start_hf:filter_ratio_grid(2):ny;
+            obs_index{it} = PickRawforCRTM(lat{it},lon{it},Tb{it},min_XLONG,max_XLONG,min_XLAT,max_XLAT,latitudes,longitudes,slots_x{it},slots_y{it},control);
         end
     end
     
@@ -198,9 +229,9 @@ function [sat_name,myLat,myLon,myTb,mySat_lat,mySat_lon,mySat_alt,mySat_azimuth,
         all_zenith_angles = reshape(zenith_angle{it},[],1);
         DA_zenith_angle{it} = all_zenith_angles(obs_index_1d);
 
-        [ch_num,fov_alongTrack,fov_crossTrack,max_scan_angle,scan_angles] = SensorInfo_read(sensor,ChName_ps{iTb}(it));
+        [scantype,ch_num,fov_alongTrack,fov_crossTrack,max_scan_angle,scan_angles] = SensorInfo_read(sensor,ChName_ps{iTb}{it});
         DA_scan_angle{it} = scan_angles(scan_position)';
-        [DA_fov_crossTrack{it}, DA_fov_alongTrack{it}] = get_channel_resolutions(sensor,ch_num,DA_lat{it},DA_lon{it},DA_zenith_angle{it},DA_sat_lat{it},DA_sat_lon{it},DA_sat_alt{it});
+        [DA_fov_crossTrack{it}, DA_fov_alongTrack{it}] = get_pixel_resolution(scantype,ch_num,fov_alongTrack,fov_crossTrack,DA_lat{it},DA_lon{it},DA_zenith_angle{it},DA_sat_lat{it},DA_sat_lon{it},DA_sat_alt{it});
 
          for my_scan_num_idx = 1:length(scan_num)
              DA_times{it}(my_scan_num_idx,1) = outime{it}(scan_num(my_scan_num_idx));

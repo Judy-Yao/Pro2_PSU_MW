@@ -4327,15 +4327,18 @@ End Granule Time:
 2017-09-06T00:07
 Microwave observations are not within the period of interest! Skip this file.
 
-Tb_file =
+ans = 
 
-    '../../Obs/MW_used/Irma2ndRI/DAt201709030600_1C.GPM.GMI.HDF5'
+    "../../Obs/MW_used/Irma2ndRI/DAt201709030700_1C.F16.SSMIS.HDF5"
 
+min of xlong: -52.9203, max of xlong: -40.8797
+min of xlat: 11.8145, max of xlat: 24.4855
+ob did not take ANY candidate at x =9 , y =5
 
-idx_gatheredTb =
+ans = 
 
-     2
+    "../../Obs/MW_used/Irma2ndRI/DAt201709030700_1C.NOAA19.MHS.HDF5"
 
-min of xlong: -52.7203, max of xlong: -40.6797
-min of xlat: 11.8627, max of xlat: 24.5373
-ob did not take ANY candidate at x =17 , y =17
+min of xlong: -52.9203, max of xlong: -40.8797
+min of xlat: 11.8145, max of xlat: 24.4855
+ob did not take ANY candidate at x =15 , y =1

@@ -2,33 +2,11 @@ function [] = Singlepass_write(idx_usedTb,istorm,Swath_used,ChIdx_ps,ChName_ps,i
     
 	[filepath,filename,filext] = fileparts(Tb_file);
     sensor_info = split(filename,'.'); platform = sensor_info(2);
-    
+   
+    Tb_file
+     
 	[sat_name,myLat,myLon,myTb,mySat_lat,mySat_lon,mySat_alt,mySat_azimuth,myScan_angle,myZenith_angle,myFov_crossTrack,myFov_alongTrack,myTimes,myChNum,myRoi_hydro,myRoi_otherVars,myObsErr] = ProduceforEnKF(idx_usedTb,Swath_used,ChIdx_ps,ChName_ps,if_swath_good,loc_DAtime_ps,Tb_file,control); 
 
-   % modify satellite-and-sensor name so that it is consistent with what is used in the CRTM package 
-	if (matches(platform,'GCOMW1'))
-        sat_name = 'amsr2_gcom-w1';
-    elseif (matches(platform,'NPP'))
-        sat_name = 'atms_npp';
-    elseif (matches(platform,'GPM'))
-        sat_name = 'gmi_gpm';
-    elseif (matches(platform,'METOPA'))
-        sat_name = 'mhs_metop-a';
-    elseif (matches(platform,'METOPB'))
-        sat_name = 'mhs_metop-b';
-    elseif (matches(platform,'NOAA18'))
-        sat_name = 'mhs_n18';
-    elseif (matches(platform,'NOAA19'))
-        sat_name = 'mhs_n19';
-    elseif (matches(platform,'MT1'))
-        sat_name = 'saphir_meghat';
-    elseif (matches(platform,'F16'))
-        sat_name = 'ssmis_f16';
-    elseif (matches(platform,'F17'))
-        sat_name = 'ssmis_f17';
-    elseif (matches(platform,'F18'))
-        sat_name = 'ssmis_f18';
-    end
     % create text file name
     filename = strcat(control.output_dir,control.storm_phase(istorm),'/microwave_d03_',DAtime_ps{idx_usedTb}(1),'_so');
     formatSpec = '%12s%16s%12i%12.3f%12.3f%12.3f%12i%12i%12.3f%12.3f%12.3f%12.3f%12.3f%12.3f%12.3f%12.3f%12.3f\n';

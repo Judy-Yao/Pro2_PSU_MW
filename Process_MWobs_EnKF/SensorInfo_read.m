@@ -1,4 +1,4 @@
-function [Ch_num,fov_alongTrack,fov_crossTrack,max_scan_angle,scan_angles] = SensorInfo_read(sensor,ChName)
+function [scantype,Ch_num,fov_alongTrack,fov_crossTrack,max_scan_angle,scan_angles] = SensorInfo_read(sensor,ChName)
 
     % Process channel names which consist of slash
     switch(ChName)
@@ -10,8 +10,9 @@ function [Ch_num,fov_alongTrack,fov_crossTrack,max_scan_angle,scan_angles] = Sen
             ChName = '183.31+-6.8GHz';
     end
         
-    search_name = '/'+ sensor +'/'+ ChName;
+    search_name = "/" + sensor + "/" + ChName;
     
+    scantype = h5readatt('sensor_database.HDF5',"/"+sensor,'ScanType');
     Ch_num = h5read("sensor_database.HDF5",search_name + '/Channel_num'); % Channel number/index that is consistent with CRTM coefficients
     fov_alongTrack = h5read("sensor_database.HDF5",search_name + '/fovs_alongTrack');
     fov_crossTrack = h5read("sensor_database.HDF5",search_name + '/fovs_crossTrack');
