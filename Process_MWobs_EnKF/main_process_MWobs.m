@@ -15,10 +15,10 @@ control.storm_phase = {'Irma2ndRI',};
 control.period = {{'201709030600','201709050600'},};
 %control.period = {{'201709030600','201709050600'},{'201709050600','201709070600'},{'201709160000','201709180000'}}; %YYYYMMDDHHmm
 % ---Satellite informaiton
-%control.sensor = {'AMSR2',};
-control.sensor = {'AMSR2','ATMS','GMI','MHS','SAPHIR','SSMIS'};
-%control.platform = {{'GCOMW1'},};
-control.platform = {{'GCOMW1'}, {'NPP'}, {'GPM'}, {'METOPA','METOPB','NOAA18','NOAA19'}, {'MT1'}, {'F16','F17','F18'}};
+control.sensor = {'AMSR2',};
+%control.sensor = {'AMSR2','ATMS','GMI','MHS','SAPHIR','SSMIS'};
+control.platform = {{'GCOMW1'},};
+%control.platform = {{'GCOMW1'}, {'NPP'}, {'GPM'}, {'METOPA','METOPB','NOAA18','NOAA19'}, {'MT1'}, {'F16','F17','F18'}};
 
 control.favCh = {'18.7GHzV-Pol','183.31+/-7GHzV-Pol','183.31+-7GHzH-Pol'}; % favorite frequencies
 control.favCh_sup = {'19.35GHzV-Pol','89GHzV-PolA-Scan','89GHzV-PolB-Scan','183.31+/-6.6GHzH-Pol','183.31+/-6.8GHz','190.31GHzV-Pol'};
@@ -55,19 +55,19 @@ for istorm = 1:length(control.storm_phase)
     % idx_gatheredTb records the order of Tbs gathered from different sensors & platforms
     % iTb indicates the order of gathered Tb files with ls command
     % - Output single-pass
-%    for is = 1:length(singlepass)
-%        for iTb = 1:length(Tb_files)
-%            Tb_file = Tb_files{iTb}
-%            [filepath,filename,filext] = fileparts(Tb_file);            
-%            if contains(filename,singlepass(is))
-%                idx_gatheredTb = find([filename,filext] == Tbfile_names)
-%                Singlepass_write(idx_gatheredTb,istorm,Swath_used,ChIdx_ps,ChName_ps,if_swath_good,DAtime_ps,loc_DAtime_ps,Tb_file,control);
-%            else
-%                continue;
-%            end
-%        end
+    for is = 1:length(singlepass)
+        for iTb = 1:length(Tb_files)
+            Tb_file = Tb_files{iTb}
+            [filepath,filename,filext] = fileparts(Tb_file);            
+            if contains(filename,singlepass(is))
+                idx_gatheredTb = find([filename,filext] == Tbfile_names)
+                Singlepass_write(idx_gatheredTb,istorm,Swath_used,ChIdx_ps,ChName_ps,if_swath_good,DAtime_ps,loc_DAtime_ps,Tb_file,control);
+            else
+                continue;
+            end
+        end
 
-%    end
+    end
 
 	% - Output overpass
     file_overpass = []; % (strings)

@@ -1,0 +1,472 @@
+MATLAB is selecting SOFTWARE OPENGL rendering.
+Processing sensor: AMSR2 on platform GCOMW1
+Start Granule Time:
+2017-09-02T22:31
+End Granule Time:
+2017-09-03T00:10
+Microwave observations are not within the period of interest! Skip this file.
+Start Granule Time:
+2017-09-03T00:10
+End Granule Time:
+2017-09-03T01:49
+Microwave observations are not within the period of interest! Skip this file.
+Start Granule Time:
+2017-09-03T01:49
+End Granule Time:
+2017-09-03T03:27
+Microwave observations are not within the period of interest! Skip this file.
+Start Granule Time:
+2017-09-03T03:27
+End Granule Time:
+2017-09-03T05:06
+Microwave observations are not within the period of interest! Skip this file.
+Start Granule Time:
+2017-09-03T05:06
+End Granule Time:
+2017-09-03T06:45
+Frequencies of interest are:
+        18.7GHzV-Pol
+        89GHzV-PolA-Scan
+        89GHzV-PolB-Scan
+DA_time candidate: 201709030600
+Effective observations are from 2017090305:30 to 2017090306:30
+Microwave observations do not exist in the area of interest at DA time! Skip this file.
+Start Granule Time:
+2017-09-03T06:45
+End Granule Time:
+2017-09-03T08:24
+Frequencies of interest are:
+        18.7GHzV-Pol
+        89GHzV-PolA-Scan
+        89GHzV-PolB-Scan
+DA_time candidate: 201709030700
+Effective observations are from 2017090306:45 to 2017090307:30
+DA_time candidate: 201709030800
+Effective observations are from 2017090307:30 to 2017090308:24
+Microwave observations do not exist in the area of interest at DA time! Skip this file.
+Start Granule Time:
+2017-09-03T08:24
+End Granule Time:
+2017-09-03T10:03
+Frequencies of interest are:
+        18.7GHzV-Pol
+        89GHzV-PolA-Scan
+        89GHzV-PolB-Scan
+DA_time candidate: 201709030900
+Effective observations are from 2017090308:30 to 2017090309:30
+DA_time candidate: 201709031000
+Effective observations are from 2017090309:30 to 2017090310:03
+Microwave observations do not exist in the area of interest at DA time! Skip this file.
+Start Granule Time:
+2017-09-03T10:03
+End Granule Time:
+2017-09-03T11:42
+Frequencies of interest are:
+        18.7GHzV-Pol
+        89GHzV-PolA-Scan
+        89GHzV-PolB-Scan
+DA_time candidate: 201709031100
+Effective observations are from 2017090310:30 to 2017090311:30
+Microwave observations do not exist in the area of interest at DA time! Skip this file.
+Start Granule Time:
+2017-09-03T11:42
+End Granule Time:
+2017-09-03T13:21
+Frequencies of interest are:
+        18.7GHzV-Pol
+        89GHzV-PolA-Scan
+        89GHzV-PolB-Scan
+DA_time candidate: 201709031200
+Effective observations are from 2017090311:42 to 2017090312:30
+DA_time candidate: 201709031300
+Effective observations are from 2017090312:30 to 2017090313:21
+Microwave observations do not exist in the area of interest at DA time! Skip this file.
+Start Granule Time:
+2017-09-03T13:21
+End Granule Time:
+2017-09-03T15:00
+Frequencies of interest are:
+        18.7GHzV-Pol
+        89GHzV-PolA-Scan
+        89GHzV-PolB-Scan
+DA_time candidate: 201709031400
+Effective observations are from 2017090313:30 to 2017090314:30
+DA_time candidate: 201709031500
+Effective observations are from 2017090314:30 to 2017090315:00
+Microwave observations do not exist in the area of interest at DA time! Skip this file.
+Start Granule Time:
+2017-09-03T15:00
+End Granule Time:
+2017-09-03T16:39
+Frequencies of interest are:
+        18.7GHzV-Pol
+        89GHzV-PolA-Scan
+        89GHzV-PolB-Scan
+DA_time candidate: 201709031600
+Effective observations are from 2017090315:30 to 2017090316:30
+Microwave observations do not exist in the area of interest at DA time! Skip this file.
+Start Granule Time:
+2017-09-03T16:39
+End Granule Time:
+2017-09-03T18:17
+Frequencies of interest are:
+        18.7GHzV-Pol
+        89GHzV-PolA-Scan
+        89GHzV-PolB-Scan
+DA_time candidate: 201709031700
+Effective observations are from 2017090316:39 to 2017090317:30
+DA_time candidate: 201709031800
+Effective observations are from 2017090317:30 to 2017090318:17
+Microwave observations do not exist in the area of interest at DA time! Skip this file.
+Start Granule Time:
+2017-09-03T18:17
+End Granule Time:
+2017-09-03T19:56
+Frequencies of interest are:
+        18.7GHzV-Pol
+        89GHzV-PolA-Scan
+        89GHzV-PolB-Scan
+DA_time candidate: 201709031900
+Effective observations are from 2017090318:30 to 2017090319:30
+Microwave observations do not exist in the area of interest at DA time! Skip this file.
+Start Granule Time:
+2017-09-03T19:56
+End Granule Time:
+2017-09-03T21:35
+Frequencies of interest are:
+        18.7GHzV-Pol
+        89GHzV-PolA-Scan
+        89GHzV-PolB-Scan
+DA_time candidate: 201709032000
+Effective observations are from 2017090319:56 to 2017090320:30
+DA_time candidate: 201709032100
+Effective observations are from 2017090320:30 to 2017090321:30
+Microwave observations do not exist in the area of interest at DA time! Skip this file.
+Start Granule Time:
+2017-09-03T21:35
+End Granule Time:
+2017-09-03T23:14
+Frequencies of interest are:
+        18.7GHzV-Pol
+        89GHzV-PolA-Scan
+        89GHzV-PolB-Scan
+DA_time candidate: 201709032200
+Effective observations are from 2017090321:35 to 2017090322:30
+DA_time candidate: 201709032300
+Effective observations are from 2017090322:30 to 2017090323:14
+Microwave observations do not exist in the area of interest at DA time! Skip this file.
+Start Granule Time:
+2017-09-03T23:14
+End Granule Time:
+2017-09-04T00:53
+Frequencies of interest are:
+        18.7GHzV-Pol
+        89GHzV-PolA-Scan
+        89GHzV-PolB-Scan
+DA_time candidate: 201709040000
+Effective observations are from 2017090323:30 to 2017090400:30
+Microwave observations do not exist in the area of interest at DA time! Skip this file.
+Start Granule Time:
+2017-09-04T00:53
+End Granule Time:
+2017-09-04T02:32
+Frequencies of interest are:
+        18.7GHzV-Pol
+        89GHzV-PolA-Scan
+        89GHzV-PolB-Scan
+DA_time candidate: 201709040100
+Effective observations are from 2017090400:53 to 2017090401:30
+DA_time candidate: 201709040200
+Effective observations are from 2017090401:30 to 2017090402:30
+Microwave observations do not exist in the area of interest at DA time! Skip this file.
+Start Granule Time:
+2017-09-04T02:32
+End Granule Time:
+2017-09-04T04:11
+Frequencies of interest are:
+        18.7GHzV-Pol
+        89GHzV-PolA-Scan
+        89GHzV-PolB-Scan
+DA_time candidate: 201709040300
+Effective observations are from 2017090402:32 to 2017090403:30
+DA_time candidate: 201709040400
+Effective observations are from 2017090403:30 to 2017090404:11
+Microwave observations do not exist in the area of interest at DA time! Skip this file.
+Start Granule Time:
+2017-09-04T04:11
+End Granule Time:
+2017-09-04T05:50
+Frequencies of interest are:
+        18.7GHzV-Pol
+        89GHzV-PolA-Scan
+        89GHzV-PolB-Scan
+DA_time candidate: 201709040500
+Effective observations are from 2017090404:30 to 2017090405:30
+1C.GCOMW1.AMSR2.XCAL2016-V.20170904-S041112-E055004.028188.V05A.HDF5 is gathered.
+Start Granule Time:
+2017-09-04T05:50
+End Granule Time:
+2017-09-04T07:28
+Frequencies of interest are:
+        18.7GHzV-Pol
+        89GHzV-PolA-Scan
+        89GHzV-PolB-Scan
+DA_time candidate: 201709040600
+Effective observations are from 2017090405:50 to 2017090406:30
+DA_time candidate: 201709040700
+Effective observations are from 2017090406:30 to 2017090407:28
+Microwave observations do not exist in the area of interest at DA time! Skip this file.
+Start Granule Time:
+2017-09-04T07:28
+End Granule Time:
+2017-09-04T09:07
+Frequencies of interest are:
+        18.7GHzV-Pol
+        89GHzV-PolA-Scan
+        89GHzV-PolB-Scan
+DA_time candidate: 201709040800
+Effective observations are from 2017090407:30 to 2017090408:30
+DA_time candidate: 201709040900
+Effective observations are from 2017090408:30 to 2017090409:07
+Microwave observations do not exist in the area of interest at DA time! Skip this file.
+Start Granule Time:
+2017-09-04T09:07
+End Granule Time:
+2017-09-04T10:46
+Frequencies of interest are:
+        18.7GHzV-Pol
+        89GHzV-PolA-Scan
+        89GHzV-PolB-Scan
+DA_time candidate: 201709041000
+Effective observations are from 2017090409:30 to 2017090410:30
+Microwave observations do not exist in the area of interest at DA time! Skip this file.
+Start Granule Time:
+2017-09-04T10:46
+End Granule Time:
+2017-09-04T12:25
+Frequencies of interest are:
+        18.7GHzV-Pol
+        89GHzV-PolA-Scan
+        89GHzV-PolB-Scan
+DA_time candidate: 201709041100
+Effective observations are from 2017090410:46 to 2017090411:30
+DA_time candidate: 201709041200
+Effective observations are from 2017090411:30 to 2017090412:25
+Microwave observations do not exist in the area of interest at DA time! Skip this file.
+Start Granule Time:
+2017-09-04T12:25
+End Granule Time:
+2017-09-04T14:04
+Frequencies of interest are:
+        18.7GHzV-Pol
+        89GHzV-PolA-Scan
+        89GHzV-PolB-Scan
+DA_time candidate: 201709041300
+Effective observations are from 2017090412:30 to 2017090413:30
+DA_time candidate: 201709041400
+Effective observations are from 2017090413:30 to 2017090414:04
+Microwave observations do not exist in the area of interest at DA time! Skip this file.
+Start Granule Time:
+2017-09-04T14:04
+End Granule Time:
+2017-09-04T15:43
+Frequencies of interest are:
+        18.7GHzV-Pol
+        89GHzV-PolA-Scan
+        89GHzV-PolB-Scan
+DA_time candidate: 201709041500
+Effective observations are from 2017090414:30 to 2017090415:30
+Microwave observations do not exist in the area of interest at DA time! Skip this file.
+Start Granule Time:
+2017-09-04T15:43
+End Granule Time:
+2017-09-04T17:22
+Frequencies of interest are:
+        18.7GHzV-Pol
+        89GHzV-PolA-Scan
+        89GHzV-PolB-Scan
+DA_time candidate: 201709041600
+Effective observations are from 2017090415:43 to 2017090416:30
+DA_time candidate: 201709041700
+Effective observations are from 2017090416:30 to 2017090417:22
+Microwave observations do not exist in the area of interest at DA time! Skip this file.
+Start Granule Time:
+2017-09-04T17:22
+End Granule Time:
+2017-09-04T19:01
+Frequencies of interest are:
+        18.7GHzV-Pol
+        89GHzV-PolA-Scan
+        89GHzV-PolB-Scan
+DA_time candidate: 201709041800
+Effective observations are from 2017090417:30 to 2017090418:30
+DA_time candidate: 201709041900
+Effective observations are from 2017090418:30 to 2017090419:01
+Microwave observations do not exist in the area of interest at DA time! Skip this file.
+Start Granule Time:
+2017-09-04T19:01
+End Granule Time:
+2017-09-04T20:40
+Frequencies of interest are:
+        18.7GHzV-Pol
+        89GHzV-PolA-Scan
+        89GHzV-PolB-Scan
+DA_time candidate: 201709042000
+Effective observations are from 2017090419:30 to 2017090420:30
+Microwave observations do not exist in the area of interest at DA time! Skip this file.
+Start Granule Time:
+2017-09-04T20:40
+End Granule Time:
+2017-09-04T22:18
+Frequencies of interest are:
+        18.7GHzV-Pol
+        89GHzV-PolA-Scan
+        89GHzV-PolB-Scan
+DA_time candidate: 201709042100
+Effective observations are from 2017090420:40 to 2017090421:30
+DA_time candidate: 201709042200
+Effective observations are from 2017090421:30 to 2017090422:18
+Microwave observations do not exist in the area of interest at DA time! Skip this file.
+Start Granule Time:
+2017-09-04T22:18
+End Granule Time:
+2017-09-04T23:57
+Frequencies of interest are:
+        18.7GHzV-Pol
+        89GHzV-PolA-Scan
+        89GHzV-PolB-Scan
+DA_time candidate: 201709042300
+Effective observations are from 2017090422:30 to 2017090423:30
+Microwave observations do not exist in the area of interest at DA time! Skip this file.
+Start Granule Time:
+2017-09-04T23:57
+End Granule Time:
+2017-09-05T01:36
+Frequencies of interest are:
+        18.7GHzV-Pol
+        89GHzV-PolA-Scan
+        89GHzV-PolB-Scan
+DA_time candidate: 201709050000
+Effective observations are from 2017090423:57 to 2017090500:30
+DA_time candidate: 201709050100
+Effective observations are from 2017090500:30 to 2017090501:30
+Microwave observations do not exist in the area of interest at DA time! Skip this file.
+Start Granule Time:
+2017-09-05T01:36
+End Granule Time:
+2017-09-05T03:15
+Frequencies of interest are:
+        18.7GHzV-Pol
+        89GHzV-PolA-Scan
+        89GHzV-PolB-Scan
+DA_time candidate: 201709050200
+Effective observations are from 2017090501:36 to 2017090502:30
+DA_time candidate: 201709050300
+Effective observations are from 2017090502:30 to 2017090503:15
+Microwave observations do not exist in the area of interest at DA time! Skip this file.
+Start Granule Time:
+2017-09-05T03:15
+End Granule Time:
+2017-09-05T04:54
+Frequencies of interest are:
+        18.7GHzV-Pol
+        89GHzV-PolA-Scan
+        89GHzV-PolB-Scan
+DA_time candidate: 201709050400
+Effective observations are from 2017090503:30 to 2017090504:30
+Microwave observations do not exist in the area of interest at DA time! Skip this file.
+Start Granule Time:
+2017-09-05T04:54
+End Granule Time:
+2017-09-05T06:33
+Frequencies of interest are:
+        18.7GHzV-Pol
+        89GHzV-PolA-Scan
+        89GHzV-PolB-Scan
+DA_time candidate: 201709050500
+Effective observations are from 2017090504:54 to 2017090505:30
+DA_time candidate: 201709050600
+Effective observations are from 2017090505:30 to 2017090506:30
+Microwave observations do not exist in the area of interest at DA time! Skip this file.
+Start Granule Time:
+2017-09-05T06:33
+End Granule Time:
+2017-09-05T08:12
+Microwave observations are not within the period of interest! Skip this file.
+Start Granule Time:
+2017-09-05T08:12
+End Granule Time:
+2017-09-05T09:51
+Microwave observations are not within the period of interest! Skip this file.
+Start Granule Time:
+2017-09-05T09:51
+End Granule Time:
+2017-09-05T11:30
+Microwave observations are not within the period of interest! Skip this file.
+Start Granule Time:
+2017-09-05T11:30
+End Granule Time:
+2017-09-05T13:08
+Microwave observations are not within the period of interest! Skip this file.
+Start Granule Time:
+2017-09-05T13:08
+End Granule Time:
+2017-09-05T14:47
+Microwave observations are not within the period of interest! Skip this file.
+Start Granule Time:
+2017-09-05T14:47
+End Granule Time:
+2017-09-05T16:26
+Microwave observations are not within the period of interest! Skip this file.
+Start Granule Time:
+2017-09-05T16:26
+End Granule Time:
+2017-09-05T18:05
+Microwave observations are not within the period of interest! Skip this file.
+Start Granule Time:
+2017-09-05T18:05
+End Granule Time:
+2017-09-05T19:44
+Microwave observations are not within the period of interest! Skip this file.
+Start Granule Time:
+2017-09-05T19:44
+End Granule Time:
+2017-09-05T21:23
+Microwave observations are not within the period of interest! Skip this file.
+Start Granule Time:
+2017-09-05T21:23
+End Granule Time:
+2017-09-05T23:02
+Microwave observations are not within the period of interest! Skip this file.
+Start Granule Time:
+2017-09-05T23:02
+End Granule Time:
+2017-09-06T00:41
+Microwave observations are not within the period of interest! Skip this file.
+
+Tb_file =
+
+    '../../Obs/MW_used/Irma2ndRI/DAt201709040500_1C.GCOMW1.AMSR2.HDF5'
+
+
+idx_gatheredTb =
+
+     1
+
+
+Tb_file =
+
+    '../../Obs/MW_used/Irma2ndRI/DAt201709040500_1C.GCOMW1.AMSR2.HDF5'
+
+Combine A scan and B scan of 89GHzV-pol together...
+
+ans =
+
+         486        7912
+
+min of xlong: -57.3369, max of xlong: -45.2964
+min of xlat: 10.753, max of xlat: 23.347
+size of Tb1206     1
+size of op_Fov_crossTrack1206     1
+size of Tb2744     1
+size of op_Fov_crossTrack2744     1

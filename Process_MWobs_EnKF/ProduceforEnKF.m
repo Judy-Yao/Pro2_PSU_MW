@@ -1,4 +1,4 @@
-function [sat_name,myLat,myLon,myTb,mySat_lat,mySat_lon,mySat_alt,mySat_azimuth,myScan_angle,myZenith_angle,myFov_crossTrack,myFov_alongTrack,myTimes,myChNum,myRoi_hydro,myRoi_otherVars,myObsErr] = ProduceforEnKF(iTb,Swath_used,ChIdx_ps,ChName_ps,if_swath_good,loc_DAtime_ps,Tb_file,control) 
+function [sat_name,myLat,myLon,myTb,mySat_lat,mySat_lon,mySat_alt,mySat_azimuth,myScan_angle,myZenith_angle,myFov_crossTrack,myFov_alongTrack,myTimes,myChNum,myRoi_hydro,myRoi_otherVars,myObsErr] = ProduceforEnKF(iTb,Swath_used,ChIdx_ps,ChName_ps,if_swath_good,DAtime_ps,loc_DAtime_ps,Tb_file,control) 
     % ---------------------------------------------------------------------
     % ---- For each raw observation file
     % ---- Loop through each possibly good channel AND
@@ -21,27 +21,27 @@ function [sat_name,myLat,myLon,myTb,mySat_lat,mySat_lon,mySat_alt,mySat_azimuth,
     ss_info = split(filename,'.'); platform = ss_info(2); sensor = ss_info(3);
 
     % modify satellite-and-sensor name so that it is consistent with what is used in the CRTM package 
-    if (matches(platform,'GCOMW1'))
+    if (contains(platform,'GCOMW1'))
         sat_name = "amsr2_gcom-w1";
-    elseif (matches(platform,'NPP'))
+    elseif (contains(platform,'NPP'))
         sat_name = "atms_npp";
-    elseif (matches(platform,'GPM'))
+    elseif (contains(platform,'GPM'))
         sat_name = "gmi_gpm";
-    elseif (matches(platform,'METOPA'))
+    elseif (contains(platform,'METOPA'))
         sat_name = "mhs_metop-a";
-    elseif (matches(platform,'METOPB'))
+    elseif (contains(platform,'METOPB'))
         sat_name = "mhs_metop-b";
-    elseif (matches(platform,'NOAA18'))
+    elseif (contains(platform,'NOAA18'))
         sat_name = "mhs_n18";
-    elseif (matches(platform,'NOAA19'))
+    elseif (contains(platform,'NOAA19'))
         sat_name = "mhs_n19";
-    elseif (matches(platform,'MT1'))
+    elseif (contains(platform,'MT1'))
         sat_name = "saphir_meghat";
-    elseif (matches(platform,'F16'))
+    elseif (contains(platform,'F16'))
         sat_name = "ssmis_f16";
-    elseif (matches(platform,'F17'))
+    elseif (contains(platform,'F17'))
         sat_name = "ssmis_f17";
-    elseif (matches(platform,'F18'))
+    elseif (contains(platform,'F18'))
         sat_name = "ssmis_f18";
     end
 
@@ -134,7 +134,7 @@ function [sat_name,myLat,myLon,myTb,mySat_lat,mySat_lon,mySat_alt,mySat_azimuth,
 
     % Special treatment to AMSR2 89GHz
     if (sensor == "AMSR2") & control.comnine_AMSR89GHz
-        [Swath_used,ChIdx_ps,ChName_ps,lat,lon,Tb,zenith_angle,sat_lat,sat_lon,sat_alt,sat_azimuth,outime] = Combine_AMSR2(iTb,Swath_used,ChIdx_ps,ChName_ps,lat,lon,Tb,zenith_angle,sat_lat,sat_lon,sat_alt,sat_azimuth,outime);
+        [Swath_used,ChIdx_ps,ChName_ps,lat,lon,Tb,zenith_angle,sat_lat,sat_lon,sat_alt,sat_azimuth,outime] = Combine_AMSR2(iTb,Swath_used,ChIdx_ps,ChName_ps,DAtime_ps,lat,lon,Tb,zenith_angle,sat_lat,sat_lon,sat_alt,sat_azimuth,outime);
     elseif (sensor == "AMSR2") & (~control.comnine_AMSR89GHz)
         disp(['Two 89 GHz scans on AMSR2 are not combined!']);
     end

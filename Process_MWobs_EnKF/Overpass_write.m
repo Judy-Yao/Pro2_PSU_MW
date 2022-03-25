@@ -24,7 +24,7 @@ function [] = Overpass_write(iTb,istorm,Swath_used,ChIdx_ps,ChName_ps,if_swath_g
 	for io = 1:length(Tb_overpass)
         Tb_overpass(io)
 		[filepath,filename,filext] = fileparts(Tb_overpass(io));
-		[sat_name{io},op_lat{io},op_lon{io},op_Tb{io},op_Sat_lat{io},op_Sat_lon{io},op_Sat_alt{io},op_Sat_azimuth{io},op_scan{io},op_zenith{io},op_Fov_crossTrack{io},op_Fov_alongTrack{io},op_times{io},op_chNum{io},op_ROI_other{io},op_ROI_hydro{io},op_ObsErr{io}] = ProduceforEnKF(iTb(io),Swath_used,ChIdx_ps,ChName_ps,if_swath_good,loc_DAtime_ps,Tb_overpass(io),control);
+		[sat_name{io},op_lat{io},op_lon{io},op_Tb{io},op_Sat_lat{io},op_Sat_lon{io},op_Sat_alt{io},op_Sat_azimuth{io},op_scan{io},op_zenith{io},op_Fov_crossTrack{io},op_Fov_alongTrack{io},op_times{io},op_chNum{io},op_ROI_hydro{io},op_ROI_other{io},op_ObsErr{io}] = ProduceforEnKF(iTb(io),Swath_used,ChIdx_ps,ChName_ps,if_swath_good,DAtime_ps,loc_DAtime_ps,Tb_overpass(io),control);
     end
 
 	% Gather variables with different ROI into cells
@@ -71,7 +71,7 @@ function [] = Overpass_write(iTb,istorm,Swath_used,ChIdx_ps,ChName_ps,if_swath_g
 	 	myLat{ir} = tem_lat(randOrder); myLon{ir} = tem_lon(randOrder); myTb{ir} = tem_Tb(randOrder);
 		mySat_lat{ir} = tem_Sat_lat(randOrder); mySat_lon{ir} = tem_Sat_lon(randOrder);
 		mySat_alt{ir} = tem_Sat_alt(randOrder); mySat_azimuth{ir} = tem_Sat_alt(randOrder);
-		myScan_angle{ir} = tem_scan(randOrder); myZenith_angle{ir} = tem_zenith(randorder);
+		myScan_angle{ir} = tem_scan(randOrder); myZenith_angle{ir} = tem_zenith(randOrder);
         myFov_crossTrack{ir} = tem_crossTrack(randOrder); myFov_alongTrack{ir} = tem_alongTrack(randOrder);
 		myTimes{ir} = tem_times(randOrder); myChNum{ir} = tem_chNum(randOrder); myRoi_hydro{ir} = tem_ROI_hydro(randOrder);
 		myRoi_otherVars{ir} = tem_ROI_other(randOrder); myObsErr{ir} = tem_ObsErr(randOrder);
