@@ -25,7 +25,7 @@ function [] = Overpass_write(iTb,istorm,Swath_used,ChIdx_ps,ChName_ps,if_swath_g
         Tb_overpass(io)
 		[filepath,filename,filext] = fileparts(Tb_overpass(io));
 		[sat_name{io},op_lat{io},op_lon{io},op_Tb{io},op_Sat_lat{io},op_Sat_lon{io},op_Sat_alt{io},op_Sat_azimuth{io},op_scan{io},op_zenith{io},op_Fov_crossTrack{io},op_Fov_alongTrack{io},op_times{io},op_chNum{io},op_ROI_other{io},op_ROI_hydro{io},op_ObsErr{io}] = ProduceforEnKF(iTb(io),Swath_used,ChIdx_ps,ChName_ps,if_swath_good,loc_DAtime_ps,Tb_overpass(io),control);
-        end
+    end
 
 	% Gather variables with different ROI into cells
 	myLat = cell(size(control.roi_oh));
@@ -58,7 +58,6 @@ function [] = Overpass_write(iTb,istorm,Swath_used,ChIdx_ps,ChName_ps,if_swath_g
 			tem_scan = [tem_scan;op_scan{io}{ir}]; tem_zenith = [tem_zenith;op_zenith{io}{ir}];			
 			tem_Sat_lat = [tem_Sat_lat;op_Sat_lat{io}{ir}]; tem_Sat_lon = [tem_Sat_lon; op_Sat_lon{io}{ir}];
 			tem_Sat_alt = [tem_Sat_alt; op_Sat_alt{io}{ir}]; tem_Sat_azimuth = [tem_Sat_azimuth;op_Sat_azimuth{io}{ir}];
-			disp(['size of op_Fov_crossTrack', num2str(size(op_Fov_crossTrack{io}{ir}))]);
             tem_crossTrack = [tem_crossTrack; op_Fov_crossTrack{io}{ir}];
 			tem_alongTrack = [tem_alongTrack;op_Fov_alongTrack{io}{ir}];			
 			tem_times = [tem_times; op_times{io}{ir}];
@@ -72,7 +71,8 @@ function [] = Overpass_write(iTb,istorm,Swath_used,ChIdx_ps,ChName_ps,if_swath_g
 	 	myLat{ir} = tem_lat(randOrder); myLon{ir} = tem_lon(randOrder); myTb{ir} = tem_Tb(randOrder);
 		mySat_lat{ir} = tem_Sat_lat(randOrder); mySat_lon{ir} = tem_Sat_lon(randOrder);
 		mySat_alt{ir} = tem_Sat_alt(randOrder); mySat_azimuth{ir} = tem_Sat_alt(randOrder);
-		myScan_angle{ir} = tem_scan(randOrder); myFov_crossTrack{ir} = tem_crossTrack(randOrder); myFov_alongTrack{ir} = tem_alongTrack(randOrder);
+		myScan_angle{ir} = tem_scan(randOrder); myZenith_angle{ir} = tem_zenith(randorder);
+        myFov_crossTrack{ir} = tem_crossTrack(randOrder); myFov_alongTrack{ir} = tem_alongTrack(randOrder);
 		myTimes{ir} = tem_times(randOrder); myChNum{ir} = tem_chNum(randOrder); myRoi_hydro{ir} = tem_ROI_hydro(randOrder);
 		myRoi_otherVars{ir} = tem_ROI_other(randOrder); myObsErr{ir} = tem_ObsErr(randOrder);
 		mySat_name{ir} = tem_Sat_name(randOrder);
@@ -83,16 +83,17 @@ function [] = Overpass_write(iTb,istorm,Swath_used,ChIdx_ps,ChName_ps,if_swath_g
     % ---------------------------------------------------------------------
 
     % create text file name
-    filename = strcat(control.output_dir,control.storm_phase(istorm),'microwave_d03_',DAtime_ps{iTb}(1),'_so');
+    filename = strcat(control.output_dir,control.storm_phase(istorm),'/microwave_d03_',DAtime_ps{iTb(1)}(1),'_so'); % same DA time
     formatSpec = '%12s%16s%12i%12.3f%12.3f%12.3f%12i%12i%12.3f%12.3f%12.3f%12.3f%12.3f%12.3f%12.3f%12.3f%12.3f\n';
     fileID = fopen(filename,'w');
     % reshape values into columns
     out_lat = cat(1, myLat{:}); out_lon = cat(1, myLon{:}); out_Tb = cat(1, myTb{:});
     out_sat_lat = cat(1, mySat_lat{:}); out_sat_lon = cat(1, mySat_lon{:}); out_sat_alt = cat(1, mySat_alt{:});
-    out_Sat_azimuth = cat(1, mySat_azimuth{:}); out_Scan_angle = cat(1, myScan_angle{:});
+    out_Sat_azimuth = cat(1, mySat_azimuth{:}); out_Scan_angle = cat(1, myScan_angle{:}); out_Zenith_angle = cat(1, myZenith_angle{:});
     out_Zenith_angle = cat(1, myZenith_angle{:}); out_Fov_crossTrack = cat(1, myFov_crossTrack{:}); out_Fov_alongTrack = cat(1, myFov_alongTrack{:});
     out_times = cat(1, myTimes{:}); out_chNum = cat(1, myChNum{:}); out_obsErr = cat(1, myObsErr{:});
     out_ROI_other = cat(1, myRoi_otherVars{:}); out_ROI_hydro = cat(1, myRoi_hydro{:}); out_Sat_name = cat(1, mySat_name{:});
+    
     % write values to a file
     for rd = 1:length(out_Tb)
         if (strcmp(out_Sat_name(rd),'gmi_gpm'))

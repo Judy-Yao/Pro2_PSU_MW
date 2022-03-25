@@ -22,27 +22,27 @@ function [sat_name,myLat,myLon,myTb,mySat_lat,mySat_lon,mySat_alt,mySat_azimuth,
 
     % modify satellite-and-sensor name so that it is consistent with what is used in the CRTM package 
     if (matches(platform,'GCOMW1'))
-        sat_name = 'amsr2_gcom-w1';
+        sat_name = "amsr2_gcom-w1";
     elseif (matches(platform,'NPP'))
-        sat_name = 'atms_npp';
+        sat_name = "atms_npp";
     elseif (matches(platform,'GPM'))
-        sat_name = 'gmi_gpm';
+        sat_name = "gmi_gpm";
     elseif (matches(platform,'METOPA'))
-        sat_name = 'mhs_metop-a';
+        sat_name = "mhs_metop-a";
     elseif (matches(platform,'METOPB'))
-        sat_name = 'mhs_metop-b';
+        sat_name = "mhs_metop-b";
     elseif (matches(platform,'NOAA18'))
-        sat_name = 'mhs_n18';
+        sat_name = "mhs_n18";
     elseif (matches(platform,'NOAA19'))
-        sat_name = 'mhs_n19';
+        sat_name = "mhs_n19";
     elseif (matches(platform,'MT1'))
-        sat_name = 'saphir_meghat';
+        sat_name = "saphir_meghat";
     elseif (matches(platform,'F16'))
-        sat_name = 'ssmis_f16';
+        sat_name = "ssmis_f16";
     elseif (matches(platform,'F17'))
-        sat_name = 'ssmis_f17';
+        sat_name = "ssmis_f17";
     elseif (matches(platform,'F18'))
-        sat_name = 'ssmis_f18';
+        sat_name = "ssmis_f18";
     end
 
     % read data from L1C file
@@ -219,6 +219,7 @@ function [sat_name,myLat,myLon,myTb,mySat_lat,mySat_lon,mySat_alt,mySat_azimuth,
         DA_lat{it}         = all_lat(obs_index_1d);
         DA_lon{it}         = all_lon(obs_index_1d);
 
+        disp(['size of Tb', num2str(size(DA_Tb{it}))]);
         [scan_position, scan_num] = ind2sub(size(Tb{it}),obs_index_1d); % size(Tb{it}): npixel, nscan; output from ind2sub: row, column ??
 
         DA_sat_lat{it} = sat_lat{it}(scan_num);
@@ -231,8 +232,9 @@ function [sat_name,myLat,myLon,myTb,mySat_lat,mySat_lon,mySat_alt,mySat_azimuth,
 
         [scantype,ch_num,fov_alongTrack,fov_crossTrack,max_scan_angle,scan_angles] = SensorInfo_read(sensor,ChName_ps{iTb}{it});
         DA_scan_angle{it} = scan_angles(scan_position)';
-        [DA_fov_crossTrack{it}, DA_fov_alongTrack{it}] = get_pixel_resolution(scantype,ch_num,fov_alongTrack,fov_crossTrack,DA_lat{it},DA_lon{it},DA_zenith_angle{it},DA_sat_lat{it},DA_sat_lon{it},DA_sat_alt{it});
-
+        [DA_fov_crossTrack{it}, DA_fov_alongTrack{it}] = Get_pixel_resolution(scantype,ch_num,fov_alongTrack,fov_crossTrack,DA_lat{it},DA_lon{it},DA_zenith_angle{it},DA_sat_lat{it},DA_sat_lon{it},DA_sat_alt{it});
+        disp(['size of op_Fov_crossTrack', num2str(size(DA_fov_crossTrack{it}))]);
+    
          for my_scan_num_idx = 1:length(scan_num)
              DA_times{it}(my_scan_num_idx,1) = outime{it}(scan_num(my_scan_num_idx));
          end
@@ -279,8 +281,8 @@ function [sat_name,myLat,myLon,myTb,mySat_lat,mySat_lon,mySat_alt,mySat_azimuth,
         tem_sat_azimuth = cat(1,DA_sat_azimuth{:}); mySat_azimuth{ir} = tem_sat_azimuth(randOrder); %clear tem_sat_azimuth
         tem_scan_angle = cat(2,DA_scan_angle{:}); myScan_angle{ir} = tem_scan_angle(randOrder)'; %clear tem_scan_angle
         tem_zenith_angle = cat(1,DA_zenith_angle{:}); myZenith_angle{ir} = tem_zenith_angle(randOrder); %clear  tem_zenith_angle
-        tem_fov_crossTrack = cat(2,DA_fov_crossTrack{:})'; myFov_crossTrack{ir} = tem_fov_crossTrack(randOrder); %clear  tem_fov_crossTrack
-        tem_fov_alongTrack = cat(2,DA_fov_alongTrack{:})'; myFov_alongTrack{ir} = tem_fov_alongTrack(randOrder); %clear tem_fov_alongTrack
+        tem_fov_crossTrack = cat(1,DA_fov_crossTrack{:}); myFov_crossTrack{ir} = tem_fov_crossTrack(randOrder); %clear  tem_fov_crossTrack
+        tem_fov_alongTrack = cat(1,DA_fov_alongTrack{:}); myFov_alongTrack{ir} = tem_fov_alongTrack(randOrder); %clear tem_fov_alongTrack
 
         tem_times = cat(1,DA_times{:}); myTimes{ir} = tem_times(randOrder); %clear tem_times
         tem_chNum = cat(1,DA_chNum{:}); myChNum{ir} = tem_chNum(randOrder); %clear myTb_chNum

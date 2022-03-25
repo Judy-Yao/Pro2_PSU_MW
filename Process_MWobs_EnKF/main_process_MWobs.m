@@ -96,7 +96,7 @@ for istorm = 1:length(control.storm_phase)
         % if 89GHz on AMSR2 exist, it will be only used if there is no 183 GHz
         % Below algorithm assumes that if a Tb file of AMSR2 is collected, 18.7GHzV-Pol & 89GHzV-PolA-Scan & 89GHzV-PolB-Scan all exist.
         if sum("AMSR2" == sensor_overpass) == 0 % No AMSR2 Tb
-            Overpass_write(idx_usedTb,file_overpass,Swath_used,ChIdx_ps,ChName_ps,if_swath_good,DAtime_ps,loc_DAtime_ps,file_overpass,control); 
+            Overpass_write(idx_usedTb,istorm,Swath_used,ChIdx_ps,ChName_ps,if_swath_good,DAtime_ps,loc_DAtime_ps,file_overpass,control); 
         else % AMSR2 is one of overpasses
             idx_order_AMSR2 = find("AMSR2" == sensor_overpass);
             idx_order_other = order_overpass(order_overpass ~= idx_order_AMSR2);
