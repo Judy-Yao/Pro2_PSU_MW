@@ -22,7 +22,7 @@ function [] = Overpass_write(iTb,istorm,Swath_used,ChIdx_ps,ChName_ps,if_swath_g
 
 	% Loop through each overpass Tb file and read variables with different files into cells
 	for io = 1:length(Tb_overpass)
-        Tb_overpass(io)
+        disp(['Over passT: ',Tb_overpass(io)]);
 		[filepath,filename,filext] = fileparts(Tb_overpass(io));
 		[sat_name{io},op_lat{io},op_lon{io},op_Tb{io},op_Sat_lat{io},op_Sat_lon{io},op_Sat_alt{io},op_Sat_azimuth{io},op_scan{io},op_zenith{io},op_Fov_crossTrack{io},op_Fov_alongTrack{io},op_times{io},op_chNum{io},op_ROI_hydro{io},op_ROI_other{io},op_ObsErr{io}] = ProduceforEnKF(iTb(io),Swath_used,ChIdx_ps,ChName_ps,if_swath_good,DAtime_ps,loc_DAtime_ps,Tb_overpass(io),control);
     end

@@ -1,10 +1,10 @@
 function [] = Singlepass_write(idx_usedTb,istorm,Swath_used,ChIdx_ps,ChName_ps,if_swath_good,DAtime_ps,loc_DAtime_ps,Tb_file,control)
-    
+   
+    disp(['Single pass: ',Tb_file]);    
+ 
 	[filepath,filename,filext] = fileparts(Tb_file);
     sensor_info = split(filename,'.'); platform = sensor_info(2);
    
-    Tb_file
-     
 	[sat_name,myLat,myLon,myTb,mySat_lat,mySat_lon,mySat_alt,mySat_azimuth,myScan_angle,myZenith_angle,myFov_crossTrack,myFov_alongTrack,myTimes,myChNum,myRoi_hydro,myRoi_otherVars,myObsErr] = ProduceforEnKF(idx_usedTb,Swath_used,ChIdx_ps,ChName_ps,if_swath_good,DAtime_ps,loc_DAtime_ps,Tb_file,control); 
 
     % create text file name
