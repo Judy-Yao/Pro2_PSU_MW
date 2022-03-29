@@ -219,7 +219,6 @@ function [sat_name,myLat,myLon,myTb,mySat_lat,mySat_lon,mySat_alt,mySat_azimuth,
         DA_lat{it}         = all_lat(obs_index_1d);
         DA_lon{it}         = all_lon(obs_index_1d);
 
-        disp(['size of Tb', num2str(size(DA_Tb{it}))]);
         [scan_position, scan_num] = ind2sub(size(Tb{it}),obs_index_1d); % size(Tb{it}): npixel, nscan; output from ind2sub: row, column ??
 
         DA_sat_lat{it} = sat_lat{it}(scan_num);
@@ -233,7 +232,6 @@ function [sat_name,myLat,myLon,myTb,mySat_lat,mySat_lon,mySat_alt,mySat_azimuth,
         [scantype,ch_num,fov_alongTrack,fov_crossTrack,max_scan_angle,scan_angles] = SensorInfo_read(sensor,ChName_ps{iTb}{it});
         DA_scan_angle{it} = scan_angles(scan_position)';
         [DA_fov_crossTrack{it}, DA_fov_alongTrack{it}] = Get_pixel_resolution(scantype,ch_num,fov_alongTrack,fov_crossTrack,DA_lat{it},DA_lon{it},DA_zenith_angle{it},DA_sat_lat{it},DA_sat_lon{it},DA_sat_alt{it});
-        disp(['size of op_Fov_crossTrack', num2str(size(DA_fov_crossTrack{it}))]);
     
          for my_scan_num_idx = 1:length(scan_num)
              DA_times{it}(my_scan_num_idx,1) = outime{it}(scan_num(my_scan_num_idx));

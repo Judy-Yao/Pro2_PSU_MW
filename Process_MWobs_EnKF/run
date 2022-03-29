@@ -1,14 +1,16 @@
 #!/bin/bash
 #SBATCH --job-name="ProcessMW"
-#SBATCH --output="log"
+#SBATCH --output="out"
 #SBATCH --partition=compute
 #SBATCH --nodes=1
 #SBATCH --ntasks-per-node=8
 #SBATCH --account=pen116
 #SBATCH --export=ALL
-#SBATCH -t 01:30:00
+#SBATCH -t 10:00:00
+#SBATCH --mail-user=yao.zhu.91@gmail.com
+#SBATCH --mail-type=all
 
 #This job runs with 2 nodes, 128 cores per node for a total of 256 tasks.
 
-matlab -batch main_process_MWobs
+matlab -batch main_process_MWobs > log
 
