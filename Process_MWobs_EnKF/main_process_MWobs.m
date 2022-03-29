@@ -1,16 +1,15 @@
-% This script reads satvvellite MW Tbs observations and if those Tbs cover the storm at DA time then process them into records that are readable by Penn State EnKF system
+% The main script with the skeleton of Process_MWobs_EnKF algorithm
 
 
-% -------------- Control variables ----------------------
-% By default, control variables prefer cell-array type.
+% -------------- Set up control variables ----------------------
 control = struct;
 % ----Path
-control.obs_dir = '../../Obs/Microwave/';
-control.obs_used_dir = '../../Obs/MW_used/'; 
+control.obs_dir = '../../Obs/Microwave/'; % directory where L1C raw observations are
+control.obs_used_dir = '../../Obs/Collected_MW/'; % 
 control.bestrack_dir = '../../Obs/Bestrack/';
 control.output_dir = '../../toEnKFobs/';
 % ---Storm information
-control.storm_phase = {'Irma2ndRI',};
+control.storm_phase = {'Irma2ndRI',}; 
 %control.storm_phase = ["Irma2ndRI",'JoseRI','MariaRI'};
 control.period = {{'201709030600','201709050600'},};
 %control.period = {{'201709030600','201709050600'},{'201709050600','201709070600'},{'201709160000','201709180000'}}; %YYYYMMDDHHmm
@@ -31,8 +30,8 @@ control.dx = 3; % WRF resolution: 3 km
 % --- Other
 control.domain_buffer = 1.5; % scaling factor
 control.search_buffer = 0.2; % degrees: lat/lon
-control.filter_ratio = [36,24]; % speed the test
-%control.filter_ratio = [6,6];
+%control.filter_ratio = [36,24]; % speed the test
+control.filter_ratio = [6,6];
 control.roi_oh = {[200,0], [60,60]}; % roi [other variables, hydrometeors]
 control.obsError = [3 3];
 
@@ -44,6 +43,12 @@ for istorm = 1:length(control.storm_phase)
 
     % --- Gather useful files of all sensors into a directory
 	[Tbfile_names,Swath_used,ChIdx_ps,ChName_ps,if_swath_good,DAtime_ps,loc_DAtime_ps,overpass,singlepass] = Gather_MW_useful(istorm, bestrack_str, control); % ps: per swath
+
+	disp('overpass:');
+	for ioo = 1:length(overpass)
+		overpass(ioo)
+	end
+
 
     % --- Loop through each useful Tb file via a symbolic link
 	Tb_dir = [control.obs_used_dir,control.storm_phase{istorm},'/*'];
@@ -57,7 +62,7 @@ for istorm = 1:length(control.storm_phase)
     % - Output single-pass
     for is = 1:length(singlepass)
         for iTb = 1:length(Tb_files)
-            Tb_file = Tb_files{iTb}
+           Tb_file = Tb_files{iTb};
             [filepath,filename,filext] = fileparts(Tb_file);            
             if contains(filename,singlepass(is))
                 idx_collectedTb = find([filename,filext] == Tbfile_names)
@@ -70,11 +75,11 @@ for istorm = 1:length(control.storm_phase)
     end
 
 	% - Output overpass
-    file_overpass = []; % (strings)
-	order_overpass = [];
-    sensor_overpass = [];
-    idx_usedTb = []; % (integer)
 	for io = 1:length(overpass)
+		file_overpass = []; % (strings)
+		order_overpass = [];
+		sensor_overpass = [];
+		idx_usedTb = []; % (integer)
         % for a specific time, find the overpass files         
 		for iTb = 1:length(Tb_files)
 			Tb_file = Tb_files{iTb};
@@ -131,7 +136,7 @@ end % end loop for istorm = 1:length(control.storm_phase)
 
 	
 
-% ---------- Background Knowledge ----------------
+% ---------- Background Knowledge of L1C file----------------
 % Take GPM GMI as an example.
 % -- Swath
 % Swath S1 has nine channels (10V, 10H, 19V,19H, 23V, 37V, 37H, 89V, and 89H).
