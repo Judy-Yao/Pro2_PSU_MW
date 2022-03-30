@@ -1,15 +1,15 @@
-% The main script with the skeleton of Process_MWobs_EnKF algorithm
+% The main script consists of the skeleton of the Process_MWobs_EnKF algorithm
 
 
 % -------------- Set up control variables ----------------------
 control = struct;
 % ----Path
 control.obs_dir = '../../Obs/Microwave/'; % directory where L1C raw observations are
-control.obs_used_dir = '../../Obs/Collected_MW/'; % 
-control.bestrack_dir = '../../Obs/Bestrack/';
-control.output_dir = '../../toEnKFobs/';
+control.obs_collect_dir = '../../Obs/Collected_MW/'; % directory into which L1C obs files are collected/linked 
+control.bestrack_dir = '../../Obs/Bestrack/'; % directory where best-track files are
+control.output_dir = '../../toEnKFobs/'; % directory where this algorithm outputs
 % ---Storm information
-control.storm_phase = {'Irma2ndRI',}; 
+control.storm_phase = {'Irma2ndRI',};  
 %control.storm_phase = ["Irma2ndRI",'JoseRI','MariaRI'};
 control.period = {{'201709030600','201709050600'},};
 %control.period = {{'201709030600','201709050600'},{'201709050600','201709070600'},{'201709160000','201709180000'}}; %YYYYMMDDHHmm
@@ -35,24 +35,17 @@ control.filter_ratio = [6,6];
 control.roi_oh = {[200,0], [60,60]}; % roi [other variables, hydrometeors]
 control.obsError = [3 3];
 
-% ---------- Loop through each storm_phase -------------------
+% ---------- Loop through each storm object -------------------
 for istorm = 1:length(control.storm_phase)
 
-    % --- Find time and location of the storm in Best track file
-	bestrack_str = Bestrack_read(istorm, control);
+    % --- Find times and center locations of the storm in the Best track file (only available on 00, 06, 12, 18 UTC)
+	bestrack_str = Bestrack_read(istorm, control); % (cell)
 
-    % --- Gather useful files of all sensors into a directory
-	[Tbfile_names,Swath_used,ChIdx_ps,ChName_ps,if_swath_good,DAtime_ps,loc_DAtime_ps,overpass,singlepass] = Gather_MW_useful(istorm, bestrack_str, control); % ps: per swath
-
-	disp('overpass:');
-	for ioo = 1:length(overpass)
-		overpass(ioo)
-	end
-
+    % --- Collect useful MW Obs files of all sensors among all platforms into a directory
+	[Tbfile_names,Swath_used,ChIdx_ps,ChName_ps,if_swath_good,DAtime_ps,loc_DAtime_ps,overpass,singlepass] = Collect_MW_useful(istorm, bestrack_str, control); % ps: per swath
 
     % --- Loop through each useful Tb file via a symbolic link
 	Tb_dir = [control.obs_used_dir,control.storm_phase{istorm},'/*'];
-	%Tb_files = regexprep(ls(Tb_dir),'\n$', ' ');
 	Tb_files = strsplit(ls(Tb_dir));
     Tb_files = Tb_files(cellfun(@isempty, Tb_files) == 0); % Get rid of the annyoing empty cell
 	% --- Output file under two situations: overpass or single-pass

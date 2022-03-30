@@ -1,3 +1,5 @@
+% This function simply filters out MW L1C files that don't lie within the period of interest 
+
 function use_Tb_file = Filter_file_out_period(idx_storm,Tb_file,control)
 
     % -read StartGranuleDateTime and StopGranuleDateTime for a Tb file
@@ -20,7 +22,7 @@ function use_Tb_file = Filter_file_out_period(idx_storm,Tb_file,control)
     pd_end_dt = datetime(control.period{idx_storm}{2},'InputFormat','yyyyMMddHHmm','TimeZone','UTC');
 
     % Skip the Tb file that is not within the period of interest
-    if (end_datetime < pd_start_dt) || (start_datetime > pd_end_dt)
+    if (end_datetime < pd_start_dt) || (start_datetime > pd_end_dt) % || expr2 is not evaluated if expr1 is logical 1 (true).
         use_Tb_file = false;
     else
         use_Tb_file = true;

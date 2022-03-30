@@ -1,15 +1,15 @@
 function [if_swath_good,DAtime_perSwath,loc_storm_DAtime] = Find_DAtime_loc(bestrack_str,Swath_used,Tb_file, control)
-% Identify the DA_time (YYYYYMMDDHH00) for a Tb observation file 
+% Identify the DA_time (YYYYYMMDDHH00) for a L1C MW obs file 
 
 % ------------------Algorithm--------------------
 % Designed by Zhu (Judy) Yao in February 2022---------
 
 % ------------------- Step 1 ----------------------------
 %           start_datetime       end_datetime
-% |__________|____!______|__________|_!_________|
+% |__________|____%______|__________|_%_________|
 % h-1     h-0.5          h        h+0.5        h+1
-% For example, for a Tb obvervation file, if StartGranuleDateTime is 2017089170434 and EndGranuleDateTime is
-% 2017089170616, the candidates for DA_time are 2017089170500 and 2017089170600.
+% For example, for a L1C MW obs file, if StartGranuleDateTime is 201708170434 and EndGranuleDateTime is
+% 201708170616, the candidates for DA_time are 201708170500 and 201708170600 (DA_time has to be o'clock)
 % Genericlly, for DA_time = 05UTC, effective Tb observations should be limited to those with scan time 
 % ranging from 4:30 to 5:30 with one-hour interval. However in this case,for DA_time = 05UTC, effective 
 % observations are limited from 4:34 to 5:30; for DA_time = 06UTC, effective observations are limited from 5:30 to 6:16.
