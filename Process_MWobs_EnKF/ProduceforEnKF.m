@@ -1,7 +1,7 @@
-function [sat_name,myLat,myLon,myTb,mySat_lat,mySat_lon,mySat_alt,mySat_azimuth,myScan_angle,myZenith_angle,myFov_crossTrack,myFov_alongTrack,myTimes,myChNum,myRoi_hydro,myRoi_otherVars,myObsErr] = ProduceforEnKF(iTb,Swath_used,ChIdx_ps,ChName_ps,if_swath_good,DAtime_ps,loc_DAtime_ps,Tb_file,control) 
+function [sat_name,myLat,myLon,myTb,mySat_lat,mySat_lon,mySat_alt,mySat_azimuth,myScan_angle,myZenith_angle,myFov_crossTrack,myFov_alongTrack,myTimes,myChNum,myRoi_hydro,myRoi_otherVars,myObsErr] = ProduceforEnKF(iTb,Swath_used,ChIdx_all,ChName_all,DAtime_all,loc_DAtime_all,Tb_file,control) 
     % ---------------------------------------------------------------------
     % ---- For each raw observation file
-    % ---- Loop through each possibly good channel AND
+    % ---- Loop through each channel/frequency of interest AND
     % ---- Read characteristics of sensor into memory
     % ---------------------------------------------------------------------
     
@@ -60,7 +60,7 @@ function [sat_name,myLat,myLon,myTb,mySat_lat,mySat_lon,mySat_alt,mySat_azimuth,
 
         % **Tb**
         Tb_allCh = h5read(Tb_file,Swath_used{iTb}(it) + '/Tc');
-        Tb{it} = squeeze(Tb_allCh(ChIdx_ps{iTb}(it),:,:)); % npixel, nscan
+        Tb{it} = squeeze(Tb_allCh(ChIdx_all{iTb}(it),:,:)); % npixel, nscan
 
         % **zenith angle**: the angle of the satellite from the local zenith as seen at the pixel locatio on the earth
         % Interpretation on nChUIA
@@ -82,7 +82,7 @@ function [sat_name,myLat,myLon,myTb,mySat_lat,mySat_lon,mySat_alt,mySat_azimuth,
             end
             if sum(num_unique_perCh) == num_Ch_perSW
                 iAIndices = iAIndices(:,1); % For a channel, all scans are references to the same set of zenith angles
-                zenith_angle{it}(:,:) = squeeze(incidenceAngles(iAIndices(ChIdx_ps{iTb}(it)),:,:)); % npixel, nscan
+                zenith_angle{it}(:,:) = squeeze(incidenceAngles(iAIndices(ChIdx_all{iTb}(it)),:,:)); % npixel, nscan
             else
                 disp("Error: current algorithm does not work!! Please modify it.");
             end
@@ -134,7 +134,7 @@ function [sat_name,myLat,myLon,myTb,mySat_lat,mySat_lon,mySat_alt,mySat_azimuth,
 
     % Special treatment to AMSR2 89GHz
     if (sensor == "AMSR2") & control.comnine_AMSR89GHz
-        [Swath_used,ChIdx_ps,ChName_ps,lat,lon,Tb,zenith_angle,sat_lat,sat_lon,sat_alt,sat_azimuth,outime] = Combine_AMSR2(iTb,Swath_used,ChIdx_ps,ChName_ps,DAtime_ps,lat,lon,Tb,zenith_angle,sat_lat,sat_lon,sat_alt,sat_azimuth,outime);
+        [Swath_used,ChIdx_all,ChName_all,lat,lon,Tb,zenith_angle,sat_lat,sat_lon,sat_alt,sat_azimuth,outime] = Combine_AMSR2(iTb,Swath_used,ChIdx_all,ChName_all,DAtime_all,lat,lon,Tb,zenith_angle,sat_lat,sat_lon,sat_alt,sat_azimuth,outime);
     elseif (sensor == "AMSR2") & (~control.comnine_AMSR89GHz)
         disp(['Two 89 GHz scans on AMSR2 are not combined!']);
     end
@@ -148,10 +148,10 @@ function [sat_name,myLat,myLon,myTb,mySat_lat,mySat_lon,mySat_alt,mySat_azimuth,
     % Prepare area: best-track location followed
     nx = control.nx*control.domain_buffer; % zoom out
     ny = control.ny*control.domain_buffer; % zoom out
-    min_XLAT = loc_DAtime_ps{iTb}{1}(1) - (ny/2*control.dx)/(cos(loc_DAtime_ps{iTb}{1}(1)*(pi/180))*111);
-    max_XLAT = loc_DAtime_ps{iTb}{1}(1) + (ny/2*control.dx)/(cos(loc_DAtime_ps{iTb}{1}(1)*(pi/180))*111);
-    min_XLONG = loc_DAtime_ps{iTb}{1}(2) - (nx/2*control.dx)/111;
-    max_XLONG = loc_DAtime_ps{iTb}{1}(2) + (nx/2*control.dx)/111;
+    min_XLAT = loc_DAtime_all{iTb}{1}(1) - (ny/2*control.dx)/(cos(loc_DAtime_all{iTb}{1}(1)*(pi/180))*111);
+    max_XLAT = loc_DAtime_all{iTb}{1}(1) + (ny/2*control.dx)/(cos(loc_DAtime_all{iTb}{1}(1)*(pi/180))*111);
+    min_XLONG = loc_DAtime_all{iTb}{1}(2) - (nx/2*control.dx)/111;
+    max_XLONG = loc_DAtime_all{iTb}{1}(2) + (nx/2*control.dx)/111;
     disp(['min of xlong: ',num2str(min_XLONG), ', max of xlong: ',num2str(max_XLONG)]);
     disp(['min of xlat: ',num2str(min_XLAT), ', max of xlat: ',num2str(max_XLAT)]);
     latitudes  = linspace(min_XLAT,max_XLAT,ny);
@@ -174,7 +174,7 @@ function [sat_name,myLat,myLon,myTb,mySat_lat,mySat_lon,mySat_alt,mySat_azimuth,
     grid_start_lf = grid_start_hf + .5*(2*filter_ratio_grid(2) - filter_ratio_grid(1)); % low frequency
 
     for it = 1:length(Swath_used{iTb})
-        if (contains(ChName_ps{iTb}(it), "18.7GHzV-Pol")) || (contains(ChName_ps{iTb}(it), "19.35GHzV-Pol"))
+        if (contains(ChName_all{iTb}(it), "18.7GHzV-Pol")) || (contains(ChName_all{iTb}(it), "19.35GHzV-Pol"))
             slots_x{it} = grid_start_lf:filter_ratio_grid(1):nx;
             slots_y{it} = grid_start_lf:filter_ratio_grid(1):ny;
             obs_index{it} = PickRawforCRTM(lat{it},lon{it},Tb{it},min_XLONG,max_XLONG,min_XLAT,max_XLAT,latitudes,longitudes,slots_x{it},slots_y{it},control);
@@ -229,7 +229,7 @@ function [sat_name,myLat,myLon,myTb,mySat_lat,mySat_lon,mySat_alt,mySat_azimuth,
         all_zenith_angles = reshape(zenith_angle{it},[],1);
         DA_zenith_angle{it} = all_zenith_angles(obs_index_1d);
 
-        [scantype,ch_num,fov_alongTrack,fov_crossTrack,max_scan_angle,scan_angles] = SensorInfo_read(sensor,ChName_ps{iTb}{it});
+        [scantype,ch_num,fov_alongTrack,fov_crossTrack,max_scan_angle,scan_angles] = SensorInfo_read(sensor,ChName_all{iTb}{it});
         DA_scan_angle{it} = scan_angles(scan_position)';
         [DA_fov_crossTrack{it}, DA_fov_alongTrack{it}] = Get_pixel_resolution(scantype,ch_num,fov_alongTrack,fov_crossTrack,DA_lat{it},DA_lon{it},DA_zenith_angle{it},DA_sat_lat{it},DA_sat_lon{it},DA_sat_alt{it});
     

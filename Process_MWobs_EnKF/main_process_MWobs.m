@@ -42,24 +42,28 @@ for istorm = 1:length(control.storm_phase)
 	bestrack_str = Bestrack_read(istorm, control); % (cell)
 
     % --- Collect useful MW Obs files of all sensors among all platforms into a directory
-	[Tbfile_names,Swath_used,ChIdx_ps,ChName_ps,if_swath_good,DAtime_ps,loc_DAtime_ps,overpass,singlepass] = Collect_MW_useful(istorm, bestrack_str, control); % ps: per swath
+    disp('Collecting useful MW obs files for this study......');
+	[Tbfile_names,Swath_used,ChIdx_all,ChName_all,DAtime_all,loc_DAtime_all,overpass,singlepass] = Collect_MW_useful(istorm, bestrack_str, control); % ps: per swath
 
     % --- Loop through each useful Tb file via a symbolic link
 	Tb_dir = [control.obs_used_dir,control.storm_phase{istorm},'/*'];
 	Tb_files = strsplit(ls(Tb_dir));
     Tb_files = Tb_files(cellfun(@isempty, Tb_files) == 0); % Get rid of the annyoing empty cell
-	% --- Output file under two situations: overpass or single-pass
-    % The order of gathering useful Tb files is different from the order of listing gathered Tb files
-    % idx_collectedTb records the order of Tbs gathered from different sensors & platforms
-    % iTb indicates the order of gathered Tb files with ls command
+	
+    % --- Output file under two situations: overpass or single-pass
+    % The order of collecting useful Tb files is different from the order of listing collected Tb files
+    % idx_collectedTb records the order of Tbs collected from different sensors & platforms
+    % iTb indicates the order of collected Tb files with ls command in a directory
+
     % - Output single-pass
+    disp('Handling single-pass Tb files......');
     for is = 1:length(singlepass)
         for iTb = 1:length(Tb_files)
            Tb_file = Tb_files{iTb};
             [filepath,filename,filext] = fileparts(Tb_file);            
             if contains(filename,singlepass(is))
                 idx_collectedTb = find([filename,filext] == Tbfile_names)
-                Singlepass_write(idx_collectedTb,istorm,Swath_used,ChIdx_ps,ChName_ps,if_swath_good,DAtime_ps,loc_DAtime_ps,Tb_file,control);
+                Singlepass_write(idx_collectedTb,istorm,Swath_used,ChIdx_all,ChName_all,DAtime_all,loc_DAtime_all,Tb_file,control);
             else
                 continue;
             end
@@ -68,6 +72,7 @@ for istorm = 1:length(control.storm_phase)
     end
 
 	% - Output overpass
+    disp('Handling over-pass Tb files......');
 	for io = 1:length(overpass)
 		file_overpass = []; % (strings)
 		order_overpass = [];
@@ -94,13 +99,13 @@ for istorm = 1:length(control.storm_phase)
         % if 89GHz on AMSR2 exist, it will be only used if there is no 183 GHz
         % Below algorithm assumes that if a Tb file of AMSR2 is collected, 18.7GHzV-Pol & 89GHzV-PolA-Scan & 89GHzV-PolB-Scan all exist.
         if sum("AMSR2" == sensor_overpass) == 0 % No AMSR2 Tb
-            Overpass_write(idx_usedTb,istorm,Swath_used,ChIdx_ps,ChName_ps,if_swath_good,DAtime_ps,loc_DAtime_ps,file_overpass,control); 
+            Overpass_write(idx_usedTb,istorm,Swath_used,ChIdx_all,ChName_all,DAtime_all,loc_DAtime_all,file_overpass,control); 
         else % AMSR2 is one of overpasses
             idx_order_AMSR2 = find("AMSR2" == sensor_overpass);
             idx_order_other = order_overpass(order_overpass ~= idx_order_AMSR2);
         
             num_183GHz = 0;    
-            ChName_other = ChName_ps{idx_usedTb(idx_order_other)}    
+            ChName_other = ChName_all{idx_usedTb(idx_order_other)}    
             for it =1:length(ChName_other)
                 if contains(ChName_other{it},'183') | contains(ChName_other{it},'190')  
                     num_183GHz = num_183GHz + 1;
@@ -108,14 +113,14 @@ for istorm = 1:length(control.storm_phase)
             end
         
             if num_183GHz == 0 % AMSR2 exist and only low frequency of other files are used
-                Overpass_write(idx_usedTb,istorm,Swath_used,ChIdx_ps,ChName_ps,if_swath_good,DAtime_ps,loc_DAtime_ps,file_overpass,control);
+                Overpass_write(idx_usedTb,istorm,Swath_used,ChIdx_all,ChName_all,DAtime_all,loc_DAtime_all,file_overpass,control);
             else % AMSR2 exist and ~ 183 GHz of other files exist. AMSR2 is not used in this case.
                 idx_usedTb = idx_usedTb(idx_usedTb ~= idx_usedTb(idx_order_AMSR2)); % Get rid of index corresponds to the AMSR2 file
                 file_overpass = file_overpass(file_overpass ~= file_overpass(idx_order_AMSR2)); % Get rid of file name corresponds to the AMSR2 file
                 if length(idx_usedTb) == 1
-                    Singlepass_write(idx_usedTb,istorm,Swath_used,ChIdx_ps,ChName_ps,if_swath_good,DAtime_ps,loc_DAtime_ps,file_overpass,control);
+                    Singlepass_write(idx_usedTb,istorm,Swath_used,ChIdx_all,ChName_all,DAtime_all,loc_DAtime_all,file_overpass,control);
                 else
-                    Overpass_write(idx_usedTb,istorm,Swath_used,ChIdx_ps,ChName_ps,if_swath_good,DAtime_ps,loc_DAtime_ps,file_overpass,control);
+                    Overpass_write(idx_usedTb,istorm,Swath_used,ChIdx_all,ChName_all,DAtime_all,loc_DAtime_all,file_overpass,control);
                 end
             end
         end

@@ -1,14 +1,14 @@
-function [] = Singlepass_write(idx_usedTb,istorm,Swath_used,ChIdx_ps,ChName_ps,if_swath_good,DAtime_ps,loc_DAtime_ps,Tb_file,control)
+function [] = Singlepass_write(idx_usedTb,istorm,Swath_used,ChIdx_all,ChName_all,DAtime_all,loc_DAtime_all,Tb_file,control)
    
     disp(['Single pass: ',Tb_file]);    
  
 	[filepath,filename,filext] = fileparts(Tb_file);
     sensor_info = split(filename,'.'); platform = sensor_info(2);
    
-	[sat_name,myLat,myLon,myTb,mySat_lat,mySat_lon,mySat_alt,mySat_azimuth,myScan_angle,myZenith_angle,myFov_crossTrack,myFov_alongTrack,myTimes,myChNum,myRoi_hydro,myRoi_otherVars,myObsErr] = ProduceforEnKF(idx_usedTb,Swath_used,ChIdx_ps,ChName_ps,if_swath_good,DAtime_ps,loc_DAtime_ps,Tb_file,control); 
+	[sat_name,myLat,myLon,myTb,mySat_lat,mySat_lon,mySat_alt,mySat_azimuth,myScan_angle,myZenith_angle,myFov_crossTrack,myFov_alongTrack,myTimes,myChNum,myRoi_hydro,myRoi_otherVars,myObsErr] = ProduceforEnKF(idx_usedTb,Swath_used,ChIdx_all,ChName_all,DAtime_all,loc_DAtime_all,Tb_file,control); 
 
     % create text file name
-    filename = strcat(control.output_dir,control.storm_phase(istorm),'/microwave_d03_',DAtime_ps{idx_usedTb}(1),'_so');
+    filename = strcat(control.output_dir,control.storm_phase(istorm),'/microwave_d03_',DAtime_all{idx_usedTb}(1),'_so');
     formatSpec = '%12s%16s%12i%12.3f%12.3f%12.3f%12i%12i%12.3f%12.3f%12.3f%12.3f%12.3f%12.3f%12.3f%12.3f%12.3f\n';
     fileID = fopen(filename,'w');
     % reshape values into columns
