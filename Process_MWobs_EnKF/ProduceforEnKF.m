@@ -47,10 +47,6 @@ function [sat_name,myLat,myLon,myTb,mySat_lat,mySat_lon,mySat_alt,mySat_azimuth,
 
     % read data from L1C file
     for it = 1:length(Swath_used{iTb}) % it: item
-        % quality control
-        if if_swath_good{iTb}(it) == 0
-           continue;
-        end
         
         % **latitude**
         lat{it} = h5read(Tb_file,Swath_used{iTb}(it) + '/Latitude'); % npixel, nscan
