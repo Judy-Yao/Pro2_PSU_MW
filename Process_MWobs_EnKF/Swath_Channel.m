@@ -4,6 +4,8 @@
 % returns the location of the frequency(ies) of interest (which swath and which index under that swath)
 % Note: in the current study, we are only interested in a low frequency around 18 GHz and a high frequency 183 GHz (if 183 GHz doesn' t exist, we will use 89 GHz instead)
 
+% This algorithm only works if every frequency name is unique. 
+
 function [Swath_used, ChIdx_perSwath, ChName_perSwath] = Swath_Channel(Tb_file, control)
     
     file_info = h5info(Tb_file);
