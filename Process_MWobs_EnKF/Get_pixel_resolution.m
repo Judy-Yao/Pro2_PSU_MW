@@ -20,3 +20,5 @@ elseif (strcmp(scantype,'Cross-track'))
     crossTrack_gifov_notProj = 2.*slant_distance.*tand(crossTrack_degrees / 2);
     crossTrack = crossTrack_gifov_notProj .* sind(90 + crossTrack_degrees/2) ./ sind(90 - (zenith + crossTrack_degrees/2));
 end
+
+% [xEast,yNorth,zUp] = geodetic2enu(lat,lon,h,lat0,lon0,h0,spheroid) transforms the geodetic coordinates specified by lat, lon, and h to the local east-north-up (ENU) Cartesian coordinates specified by xEast, yNorth, and zDown. Specify the origin of the local ENU system with the geodetic coordinates lat0, lon0, and h0. 

@@ -51,7 +51,13 @@ for istorm = 1:length(control.storm_phase)
     Tb_files = Tb_files(cellfun(@isempty, Tb_files) == 0); % Get rid of the annyoing empty cell
 	
     % --- Output file under two situations: overpass or single-pass
-
+    % Make a subdirectory for a storm object under /toEnKFobs/    
+    [~, msg, ~] = mkdir(control.output_dir,control.storm_phase{istorm});
+    if isempty(msg)
+        disp(['Successfully created a subdirectory in ',control.output_dir,' for ',control.storm_phase{istorm}]);
+    else
+        error('Error: ',msg);
+    end
     % - Output single-pass
     disp('Handling single-pass Tb files......');
     for is = 1:length(singlepass)

@@ -3,7 +3,7 @@
 % for each frequency of interest, separates the mesh into different parts &
 % for each grid point of a part, selects a L1C MW obs and return its characteristics such as Tb value, location, angles, scan time...   
 
-function [sat_name,myLat,myLon,myTb,mySat_lat,mySat_lon,mySat_alt,mySat_azimuth,myScan_angle,myZenith_angle,myFov_crossTrack,myFov_alongTrack,myTimes,myChNum,myRoi_hydro,myRoi_otherVars,myObsErr] = ProduceforEnKF(iTb,Swath_used,ChIdx_all,ChName_all,DAtime_all,loc_DAtime_all,Tb_file,control) 
+function [sat_name,myLat,myLon,myTb,mySat_lat,mySat_lon,mySat_alt,myAzimuth,myScan_angle,myZenith,myFov_crossTrack,myFov_alongTrack,myTimes,myChNum,myRoi_hydro,myRoi_otherVars,myObsErr] = ProduceforEnKF(iTb,Swath_used,ChIdx_all,ChName_all,DAtime_all,loc_DAtime_all,Tb_file,control) 
     % ---------------------------------------------------------------------
     % ---- For each L1C MW observation file
     % ---- Loop through each channel/frequency of interest AND
@@ -14,11 +14,11 @@ function [sat_name,myLat,myLon,myTb,mySat_lat,mySat_lon,mySat_alt,mySat_azimuth,
     lat = cell(size(Swath_used{iTb}));
     lon = cell(size(Swath_used{iTb}));
     Tb = cell(size(Swath_used{iTb}));
-    zenith_angle = cell(size(Swath_used{iTb}));
+    zenith = cell(size(Swath_used{iTb}));
     sat_lat = cell(size(Swath_used{iTb}));
     sat_lon = cell(size(Swath_used{iTb}));
     sat_alt = cell(size(Swath_used{iTb}));
-    sat_azimuth = cell(size(Swath_used{iTb}));
+    azimuth = cell(size(Swath_used{iTb}));
     outime = cell(size(Swath_used{iTb}));
 
     % Get platform and sensor names from the Tb file name 
@@ -81,7 +81,7 @@ function [sat_name,myLat,myLon,myTb,mySat_lat,mySat_lon,mySat_alt,mySat_azimuth,
         incidenceAngles = h5read(Tb_file,Swath_used{iTb}(it) + '/incidenceAngle'); % nChUIA1, npixel, nscan
         iAIndices = h5read(Tb_file,Swath_used{iTb}(it) + '/incidenceAngleIndex'); % nchannel, nscan
         if size(incidenceAngles,1) == 1
-            zenith_angle{it}(:,:) = squeeze(incidenceAngles(1,:,:));
+            zenith{it}(:,:) = squeeze(incidenceAngles(1,:,:));
         else
             num_Ch_perSW = size(iAIndices,1);
             num_unique_perCh = zeros(1,num_Ch_perSW); % size(iAIndices,1): number of channels under this swath
@@ -90,7 +90,7 @@ function [sat_name,myLat,myLon,myTb,mySat_lat,mySat_lon,mySat_alt,mySat_azimuth,
             end
             if sum(num_unique_perCh) == num_Ch_perSW
                 iAIndices = iAIndices(:,1); % For a channel, all scans are references to the same set of zenith angles
-                zenith_angle{it}(:,:) = squeeze(incidenceAngles(iAIndices(ChIdx_all{iTb}(it)),:,:)); % npixel, nscan
+                zenith{it}(:,:) = squeeze(incidenceAngles(iAIndices(ChIdx_all{iTb}(it)),:,:)); % npixel, nscan
             else
                 disp("Error: current algorithm does not work!! Please modify it.");
             end
@@ -116,9 +116,9 @@ function [sat_name,myLat,myLon,myTb,mySat_lat,mySat_lon,mySat_alt,mySat_azimuth,
         %                      |/
         % West ---------- Satellite ------------- East
         length_perscan{it} = size(Tb{it},1); % number of pixels per scan
-        sat_azimuth{it} = geodetic2aer(lat{it},                                       lon{it},                                       0, ...
+        azimuth{it} = geodetic2aer(lat{it},                                       lon{it},                                       0, ...
                                              repmat(sat_lat{it}',[length_perscan{it} 1]), repmat(sat_lon{it}',[length_perscan{it} 1]), repmat(sat_alt{it}'*1000,[length_perscan{it} 1]), ...
-                                             referenceEllipsoid('WGS 84'));
+                                             referenceEllipsoid('WGS 84')); % npixel, nscan
 
         % ** (Scan) Time** 
         year   = double(h5read(Tb_file, Swath_used{iTb}(it) + '/ScanTime/Year')); % nscan
@@ -142,7 +142,7 @@ function [sat_name,myLat,myLon,myTb,mySat_lat,mySat_lon,mySat_alt,mySat_azimuth,
 
     % Special treatment to AMSR2 89GHz
     if (sensor == "AMSR2") & control.comnine_AMSR89GHz
-        [Swath_used,ChIdx_all,ChName_all,lat,lon,Tb,zenith_angle,sat_lat,sat_lon,sat_alt,sat_azimuth,outime] = Combine_AMSR2(iTb,Swath_used,ChIdx_all,ChName_all,DAtime_all,lat,lon,Tb,zenith_angle,sat_lat,sat_lon,sat_alt,sat_azimuth,outime);
+        [Swath_used,ChIdx_all,ChName_all,lat,lon,Tb,zenith,sat_lat,sat_lon,sat_alt,azimuth,outime] = Combine_AMSR2(iTb,Swath_used,ChIdx_all,ChName_all,DAtime_all,lat,lon,Tb,zenith,sat_lat,sat_lon,sat_alt,azimuth,outime);
     elseif (sensor == "AMSR2") & (~control.comnine_AMSR89GHz)
         disp(['Two 89 GHz scans on AMSR2 are not combined!']);
     end
@@ -192,7 +192,9 @@ function [sat_name,myLat,myLon,myTb,mySat_lat,mySat_lon,mySat_alt,mySat_azimuth,
             obs_index{it} = PickRawforCRTM(lat{it},lon{it},Tb{it},min_XLONG,max_XLONG,min_XLAT,max_XLAT,latitudes,longitudes,slots_x{it},slots_y{it},control);
         end
     end
-    
+    % Note: Each value in the obs_index points at a location in the vectorized array Tb_col [Tb_col = reshape(Tb_raw,[],1)]
+
+ 
     % ---------------------------------------------------------------------
     % ---- Select MW records for EnKF assimilation
     % ---------------------------------------------------------------------
@@ -205,9 +207,9 @@ function [sat_name,myLat,myLon,myTb,mySat_lat,mySat_lon,mySat_alt,mySat_azimuth,
     DA_sat_lat = cell(size(Swath_used{iTb}));
     DA_sat_lon = cell(size(Swath_used{iTb}));
     DA_sat_alt = cell(size(Swath_used{iTb}));
-    DA_sat_azimuth = cell(size(Swath_used{iTb})); 
+    DA_azimuth = cell(size(Swath_used{iTb})); 
     DA_scan_angle = cell(size(Swath_used{iTb}));
-    DA_zenith_angle = cell(size(Swath_used{iTb}));
+    DA_zenith = cell(size(Swath_used{iTb}));
     DA_fov_crossTrack = cell(size(Swath_used{iTb}));
     DA_fov_alongTrack = cell(size(Swath_used{iTb}));
 
@@ -216,42 +218,44 @@ function [sat_name,myLat,myLon,myTb,mySat_lat,mySat_lon,mySat_alt,mySat_azimuth,
     DA_obsError = cell(size(Swath_used{iTb}));
 
     % Assign values
-    for it = 1:length(Swath_used{iTb}) % it: item
+    for it = 1:length(Swath_used{iTb}) 
         obs_index_array = obs_index{it};
         obs_index_1d = obs_index_array(obs_index_array(:) == obs_index_array(:)); % get rid of obs_index with value NaN
-
+        % **Tb,lat,lon**
         allTb = reshape(Tb{it},[],1);
         all_lat = reshape(lat{it},[],1);
         all_lon = reshape(lon{it},[],1);
         DA_Tb{it}          = allTb(obs_index_1d);
         DA_lat{it}         = all_lat(obs_index_1d);
         DA_lon{it}         = all_lon(obs_index_1d);
-
-        [scan_position, scan_num] = ind2sub(size(Tb{it}),obs_index_1d); % size(Tb{it}): npixel, nscan; output from ind2sub: row, column ??
-
+        % **sat_lat,sat_lon,sat_alt,zenith angle**
+        [scan_position, scan_num] = ind2sub(size(Tb{it}),obs_index_1d); % size(Tb{it}): npixel, nscan; output from ind2sub: row, column
         DA_sat_lat{it} = sat_lat{it}(scan_num);
         DA_sat_lon{it} = sat_lon{it}(scan_num);
         DA_sat_alt{it} = sat_alt{it}(scan_num);
-        all_sat_azimuth = reshape(sat_azimuth{it},[],1);
-        DA_sat_azimuth{it} = all_sat_azimuth(obs_index_1d);
-        all_zenith_angles = reshape(zenith_angle{it},[],1);
-        DA_zenith_angle{it} = all_zenith_angles(obs_index_1d);
-
+        all_azimuth = reshape(azimuth{it},[],1);
+        DA_azimuth{it} = all_azimuth(obs_index_1d);
+        all_zenith = reshape(zenith{it},[],1);
+        DA_zenith{it} = all_zenith(obs_index_1d);
+        % **scan angle** 
         [scantype,ch_num,fov_alongTrack,fov_crossTrack,max_scan_angle,scan_angles] = SensorInfo_read(sensor,ChName_all{iTb}{it});
         DA_scan_angle{it} = scan_angles(scan_position)';
-        [DA_fov_crossTrack{it}, DA_fov_alongTrack{it}] = Get_pixel_resolution(scantype,ch_num,fov_alongTrack,fov_crossTrack,DA_lat{it},DA_lon{it},DA_zenith_angle{it},DA_sat_lat{it},DA_sat_lon{it},DA_sat_alt{it});
-    
-         for my_scan_num_idx = 1:length(scan_num)
-             DA_times{it}(my_scan_num_idx,1) = outime{it}(scan_num(my_scan_num_idx));
-         end
+        % **cross-track and along-track FOV**
+        [DA_fov_crossTrack{it}, DA_fov_alongTrack{it}] = Get_pixel_resolution(scantype,ch_num,fov_alongTrack,fov_crossTrack,DA_lat{it},DA_lon{it},DA_zenith{it},DA_sat_lat{it},DA_sat_lon{it},DA_sat_alt{it});
+        % **scan time**
+        DA_times{it}(scan_num,1) = outime{it}(scan_num);
+        %for my_scan_num_idx = 1:length(scan_num)
+        %    DA_times{it}(my_scan_num_idx,1) = outime{it}(scan_num(my_scan_num_idx));
+        %end
+        % **Channel number, obs error**
         DA_chNum{it} = ones(numel(obs_index_1d),1,'int64')*ch_num;
         DA_obsError{it} = ones(numel(obs_index_1d),1)*control.obsError(it);
     end
-    clear Tb lat lon sat_lat sat_lon sat_alt sat_azimuth zenith_angle scan_angles outime 
-    clear allTb all_lat all_lon all_sat_azimuth all_zenith_angles 
+    clear Tb lat lon sat_lat sat_lon sat_alt azimuth zenith scan_angles outime 
+    clear allTb all_lat all_lon all_azimuth all_zenith 
 
     % ---------------------------------------------------------------------
-    % ---- Produce MW records for EnKF assimilation
+    % ---- Produce MW records for EnKF assimilation with roi
     % ---------------------------------------------------------------------
 
     myLat = cell(size(control.roi_oh));
@@ -261,9 +265,9 @@ function [sat_name,myLat,myLon,myTb,mySat_lat,mySat_lon,mySat_alt,mySat_azimuth,
     mySat_lat = cell(size(control.roi_oh));
     mySat_lon = cell(size(control.roi_oh));
     mySat_alt = cell(size(control.roi_oh));
-    mySat_azimuth = cell(size(control.roi_oh)); 
+    myAzimuth = cell(size(control.roi_oh)); 
     myScan_angle = cell(size(control.roi_oh));
-    myZenith_angle = cell(size(control.roi_oh));
+    myZenith = cell(size(control.roi_oh));
     myFov_crossTrack = cell(size(control.roi_oh));
     myFov_alongTrack = cell(size(control.roi_oh));
 
@@ -273,7 +277,7 @@ function [sat_name,myLat,myLon,myTb,mySat_lat,mySat_lon,mySat_alt,mySat_azimuth,
     myRoi_otherVars = cell(size(control.roi_oh));
     myObsErr = cell(size(control.roi_oh));
 
-    for ir = 1:length(control.roi_oh)
+    for ir = 1:length(control.roi_oh) % ROI first references [200,0] second [60,60]
         % randomize MW records for this ROI 
         randOrder = randperm(length(cat(1,DA_Tb{:}))); % DA_Tb may contain 1 channel (low or high) or contain both low and high channels
 
@@ -284,9 +288,9 @@ function [sat_name,myLat,myLon,myTb,mySat_lat,mySat_lon,mySat_alt,mySat_azimuth,
         tem_sat_lat = cat(1,DA_sat_lat{:}); mySat_lat{ir} = tem_sat_lat(randOrder); %clear tem_sat_lat
         tem_sat_lon = cat(1,DA_sat_lon{:}); mySat_lon{ir} = tem_sat_lon(randOrder); %clear tem_sat_lon
         tem_sat_alt = cat(1,DA_sat_alt{:}); mySat_alt{ir} = tem_sat_alt(randOrder); %clear tem_sat_alt
-        tem_sat_azimuth = cat(1,DA_sat_azimuth{:}); mySat_azimuth{ir} = tem_sat_azimuth(randOrder); %clear tem_sat_azimuth
+        tem_azimuth = cat(1,DA_azimuth{:}); myAzimuth{ir} = tem_azimuth(randOrder); %clear tem_azimuth
         tem_scan_angle = cat(2,DA_scan_angle{:}); myScan_angle{ir} = tem_scan_angle(randOrder)'; %clear tem_scan_angle
-        tem_zenith_angle = cat(1,DA_zenith_angle{:}); myZenith_angle{ir} = tem_zenith_angle(randOrder); %clear  tem_zenith_angle
+        tem_zenith = cat(1,DA_zenith{:}); myZenith{ir} = tem_zenith(randOrder); %clear  tem_zenith
         tem_fov_crossTrack = cat(1,DA_fov_crossTrack{:}); myFov_crossTrack{ir} = tem_fov_crossTrack(randOrder); %clear  tem_fov_crossTrack
         tem_fov_alongTrack = cat(1,DA_fov_alongTrack{:}); myFov_alongTrack{ir} = tem_fov_alongTrack(randOrder); %clear tem_fov_alongTrack
 
@@ -307,7 +311,7 @@ function [sat_name,myLat,myLon,myTb,mySat_lat,mySat_lon,mySat_alt,mySat_azimuth,
         tem_ROI_other = cat(1,DA_ROI_other{:}); myRoi_otherVars{ir} = tem_ROI_other(randOrder); %clear tem_ROI_other
         tem_ROI_hydro = cat(1,DA_ROI_hydro{:}); myRoi_hydro{ir} = tem_ROI_hydro(randOrder); %clear tem_ROI_hydro
     end
-    clear DA_lat DA_lon DA_sat_lat DA_sat_lon DA_sat_alt DA_sat_azimuth DA_scan_angle DA_zenith_angle DA_fov_crossTrack DA_fov_alongTrack DA_times DA_chNum DA_obsError DA_ROI_other DA_ROI_hydro
+    clear DA_lat DA_lon DA_sat_lat DA_sat_lon DA_sat_alt DA_azimuth DA_scan_angle DA_zenith DA_fov_crossTrack DA_fov_alongTrack DA_times DA_chNum DA_obsError DA_ROI_other DA_ROI_hydro
 	
 
 end
