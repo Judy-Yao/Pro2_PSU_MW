@@ -49,7 +49,7 @@ function [all_Tbfile_name,all_Swath_used,all_ChIdx_perCh,all_ChName_perCh,all_if
                     continue;
                 else
                     % obtain swaths, channel/frequency index under each swath, and frequency(ies) name(s) of interest
-                    [Swath_used, ChIdx_perCh, ChName_perCh] = Swath_Channel(Tb_file, control); % (strings) (double) (strings)
+                    [Swath_used, ChIdx_perCh, ChName_perCh] = Match_Freq(Tb_file, control); % (strings) (double) (strings)
                     % subroutine to identify the best DA time for each item
                     [if_swath_good, DAtime_perCh, loc_storm_DAtime] = Find_DAtime_loc(bestrack_str,Swath_used,Tb_file, control); % (logical) (strings) (cell{double})
                     if sum(if_swath_good) == 0

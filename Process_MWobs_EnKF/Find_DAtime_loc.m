@@ -126,7 +126,7 @@ function [if_swath_good,DAtime_perCh,loc_storm_DAtime] = Find_DAtime_loc(bestrac
 
 % ------------------- Step 2 ----------------------------
 % Center locations in the best-track file are only available at 00 UTC, 06 UTC, 12 UTC and 18
-% UTC, therefore we need to linearly interpolate the available locations to the DA_time candidates.
+% UTC, therefore we need to linearly interpolate the available locations to ones at DA_time candidates.
 % For each DA_time candidate, we calculate how many observations lie within the sqaure area that is 
 % centered at the center location of a DA_time candidate.
 % Determine the best DA_time as the DA_time candidate with most observations in that square area.

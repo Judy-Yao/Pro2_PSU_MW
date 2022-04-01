@@ -1,6 +1,11 @@
+% This function reads values of L1C MW obs files into the memory &
+% generates a grid mesh centered at the location of the storm at the DA_time using the same setup used for WRF simulation (nx,ny,dx,dy) &
+% for each frequency of interest, separates the mesh into different parts &
+% for each grid point of a part, selects a L1C MW obs and return its characteristics such as Tb value, location, angles, scan time...   
+
 function [sat_name,myLat,myLon,myTb,mySat_lat,mySat_lon,mySat_alt,mySat_azimuth,myScan_angle,myZenith_angle,myFov_crossTrack,myFov_alongTrack,myTimes,myChNum,myRoi_hydro,myRoi_otherVars,myObsErr] = ProduceforEnKF(iTb,Swath_used,ChIdx_all,ChName_all,DAtime_all,loc_DAtime_all,Tb_file,control) 
     % ---------------------------------------------------------------------
-    % ---- For each raw observation file
+    % ---- For each L1C MW observation file
     % ---- Loop through each channel/frequency of interest AND
     % ---- Read characteristics of sensor into memory
     % ---------------------------------------------------------------------
@@ -16,11 +21,11 @@ function [sat_name,myLat,myLon,myTb,mySat_lat,mySat_lon,mySat_alt,mySat_azimuth,
     sat_azimuth = cell(size(Swath_used{iTb}));
     outime = cell(size(Swath_used{iTb}));
 
-    % Get platform and sensor information from the new name 
+    % Get platform and sensor names from the Tb file name 
     [filepath,filename,filext] = fileparts(Tb_file);
     ss_info = split(filename,'.'); platform = ss_info(2); sensor = ss_info(3);
 
-    % modify satellite-and-sensor name so that it is consistent with what is used in the CRTM package 
+    % Modify satellite-and-sensor name so that it is consistent with what is used in the CRTM package 
     if (contains(platform,'GCOMW1'))
         sat_name = "amsr2_gcom-w1";
     elseif (contains(platform,'NPP'))
@@ -45,7 +50,7 @@ function [sat_name,myLat,myLon,myTb,mySat_lat,mySat_lon,mySat_alt,mySat_azimuth,
         sat_name = "ssmis_f18";
     end
 
-    % read data from L1C file
+    % Read values from L1C file
     for it = 1:length(Swath_used{iTb}) % it: item
         
         % **latitude**
@@ -58,13 +63,20 @@ function [sat_name,myLat,myLon,myTb,mySat_lat,mySat_lon,mySat_alt,mySat_azimuth,
         Tb_allCh = h5read(Tb_file,Swath_used{iTb}(it) + '/Tc');
         Tb{it} = squeeze(Tb_allCh(ChIdx_all{iTb}(it),:,:)); % npixel, nscan
 
-        % **zenith angle**: the angle of the satellite from the local zenith as seen at the pixel locatio on the earth
-        % Interpretation on nChUIA
-        % For example, GMI sensor has two swaths. Channel 1-9 are under
-        % swath 1 and channel 10-14 are under swath 2, which respectively
-        % corresponds to nChUIA1 and nChUIA2. If nChUIA1 = 1, at a specific (a pixel on a scan)
-        % location, only one value of incidence angle exist for all 9 channels; 
-        % If nChUIA1 = n (n >= 2), at a specific location, each channel
+        % **zenith angle**: the angle of the satellite from the local zenith as seen at the pixel location on the earth
+        %     satellite   local zenith
+        %         \       /
+        %          \zenith
+        %           \~ /
+        %            \/
+        %            FOV
+        % ----------------------- earth surface
+        % Note: Interpretation on nChUIA
+        % For example, GMI sensor has two swaths. Channel 1-9 are under &
+        % swath 1 and channel 10-14 are under swath 2, which respectively &
+        % corresponds to nChUIA1 and nChUIA2. If nChUIA1 = 1, at a specific (a fov on a scan) &
+        % location, only one value of incidence angle exists for all 9 channels; &
+        % If nChUIA1 = n (n >= 2), at a specific location, each channel &
         % could in theory reference n values.
         incidenceAngles = h5read(Tb_file,Swath_used{iTb}(it) + '/incidenceAngle'); % nChUIA1, npixel, nscan
         iAIndices = h5read(Tb_file,Swath_used{iTb}(it) + '/incidenceAngleIndex'); % nchannel, nscan
@@ -103,12 +115,12 @@ function [sat_name,myLat,myLon,myTb,mySat_lat,mySat_lon,mySat_alt,mySat_azimuth,
         %                      | /
         %                      |/
         % West ---------- Satellite ------------- East
-        perscan_length{it} = size(Tb{it},1); % number of pixels per scan
+        length_perscan{it} = size(Tb{it},1); % number of pixels per scan
         sat_azimuth{it} = geodetic2aer(lat{it},                                       lon{it},                                       0, ...
-                                             repmat(sat_lat{it}',[perscan_length{it} 1]), repmat(sat_lon{it}',[perscan_length{it} 1]), repmat(sat_alt{it}'*1000,[perscan_length{it} 1]), ...
+                                             repmat(sat_lat{it}',[length_perscan{it} 1]), repmat(sat_lon{it}',[length_perscan{it} 1]), repmat(sat_alt{it}'*1000,[length_perscan{it} 1]), ...
                                              referenceEllipsoid('WGS 84'));
 
-        % **Time** 
+        % ** (Scan) Time** 
         year   = double(h5read(Tb_file, Swath_used{iTb}(it) + '/ScanTime/Year')); % nscan
         month  = double(h5read(Tb_file, Swath_used{iTb}(it) + '/ScanTime/Month')); % nscan
         day    = double(h5read(Tb_file, Swath_used{iTb}(it) + '/ScanTime/DayOfMonth')); % nscan
@@ -135,8 +147,6 @@ function [sat_name,myLat,myLon,myTb,mySat_lat,mySat_lon,mySat_alt,mySat_azimuth,
         disp(['Two 89 GHz scans on AMSR2 are not combined!']);
     end
 
-
-    % Time cost to get obs_index for one Channel: 200 ~ 300 seconds 
     % ---------------------------------------------------------------------
     % ---- Define area of interest for simulation AND
     % ---- Select the raw obs for every grid point for EnKF assimilation
@@ -144,6 +154,7 @@ function [sat_name,myLat,myLon,myTb,mySat_lat,mySat_lon,mySat_alt,mySat_azimuth,
     % Prepare area: best-track location followed
     nx = control.nx*control.domain_buffer; % zoom out
     ny = control.ny*control.domain_buffer; % zoom out
+    % below algorithm works if only for all frequencies of interest, the DA_time are the same
     min_XLAT = loc_DAtime_all{iTb}{1}(1) - (ny/2*control.dx)/(cos(loc_DAtime_all{iTb}{1}(1)*(pi/180))*111);
     max_XLAT = loc_DAtime_all{iTb}{1}(1) + (ny/2*control.dx)/(cos(loc_DAtime_all{iTb}{1}(1)*(pi/180))*111);
     min_XLONG = loc_DAtime_all{iTb}{1}(2) - (nx/2*control.dx)/111;
@@ -154,7 +165,7 @@ function [sat_name,myLat,myLon,myTb,mySat_lat,mySat_lon,mySat_alt,mySat_azimuth,
     longitudes = linspace(min_XLONG,max_XLONG,nx);
     [XLAT, XLONG] = meshgrid(latitudes,longitudes);
     
-    % Separate gird points of low frequency from of high frequency
+    % Separate gird points for low frequency from for high frequency
     % Original grid points:         Filtered grid points:
     %       * * * * *                *   *   * 
     %       * * * * *                          
@@ -169,6 +180,7 @@ function [sat_name,myLat,myLon,myTb,mySat_lat,mySat_lon,mySat_alt,mySat_azimuth,
     grid_start_hf =  floor(filter_ratio_grid(2) / 2); % high frequency
     grid_start_lf = grid_start_hf + .5*(2*filter_ratio_grid(2) - filter_ratio_grid(1)); % low frequency
 
+    % loop through each frequency of interest
     for it = 1:length(Swath_used{iTb})
         if (contains(ChName_all{iTb}(it), "18.7GHzV-Pol")) || (contains(ChName_all{iTb}(it), "19.35GHzV-Pol"))
             slots_x{it} = grid_start_lf:filter_ratio_grid(1):nx;

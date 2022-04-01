@@ -19,8 +19,8 @@ control.sensor = {'AMSR2','ATMS','GMI','MHS','SAPHIR','SSMIS'};
 %control.platform = {{'GCOMW1'},};
 control.platform = {{'GCOMW1'}, {'NPP'}, {'GPM'}, {'METOPA','METOPB','NOAA18','NOAA19'}, {'MT1'}, {'F16','F17','F18'}};
 
-control.favCh = {'18.7GHzV-Pol','183.31+/-7GHzV-Pol','183.31+-7GHzH-Pol'}; % favorite frequencies
-control.favCh_sup = {'19.35GHzV-Pol','89GHzV-PolA-Scan','89GHzV-PolB-Scan','183.31+/-6.6GHzH-Pol','183.31+/-6.8GHz','190.31GHzV-Pol'};
+control.favFreq = {'18.7GHzV-Pol','19.35GHzV-Pol','89GHzV-PolA-Scan','89GHzV-PolB-Scan','183.31+/-6.6GHzH-Pol','183.31+/-6.8GHz','183.31+/-7GHzV-Pol','183.31+-7GHzH-Pol','190.31GHzV-Pol'}; % favorite frequencies
+%control.favCh_sup = {'19.35GHzV-Pol','89GHzV-PolA-Scan','89GHzV-PolB-Scan','183.31+/-6.6GHzH-Pol','183.31+/-6.8GHz','190.31GHzV-Pol'};
 % --- If combine 89GHzV-PolA-Scan and 89GHzV-PolB-Scan on AMSR2
 control.comnine_AMSR89GHz = true;
 % --- WRF setup
@@ -30,8 +30,8 @@ control.dx = 3; % WRF resolution: 3 km
 % --- Other
 control.domain_buffer = 1.5; % scaling factor
 control.search_buffer = 0.2; % degrees: lat/lon
-%control.filter_ratio = [36,24]; % speed the test
-control.filter_ratio = [6,6];
+control.filter_ratio = [36,24]; % speed the test
+%control.filter_ratio = [6,6];
 control.roi_oh = {[200,0], [60,60]}; % roi [other variables, hydrometeors]
 control.obsError = [3 3];
 
@@ -51,9 +51,6 @@ for istorm = 1:length(control.storm_phase)
     Tb_files = Tb_files(cellfun(@isempty, Tb_files) == 0); % Get rid of the annyoing empty cell
 	
     % --- Output file under two situations: overpass or single-pass
-    % The order of collecting useful Tb files is different from the order of listing collected Tb files
-    % idx_collectedTb records the order of Tbs collected from different sensors & platforms
-    % iTb indicates the order of collected Tb files with ls command in a directory
 
     % - Output single-pass
     disp('Handling single-pass Tb files......');
@@ -70,6 +67,9 @@ for istorm = 1:length(control.storm_phase)
         end
 
     end
+    % Note: The order of collecting Tb files is different from the order of listing collected Tb files &
+    % idx_collectedTb records the order of Tbs collected from different sensors & platforms in module Collect_MW_useful.m &
+    % iTb indicates the order of collected Tb files with ls command in a directory
 
 	% - Output overpass
     disp('Handling over-pass Tb files......');
