@@ -10,7 +10,7 @@
 function [Swath_used, ChIdx_perSwath, ChName_perSwath] = Match_Freq(Tb_file, control)
     
     file_info = h5info(Tb_file);
-    num_swath = length(file_info.Groups); % total number of swaths per L1C file
+    num_swath = length(file_info.Groups) % total number of swaths per L1C file
 
     Swath_used= []; % (strings) name(s) of swaths which include the frequency(ies) of interest
     ChName_perSwath = []; % (strings) name(s) of frequency(ies) of interest under the swath(s)
@@ -36,7 +36,7 @@ function [Swath_used, ChIdx_perSwath, ChName_perSwath] = Match_Freq(Tb_file, con
             end       
         end
     end
-
+	ChName_perSwath
 
     % Sanity Check
     if length(Swath_used) ~= length(ChName_perSwath) || length(Swath_used) ~= length(ChIdx_perSwath)

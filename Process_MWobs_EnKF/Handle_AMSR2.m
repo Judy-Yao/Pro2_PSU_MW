@@ -26,9 +26,9 @@ function [Swath_used,ChIdx_all,ChName_all,lat,lon,Tb,zenith,sat_lat,sat_lon,sat_
             sat_azimuth{idx_89GHz(ith)} = [];
             outime{idx_89GHz(ith)} = [];
             
-            Swath_used{idx_89GHz(ith)} = [];
-            ChIdx_all{idx_89GHz(ith)} = [];
-            ChName_all{idx_89GHz(ith)} = [];
+            Swath_used{iTb}(idx_89GHz(ith)) = [];
+            ChIdx_all{iTb}(idx_89GHz(ith)) = [];
+            ChName_all{iTb}(idx_89GHz(ith)) = [];
         end
         disp('89 GHz of AMSR2 are not in use!');
     elseif (~control.NOTuse_AMSR89GHz) & control.comnine_AMSR89GHz % 89-GHz data of AMSR2 is in use.

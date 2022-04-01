@@ -10,6 +10,7 @@ function [] = Singlepass_write(iTb,istorm,Swath_used,ChIdx_all,ChName_all,DAtime
     sensor_info = split(filename,'.'); platform = sensor_info(2);
    
 	[sat_name,myLat,myLon,myTb,mySat_lat,mySat_lon,mySat_alt,mySat_azimuth,myScan_angle,myZenith_angle,myFov_crossTrack,myFov_alongTrack,myTimes,myChNum,myRoi_hydro,myRoi_otherVars,myObsErr] = ProduceforEnKF(iTb,Swath_used,ChIdx_all,ChName_all,DAtime_all,loc_DAtime_all,Tb_file,control); 
+	DAtime_all
 	DAtime_all{iTb}(1)
     % create text file name
     filename = strcat(control.output_dir,control.storm_phase(istorm),'/microwave_d03_',DAtime_all{iTb}(1),'_so');

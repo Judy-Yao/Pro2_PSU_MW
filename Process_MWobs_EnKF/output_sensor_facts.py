@@ -83,7 +83,7 @@ atms = f.create_group("ATMS")
 atms.attrs['ScanType'] = 'Cross-track'
 atms.attrs['FovType'] = 'EFOV'
 
-atms_ch = atms.create_group("183.31+-7GHzH-Pol")
+atms_ch = atms.create_group("183.31+-7GHzQH-Pol")
 
 atms_ch_dset = atms_ch.create_dataset("Channel_num", data=18)
 
