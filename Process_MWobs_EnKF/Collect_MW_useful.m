@@ -4,19 +4,23 @@
 
 function [all_Tbfile_name,all_Swath_used,all_ChIdx_perCh,all_ChName_perCh,all_if_swath_good,all_DAtime_perCh,all_loc_storm_DAtime,overpass,singlepass] = Collect_MW_useful(istorm, bestrack_str, control)
 
-    % Make a subdirectory for a storm object under Collected_MW/
-    [~, msg, ~] = mkdir(control.obs_collect_dir,control.storm_phase{istorm});
-    if isempty(msg)
-       disp(['Successfully created a subdirectory in ',control.obs_collect_dir,' for ',control.storm_phase{istorm}]); 
-    else
-        error('Error: ',msg);
-    end 
-    % Clean existed symbolic files
-    destination = [control.obs_collect_dir,control.storm_phase{istorm},'/']; 
-    [status,~] = system(['rm ',destination,'*']); % Tricky part: it seems that it can't delete unsuccessful links!!
-    if status ~= 0
-        error('Error cleaning existed symbolic files!');
-    end
+    % Determine if a subdirectory for a storm object exists
+	if ~exist([control.obs_collect_dir,control.storm_phase{istorm}],'dir')
+	    [~, msg, ~] = mkdir(control.obs_collect_dir,control.storm_phase{istorm});% create a subdirectory for a storm object under Collected_MW/
+		if isempty(msg)
+			disp(['Successfully created a subdirectory in ',control.obs_collect_dir,' for ',control.storm_phase{istorm}]); 
+		else
+			error('Error: ',msg);
+		end
+		destination = [control.obs_collect_dir,control.storm_phase{istorm},'/'];
+	else
+		% Clean existed symbolic files
+		destination = [control.obs_collect_dir,control.storm_phase{istorm},'/'];
+		[status,~] = system(['rm ',destination,'*']); % Tricky part: it seems that it can't delete unsuccessful links!!
+		if status ~= 0
+			error('Error cleaning existed symbolic files!');
+		end
+	end 
 	% Define empty cells (final length of each cell is the number of useful Tbs)
 	all_Tbfile_name = []; % (strings)
 	all_Swath_used = {};
@@ -76,7 +80,7 @@ function [all_Tbfile_name,all_Swath_used,all_ChIdx_perCh,all_ChName_perCh,all_if
 						all_Swath_used{end+1} = Swath_used(if_swath_good); % (cell{strings})
 						all_ChIdx_perCh{end+1} = ChIdx_perCh(if_swath_good); % (cell{single})
 						all_ChName_perCh{end+1} = ChName_perCh(if_swath_good); % (cell{strings})
-						all_DAtime_perCh{end+1} = DAtime_perCh(if_swath_good); % (cell{strings})
+						all_DAtime_perCh{end+1} = DAtime_perCh(if_swath_good) % (cell{strings})
 						all_loc_storm_DAtime{end+1} = loc_storm_DAtime(if_swath_good',:); % (cell{cell{double}})
                     end
                 end
@@ -85,7 +89,7 @@ function [all_Tbfile_name,all_Swath_used,all_ChIdx_perCh,all_ChName_perCh,all_if
     end
 
 	% Sanity check
-	if (length(all_Tbfile_name) ~= length(all_Swath_used)) | (length(all_Tbfile_name) ~= length(all_ChName_perCh)		
+	if (length(all_Tbfile_name) ~= length(all_Swath_used)) | (length(all_Tbfile_name) ~= length(all_ChName_perCh))
 		disp('Error collecting useful attributes for Tb files!');
 	end
 

@@ -45,20 +45,22 @@ for istorm = 1:length(control.storm_phase)
     % --- Collect useful MW Obs files of all sensors among all platforms into a directory
     disp('Collecting useful MW obs files for this study......');
 	[Tbfile_names,Swath_used,ChIdx_all,ChName_all,DAtime_all,loc_DAtime_all,overpass,singlepass] = Collect_MW_useful(istorm, bestrack_str, control); % ps: per swath
-
+	
     % --- Loop through each useful Tb file via a symbolic link
-	Tb_dir = [control.obs_used_dir,control.storm_phase{istorm},'/*'];
+	Tb_dir = [control.obs_collect_dir,control.storm_phase{istorm},'/*'];
 	Tb_files = strsplit(ls(Tb_dir));
     Tb_files = Tb_files(cellfun(@isempty, Tb_files) == 0); % Get rid of the annyoing empty cell
 	
     % --- Output file under two situations: overpass or single-pass
-    % Make a subdirectory for a storm object under /toEnKFobs/    
-    [~, msg, ~] = mkdir(control.output_dir,control.storm_phase{istorm});
-    if isempty(msg)
-        disp(['Successfully created a subdirectory in ',control.output_dir,' for ',control.storm_phase{istorm}]);
-    else
-        error('Error: ',msg);
-    end
+	if ~exist([control.obs_collect_dir,control.storm_phase{istorm}],'dir')
+		[~, msg, ~] = mkdir(control.output_dir,control.storm_phase{istorm});
+        if isempty(msg)
+            disp(['Successfully created a subdirectory in ',control.ouput_dir,' for ',control.storm_phase{istorm}]);
+        else
+            error('Error: ',msg);
+        end
+	end
+
     % - Output single-pass
     disp('Handling single-pass Tb files......');
     for is = 1:length(singlepass)
@@ -66,7 +68,7 @@ for istorm = 1:length(control.storm_phase)
            Tb_file = Tb_files{iTb};
             [filepath,filename,filext] = fileparts(Tb_file);            
             if contains(filename,singlepass(is))
-                idx_collectedTb = find([filename,filext] == Tb_files)
+                idx_collectedTb = find([filename,filext] == Tbfile_names)
                 Singlepass_write(idx_collectedTb,istorm,Swath_used,ChIdx_all,ChName_all,DAtime_all,loc_DAtime_all,Tb_file,control);
             else
                 continue;
@@ -98,7 +100,7 @@ for istorm = 1:length(control.storm_phase)
                 order_overpass = [order_overpass, io];
                 file_overpass = [file_overpass,string(Tb_file)];
                 sensor_overpass = [sensor_overpass,string(sensor)];
-                idx_collectedTb = find([filename,filext] == Tb_files);
+                idx_collectedTb = find([filename,filext] == Tbfile_names);
 				idx_usedTb(end+1) = idx_collectedTb;
 			else
 				continue;

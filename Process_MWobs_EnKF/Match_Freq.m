@@ -29,7 +29,7 @@ function [Swath_used, ChIdx_perSwath, ChName_perSwath] = Match_Freq(Tb_file, con
                idx_one_Ch = cellfun(@str2num, extractBetween(AllCh_name_good,oneCh_name_idx_start-2,oneCh_name_idx_start-2));   
                % Save
                Swath_used = [Swath_used,string(file_info.Groups(i_sw).Name)]; %file_info.Groups(i_sw).Name is Character. It is converted to strings in this case. E.g., '/S1' is converted to "/S1"
-               ChName_perSwath = [ChName_perSwath, string(control.favCh{i_ch})];
+               ChName_perSwath = [ChName_perSwath, string(control.favFreq{i_ch})];
                ChIdx_perSwath = [ChIdx_perSwath,idx_one_Ch];
             else
                continue;
