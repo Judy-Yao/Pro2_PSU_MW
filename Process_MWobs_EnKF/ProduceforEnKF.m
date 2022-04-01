@@ -141,10 +141,8 @@ function [sat_name,myLat,myLon,myTb,mySat_lat,mySat_lon,mySat_alt,myAzimuth,mySc
     end
 
     % Special treatment to AMSR2 89GHz
-    if (sensor == "AMSR2") & control.comnine_AMSR89GHz
-        [Swath_used,ChIdx_all,ChName_all,lat,lon,Tb,zenith,sat_lat,sat_lon,sat_alt,azimuth,outime] = Combine_AMSR2(iTb,Swath_used,ChIdx_all,ChName_all,DAtime_all,lat,lon,Tb,zenith,sat_lat,sat_lon,sat_alt,azimuth,outime);
-    elseif (sensor == "AMSR2") & (~control.comnine_AMSR89GHz)
-        disp(['Two 89 GHz scans on AMSR2 are not combined!']);
+    if (sensor == "AMSR2") 
+        [Swath_used,ChIdx_all,ChName_all,lat,lon,Tb,zenith,sat_lat,sat_lon,sat_alt,azimuth,outime] = Handle_AMSR2(iTb,Swath_used,ChIdx_all,ChName_all,DAtime_all,lat,lon,Tb,zenith,sat_lat,sat_lon,sat_alt,azimuth,outime);
     end
 
     % ---------------------------------------------------------------------
