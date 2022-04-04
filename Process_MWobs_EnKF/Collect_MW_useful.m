@@ -2,7 +2,7 @@
 % It collects files that meet the requiremens and symbolically links these files to a directory (/Obs/Collected_MW/)
 % It also returns useful attributes for each useful Tb files
 
-function [all_Tbfile_name,all_Swath_used,all_ChIdx_perCh,all_ChName_perCh,all_if_swath_good,all_DAtime_perCh,all_loc_storm_DAtime,overpass,singlepass] = Collect_MW_useful(istorm, bestrack_str, control)
+function [all_Tbfile_name,all_Swath_used,all_ChIdx_perCh,all_ChName_perCh,all_DAtime_perCh,all_loc_storm_DAtime,overpass,singlepass] = Collect_MW_useful(istorm, bestrack_str, control)
 
     % Determine if a subdirectory for a storm object exists
 	if ~exist([control.obs_collect_dir,control.storm_phase{istorm}],'dir')
@@ -18,7 +18,7 @@ function [all_Tbfile_name,all_Swath_used,all_ChIdx_perCh,all_ChName_perCh,all_if
 		destination = [control.obs_collect_dir,control.storm_phase{istorm},'/'];
 		[status,~] = system(['rm ',destination,'*']); % Tricky part: it seems that it can't delete unsuccessful links!!
 		if status ~= 0
-			error('Error cleaning existed symbolic files!');
+			disp('Warning: cleaning existed symbolic files failed!');
 		end
 	end 
 	% Define empty cells (final length of each cell is the number of useful Tbs)
@@ -45,20 +45,19 @@ function [all_Tbfile_name,all_Swath_used,all_ChIdx_perCh,all_ChName_perCh,all_if
             % ---- Loop through each file for a sensor on a specific platform ---
             for i = 1:length(Tb_files)
                 Tb_file = Tb_files{i};
-                disp(['Examining Tb file: ',Tb_file]);
+                disp(['  Examining Tb file: ',Tb_file]);
                 % determine if this Tb is within the period of interest
                 [use_Tb_file] = Filter_file_out_period(istorm, Tb_file, control); %(logical)
                 if use_Tb_file == 0
-                    disp('Microwave observations are not within the period of interest! Skip this file.');
+                    disp('  Microwave observations are not within the period of interest! Skip this file.');
                     continue;
                 else
                     % obtain swaths, channel/frequency index under each swath, and frequency(ies) name(s) of interest
                     [Swath_used, ChIdx_perCh, ChName_perCh] = Match_Freq(Tb_file, control); % (strings) (double) (strings)
-					ChName_perCh
-                    % subroutine to identify the best DA time for each item
+					% subroutine to identify the best DA time for each item
                     [if_swath_good, DAtime_perCh, loc_storm_DAtime] = Find_DAtime_loc(bestrack_str,Swath_used,Tb_file, control); % (logical) (strings) (cell{double})
                     if sum(if_swath_good) == 0
-                        disp('Microwave observations do not exist in the area of interest at DA time! Skip this file.');
+                        disp('	Microwave observations do not exist in the area of interest at DA time! Skip this file.');
                         continue;
                     else
 						% ----- Gather the useful Tb file of all sensors !!
@@ -66,32 +65,34 @@ function [all_Tbfile_name,all_Swath_used,all_ChIdx_perCh,all_ChName_perCh,all_if
                         source_file = erase(Tb_file,'Obs/');
                         % A potential BUG exists: the current algorithm assumes that for all channels of a L1C MW file the best-track locations and DA times are the same
 						if (length(DAtime_perCh) > 1) & (DAtime_perCh(1) ~= DAtime_perCh(2))
-							disp('Error collecting the Tb file! Potential risk exists!');
+							disp('	Error collecting the Tb file! Potential risk exists!');
 						end
 						newfile_name = ['DAt' + DAtime_perCh(1) + '_1C.' + control.platform{isensor}{isensor_plf} + '.' + control.sensor{isensor} + '.HDF5'];
                         command = ["ln -s " + source_file + " " + destination + newfile_name];% Symbolic link's path -> source file. The relatively path of source file is relative to symbolic link's path.
                         [status,~] = system(command);
                         if status == 0
-                            disp([filename,filext, ' is collected.']);
+                            disp(['  ',filename,filext, ' is collected.']);
                         else
-                            disp('Error collecting the Tb file!');
+                            disp('  Error collecting the Tb file!');
                         end
 						% store useful information with correction from if_swath_good
                         all_Tbfile_name = [all_Tbfile_name,newfile_name]; % (strings)
+						if_swath_good = logical(if_swath_good);
 						all_Swath_used{end+1} = Swath_used(if_swath_good); % (cell{strings})
 						all_ChIdx_perCh{end+1} = ChIdx_perCh(if_swath_good); % (cell{single})
-						all_ChName_perCh{end+1} = ChName_perCh(if_swath_good); % (cell{strings})
+						all_ChName_perCh{end+1} =  ChName_perCh(if_swath_good); % (cell{strings})
 						all_DAtime_perCh{end+1} = DAtime_perCh(if_swath_good); % (cell{strings})
-						all_loc_storm_DAtime{end+1} = loc_storm_DAtime(if_swath_good',:); % (cell{cell{double}})
+						all_loc_storm_DAtime{end+1} = loc_storm_DAtime{if_swath_good}; % (cell{cell{double}})
                     end
                 end
             end
         end
     end
+		
 
 	% Sanity check
 	if (length(all_Tbfile_name) ~= length(all_Swath_used)) | (length(all_Tbfile_name) ~= length(all_ChName_perCh))
-		disp('Error collecting useful attributes for Tb files!');
+		disp('  Error collecting useful attributes for Tb files!');
 	end
 
 	% --- Mark satellite overpass and single-pass

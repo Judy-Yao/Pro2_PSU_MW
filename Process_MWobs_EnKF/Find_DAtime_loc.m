@@ -120,8 +120,8 @@ function [if_swath_good,DAtime_perCh,loc_storm_DAtime] = Find_DAtime_loc(bestrac
 
     % -display necessary information
     for i_cand = 1:length(DAhh_cand)
-        disp(['     DA_time candidate: ', datestr(DA_per_hhcand{i_cand,1},'yyyymmddhhMM')]);
-        disp(['     Effective observations are from ', datestr(DA_per_hhcand{i_cand,2},'yyyymmddHH:MM'),' to ',datestr(DA_per_hhcand{i_cand,3},'yyyymmddHH:MM')]);
+        disp(['    DA_time candidate: ', datestr(DA_per_hhcand{i_cand,1},'yyyymmddhhMM')]);
+        disp(['    Effective observations are from ', datestr(DA_per_hhcand{i_cand,2},'yyyymmddHH:MM'),' to ',datestr(DA_per_hhcand{i_cand,3},'yyyymmddHH:MM')]);
     end
 
 % ------------------- Step 2 ----------------------------
@@ -133,7 +133,7 @@ function [if_swath_good,DAtime_perCh,loc_storm_DAtime] = Find_DAtime_loc(bestrac
 
     num_useful_scan = [];
     if_swath_good = []; % (logical)
-    DAtime_perCh = {}; % (cell --> strings)
+    DAtime_perCh = []; % (strings)
     loc_storm_DAtime = {}; % lat,lon
 
     % --- loop through each frequency of interest
@@ -216,7 +216,7 @@ function [if_swath_good,DAtime_perCh,loc_storm_DAtime] = Find_DAtime_loc(bestrac
         % DAtime_perCh(length(Swath_used))
         if sum(num_useful_scan) == 0
             if_swath_good = [if_swath_good, false];
-            DAtime_perCh{end+1} = "";
+            DAtime_perCh = [DAtime_perCh,""];
             loc_storm_DAtime{end+1} = NaN; 
         else
             if_swath_good = [if_swath_good, true];
@@ -224,16 +224,17 @@ function [if_swath_good,DAtime_perCh,loc_storm_DAtime] = Find_DAtime_loc(bestrac
             if length(idx_DAcand) > 1 % rarely happens: several DA_times candidates have the same useful scans (equally good) 
                 idx_DAcand = idx_DAcand(1);
             end
-            DAtime_perCh{end+1} = datestr(DA_per_hhcand{idx_DAcand,1},'yyyymmddhhMM');
+			DAtime_char = datestr(DA_per_hhcand{idx_DAcand,1},'yyyymmddhhMM');
+			DAtime_perCh = [DAtime_perCh, string(DAtime_char)];
             loc_storm_DAtime{end+1} = loc_perDAcand(idx_DAcand,:);
         end   
 
     end
-    
-    DAtime_perCh = string(DAtime_perCh); % convert from cell type to string type
+   
+%    DAtime_perCh = convertCharsToStrings(DAtime_perCh);% convert from cell type to string type
     % sanity check
     if length(if_swath_good) ~= length(Swath_used) || length(DAtime_perCh) ~= length(Swath_used) || length(loc_storm_DAtime) ~= length(Swath_used)
-        disp('Error identifying DA time for each swath/channel!');
+        disp('    Error identifying DA time for each swath/channel!');
     end
 
 end

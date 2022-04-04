@@ -22,10 +22,10 @@ function [] = Overpass_write(iTb,istorm,Swath_used,ChIdx_all,ChName_all,DAtime_a
 
 	% Loop through each overpass Tb file and read variables with different files into cells
 	for io = 1:length(Tb_overpass)
-        disp(['Over pass: ',Tb_overpass(io)]);
-        disp('Frequencies of interest are:');
-        for item = 1:length(ChName_all{iTb})
-            disp(["        " + ChName_all{iTb}(item)]);
+        disp(["    File: " + Tb_overpass(io)]);
+        disp("      Frequencies of interest are:");
+        for item = 1:length(ChName_all{iTb(io)})
+            disp(["        " + ChName_all{iTb(io)}(item)]);
         end
 
 		[filepath,filename,filext] = fileparts(Tb_overpass(io));
@@ -88,7 +88,8 @@ function [] = Overpass_write(iTb,istorm,Swath_used,ChIdx_all,ChName_all,DAtime_a
     % ---------------------------------------------------------------------
 
     % create text file name
-    filename = strcat(control.output_dir,control.storm_phase(istorm),'/microwave_d03_',DAtime_all{iTb(1)}(1),'_so') % same DA time
+    filename = strcat(control.output_dir,control.storm_phase(istorm),'/microwave_d03_',DAtime_all{iTb(1)}(1),'_so'); % same DA time
+	disp("    Output processed MW obs file: "+filename);
     formatSpec = '%12s%16s%12i%12.3f%12.3f%12.3f%12i%12i%12.3f%12.3f%12.3f%12.3f%12.3f%12.3f%12.3f%12.3f%12.3f\n';
     fileID = fopen(filename,'w');
     % reshape values into columns

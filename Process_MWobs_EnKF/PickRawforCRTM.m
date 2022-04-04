@@ -76,8 +76,8 @@ function [obs_index] = PickRawforCRTM(lat_raw,lon_raw,Tb_raw,min_XLONG,max_XLONG
                 obs_n_candidates(idx_obs_slots_x,idx_obs_slots_y) = length(myTb_inArea_distance);
             end
         % ------------------------------------------------------------
-         % Flag if no raw-obs candidates are used 
-        disp(strcat('ob did not take ANY candidate at x = ',num2str(x),' , y = ',num2str(y)));
+        % Flag if no raw-obs candidates are used 
+        %disp(strcat('ob did not take ANY candidate at x = ',num2str(x),' , y = ',num2str(y)));
         end % end loop: for y = slots_y
     end % end loop: for x = slots_x
 

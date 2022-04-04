@@ -142,7 +142,7 @@ function [sat_name,myLat,myLon,myTb,mySat_lat,mySat_lon,mySat_alt,myAzimuth,mySc
 
     % Special treatment to AMSR2 89GHz
     if (sensor == "AMSR2") 
-        [Swath_used,ChIdx_all,ChName_all,lat,lon,Tb,zenith,sat_lat,sat_lon,sat_alt,azimuth,outime] = Handle_AMSR2(iTb,Swath_used,ChIdx_all,ChName_all,DAtime_all,lat,lon,Tb,zenith,sat_lat,sat_lon,sat_alt,azimuth,outime);
+        [Swath_used,ChIdx_all,ChName_all,lat,lon,Tb,zenith,sat_lat,sat_lon,sat_alt,azimuth,outime] = Handle_AMSR2(iTb,Swath_used,ChIdx_all,ChName_all,DAtime_all,lat,lon,Tb,zenith,sat_lat,sat_lon,sat_alt,azimuth,outime,control);
     end
 
     % ---------------------------------------------------------------------
@@ -153,12 +153,12 @@ function [sat_name,myLat,myLon,myTb,mySat_lat,mySat_lon,mySat_alt,myAzimuth,mySc
     nx = control.nx*control.domain_buffer; % zoom out
     ny = control.ny*control.domain_buffer; % zoom out
     % below algorithm works if only for all frequencies of interest, the DA_time are the same
-    min_XLAT = loc_DAtime_all{iTb}{1}(1) - (ny/2*control.dx)/(cos(loc_DAtime_all{iTb}{1}(1)*(pi/180))*111);
-    max_XLAT = loc_DAtime_all{iTb}{1}(1) + (ny/2*control.dx)/(cos(loc_DAtime_all{iTb}{1}(1)*(pi/180))*111);
-    min_XLONG = loc_DAtime_all{iTb}{1}(2) - (nx/2*control.dx)/111;
-    max_XLONG = loc_DAtime_all{iTb}{1}(2) + (nx/2*control.dx)/111;
-    disp(['min of xlong: ',num2str(min_XLONG), ', max of xlong: ',num2str(max_XLONG)]);
-    disp(['min of xlat: ',num2str(min_XLAT), ', max of xlat: ',num2str(max_XLAT)]);
+	min_XLAT = loc_DAtime_all{iTb}(1) - (ny/2*control.dx)/(cos(loc_DAtime_all{iTb}(1)*(pi/180))*111);
+    max_XLAT = loc_DAtime_all{iTb}(1) + (ny/2*control.dx)/(cos(loc_DAtime_all{iTb}(1)*(pi/180))*111);
+    min_XLONG = loc_DAtime_all{iTb}(2) - (nx/2*control.dx)/111;
+    max_XLONG = loc_DAtime_all{iTb}(2) + (nx/2*control.dx)/111;
+    disp(['      min of xlong: ',num2str(min_XLONG), ', max of xlong: ',num2str(max_XLONG)]);
+    disp(['      min of xlat: ',num2str(min_XLAT), ', max of xlat: ',num2str(max_XLAT)]);
     latitudes  = linspace(min_XLAT,max_XLAT,ny);
     longitudes = linspace(min_XLONG,max_XLONG,nx);
     [XLAT, XLONG] = meshgrid(latitudes,longitudes);
@@ -241,10 +241,10 @@ function [sat_name,myLat,myLon,myTb,mySat_lat,mySat_lon,mySat_alt,myAzimuth,mySc
         % **cross-track and along-track FOV**
         [DA_fov_crossTrack{it}, DA_fov_alongTrack{it}] = Get_pixel_resolution(scantype,ch_num,fov_alongTrack,fov_crossTrack,DA_lat{it},DA_lon{it},DA_zenith{it},DA_sat_lat{it},DA_sat_lon{it},DA_sat_alt{it});
         % **scan time**
-        DA_times{it}(scan_num,1) = outime{it}(scan_num);
-        %for my_scan_num_idx = 1:length(scan_num)
-        %    DA_times{it}(my_scan_num_idx,1) = outime{it}(scan_num(my_scan_num_idx));
-        %end
+        %DA_times{it}(scan_num,1) = outime{it}(scan_num);
+        for my_scan_num_idx = 1:length(scan_num)
+            DA_times{it}(my_scan_num_idx,1) = outime{it}(scan_num(my_scan_num_idx));
+        end
         % **Channel number, obs error**
         DA_chNum{it} = ones(numel(obs_index_1d),1,'int64')*ch_num;
         DA_obsError{it} = ones(numel(obs_index_1d),1)*control.obsError(it);
@@ -291,7 +291,6 @@ function [sat_name,myLat,myLon,myTb,mySat_lat,mySat_lon,mySat_alt,myAzimuth,mySc
         tem_zenith = cat(1,DA_zenith{:}); myZenith{ir} = tem_zenith(randOrder); %clear  tem_zenith
         tem_fov_crossTrack = cat(1,DA_fov_crossTrack{:}); myFov_crossTrack{ir} = tem_fov_crossTrack(randOrder); %clear  tem_fov_crossTrack
         tem_fov_alongTrack = cat(1,DA_fov_alongTrack{:}); myFov_alongTrack{ir} = tem_fov_alongTrack(randOrder); %clear tem_fov_alongTrack
-
         tem_times = cat(1,DA_times{:}); myTimes{ir} = tem_times(randOrder); %clear tem_times
         tem_chNum = cat(1,DA_chNum{:}); myChNum{ir} = tem_chNum(randOrder); %clear myTb_chNum
 
