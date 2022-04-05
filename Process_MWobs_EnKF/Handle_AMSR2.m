@@ -35,8 +35,8 @@ function [Swath_used,ChIdx_all,ChName_all,lat,lon,Tb,zenith,sat_lat,sat_lon,sat_
             return 
         else % If both 89 GHz scans are used
             if DAtime_all{iTb}(idx_89GHz(1)) == DAtime_all{iTb}(idx_89GHz(2)) %if DA_time is the same for both scans, combine them
-                disp('        (sanity check) size of one 89 GHZ scan: ',num2str(size(lat{idx_89GHz(1)})));
-                disp('        (sanity check) size of the other 89 GHZ scan: ',num2str(size(lat{idx_89GHz(2)})));
+                disp(['        (sanity check) size of one 89 GHZ scan: ',num2str(size(lat{idx_89GHz(1)}))]);
+                disp(['        (sanity check) size of the other 89 GHZ scan: ',num2str(size(lat{idx_89GHz(2)}))]);
                 disp(['        Combine A scan and B scan of 89GHzV-pol together...']);
                 Clat = [lat{idx_89GHz(1)},lat{idx_89GHz(2)}];
                 lat{idx_89GHz(1)} = Clat; lat(idx_89GHz(2)) = [];
@@ -56,7 +56,7 @@ function [Swath_used,ChIdx_all,ChName_all,lat,lon,Tb,zenith,sat_lat,sat_lon,sat_
                 sat_azimuth{idx_89GHz(1)} = Csat_azimuth; sat_azimuth(idx_89GHz(2)) = [];
                 Coutime = [outime{idx_89GHz(1)},outime{idx_89GHz(2)}];
                 outime{idx_89GHz(1)} = Coutime; outime(idx_89GHz(2)) = [];
-                disp('        (sanity check) size of the final 89 GHZ scan: ',num2str(size(num2strlat{1})));
+                disp(['        (sanity check) size of the final 89 GHZ scan: ',num2str(size(lat{idx_89GHz(1)}))]);
                 % Find indices of 89 A scan and B scan among all possible channels in the AMSR2
                 for ith = 1:length(idx_89GHz)
                     if contains(ChName_all{iTb}{idx_89GHz(ith)},'89GHzV-PolB-Scan')

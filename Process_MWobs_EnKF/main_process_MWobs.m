@@ -9,18 +9,18 @@ control.obs_collect_dir = '../../Obs/Collected_MW/'; % directory into which L1C 
 control.bestrack_dir = '../../Obs/Bestrack/'; % directory where best-track files are
 control.output_dir = '../../toEnKFobs/'; % directory where this algorithm outputs
 % ---Storm information
-control.storm_phase = {'Irma2ndRI',};  
+control.storm_phase = {'MariaRI',};  
 %control.storm_phase = ["Irma2ndRI",'JoseRI','MariaRI'};
-control.period = {{'201709030600','201709050600'},};
+control.period = {{'201709160000','201709180000'},};
 %control.period = {{'201709030600','201709050600'},{'201709050600','201709070600'},{'201709160000','201709180000'}}; %YYYYMMDDHHmm
 % ---Satellite informaiton
 %control.sensor = {'AMSR2',};
 control.sensor = {'AMSR2','ATMS','GMI','MHS','SAPHIR','SSMIS'};
 %control.platform = {{'GCOMW1'},};
 control.platform = {{'GCOMW1'}, {'NPP'}, {'GPM'}, {'METOPA','METOPB','NOAA18','NOAA19'}, {'MT1'}, {'F16','F17','F18'}};
-
 control.favFreq = {'18.7GHzV-Pol','19.35GHzV-Pol','89GHzV-PolA-Scan','89GHzV-PolB-Scan','183.31+/-6.6GHzH-Pol','183.31+/-6.8GHz','183.31+/-7GHzV-Pol','183.31+-7GHzQH-Pol','190.31GHzV-Pol'}; % favorite frequencies
-%control.favCh_sup = {'19.35GHzV-Pol','89GHzV-PolA-Scan','89GHzV-PolB-Scan','183.31+/-6.6GHzH-Pol','183.31+/-6.8GHz','190.31GHzV-Pol'};
+%control.favFreq = {{'18.7GHzV-Pol','89GHzV-PolA-Scan','89GHzV-PolB-Scan'},{'183.31+-7GHzQH-Pol'},{'18.7GHzV-Pol','183.31+/-7GHzV-Pol'},{'190.31GHzV-Pol'},{'183.31+/-6.8GHz'},{'19.35GHzV-Pol','183.31+/-6.6GHzH-Pol'}};
+
 % --- Dealing with 89GHzV-PolA-Scan and 89GHzV-PolB-Scan on AMSR2
 control.comnine_AMSR89GHz = true;
 control.NOTuse_AMSR89GHz = false;
@@ -52,10 +52,10 @@ for istorm = 1:length(control.storm_phase)
 	Tb_files = Tb_files(~cellfun('isempty',Tb_files)); % get rid of annoying empty cell
 
     % --- Output file under two situations: overpass or single-pass
-	if ~exist([control.obs_collect_dir,control.storm_phase{istorm}],'dir')
+	if ~exist([control.output_dir,control.storm_phase{istorm}],'dir')
 		[~, msg, ~] = mkdir(control.output_dir,control.storm_phase{istorm});
         if isempty(msg)
-            disp(['Successfully created a subdirectory in ',control.ouput_dir,' for ',control.storm_phase{istorm}]);
+            disp(['Successfully created a subdirectory in ',control.output_dir,' for ',control.storm_phase{istorm}]);
         else
             error('Error: ',msg);
         end
