@@ -67,7 +67,7 @@ end
 for iso = 1:length(obs_files)
     so_file = obs_files{iso};
     disp(so_file);
-    % --- Read so file
+    % --- Read the so file
     fid = fopen(so_file);
     obs_record = textscan(fid,'%s','delimiter','');
     fclose(fid);
@@ -80,7 +80,7 @@ for iso = 1:length(obs_files)
         obs_str(ir,1:5) = obs_str_per(1,2:6); % sensor name, channel number, latitude, longitude, Tb value
         obs_str(ir,6:7) = obs_str_per(1,10:11); % crosstrack and alongtrack of FOV
     end
-    % -
+    % --- Allocate indices for records for each sensor and each channel
     sensors_plf = unique(obs_str(:,1));
     chNum = cell(length(sensors_plf),1); % channel number
     idx_perChperSS = cell(length(sensors_plf),1);
@@ -89,14 +89,14 @@ for iso = 1:length(obs_files)
         chNum{iss,1} = unique(obs_str(idx_perSS,2));
         idx_perChperSS{iss,1} = cell(length(chNum{iss,1}),1);
     end
-    % -
+    % --- Identify location of the storm at a DA time
     [~,filename,~] = fileparts(so_file);
     file_info = split(filename,'_'); DA_time = file_info{3};
 
     idx_inBT = DA_time == loc_storm(:,1);
     lat_bt = str2double(loc_storm(idx_inBT,2));
     lon_bt = str2double(loc_storm(idx_inBT,3));
-
+    % --- Plot each kind of record
     for iss = 1:length(sensors_plf)
         for ich = 1:length(idx_perChperSS{iss,1})
             sensor_plf = sensors_plf(iss);
@@ -136,7 +136,6 @@ for iso = 1:length(obs_files)
             pointsize = control.numPerscan{iss_list}(ich_list)*(-0.114)+60.26; % linear interpolation
             % number per scan: 486  <--> pointsize = 5
             % number per scan: 90   <--> pointsize = 50
-            pointsize 
             H = m_scatter(lon,lat,pointsize,Tb,'o','filled');
             hold on;
             if contains(control.freq_list{iss_list}{ich_list}, '18.7GHzV-Pol') | contains(control.freq_list{iss_list}{ich_list},'19.35GHzV-Pol')
