@@ -7,11 +7,11 @@ control = struct;
 control.obs_dir = '../../raw_Obs/Microwave/'; % directory where L1C raw observations are
 control.obs_collect_dir = '../../raw_Obs/Collected_MW/'; % directory into which L1C obs files are collected/linked 
 control.bestrack_dir = '../../raw_Obs/Bestrack/'; % directory where best-track files are
-control.output_dir = '../../toEnKFobs/'; % directory where this algorithm outputs
+control.output_dir = '../../toEnKFobs/MW/'; % directory where this algorithm outputs
 % ---Storm information
-control.storm_phase = {'JoseRI',};  
+control.storm_phase = {'MariaRI',};  
 %control.storm_phase = ["Irma2ndRI",'JoseRI','MariaRI'};
-control.period = {{'201709050600','201709070600'},};
+control.period = {{'201709160000','201709180000'},};
 %control.period = {{'201709030600','201709050600'},{'201709050600','201709070600'},{'201709160000','201709180000'}}; %YYYYMMDDHHmm
 % ---Satellite informaiton
 %control.sensor = {'AMSR2',};
@@ -31,8 +31,8 @@ control.dx = 3; % WRF resolution: 3 km
 % --- Other
 control.domain_buffer = 1.5; % scaling factor
 control.search_buffer = 0.2; % degrees: lat/lon
-%control.filter_ratio = [36,24]; % only for testing!!
-control.filter_ratio = [6,6];
+control.filter_ratio = [36,24]; % only for testing!!
+%control.filter_ratio = [6,6];
 control.roi_oh = {[200,0], [60,60]}; % roi [other variables, hydrometeors]
 control.obsError = [3 3];
 
