@@ -4,10 +4,10 @@
 % -------------- Set up control variables ----------------------
 control = struct;
 % ----Path
-control.obs_dir = '../../Obs/Microwave/'; % directory where L1C raw observations are
-control.obs_collect_dir = '../../Obs/Collected_MW/'; % directory into which L1C obs files are collected/linked 
-control.bestrack_dir = '../../Obs/Bestrack/'; % directory where best-track files are
-control.output_dir = '../../toEnKFobs/'; % directory where this algorithm outputs
+control.obs_dir = '../../raw_Obs/Microwave/'; % directory where L1C raw observations are
+control.obs_collect_dir = '../../raw_Obs/Collected_MW/'; % directory into which L1C obs files are collected/linked 
+control.bestrack_dir = '../../raw_Obs/Bestrack/'; % directory where best-track files are
+control.output_dir = '../../toEnKFobs/MW/'; % directory where this algorithm outputs
 % ---Storm information
 control.storm_phase = {'MariaRI',};  
 %control.storm_phase = ["Irma2ndRI",'JoseRI','MariaRI'};
@@ -18,8 +18,8 @@ control.period = {{'201709160000','201709180000'},};
 control.sensor = {'AMSR2','ATMS','GMI','MHS','SAPHIR','SSMIS'};
 %control.platform = {{'GCOMW1'},};
 control.platform = {{'GCOMW1'}, {'NPP'}, {'GPM'}, {'METOPA','METOPB','NOAA18','NOAA19'}, {'MT1'}, {'F16','F17','F18'}};
-control.favFreq = {'18.7GHzV-Pol','19.35GHzV-Pol','89GHzV-PolA-Scan','89GHzV-PolB-Scan','183.31+/-6.6GHzH-Pol','183.31+/-6.8GHz','183.31+/-7GHzV-Pol','183.31+-7GHzQH-Pol','190.31GHzV-Pol'}; % favorite frequencies
-%control.favFreq = {{'18.7GHzV-Pol','89GHzV-PolA-Scan','89GHzV-PolB-Scan'},{'183.31+-7GHzQH-Pol'},{'18.7GHzV-Pol','183.31+/-7GHzV-Pol'},{'190.31GHzV-Pol'},{'183.31+/-6.8GHz'},{'19.35GHzV-Pol','183.31+/-6.6GHzH-Pol'}};
+%control.favFreq = {{'18.7GHzV-Pol','89GHzV-PolA-Scan','89GHzV-PolB-Scan'},};
+control.favFreq = {{'18.7GHzV-Pol','89GHzV-PolA-Scan','89GHzV-PolB-Scan'},{'183.31+-7GHzQH-Pol'},{'18.7GHzV-Pol','183.31+/-7GHzV-Pol'},{'190.31GHzV-Pol'},{'183.31+/-6.8GHz'},{'19.35GHzV-Pol','183.31+/-6.6GHzH-Pol'}};
 
 % --- Dealing with 89GHzV-PolA-Scan and 89GHzV-PolB-Scan on AMSR2
 control.comnine_AMSR89GHz = true;
@@ -31,8 +31,8 @@ control.dx = 3; % WRF resolution: 3 km
 % --- Other
 control.domain_buffer = 1.5; % scaling factor
 control.search_buffer = 0.2; % degrees: lat/lon
-%control.filter_ratio = [36,24]; % only for testing!!
-control.filter_ratio = [6,6];
+control.filter_ratio = [36,24]; % only for testing!!
+%control.filter_ratio = [6,6];
 control.roi_oh = {[200,0], [60,60]}; % roi [other variables, hydrometeors]
 control.obsError = [3 3];
 
@@ -46,12 +46,7 @@ for istorm = 1:length(control.storm_phase)
     disp('Collecting useful MW obs files for this study......');
 	[Tbfile_names,Swath_used,ChIdx_all,ChName_all,DAtime_all,loc_DAtime_all,overpass,singlepass] = Collect_MW_useful(istorm, bestrack_str, control); % ps: per swath
 
-	% --- Loop through each useful Tb file via a symbolic link
-	Tb_dir = [control.obs_collect_dir,control.storm_phase{istorm},'/*'];
-	Tb_files = strsplit(ls(Tb_dir));
-	Tb_files = Tb_files(~cellfun('isempty',Tb_files)); % get rid of annoying empty cell
-
-    % --- Output file under two situations: overpass or single-pass
+    % - Make subdirectory for output
 	if ~exist([control.output_dir,control.storm_phase{istorm}],'dir')
 		[~, msg, ~] = mkdir(control.output_dir,control.storm_phase{istorm});
         if isempty(msg)
@@ -60,6 +55,23 @@ for istorm = 1:length(control.storm_phase)
             error('Error: ',msg);
         end
 	end
+	
+	% - Output hourly best-track location and time
+ 	filename = strcat(control.output_dir,control.storm_phase{istorm},'/bestrack_perHour');	
+	disp("Output hourly best-track location and time: "+filename);
+	formatSpec = '%12s%12.3f%12.3f\n';
+	fileID = fopen(filename,'w');
+	for itime = 1:length(DAtime_all)
+		fprintf(fileID, formatSpec, ...
+                DAtime_all{itime}(1), loc_DAtime_all{1,itime}(1),loc_DAtime_all{1,itime}(2)); 
+	end
+	fclose(fileID);
+	
+	% --- Output file under two situations: overpass or single-pass
+    % - Loop through each useful Tb file via a symbolic link
+    Tb_dir = [control.obs_collect_dir,control.storm_phase{istorm},'/*'];
+    Tb_files = strsplit(ls(Tb_dir));
+    Tb_files = Tb_files(~cellfun('isempty',Tb_files)); % get rid of annoying empty cell
 
     % - Output single-pass
     disp('Handling single-pass Tb files......');
