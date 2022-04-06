@@ -53,7 +53,7 @@ function [all_Tbfile_name,all_Swath_used,all_ChIdx_perCh,all_ChName_perCh,all_DA
                     continue;
                 else
                     % obtain swaths, channel/frequency index under each swath, and frequency(ies) name(s) of interest
-                    [Swath_used, ChIdx_perCh, ChName_perCh] = Match_Freq(Tb_file, control); % (strings) (double) (strings)
+                    [Swath_used, ChIdx_perCh, ChName_perCh] = Match_Freq(isensor, Tb_file, control); % (strings) (double) (strings)
 					% subroutine to identify the best DA time for each item
                     [if_swath_good, DAtime_perCh, loc_storm_DAtime] = Find_DAtime_loc(bestrack_str,Swath_used,Tb_file, control); % (logical) (strings) (cell{double})
                     if sum(if_swath_good) == 0
@@ -62,7 +62,7 @@ function [all_Tbfile_name,all_Swath_used,all_ChIdx_perCh,all_ChName_perCh,all_DA
                     else
 						% ----- Gather the useful Tb file of all sensors !!
                         [filepath,filename,filext] = fileparts(Tb_file);
-                        source_file = erase(Tb_file,'Obs/');
+                        source_file = erase(Tb_file,'raw_Obs/');
                         % A potential BUG exists: the current algorithm assumes that for all channels of a L1C MW file the best-track locations and DA times are the same
 						if (length(DAtime_perCh) > 1) & (DAtime_perCh(1) ~= DAtime_perCh(2))
 							disp('	Error collecting the Tb file! Potential risk exists!');
