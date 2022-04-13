@@ -4,7 +4,7 @@ function use_Tb_file = Filter_file_out_period(idx_storm,Tb_file,control)
 
     % -read time_coverage_start and time_coverage_end from global attributes from a Tb file
     time_start = ncreadatt(Tb_file,'/','time_coverage_start');
-i   time_end =  ncreadatt(Tb_file,'/','time_coverage_end'); 
+    time_end =  ncreadatt(Tb_file,'/','time_coverage_end'); 
    
      % -convert saved time strings to scalar datetime arrays
     start_datetime = replace(extractBefore(time_start,17),'T',' ');
