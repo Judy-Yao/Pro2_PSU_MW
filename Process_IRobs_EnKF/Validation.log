@@ -1,0 +1,46 @@
+MATLAB is selecting SOFTWARE OPENGL rendering.
+Validating the pre-processing IR algorithm on strom Irma2ndRI
+
+DA_time = 
+
+    "201709030600"
+
+../../toEnKFobs/GOESR_IR/Irma2ndRI/radiance_d03_201709030600_so
+
+len_record =
+
+       48970
+
+      min of xlong: -46.9838, max of xlong: -46.4162
+      min of xlat: 17.9013, max of xlat: 18.4987
+[Warning: MATLAB has disabled some advanced graphics rendering features by
+switching to software OpenGL. For more information, click <a
+href="matlab:opengl('problems')">here</a>.] 
+Validating the pre-processing IR algorithm on strom JoseRI
+
+DA_time = 
+
+    "201709050600"
+
+../../toEnKFobs/GOESR_IR/JoseRI/radiance_d03_201709050600_so
+
+len_record =
+
+       39140
+
+      min of xlong: -38.1838, max of xlong: -37.6162
+      min of xlat: 11.3103, max of xlat: 11.8897
+Validating the pre-processing IR algorithm on strom MariaRI
+
+DA_time = 
+
+    "201709160000"
+
+../../toEnKFobs/GOESR_IR/MariaRI/radiance_d03_201709160000_so
+
+len_record =
+
+       50271
+
+      min of xlong: -46.0838, max of xlong: -45.5162
+      min of xlat: 11.3103, max of xlat: 11.8897
