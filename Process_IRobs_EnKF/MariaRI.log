@@ -353,3 +353,138 @@ Dealing with file(s) at DAtime: 201709162100
   min of xlat: 7.9868, max of xlat: 16.6132
   File: ../../raw_Obs/Collected_IR/MariaRI/DAt201709162100_GOESR_ABI_L2_CMIPF_CH8.nc
   Output processed GOESR obs file: ../../toEnKFobs/GOESR_IR/MariaRI/radiance_d03_201709162100_so
+Dealing with file(s) at DAtime: 201709162200
+  min of xlong: -56.8475, max of xlong: -48.4191
+  min of xlat: 8.0196, max of xlat: 16.6471
+  File: ../../raw_Obs/Collected_IR/MariaRI/DAt201709162200_GOESR_ABI_L2_CMIPF_CH8.nc
+  Output processed GOESR obs file: ../../toEnKFobs/GOESR_IR/MariaRI/radiance_d03_201709162200_so
+Dealing with file(s) at DAtime: 201709162300
+  min of xlong: -57.0809, max of xlong: -48.6525
+  min of xlat: 8.0524, max of xlat: 16.681
+  File: ../../raw_Obs/Collected_IR/MariaRI/DAt201709162300_GOESR_ABI_L2_CMIPF_CH8.nc
+  Output processed GOESR obs file: ../../toEnKFobs/GOESR_IR/MariaRI/radiance_d03_201709162300_so
+Dealing with file(s) at DAtime: 201709170000
+  min of xlong: -57.3142, max of xlong: -48.8858
+  min of xlat: 8.0852, max of xlat: 16.7148
+  File: ../../raw_Obs/Collected_IR/MariaRI/DAt201709170000_GOESR_ABI_L2_CMIPF_CH8.nc
+  Output processed GOESR obs file: ../../toEnKFobs/GOESR_IR/MariaRI/radiance_d03_201709170000_so
+Dealing with file(s) at DAtime: 201709170100
+  min of xlong: -57.5142, max of xlong: -49.0858
+  min of xlat: 8.1507, max of xlat: 16.7826
+  File: ../../raw_Obs/Collected_IR/MariaRI/DAt201709170100_GOESR_ABI_L2_CMIPF_CH8.nc
+  Output processed GOESR obs file: ../../toEnKFobs/GOESR_IR/MariaRI/radiance_d03_201709170100_so
+Dealing with file(s) at DAtime: 201709170200
+  min of xlong: -57.7142, max of xlong: -49.2858
+  min of xlat: 8.2163, max of xlat: 16.8504
+  File: ../../raw_Obs/Collected_IR/MariaRI/DAt201709170200_GOESR_ABI_L2_CMIPF_CH8.nc
+  Output processed GOESR obs file: ../../toEnKFobs/GOESR_IR/MariaRI/radiance_d03_201709170200_so
+Dealing with file(s) at DAtime: 201709170300
+  min of xlong: -57.9142, max of xlong: -49.4858
+  min of xlat: 8.2818, max of xlat: 16.9182
+  File: ../../raw_Obs/Collected_IR/MariaRI/DAt201709170300_GOESR_ABI_L2_CMIPF_CH8.nc
+  Output processed GOESR obs file: ../../toEnKFobs/GOESR_IR/MariaRI/radiance_d03_201709170300_so
+Dealing with file(s) at DAtime: 201709170400
+  min of xlong: -58.1142, max of xlong: -49.6858
+  min of xlat: 8.3474, max of xlat: 16.986
+  File: ../../raw_Obs/Collected_IR/MariaRI/DAt201709170400_GOESR_ABI_L2_CMIPF_CH8.nc
+  Output processed GOESR obs file: ../../toEnKFobs/GOESR_IR/MariaRI/radiance_d03_201709170400_so
+Dealing with file(s) at DAtime: 201709170500
+  min of xlong: -58.3142, max of xlong: -49.8858
+  min of xlat: 8.4129, max of xlat: 17.0538
+  File: ../../raw_Obs/Collected_IR/MariaRI/DAt201709170500_GOESR_ABI_L2_CMIPF_CH8.nc
+  Output processed GOESR obs file: ../../toEnKFobs/GOESR_IR/MariaRI/radiance_d03_201709170500_so
+Dealing with file(s) at DAtime: 201709170600
+  min of xlong: -58.5142, max of xlong: -50.0858
+  min of xlat: 8.4784, max of xlat: 17.1216
+  File: ../../raw_Obs/Collected_IR/MariaRI/DAt201709170600_GOESR_ABI_L2_CMIPF_CH8.nc
+  Output processed GOESR obs file: ../../toEnKFobs/GOESR_IR/MariaRI/radiance_d03_201709170600_so
+Dealing with file(s) at DAtime: 201709170700
+  min of xlong: -58.7475, max of xlong: -50.3191
+  min of xlat: 8.5603, max of xlat: 17.2063
+  File: ../../raw_Obs/Collected_IR/MariaRI/DAt201709170700_GOESR_ABI_L2_CMIPF_CH8.nc
+  Output processed GOESR obs file: ../../toEnKFobs/GOESR_IR/MariaRI/radiance_d03_201709170700_so
+Dealing with file(s) at DAtime: 201709170800
+  min of xlong: -58.9809, max of xlong: -50.5525
+  min of xlat: 8.6422, max of xlat: 17.2911
+  File: ../../raw_Obs/Collected_IR/MariaRI/DAt201709170800_GOESR_ABI_L2_CMIPF_CH8.nc
+  Output processed GOESR obs file: ../../toEnKFobs/GOESR_IR/MariaRI/radiance_d03_201709170800_so
+Dealing with file(s) at DAtime: 201709170900
+  min of xlong: -59.2142, max of xlong: -50.7858
+  min of xlat: 8.7241, max of xlat: 17.3759
+  File: ../../raw_Obs/Collected_IR/MariaRI/DAt201709170900_GOESR_ABI_L2_CMIPF_CH8.nc
+  Output processed GOESR obs file: ../../toEnKFobs/GOESR_IR/MariaRI/radiance_d03_201709170900_so
+Dealing with file(s) at DAtime: 201709171000
+  min of xlong: -59.4475, max of xlong: -51.0191
+  min of xlat: 8.806, max of xlat: 17.4607
+  File: ../../raw_Obs/Collected_IR/MariaRI/DAt201709171000_GOESR_ABI_L2_CMIPF_CH8.nc
+  Output processed GOESR obs file: ../../toEnKFobs/GOESR_IR/MariaRI/radiance_d03_201709171000_so
+Dealing with file(s) at DAtime: 201709171100
+  min of xlong: -59.6809, max of xlong: -51.2525
+  min of xlat: 8.8878, max of xlat: 17.5455
+  File: ../../raw_Obs/Collected_IR/MariaRI/DAt201709171100_GOESR_ABI_L2_CMIPF_CH8.nc
+  Output processed GOESR obs file: ../../toEnKFobs/GOESR_IR/MariaRI/radiance_d03_201709171100_so
+Dealing with file(s) at DAtime: 201709171200
+  min of xlong: -59.9142, max of xlong: -51.4858
+  min of xlat: 8.9697, max of xlat: 17.6303
+  File: ../../raw_Obs/Collected_IR/MariaRI/DAt201709171200_GOESR_ABI_L2_CMIPF_CH8.nc
+  Output processed GOESR obs file: ../../toEnKFobs/GOESR_IR/MariaRI/radiance_d03_201709171200_so
+Dealing with file(s) at DAtime: 201709171300
+  min of xlong: -60.1309, max of xlong: -51.7025
+  min of xlat: 9.0188, max of xlat: 17.6812
+  File: ../../raw_Obs/Collected_IR/MariaRI/DAt201709171300_GOESR_ABI_L2_CMIPF_CH8.nc
+  Output processed GOESR obs file: ../../toEnKFobs/GOESR_IR/MariaRI/radiance_d03_201709171300_so
+Dealing with file(s) at DAtime: 201709171400
+  min of xlong: -60.3475, max of xlong: -51.9191
+  min of xlat: 9.0679, max of xlat: 17.7321
+  File: ../../raw_Obs/Collected_IR/MariaRI/DAt201709171400_GOESR_ABI_L2_CMIPF_CH8.nc
+  Output processed GOESR obs file: ../../toEnKFobs/GOESR_IR/MariaRI/radiance_d03_201709171400_so
+Dealing with file(s) at DAtime: 201709171500
+  min of xlong: -60.5642, max of xlong: -52.1358
+  min of xlat: 9.117, max of xlat: 17.783
+  File: ../../raw_Obs/Collected_IR/MariaRI/DAt201709171500_GOESR_ABI_L2_CMIPF_CH8.nc
+  Output processed GOESR obs file: ../../toEnKFobs/GOESR_IR/MariaRI/radiance_d03_201709171500_so
+Dealing with file(s) at DAtime: 201709171600
+  min of xlong: -60.7809, max of xlong: -52.3525
+  min of xlat: 9.1661, max of xlat: 17.8339
+  File: ../../raw_Obs/Collected_IR/MariaRI/DAt201709171600_GOESR_ABI_L2_CMIPF_CH8.nc
+  Output processed GOESR obs file: ../../toEnKFobs/GOESR_IR/MariaRI/radiance_d03_201709171600_so
+Dealing with file(s) at DAtime: 201709171700
+  min of xlong: -60.9975, max of xlong: -52.5691
+  min of xlat: 9.2152, max of xlat: 17.8848
+  File: ../../raw_Obs/Collected_IR/MariaRI/DAt201709171700_GOESR_ABI_L2_CMIPF_CH8.nc
+  Output processed GOESR obs file: ../../toEnKFobs/GOESR_IR/MariaRI/radiance_d03_201709171700_so
+Dealing with file(s) at DAtime: 201709171800
+  min of xlong: -61.2142, max of xlong: -52.7858
+  min of xlat: 9.2642, max of xlat: 17.9358
+  File: ../../raw_Obs/Collected_IR/MariaRI/DAt201709171800_GOESR_ABI_L2_CMIPF_CH8.nc
+  Output processed GOESR obs file: ../../toEnKFobs/GOESR_IR/MariaRI/radiance_d03_201709171800_so
+Dealing with file(s) at DAtime: 201709171900
+  min of xlong: -61.3809, max of xlong: -52.9525
+  min of xlat: 9.3297, max of xlat: 18.0036
+  File: ../../raw_Obs/Collected_IR/MariaRI/DAt201709171900_GOESR_ABI_L2_CMIPF_CH8.nc
+  Output processed GOESR obs file: ../../toEnKFobs/GOESR_IR/MariaRI/radiance_d03_201709171900_so
+Dealing with file(s) at DAtime: 201709172000
+  min of xlong: -61.5475, max of xlong: -53.1191
+  min of xlat: 9.3951, max of xlat: 18.0715
+  File: ../../raw_Obs/Collected_IR/MariaRI/DAt201709172000_GOESR_ABI_L2_CMIPF_CH8.nc
+  Output processed GOESR obs file: ../../toEnKFobs/GOESR_IR/MariaRI/radiance_d03_201709172000_so
+Dealing with file(s) at DAtime: 201709172100
+  min of xlong: -61.7142, max of xlong: -53.2858
+  min of xlat: 9.4605, max of xlat: 18.1395
+  File: ../../raw_Obs/Collected_IR/MariaRI/DAt201709172100_GOESR_ABI_L2_CMIPF_CH8.nc
+  Output processed GOESR obs file: ../../toEnKFobs/GOESR_IR/MariaRI/radiance_d03_201709172100_so
+Dealing with file(s) at DAtime: 201709172200
+  min of xlong: -61.8809, max of xlong: -53.4525
+  min of xlat: 9.526, max of xlat: 18.2074
+  File: ../../raw_Obs/Collected_IR/MariaRI/DAt201709172200_GOESR_ABI_L2_CMIPF_CH8.nc
+  Output processed GOESR obs file: ../../toEnKFobs/GOESR_IR/MariaRI/radiance_d03_201709172200_so
+Dealing with file(s) at DAtime: 201709172300
+  min of xlong: -62.0475, max of xlong: -53.6191
+  min of xlat: 9.5914, max of xlat: 18.2753
+  File: ../../raw_Obs/Collected_IR/MariaRI/DAt201709172300_GOESR_ABI_L2_CMIPF_CH8.nc
+  Output processed GOESR obs file: ../../toEnKFobs/GOESR_IR/MariaRI/radiance_d03_201709172300_so
+Dealing with file(s) at DAtime: 201709180000
+  min of xlong: -62.2142, max of xlong: -53.7858
+  min of xlat: 9.6568, max of xlat: 18.3432
+  File: ../../raw_Obs/Collected_IR/MariaRI/DAt201709180000_GOESR_ABI_L2_CMIPF_CH8.nc
+  Output processed GOESR obs file: ../../toEnKFobs/GOESR_IR/MariaRI/radiance_d03_201709180000_so
