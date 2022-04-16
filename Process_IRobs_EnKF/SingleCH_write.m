@@ -1,10 +1,10 @@
-function [] = SingleCH_write(istorm, Tb_file, DAtime, min_WRF_lat, max_WRF_lat, min_WRF_lon, max_WRF_lon, control)
+function [] = SingleCH_write(istorm, DAtime, DA_btk, Tb_file, control)
 
     disp(["  File: " + Tb_file]);
     
     [~, filename, ~] = fileparts(Tb_file);
     file_info = split(filename,'_'); Ch = str2num(erase(file_info(6),'CH'));
-    [myTimes,mySat_name,myChNum,myLat,myLon,myTb,myROI_hydro,myROI_other,myObsErr,mySat_alt] = ProduceForEnKF(DAtime, Ch, min_WRF_lat, max_WRF_lat, min_WRF_lon, max_WRF_lon, Tb_file, control);
+    [myTimes,mySat_name,myChNum,myLat,myLon,myTb,myROI_hydro,myROI_other,myObsErr,mySat_alt] = ProduceForEnKF(DAtime, DA_btk, Ch, Tb_file, control);
      
     % create text file name
     filename = strcat(control.output_dir,control.storm_phase{istorm},'/radiance_d03_',DAtime,'_so');

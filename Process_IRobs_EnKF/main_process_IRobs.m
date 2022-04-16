@@ -1,3 +1,6 @@
+% Skeleton of the algorithm producing GOES-R obs that is readable by EnKF
+
+
 % -------------- Set up control variables ----------------------
 control = struct;
 % ----Path
@@ -20,8 +23,9 @@ control.dx = 3; % WRF resolution: 3 km
 % --- Other
 control.domain_buffer = 1.05; % scaling factor (Enlarge the domain 3 a bit so that enough obs will be obtained)
 control.filter_reso = [18;12]; 
+control.search_buffer = 0.1; % degrees: lat/lon
 % 18-by-18 km box with a 200-km radius of inﬂuence for non-hydro variables; 12-by-12 km box with a 30-km radius of inﬂuence for all variables
-control.roi_oh = {[200,0], [30,30]}; % roi [other variables, hydrometeors]
+control.roi_oh = {[200,0]; [30,30]}; % roi [other variables, hydrometeors]
 control.obsError = 3;
 control.Sat_alt = 35000; % km
 
@@ -61,9 +65,9 @@ for istorm = 1:length(control.storm_phase)
    Tb_files = strsplit(ls(Tb_dir));
    Tb_files = Tb_files(~cellfun('isempty',Tb_files)); % get rid of annoying empty cell    
 
-   for it = 1:size(bestrack_str,1)
+   for it = 1%:size(bestrack_str,1)
         files = [];
-        for iTb = 1:length(Tb_files)
+        for iTb = 1%:length(Tb_files)
             Tb_file = Tb_files{iTb};
             if contains(Tb_file, bestrack_str{it,1})
                 files = [files, string(Tb_file)];
@@ -73,24 +77,13 @@ for istorm = 1:length(control.storm_phase)
         end
         
         DAtime = bestrack_str{it,1};
+        DA_btk = bestrack_str{it,3}; % best-track location at the DA time
         disp(["Dealing with file(s) at DAtime: " + DAtime]);
 
-        % Create the domain centered at the best-track location at the DA time 
-        nx = control.nx*control.domain_buffer; % zoom out
-        ny = control.ny*control.domain_buffer; % zoom out
-        % Note: below algorithm works if only for all channels of interest, the DA_time are the same
-        DA_btk = bestrack_str{it,3}; % best-track location at the DA time
-        min_WRF_lat = DA_btk(1) - (ny/2*control.dx)/(cos(DA_btk(1)*(pi/180))*111);
-        max_WRF_lat = DA_btk(1) + (ny/2*control.dx)/(cos(DA_btk(1)*(pi/180))*111);
-        min_WRF_lon = DA_btk(2) - (nx/2*control.dx)/111;
-        max_WRF_lon = DA_btk(2) + (nx/2*control.dx)/111;
-        disp(['  min of xlong: ',num2str(min_WRF_lon), ', max of xlong: ',num2str(max_WRF_lon)]);
-        disp(['  min of xlat: ',num2str(min_WRF_lat), ', max of xlat: ',num2str(max_WRF_lat)]);
-
         if length(files) == 1
-            SingleCH_write(istorm, files, DAtime, min_WRF_lat, max_WRF_lat, min_WRF_lon, max_WRF_lon, control);                
+            SingleCH_write(istorm, DAtime, DA_btk, files, control);                
         else
-            MultiCh_write(istorm, files, DAtime, min_WRF_lat, max_WRF_lat, min_WRF_lon, max_WRF_lon, control);
+            MultiCh_write(istorm, DAtime, DA_btk, files, control);
         end
    end
 

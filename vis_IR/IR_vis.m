@@ -5,10 +5,10 @@ function [] = IR_vis(istorm, min_lat, max_lat, min_lon, max_lon, Tb_file, contro
     time_start = ncreadatt(Tb_file,'/','time_coverage_start');
     time_end =  ncreadatt(Tb_file,'/','time_coverage_end');
     % Tbs of Ch 8
-    Tbs = ncread(Tb_file, 'CMI');
-    % Vairables about lat/lon
-    x=ncread(Tb_file,'x');
-    y=ncread(Tb_file,'y');
+    Tbs = ncread(Tb_file, 'CMI');% cloud and moisture imagery TB ((key performance parameter for GOES-R series)
+    % geolocation
+    x=ncread(Tb_file,'x'); % GOES fixed grid projection x-coordinate (units: rad)
+    y=ncread(Tb_file,'y'); % GOES fixed grid projection y-coordinate (units: rad)
 
     % ----------------- Operations on Variables ------------------------------
     % time
@@ -23,10 +23,11 @@ function [] = IR_vis(istorm, min_lat, max_lat, min_lon, max_lon, Tb_file, contro
     time_save_str5 = extractBetween(time_start,15,16);
     time_save = append(time_save_str1,time_save_str2,time_save_str3,time_save_str4,time_save_str5);
     % Lat/lon;
-    req=6378137;
-    rpol=6356752.31414;
-    H=42164160;
-    l0=ncread(Tb_file,'nominal_satellite_subpoint_lon')*pi/180;
+    % GOES-R ABI fixed grid projection
+    req=6378137; % semi_major_axis
+    rpol=6356752.31414; % semi_minor_axis
+    H=42164160; % ?
+    l0=ncread(Tb_file,'nominal_satellite_subpoint_lon')*pi/180; % nominal satellite subpoint longitude (platform longitude)
     [y2d,x2d]=meshgrid(y,x);
     a=(sin(x2d)).^2+(cos(x2d)).^2.*((cos(y2d)).^2+(req/rpol.*sin(y2d)).^2);
     b=-2.*H.*cos(x2d).*cos(y2d);
