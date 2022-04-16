@@ -170,26 +170,27 @@ function [sat_name,myLat,myLon,myTb,mySat_lat,mySat_lon,mySat_alt,myAzimuth,mySc
     %       * * * * *                *   *   * 
     %       * * * * *                          
     %       * * * * *                *   *   * 
-    slots_x = cell(size(Swath_used{iTb}));
-    slots_y = cell(size(Swath_used{iTb}));
-    obs_index = cell(size(Swath_used{iTb}));
-        
-    filter_ratio_grid = control.filter_ratio / control.dx; 
-    grid_start_hf =  floor(filter_ratio_grid(2) / 2); % high frequency
-    grid_start_lf = grid_start_hf + .5*(2*filter_ratio_grid(2) - filter_ratio_grid(1)); % low frequency
+    slots_x = cell(size(control.roi_oh));
+    slots_y = cell(size(control.roi_oh));
+    obs_index = cell(length(control.roi_oh),length(Swath_used{iTb}));
+    
+	% Locate the start point for each ROI plan
+    filter_grid_step = control.filter_reso / control.dx;
+    grid_start(2) = floor(filter_grid_step(2) / 2); % start point for ROI plan 1 
+    grid_start(1) = grid_start(2) + .5*(2*filter_grid_step(2) - filter_grid_step(1)); % start point for ROI plan 2  
 
-    % loop through each frequency of interest
-    for it = 1:length(Swath_used{iTb})
-        if (contains(ChName_all{iTb}(it), "18.7GHzV-Pol")) || (contains(ChName_all{iTb}(it), "19.35GHzV-Pol"))
-            slots_x{it} = grid_start_lf:filter_ratio_grid(1):nx;
-            slots_y{it} = grid_start_lf:filter_ratio_grid(1):ny;
-            obs_index{it} = PickRawforCRTM(lat{it},lon{it},Tb{it},min_XLONG,max_XLONG,min_XLAT,max_XLAT,latitudes,longitudes,slots_x{it},slots_y{it},control);
-        else
-            slots_x{it} = grid_start_hf:filter_ratio_grid(2):nx;
-            slots_y{it} = grid_start_hf:filter_ratio_grid(2):ny;
-            obs_index{it} = PickRawforCRTM(lat{it},lon{it},Tb{it},min_XLONG,max_XLONG,min_XLAT,max_XLAT,latitudes,longitudes,slots_x{it},slots_y{it},control);
-        end
-    end
+    % For each ROI plan, find the nearest obs of each frequency for each WRF grid
+    for iroi = 1:length(control.roi_oh)
+		slots_x{iroi} = grid_start(iroi):filter_grid_step(iroi):nx;
+        slots_y{iroi} = grid_start(iroi):filter_grid_step(iroi):ny;
+		for it = 1:length(Swath_used{iTb})
+			if (contains(ChName_all{iTb}(it), "18.7GHzV-Pol")) || (contains(ChName_all{iTb}(it), "19.35GHzV-Pol"))
+				obs_index{iroi,it} = PickRawforCRTM(lat{it},lon{it},Tb{it},min_XLONG,max_XLONG,min_XLAT,max_XLAT,latitudes,longitudes,slots_x{iroi},slots_y{iroi},control);
+			else
+				obs_index{iroi,it} = PickRawforCRTM(lat{it},lon{it},Tb{it},min_XLONG,max_XLONG,min_XLAT,max_XLAT,latitudes,longitudes,slots_x{iroi},slots_y{iroi},control);
+			end
+		end
+	end
     % Note: Each value in the obs_index points at a location in the vectorized array Tb_col [Tb_col = reshape(Tb_raw,[],1)]
 
  

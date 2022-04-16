@@ -31,10 +31,10 @@ control.dx = 3; % WRF resolution: 3 km
 % --- Other
 control.domain_buffer = 1.5; % scaling factor
 control.search_buffer = 0.2; % degrees: lat/lon
-control.filter_ratio = [36,24]; % only for testing!!
+control.filter_reso = [36;24]; % only for testing!!
 %control.filter_ratio = [6,6];
-control.roi_oh = {[200,0], [60,60]}; % roi [other variables, hydrometeors]
-control.obsError = [3 3];
+control.roi_oh = {[200,0]; [60,60]}; % roi [other variables, hydrometeors]
+control.obsError = [3;3];
 
 % ---------- Loop through each storm object -------------------
 for istorm = 1:length(control.storm_phase)
