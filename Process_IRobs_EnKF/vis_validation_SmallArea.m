@@ -6,8 +6,8 @@ control = struct;
 control.obs_dir = '../../toEnKFobs/GOESR_IR/'; 
 control.output_dir = '../../Visual/toEnKFobs/GOESR_IR/';
 % ---Storm information
-%control.storm_phase = {'JoseRI',};  
-control.storm_phase = {'Irma2ndRI','JoseRI','MariaRI'};
+control.storm_phase = {'JoseRI',};  
+%control.storm_phase = {'Irma2ndRI','JoseRI','MariaRI'};
 % --- WRF setup
 control.nx = 20; % number of grid points along X direction
 control.ny = 20; % number of grid points along Y direction
@@ -59,7 +59,7 @@ for istorm = 1:length(control.storm_phase)
      obs_record = textscan(fid,'%s','delimiter','');
      fclose(fid);
      obs_str_all = string(obs_record{1}(:));
-     len_record = length(obs_record{1}(:)) % how many records there are per so file
+     len_record = length(obs_record{1}(:)); % how many records there are per so file
 
      obs_str_3 = zeros(len_record,3); 
      for ir = 1:len_record
