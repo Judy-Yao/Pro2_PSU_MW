@@ -4,13 +4,16 @@ control = struct;
 control.obs_dir = '../../toEnKFobs/GOESR_IR/';
 control.output_dir = '../../Visual/toEnKFobs/GOESR_IR/';
 % ---Storm information
-control.storm_phase = 'Irma2ndRI';  
+control.storm_phase = 'MariaRI';  
 %control.storm_phase = {'Irma2ndRI','JoseRI','MariaRI'};
 % --- WRF setup
 control.nx = 297; % number of grid points along X direction
 control.ny = 297; % number of grid points along Y direction
 control.dx = 3; % WRF resolution: 3 km
 % --- Other
+control.satName = "GOES16";
+control.favCH = "8";
+%control.facWL = {'6.2um', };
 %control.domain_buffer = 1.05; % scaling factor (Enlarge the domain 3 a bit so that enough obs will be obtained)
 control.filter_reso = [18;12];
 % 18-by-18 km box with a 200-km radius of inﬂuence for non-hydro variables; 12-by-12 km box with a 30-km radius of inﬂuence for all variables
@@ -38,10 +41,10 @@ bt_record = textscan(fid,'%s','delimiter','');
 fclose(fid);
 bt_str_all = string(bt_record{1}(:));
 
-loc_storm = strings(length(bt_record), 3);
-for ir = 1:length(bt_record)
+loc_storm = strings(length(bt_str_all), 3);
+for ir = 1:length(bt_str_all)
     bt_str_per = strsplit(bt_str_all(ir));
-    loc_storm(ir,:) = bt_str_per(1,:); % time,lat,lon
+    loc_storm(ir,:) = bt_str_per; % time,lat,lon
 end
 
 
@@ -57,20 +60,20 @@ for iso = 1:length(obs_files)
     obs_str_all = string(obs_record{1}(:));
     len_record = length(obs_record{1}(:)); % how many records there are per so file
 
-    obs_3 = zeros(len_record,6);
+    obs_4 = zeros(len_record,4);
     for ir = 1:len_record
         obs_str_per = strsplit(obs_str_all(ir));
-        obs_3(ir,:) =  str2double(obs_str_per(1,4:7)); % latitude, longitude, Tb value, ROI for hydro
+        obs_4(ir,:) =  str2double(obs_str_per(1,4:7)); % latitude, longitude, Tb value, ROI for hydro
     end
 
     % - Separate obs with large ROI from small ROI
-    idx_largeROI =  obs_str_3(:,4) == 0;
-    idx_smallROI = obs_str_3(:,4) == 30;
+    idx_largeROI =  obs_4(:,4) == 0;
+    idx_smallROI = obs_4(:,4) == 30;
     obs = cell(length(control.roi_oh),1);
-    obs{1,1} = obs_str_3(idx_largeROI,1:3);
-    obs{2,1} = obs_str_3(idx_smallROI,1:3);
+    obs{1,1} = obs_4(idx_largeROI,1:3);
+    obs{2,1} = obs_4(idx_smallROI,1:3);
 
-    lat_bt = loc_storm(iso,2); lon_bt =  loc_storm(iso,3);
+    DA_time = loc_storm(iso,1); lat_bt = str2double(loc_storm(iso,2)); lon_bt = str2double(loc_storm(iso,3));
     % map boundaries
     min_lat = lat_bt - (control.ny/2*control.dx)/(cos(lat_bt*(pi/180))*111);
     max_lat = lat_bt + (control.ny/2*control.dx)/(cos(lat_bt*(pi/180))*111);
@@ -89,11 +92,11 @@ for iso = 1:length(obs_files)
         set(hFig, 'Position', [0 0 750 800]);
         % scatter Tbs on a projected map
         m_proj('mercator','lon',[min_xlon max_xlon],'lat',[min_xlat max_xlat]);    
-        H = m_scatter(obs{iroi,1}(:,2), obs{iroi,1}(:,1),pointsize,obs{iroi,1}(:,3),'o','filled');
-        hold on;
-        m_scatter(lon_bt,lat_bt,50,0, '*'); % 0 is represented by black color in this colormap
+        H = m_scatter(obs{iroi,1}(:,2), obs{iroi,1}(:,1),50,obs{iroi,1}(:,3),'o','filled');
+        %hold on;
+        %m_scatter(lon_bt,lat_bt,50,0, '*'); % 0 is represented by black color in this colormap
         % use the customized colormap
-        cmap = IR_colormap(0.5); caxis([185 325]); 
+        colormap(IR_colormap(0.5)); caxis([185 325]); 
         cb = colorbar;
         set(cb,'Fontsize', 23);
         cb.Label.String = 'Brightness Temperature (K)';
@@ -106,12 +109,17 @@ for iso = 1:length(obs_files)
         xlh = xlabel(['DA time: ', DA_time], 'Fontsize',22,'fontweight','bold');
         xlh.Position(2) = xlh.Position(2) - 0.01;  % move the label 0.02 data-units further down 
         % title
-        title = [];
+        title_char1 = control.storm_phase + ": " + control.satName + " CH"+ control.favCH;
+        title_char2 = "Filtered Resolution: " + num2str(control.filter_reso(iroi))  + " KM";
+        title_char = [title_char1, title_char2];
+        title(title_char,'Fontsize',20)
 
+        save_dir = [control.output_dir+string(control.storm_phase)+'/'+string(DA_time)+'_'+num2str(control.filter_reso(iroi))+'km'+'.png'];
+        saveas(gcf,save_dir);        
 
     end
 
-
+end
 
 
 
