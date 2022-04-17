@@ -6,8 +6,8 @@ control = struct;
 control.obs_dir = '../../toEnKFobs/GOESR_IR/'; 
 control.output_dir = '../../Visual/toEnKFobs/GOESR_IR/';
 % ---Storm information
-control.storm_phase = {'JoseRI',};  
-%control.storm_phase = {'Irma2ndRI','JoseRI','MariaRI'};
+%control.storm_phase = {'JoseRI',};  
+control.storm_phase = {'Irma2ndRI','JoseRI','MariaRI'};
 % --- WRF setup
 control.nx = 20; % number of grid points along X direction
 control.ny = 20; % number of grid points along Y direction
@@ -132,7 +132,7 @@ for istorm = 1:length(control.storm_phase)
     t5 = m_text(min_WRF_lon-0.08, min_WRF_lat-0.06, 'Note: pointsize does not represent any FOV-size information.');
     t5.Color = 'black'; t5.FontSize = 16;
 
-    title([control.storm_phase{istorm},': every-Nth-obs thinning method'],'Fontsize',25);
+    title([control.storm_phase{istorm},':nearest-neighbor method'],'Fontsize',25);
 
     saveas(gcf,[control.obs_dir,control.storm_phase{istorm},'/',control.storm_phase{istorm},'_GOES_thin_validation.png']);
 

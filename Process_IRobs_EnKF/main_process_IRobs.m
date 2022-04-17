@@ -9,9 +9,9 @@ control.bestrack_dir = '../../raw_Obs/Bestrack/'; % directory where best-track f
 control.output_dir = '../../toEnKFobs/GOESR_IR/'; % directory where this algorithm outputs
 control.obs_collect_dir = '../../raw_Obs/Collected_IR/'; % 
 % ---Storm information
-control.storm_phase = {'JoseRI',};  
+control.storm_phase = {'MariaRI',};  
 %control.storm_phase = ["Irma2ndRI",'JoseRI','MariaRI'};
-control.period = {{'201709050600','201709070600'},};
+control.period = {{'201709160000','201709180000'},};
 %control.period = {{'201709030600','201709050600'},{'201709050600','201709070600'},{'201709160000','201709180000'}}; %YYYYMMDDHHmm
 % ---Satellite information
 control.favCH = [8,];
@@ -65,9 +65,9 @@ for istorm = 1:length(control.storm_phase)
    Tb_files = strsplit(ls(Tb_dir));
    Tb_files = Tb_files(~cellfun('isempty',Tb_files)); % get rid of annoying empty cell    
 
-   for it = 1%:size(bestrack_str,1)
+   for it = 1:size(bestrack_str,1)
         files = [];
-        for iTb = 1%:length(Tb_files)
+        for iTb = 1:length(Tb_files)
             Tb_file = Tb_files{iTb};
             if contains(Tb_file, bestrack_str{it,1})
                 files = [files, string(Tb_file)];
