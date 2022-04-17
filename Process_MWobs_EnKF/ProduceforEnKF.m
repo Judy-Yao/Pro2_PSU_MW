@@ -180,15 +180,12 @@ function [sat_name,myLat,myLon,myTb,mySat_lat,mySat_lon,mySat_alt,myAzimuth,mySc
     grid_start(1) = grid_start(2) + .5*(2*filter_grid_step(2) - filter_grid_step(1)); % start point for ROI plan 2  
 
     % For each ROI plan, find the nearest obs of each frequency for each WRF grid
-    for iroi = 1:length(control.roi_oh)
+    % Note: for GOESIR data, the (i,j) obs of 16 channels has the same location. Therefore, loop over channels is not needed.
+	for iroi = 1:length(control.roi_oh)
 		slots_x{iroi} = grid_start(iroi):filter_grid_step(iroi):nx;
         slots_y{iroi} = grid_start(iroi):filter_grid_step(iroi):ny;
 		for it = 1:length(Swath_used{iTb})
-			if (contains(ChName_all{iTb}(it), "18.7GHzV-Pol")) || (contains(ChName_all{iTb}(it), "19.35GHzV-Pol"))
-				obs_index{iroi,it} = PickRawforCRTM(lat{it},lon{it},Tb{it},min_XLONG,max_XLONG,min_XLAT,max_XLAT,latitudes,longitudes,slots_x{iroi},slots_y{iroi},control);
-			else
-				obs_index{iroi,it} = PickRawforCRTM(lat{it},lon{it},Tb{it},min_XLONG,max_XLONG,min_XLAT,max_XLAT,latitudes,longitudes,slots_x{iroi},slots_y{iroi},control);
-			end
+			obs_index{iroi,it} = PickRawforCRTM(lat{it},lon{it},Tb{it},min_XLONG,max_XLONG,min_XLAT,max_XLAT,latitudes,longitudes,slots_x{iroi},slots_y{iroi},control);
 		end
 	end
     % Note: Each value in the obs_index points at a location in the vectorized array Tb_col [Tb_col = reshape(Tb_raw,[],1)]
@@ -199,59 +196,70 @@ function [sat_name,myLat,myLon,myTb,mySat_lat,mySat_lon,mySat_alt,myAzimuth,mySc
     % ---------------------------------------------------------------------
     
     % Preallocating memory
-    DA_lat = cell(size(Swath_used{iTb}));
-    DA_lon = cell(size(Swath_used{iTb}));
-    DA_Tb = cell(size(Swath_used{iTb}));
+    DA_lat = cell(length(control.roi_oh),length(Swath_used{iTb})); DA_lat_perROI = cell(length(control.roi_oh));
+    DA_lon = cell(length(control.roi_oh),length(Swath_used{iTb})); DA_lon_perROI = cell(length(control.roi_oh));
+    DA_Tb = cell(length(control.roi_oh),length(Swath_used{iTb})); DA_Tb_perROi =  
 
-    DA_sat_lat = cell(size(Swath_used{iTb}));
-    DA_sat_lon = cell(size(Swath_used{iTb}));
-    DA_sat_alt = cell(size(Swath_used{iTb}));
-    DA_azimuth = cell(size(Swath_used{iTb})); 
-    DA_scan_angle = cell(size(Swath_used{iTb}));
-    DA_zenith = cell(size(Swath_used{iTb}));
-    DA_fov_crossTrack = cell(size(Swath_used{iTb}));
-    DA_fov_alongTrack = cell(size(Swath_used{iTb}));
+    DA_sat_lat = cell(length(control.roi_oh),length(Swath_used{iTb})); DA_satLat_perROI = cell(length(control.roi_oh));
+    DA_sat_lon = cell(length(control.roi_oh),length(Swath_used{iTb})); DA_satLon_perROI = cell(length(control.roi_oh));
+    DA_sat_alt = cell(length(control.roi_oh),length(Swath_used{iTb})); DA_satAlt_perROI = cell(length(control.roi_oh));
+    DA_azimuth = cell(length(control.roi_oh),length(Swath_used{iTb})); DA_azimuth_perROI = cell(length(control.roi_oh));
+    DA_scan_angle = cell(length(control.roi_oh),length(Swath_used{iTb})); DA_scan_perROI = cell(length(control.roi_oh));
+    DA_zenith = cell(length(control.roi_oh),length(Swath_used{iTb})); DA_zenith_perROI = cell(length(control.roi_oh));
+    DA_fov_crossTrack = cell(length(control.roi_oh),length(Swath_used{iTb})); DA_fovCross_perROI = cell(length(control.roi_oh));
+    DA_fov_alongTrack = cell(length(control.roi_oh),length(Swath_used{iTb})); DA_fovAlong_perROI = cell(length(control.roi_oh));
 
-    DA_times = cell(size(Swath_used{iTb}));
-    DA_chNum = cell(size(Swath_used{iTb}));
-    DA_obsError = cell(size(Swath_used{iTb}));
-
+    DA_times = cell(length(control.roi_oh),length(Swath_used{iTb})); DA_times_perROI = cell(length(control.roi_oh));
+    DA_chNum = cell(length(control.roi_oh),length(Swath_used{iTb})); DA_chNum_perROI = cell(length(control.roi_oh));
+	DA_ROI_hydro = cell(length(control.roi_oh),length(Swath_used{iTb})); DA_roiHydro_perROI = cell(length(control.roi_oh));
+	DA_ROI_other = cell(length(control.roi_oh),length(Swath_used{iTb})); DA_roiOther_perROI = cell(length(control.roi_oh));
+    DA_obsError = cell(length(control.roi_oh),length(Swath_used{iTb})); DA_obsError_perROI = cell(length(control.roi_oh));
     % Assign values
-    for it = 1:length(Swath_used{iTb}) 
-        obs_index_array = obs_index{it};
-        obs_index_1d = obs_index_array(obs_index_array(:) == obs_index_array(:)); % get rid of obs_index with value NaN
-        % **Tb,lat,lon**
-        allTb = reshape(Tb{it},[],1);
-        all_lat = reshape(lat{it},[],1);
-        all_lon = reshape(lon{it},[],1);
-        DA_Tb{it}          = allTb(obs_index_1d);
-        DA_lat{it}         = all_lat(obs_index_1d);
-        DA_lon{it}         = all_lon(obs_index_1d);
-        % **sat_lat,sat_lon,sat_alt,zenith angle**
-        [scan_position, scan_num] = ind2sub(size(Tb{it}),obs_index_1d); % size(Tb{it}): npixel, nscan; output from ind2sub: row, column
-        DA_sat_lat{it} = sat_lat{it}(scan_num);
-        DA_sat_lon{it} = sat_lon{it}(scan_num);
-        DA_sat_alt{it} = sat_alt{it}(scan_num);
-        all_azimuth = reshape(azimuth{it},[],1);
-        DA_azimuth{it} = all_azimuth(obs_index_1d);
-        all_zenith = reshape(zenith{it},[],1);
-        DA_zenith{it} = all_zenith(obs_index_1d);
-        % **scan angle** 
-        [scantype,ch_num,fov_alongTrack,fov_crossTrack,max_scan_angle,scan_angles] = SensorInfo_read(sensor,ChName_all{iTb}{it});
-        DA_scan_angle{it} = scan_angles(scan_position)';
-        % **cross-track and along-track FOV**
-        [DA_fov_crossTrack{it}, DA_fov_alongTrack{it}] = Get_pixel_resolution(scantype,ch_num,fov_alongTrack,fov_crossTrack,DA_lat{it},DA_lon{it},DA_zenith{it},DA_sat_lat{it},DA_sat_lon{it},DA_sat_alt{it});
-        % **scan time**
-        %DA_times{it}(scan_num,1) = outime{it}(scan_num);
-        for my_scan_num_idx = 1:length(scan_num)
-            DA_times{it}(my_scan_num_idx,1) = outime{it}(scan_num(my_scan_num_idx));
-        end
-        % **Channel number, obs error**
-        DA_chNum{it} = ones(numel(obs_index_1d),1,'int64')*ch_num;
-        DA_obsError{it} = ones(numel(obs_index_1d),1)*control.obsError(it);
-    end
+	for iroi = 1:length(control.roi_oh)
+		for it = 1:length(Swath_used{iTb}) 
+			obs_index_array = obs_index{iroi,it};
+			obs_index_1d = obs_index_array(obs_index_array(:) == obs_index_array(:)); % get rid of obs_index with value NaN
+			% **Tb,lat,lon**
+			allTb = reshape(Tb{it},[],1); all_lat = reshape(lat{it},[],1); all_lon = reshape(lon{it},[],1);
+			DA_Tb{iroi,it}          = allTb(obs_index_1d);
+			DA_lat{iroi,it}         = all_lat(obs_index_1d);
+			DA_lon{iroi,it}         = all_lon(obs_index_1d);
+			% **sat_lat,sat_lon,sat_alt,zenith angle**
+			[scan_position, scan_num] = ind2sub(size(Tb{it}),obs_index_1d); % size(Tb{it}): npixel, nscan; output from ind2sub: row, column
+			DA_sat_lat{iroi,it} = sat_lat{it}(scan_num);
+			DA_sat_lon{iroi,it} = sat_lon{it}(scan_num);
+			DA_sat_alt{iroi,it} = sat_alt{it}(scan_num);
+			all_azimuth = reshape(azimuth{it},[],1);
+			DA_azimuth{iroi,it} = all_azimuth(obs_index_1d);
+			all_zenith = reshape(zenith{it},[],1);
+			DA_zenith{iroi,it} = all_zenith(obs_index_1d);
+			% **scan angle** 
+			[scantype,ch_num,fov_alongTrack,fov_crossTrack,max_scan_angle,scan_angles] = SensorInfo_read(sensor,ChName_all{iTb}{it});
+			DA_scan_angle{iroi,it} = scan_angles(scan_position)';
+			% **cross-track and along-track FOV**
+			[DA_fov_crossTrack{iroi,it}, DA_fov_alongTrack{iroi,it}] = Get_pixel_resolution(scantype,ch_num,fov_alongTrack,fov_crossTrack,DA_lat{iroi,it},DA_lon{iroi,it},DA_zenith{iroi,it},DA_sat_lat{iroi,it},DA_sat_lon{iroi,it},DA_sat_alt{iroi,it});
+			% **scan time**
+			%DA_times{it}(scan_num,1) = outime{it}(scan_num);
+			for my_scan_num_idx = 1:length(scan_num)
+				DA_times{iroi,it}(my_scan_num_idx,1) = outime{it}(scan_num(my_scan_num_idx));
+			end
+			% **Channel number, obs error**
+			DA_chNum{iroi,it} = ones(numel(obs_index_1d),1,'int64')*ch_num;
+			DA_obsError{iroi,it} = ones(numel(obs_index_1d),1)*control.obsError(it);
+			DA_ROI_hydro{iroi,it} = ones(numel(obs_index_1d),1)*control.roi_oh{iroi}(2);
+	        DA_ROI_other{iroi,it} = ones(numel(obs_index_1d),1)*control.roi_oh{iroi}(1);
+		end
+		DA_lat_perROI{iroi} = cat(1,DA_lat{iroi,:}); DA_lon_perROI{iroi} = cat(1,DA_lon{iroi,:}); DA_lon_perROI{iroi} = cat(1,DA_Tb{iroi,:});
+		DA_satLat_perROI{iroi} = cat(1,DA_sat_lat{iroi,:}); DA_satLon_perROI{iroi} = cat(1,DA_sat_lon{iroi,:}); DA_satAlt_perROI{iroi} = cat(1,DA_sat_alt{iroi,:});
+        DA_azimuth_perROI{iroi} = cat(1,DA_azimuth{iroi,:}); DA_scan_perROI{iroi} = cat(1,DA_scan_angle{iroi,:}); DA_zenith_perROI{iroi} = cat(1,DA_zenith{iroi,:});    
+		DA_fovCross_perROI{iroi} = cat(1,DA_fov_crossTrack{iroi,:}); DA_fovAlong_perROI{iroi} = cat(1,DA_fov_alongTrack{iroi,:}); 
+		DA_times_perROI{iroi} = cat(1,DA_times{iroi,:});  DA_chNum_perROI{iroi} = cat(1,DA_chNum{iroi,:});
+        DA_roiHydro_perROI{iroi} = cat(1,DA_ROI_hydro{iroi,:}); DA_roiOther_perROI{iroi} = cat(1,DA_ROI_other{iroi,:}); DA_obsError_perROI{iroi} = cat(1,DA_obsError{iroi,:});
+	end
     clear Tb lat lon sat_lat sat_lon sat_alt azimuth zenith scan_angles outime 
     clear allTb all_lat all_lon all_azimuth all_zenith 
+	clear DA_lat DA_lon DA_Tb DA_sat_lat DA_sat_lon DA_sat_alt DA_azimuth DA_azimuth DA_zenith DA_fov_crossTrack DA_fov_alongTrack 
+	clear DA_times DA_chNum DA_chNum DA_ROI_hydro DA_ROI_other DA_ROI_other
 
     % ---------------------------------------------------------------------
     % ---- Produce MW records for EnKF assimilation with roi
@@ -278,11 +286,11 @@ function [sat_name,myLat,myLon,myTb,mySat_lat,mySat_lon,mySat_alt,myAzimuth,mySc
 
     for ir = 1:length(control.roi_oh) % ROI first references [200,0] second [60,60]
         % randomize MW records for this ROI 
-        randOrder = randperm(length(cat(1,DA_Tb{:}))); % DA_Tb may contain 1 channel (low or high) or contain both low and high channels
+        randOrder = randperm(length(cat(1,DA_Tb_perROI{ir}))); % DA_Tb may contain 1 channel (low or high) or contain both low and high channels
 
-        tem_lat = cat(1,DA_lat{:});                 myLat{ir} = tem_lat(randOrder); %clear tem_lat
-        tem_lon = cat(1,DA_lon{:});                 myLon{ir} = tem_lon(randOrder); %clear tem_lon
-        tem_Tb = cat(1,DA_Tb{:});                   myTb{ir} = tem_Tb(randOrder); %clear tem_Tb
+        tem_lat = cat(1,DA_lat_perROI{ir});                 myLat{ir} = tem_lat(randOrder); %clear tem_lat
+        tem_lon = cat(1,DA_lon_perROI{ur});                 myLon{ir} = tem_lon(randOrder); %clear tem_lon
+        tem_Tb = cat(1,DA_Tb_perROI{ir});                   myTb{ir} = tem_Tb(randOrder); %clear tem_Tb
         
         tem_sat_lat = cat(1,DA_sat_lat{:}); mySat_lat{ir} = tem_sat_lat(randOrder); %clear tem_sat_lat
         tem_sat_lon = cat(1,DA_sat_lon{:}); mySat_lon{ir} = tem_sat_lon(randOrder); %clear tem_sat_lon
