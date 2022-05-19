@@ -1,0 +1,52 @@
+
+In util.sh line 21:
+      date1=`advance_time $date1 -1440`
+            ^-------------------------^ SC2006: Use $(...) notation instead of legacy backticked `...`.
+                          ^----^ SC2086: Double quote to prevent globbing and word splitting.
+
+Did you mean: 
+      date1=$(advance_time "$date1" -1440)
+
+
+In util.sh line 57:
+  for module in $*; do
+                ^-- SC2048: Use "$@" (with quotes) to prevent whitespace problems.
+
+
+In util.sh line 79:
+  until [[ $(tail -n5 "$logfile" |grep "$keyword") ]]; do
+           ^-- SC2143: Use grep -q instead of comparing output with [ -n .. ].
+
+
+In util.sh line 82:
+    l1=$(cat "$logfile" |wc -l)
+             ^--------^ SC2002: Useless cat. Consider 'cmd < file | ..' or 'cmd file | ..' instead.
+
+
+In util.sh line 92:
+      echo $(pwd)/"$logfile" stagnant "for" "$timeout" minutes! Abort.
+           ^----^ SC2046: Quote this to prevent word splitting.
+
+
+In util.sh line 110:
+      echo Timeout waiting for $(pwd)/"$filename". Abort.
+                               ^----^ SC2046: Quote this to prevent word splitting.
+
+
+In util.sh line 124:
+  rem=$(($m%$n))
+         ^-- SC2004: $/${} is unnecessary on arithmetic variables.
+            ^-- SC2004: $/${} is unnecessary on arithmetic variables.
+
+
+In util.sh line 128:
+echo $m
+     ^-- SC2086: Double quote to prevent globbing and word splitting.
+
+Did you mean: 
+echo "$m"
+
+For more information:
+  https://www.shellcheck.net/wiki/SC2046 -- Quote this to prevent word splitt...
+  https://www.shellcheck.net/wiki/SC2048 -- Use "$@" (with quotes) to prevent...
+  https://www.shellcheck.net/wiki/SC2086 -- Double quote to prevent globbing ...

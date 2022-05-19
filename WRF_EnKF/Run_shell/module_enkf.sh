@@ -1,12 +1,13 @@
 #!/bin/bash --login
-. $CONFIG_FILE
+. "$CONFIG_FILE"
+
 rundir=$WORK_DIR/run/$DATE/enkf
-if [[ ! -d $rundir ]]; then mkdir -p $rundir; echo waiting > $rundir/stat; fi
-cd $rundir
-if [[ `cat stat` == "complete" ]]; then exit; fi
+if [[ ! -d $rundir ]]; then mkdir -p "$rundir"; echo waiting > "$rundir"/stat; fi
+cd "$rundir"
+if [[ $(cat stat) == "complete" ]]; then exit; fi
 
 #Check dependency
-wait_for_module ../../$PREVDATE/wrf_ens ../obsproc ../icbc
+wait_for_module ../../"$PREVDATE"/wrf_ens ../obsproc ../icbc
 #Commented out for GEFS Perrurbations
 if [[ $DATE == $LBDATE ]]; then
   wait_for_module ../perturb_ic

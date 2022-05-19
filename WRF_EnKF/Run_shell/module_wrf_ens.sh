@@ -1,10 +1,11 @@
 #!/bin/bash --login
-. $CONFIG_FILE
-rundir=$WORK_DIR/run/$DATE/wrf_ens
-if [[ ! -d $rundir ]]; then mkdir -p $rundir; echo waiting > $rundir/stat; fi
+. "$CONFIG_FILE"
 
-cd $rundir
-if [[ `cat stat` == "complete" ]]; then exit; fi
+rundir="$WORK_DIR"/run/"$DATE"/wrf_ens
+if [[ ! -d $rundir ]]; then mkdir -p "$rundir"; echo waiting > "$rundir"/stat; fi
+
+cd "$rundir" || exit
+if [[ $(cat stat) == "complete" ]]; then exit; fi
 
 #Check dependency
 wait_for_module ../update_bc ../icbc 
@@ -20,39 +21,39 @@ echo "  Running WRF ensemble..."
 tid=0  #does not start from 0, because the wrf forecast runs with ens at the same time.
 nt=$((total_ntasks/$wrf_ntasks))
 
-if $RECENTER; then NUM_ENS=`expr $NUM_ENS + 1`; fi
+if $RECENTER; then NUM_ENS=$(expr "$NUM_ENS" + 1); fi
 
-for NE in `seq 1 $NUM_ENS`; do
+for NE in $(seq 1 "$NUM_ENS"); do
 #for NE in `seq 1 1`; do
-  id=`expr $NE + 1000 |cut -c2-`
-  if [[ ! -d $id ]]; then mkdir $id; fi
-  touch $id/rsl.error.0000
-  if [[ `tail -n1 $id/rsl.error.0000 |grep SUCCESS` ]]; then continue; fi
+  id=$(expr "$NE" + 1000 |cut -c2-)
+  if [[ ! -d $id ]]; then mkdir "$id"; fi
+  touch "$id"/rsl.error.0000
+  if [[ $(tail -n1 "$id"/rsl.error.0000 |grep SUCCESS) ]]; then continue; fi
 
-  cd $id
+  cd "$id" || exit
   #ln -fs $WRF_DIR/run/* .
-  ln -fs $WRF_PRESET_DIR/run/* .
+  ln -fs "$WRF_PRESET_DIR"/run/* .
   rm -f namelist.*
 
-  for n in `seq 1 $MAX_DOM`; do
-    dm=d`expr $n + 100 |cut -c2-`
+  for n in $(seq 1 "$MAX_DOM"); do
+    dm=d$(expr "$n" + 100 |cut -c2-)
     #if [[ $NE -eq $NUM_ENS ]]; then
     #  ln -fs $WORK_DIR/fc/$DATE/wrfinput_${dm} wrfinput_$dm
     #  ln -fs $WORK_DIR/fc/$DATE/wrfbdy_d01 wrfbdy_d01
     #else
-    ln -fs $WORK_DIR/fc/$DATE/wrfinput_${dm}_$id wrfinput_$dm
-    ln -fs $WORK_DIR/fc/$DATE/wrfbdy_d01_$id wrfbdy_d01
+    ln -fs "$WORK_DIR"/fc/"$DATE"/wrfinput_"${dm}"_"$id" wrfinput_"$dm"
+    ln -fs "$WORK_DIR"/fc/"$DATE"/wrfbdy_d01_"$id" wrfbdy_d01
     #fi
     #ncl $SCRIPT_DIR/util_change_nc_time.ncl 'ncfile="wrfinput_d01"' 'time="'`wrf_time_string $DATE`'"'
   done
 
   if $FOLLOW_STORM; then
-    cp $WORK_DIR/rc/$DATE/ij_parent_start .
-    cp $WORK_DIR/rc/$DATE/domain_moves .
+    cp "$WORK_DIR"/rc/"$DATE"/ij_parent_start .
+    cp "$WORK_DIR"/rc/"$DATE"/domain_moves .
   fi
  
   if [[ $SST_UPDATE == 1 ]]; then
-    ln -fs $WORK_DIR/rc/$LBDATE/wrflowinp_d?? .
+    ln -fs "$WORK_DIR"/rc/"$LBDATE"/wrflowinp_d?? .
   fi
 
   export start_date=$start_date_cycle
@@ -64,10 +65,10 @@ for NE in `seq 1 $NUM_ENS`; do
 
   if [[ $DATE == $DATE_START ]]; then
     export wrf_for=forecast
-    $SCRIPT_DIR/namelist_wrf_realtime.sh wrfw $RUN_DOMAIN > namelist.input
+    "$SCRIPT_DIR"/namelist_wrf_realtime.sh wrfw "$RUN_DOMAIN" > namelist.input
   else
     export wrf_for=cycle
-    $SCRIPT_DIR/namelist_wrf_realtime.sh wrfw $RUN_DOMAIN > namelist.input
+    "$SCRIPT_DIR"/namelist_wrf_realtime.sh wrfw "$RUN_DOMAIN" > namelist.input
   fi
   
 #  $SCRIPT_DIR/job_submit.sh $wrf_ntasks $((tid*$wrf_ntasks)) $HOSTPPN ./wrf.exe >& wrf.log &
@@ -100,43 +101,43 @@ done
 date
 EOF
 sbatch run_wrf_ens.sh &> job_submit.log
-until [[ `grep SUCCESS $rundir/*/rsl.error.0000 | wc -l` -eq $NUM_ENS ]]; do
-  JID=`tail -1 job_submit.log | cut -c21-`
-  if [[ `squeue | grep $JID | wc -l` -eq 0 ]]; then
+until [[ $(grep SUCCESS "$rundir"/*/rsl.error.0000 | wc -l) -eq $NUM_ENS ]]; do
+  JID=$(tail -1 job_submit.log | cut -c21-)
+  if [[ $(squeue | grep "$JID" | wc -l) -eq 0 ]]; then
     sbatch run_wrf_ens.sh &> job_submit.log
   fi
-  JID=`tail -1 job_submit.log | cut -c21-`
+  JID=$(tail -1 job_submit.log | cut -c21-)
   sleep 1m
 done
 
-for NE in `seq 1 $NUM_ENS`; do
-  id=`expr $NE + 1000 |cut -c2-`
-  watch_log $id/rsl.error.0000 SUCCESS 5 $rundir
-  rm $id/rsl.*
-  echo SUCCESS > $id/rsl.error.0000
+for NE in $(seq 1 "$NUM_ENS"); do
+  id=$(expr "$NE" + 1000 |cut -c2-)  
+  watch_log "$id"/rsl.error.0000 SUCCESS 5 "$rundir"
+  rm "$id"/rsl.*
+  echo SUCCESS > "$id"/rsl.error.0000
   #outfile=$id/wrfinput_d01_`wrf_time_string $NEXTDATE`
-  outfile=$id/wrfout_d01_`wrf_time_string $NEXTDATE`
+  outfile=$id/wrfout_d01_$(wrf_time_string "$NEXTDATE")
   #outfile=$id/wrfrst_d01_`wrf_time_string $NEXTDATE`
-  watch_file $outfile 5 $rundir
+  watch_file "$outfile" 5 "$rundir"
   if $RECENTER && [[ $NE -eq $NUM_ENS ]]; then
-    mv $outfile $WORK_DIR/fc/$DATE/wrfinput_d01_`wrf_time_string $NEXTDATE`
+    mv "$outfile" "$WORK_DIR"/fc/"$DATE"/wrfinput_d01_$(wrf_time_string "$NEXTDATE")
   else
-    cp $outfile $WORK_DIR/fc/$DATE/wrfinput_d01_`wrf_time_string $NEXTDATE`_$id
+    cp "$outfile" "$WORK_DIR"/fc/"$DATE"/wrfinput_d01_$(wrf_time_string "$NEXTDATE")_"$id"
   fi
-  if [ $MAX_DOM -gt 1 ]; then
-    for n in `seq 2 $MAX_DOM`; do
-      dm=d`expr $n + 100 |cut -c2-`
-      outfile=$id/wrfout_${dm}_`wrf_time_string $NEXTDATE`
+  if [ "$MAX_DOM" -gt 1 ]; then
+      for n in $(seq 2 "$MAX_DOM"); do
+      dm=d$(expr "$n" + 100 |cut -c2-)
+      outfile=$id/wrfout_${dm}_$(wrf_time_string "$NEXTDATE")
       #outfile=$id/wrfrst_${dm}_`wrf_time_string $NEXTDATE`
-      watch_file $outfile 5 $rundir
+      watch_file "$outfile" 5 "$rundir"
       if $RECENTER && [[ $NE -eq $NUM_ENS ]]; then
-        mv $outfile $WORK_DIR/fc/$DATE/wrfinput_${dm}_`wrf_time_string $NEXTDATE`
+        mv "$outfile" "$WORK_DIR"/fc/"$DATE"/wrfinput_"${dm}"_$(wrf_time_string "$NEXTDATE")
       else
-        cp $outfile $WORK_DIR/fc/$DATE/wrfinput_${dm}_`wrf_time_string $NEXTDATE`_$id
+        cp "$outfile" "$WORK_DIR"/fc/"$DATE"/wrfinput_"${dm}"_$(wrf_time_string "$NEXTDATE")_"$id"
       fi 
     done
   fi
 done
 
-if $CLEAN; then rm $rundir/$id/wrfout* ; fi
+if $CLEAN; then rm "$rundir"/"$id"/wrfout* ; fi
 echo complete > stat
