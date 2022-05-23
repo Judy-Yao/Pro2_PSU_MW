@@ -18,20 +18,8 @@ nt=$((total_ntasks/$wrf_ntasks))
 
 
 In module_wrf_ens.sh line 24:
-if $RECENTER; then NUM_ENS=$(expr $NUM_ENS + 1); fi
-                             ^--^ SC2003: expr is antiquated. Consider rewriting this using $((..)), ${} or [[ ]].
-                                  ^------^ SC2086: Double quote to prevent globbing and word splitting.
-
-Did you mean: 
 if $RECENTER; then NUM_ENS=$(expr "$NUM_ENS" + 1); fi
-
-
-In module_wrf_ens.sh line 26:
-for NE in $(seq 1 $NUM_ENS); do
-                  ^------^ SC2086: Double quote to prevent globbing and word splitting.
-
-Did you mean: 
-for NE in $(seq 1 "$NUM_ENS"); do
+                             ^--^ SC2003: expr is antiquated. Consider rewriting this using $((..)), ${} or [[ ]].
 
 
 In module_wrf_ens.sh line 28:
@@ -87,14 +75,6 @@ In module_wrf_ens.sh line 123:
 In module_wrf_ens.sh line 125:
     cp "$outfile" "$WORK_DIR"/fc/"$DATE"/wrfinput_d01_$(wrf_time_string "$NEXTDATE")_"$id"
                                                       ^----------------------------^ SC2046: Quote this to prevent word splitting.
-
-
-In module_wrf_ens.sh line 127:
-  if [ $MAX_DOM -gt 1 ]; then
-       ^------^ SC2086: Double quote to prevent globbing and word splitting.
-
-Did you mean: 
-  if [ "$MAX_DOM" -gt 1 ]; then
 
 
 In module_wrf_ens.sh line 129:

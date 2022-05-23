@@ -3,7 +3,7 @@
 
 rundir=$WORK_DIR/run/$DATE/enkf
 if [[ ! -d $rundir ]]; then mkdir -p "$rundir"; echo waiting > "$rundir"/stat; fi
-cd "$rundir"
+cd "$rundir" || exit
 if [[ $(cat stat) == "complete" ]]; then exit; fi
 
 #Check dependency
@@ -121,15 +121,15 @@ for n in $domlist; do
 done
 
 # replacing prior mean with determinstic forecast
-  if $RECENTER; then
-   if [[ $REPLACE_MEAN_WITH == "prior_forecast" ]]; then
+if $RECENTER; then
+  if [[ $REPLACE_MEAN_WITH == "prior_forecast" ]]; then
     tid=0
     nn=$((($enkf_ntasks+$HOSTPPN-$enkf_ntasks%$HOSTPPN)/$HOSTPPN))
     nt=$(($total_ntasks/$HOSTPPN/$nn))
     for n in $domlist; do
-     dm=d`expr $n + 100 |cut -c2-`
-     cd $dm
-     if [[ ! -d replace_mean ]]; then mkdir -p replace_mean; fi
+      dm=d`expr $n + 100 |cut -c2-`
+      cd $dm
+      if [[ ! -d replace_mean ]]; then mkdir -p replace_mean; fi
       cd replace_mean
       echo "  Replacing ens mean with $REPLACE_MEAN_WITH for domain $dm"
       for NE in `seq 1 $((NUM_ENS+1))`; do
@@ -161,8 +161,8 @@ done
       done
       cd ../..
     done
-   fi
   fi
+fi
 
 # inflate prior members
 if $USE_ESTIMATE_INF; then
