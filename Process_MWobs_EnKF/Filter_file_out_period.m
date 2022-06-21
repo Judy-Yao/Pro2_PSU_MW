@@ -12,8 +12,9 @@ function use_Tb_file = Filter_file_out_period(idx_storm,Tb_file,control)
 	[~,~,filext] = fileparts(Tb_file);
 	
 	% Read the beginning and ending of the time coverage for this file
+	
+	% HDF5 file
 	if contains(filext,"HDF5")
-		%% HDF5 file
 		fileheader = split(h5readatt(Tb_file,'/','FileHeader'),';');
 		for i = 1:length(fileheader)
 			if contains(fileheader{i},'StartGranuleDateTime') 
@@ -24,11 +25,11 @@ function use_Tb_file = Filter_file_out_period(idx_storm,Tb_file,control)
 				disp(['    End Granule Time: ',strtrim(time_end)]);
 			end
 		end
-		%%% convert saved time strings to scalar datetime arrays
+		% convert saved time strings to scalar datetime arrays
 		start_datetime = datetime(strtrim(time_start),'InputFormat','yyyy-MM-dd''T''HH:mm', 'TimeZone','UTC');
 		end_datetime = datetime(strtrim(time_end),'InputFormat','yyyy-MM-dd''T''HH:mm', 'TimeZone','UTC'); 
+	% NC file
 	elseif contains(filext,"nc")
-		%% nc file
 		start_datetime = extractBefore(ncreadtt(Tb_file,'/','time_coverage_start'),18);			
 		end_datetime = extractBefore(ncreadtt(Tb_file,'/','time_coverage_end'),18);
 	end

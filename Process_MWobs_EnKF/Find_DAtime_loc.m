@@ -1,32 +1,47 @@
+% ==========================================================================================
+% Identify the DA_time (YYYYYMMDDHH00) for a L1C MW obs file
+% Designed by Zhu (Judy) Yao in February 2022 
+% ==========================================================================================
+
 function [if_swath_good,DAtime_perCh,loc_storm_DAtime] = Find_DAtime_loc(bestrack_str,Swath_used,Tb_file, control)
-% Identify the DA_time (YYYYYMMDDHH00) for a L1C MW obs file 
 
-% ------------------Algorithm--------------------
-% Designed by Zhu (Judy) Yao in February 2022---------
+    % Determine if the file should be read by ncread or h5read
+    [~,~,filext] = fileparts(Tb_file);
 
-% ------------------- Step 1 ----------------------------
+% ==================================================================================================
+%                                         Step 1
+% =================================================================================================
+%
 %           start_datetime       end_datetime
 % |__________|____%______|__________|_%_________|
 % h-1     h-0.5          h        h+0.5        h+1
-% For example, for a L1C MW obs file, if StartGranuleDateTime is 201708170434 and EndGranuleDateTime is
+% For example, for a MW obs file, if time_coverage_start is 201708170434 and time_coverage_end is
 % 201708170616, the candidates for DA_time are 201708170500 and 201708170600 (DA_time has to be o'clock)
 % Genericlly, for DA_time = 05UTC, effective Tb observations should be limited to those with scan time 
 % ranging from 4:30 to 5:30 with one-hour interval. However in this case,for DA_time = 05UTC, effective 
 % observations are limited from 4:34 to 5:30; for DA_time = 06UTC, effective observations are limited from 5:30 to 6:16.
+% ------------------------------------------------------------------------------------------------------------------
 
-    % -read StartGranuleDateTime and StopGranuleDateTime from the file header 
-    fileheader = split(h5readatt(Tb_file,'/','FileHeader'),';');
-    for i = 1:length(fileheader)
-        if contains(fileheader{i},'StartGranuleDateTime') 
-            time_start = extractBefore(erase(fileheader{i},'StartGranuleDateTime='),18); % only save year-month-date-hour-minutes
-        elseif contains(fileheader{i},'StopGranuleDateTime') 
-            time_end = extractBefore(erase(fileheader{i},'StopGranuleDateTime='),18); % only save year-month-date-hour-minutes
+	% --------- Read the beginning and ending of the time coverage for this file -------------------
+
+    % HDF5 file
+    if contains(filext,"HDF5")
+        fileheader = split(h5readatt(Tb_file,'/','FileHeader'),';');
+        for i = 1:length(fileheader)
+            if contains(fileheader{i},'StartGranuleDateTime')
+                time_start = extractBefore(erase(fileheader{i},'StartGranuleDateTime='),18); % only save year-month-date-hour-minutes
+            elseif contains(fileheader{i},'StopGranuleDateTime')
+                time_end = extractBefore(erase(fileheader{i},'StopGranuleDateTime='),18); % only save year-month-date-hour-minutes
+            end
         end
+        % convert saved time strings to scalar datetime arrays
+        start_datetime = datetime(strtrim(time_start),'InputFormat','yyyy-MM-dd''T''HH:mm', 'TimeZone','UTC');
+        end_datetime = datetime(strtrim(time_end),'InputFormat','yyyy-MM-dd''T''HH:mm', 'TimeZone','UTC');
+    % NC file
+    elseif contains(filext,"nc")
+        start_datetime = extractBefore(ncreadtt(Tb_file,'/','time_coverage_start'),18);
+        end_datetime = extractBefore(ncreadtt(Tb_file,'/','time_coverage_end'),18);
     end
-
-    % -convert saved time strings to scalar datetime arrays
-    start_datetime = datetime(strtrim(time_start),'InputFormat','yyyy-MM-dd''T''HH:mm', 'TimeZone','UTC');
-    end_datetime = datetime(strtrim(time_end),'InputFormat','yyyy-MM-dd''T''HH:mm', 'TimeZone','UTC');
 
     % -------- Get every possible DA_time (especially hour) and its effective Tb observations --------
 
@@ -124,12 +139,15 @@ function [if_swath_good,DAtime_perCh,loc_storm_DAtime] = Find_DAtime_loc(bestrac
         disp(['    Effective observations are from ', datestr(DA_per_hhcand{i_cand,2},'yyyymmddHH:MM'),' to ',datestr(DA_per_hhcand{i_cand,3},'yyyymmddHH:MM')]);
     end
 
-% ------------------- Step 2 ----------------------------
+% ==================================================================================================
+%                                         Step 2
+% =================================================================================================
 % Center locations in the best-track file are only available at 00 UTC, 06 UTC, 12 UTC and 18
 % UTC, therefore we need to linearly interpolate the available locations to ones at DA_time candidates.
 % For each DA_time candidate, we calculate how many observations lie within the sqaure area that is 
 % centered at the center location of a DA_time candidate.
 % Determine the best DA_time as the DA_time candidate with most observations in that square area.
+% ------------------------------------------------------------------------------------------------------------------
 
     num_useful_scan = [];
     if_swath_good = []; % (logical)
