@@ -9,7 +9,7 @@ PROGRAM test
     END TYPE string
     
     INTEGER :: ifile
-    INTEGER :: num_file=11 
+    INTEGER :: num_file=12 
     CHARACTER(len=100) :: path = '/work2/06191/tg854905/stampede2/opt/CRTM/PSU_EnKF_CRTM/coefficients/'
     CHARACTER(len=150) :: spccoeff_file
 
@@ -22,9 +22,10 @@ PROGRAM test
     spcfile(6)%s = 'mhs_n18.SpcCoeff.bin'
     spcfile(7)%s = 'mhs_n19.SpcCoeff.bin'
     spcfile(8)%s = 'saphir_meghat.SpcCoeff.bin'
-    spcfile(9)%s = 'ssmis_f16.SpcCoeff.bin'
-    spcfile(10)%s = 'ssmis_f17.SpcCoeff.bin'
-    spcfile(11)%s = 'ssmis_f18.SpcCoeff.bin'
+    spcfile(9)%s = 'ssmi_f15.SpcCoeff.bin' 
+    spcfile(10)%s = 'ssmis_f16.SpcCoeff.bin'
+    spcfile(11)%s = 'ssmis_f17.SpcCoeff.bin'
+    spcfile(12)%s = 'ssmis_f18.SpcCoeff.bin'
 
 
     DO ifile  = 1, num_file
