@@ -163,7 +163,7 @@ end % end loop for istorm = 1:length(control.storm_phase)
 
 	
 
-% ---------- Background Knowledge of L1C file----------------
+% ---------- Background Knowledge about L1C HDF5 file----------------
 % Take GPM GMI as an example.
 % -- Swath
 % Swath S1 has nine channels (10V, 10H, 19V,19H, 23V, 37V, 37H, 89V, and 89H).
