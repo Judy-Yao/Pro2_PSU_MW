@@ -1,6 +1,12 @@
+% ----------------------------------------------------------------------------------------- %
 % This function simply filters out MW L1C files that don't lie within the period of interest 
+% ----------------------------------------------------------------------------------------- %
 
 function use_Tb_file = Filter_file_out_period(idx_storm,Tb_file,control)
+
+    % Convert the start and the end of the period of interest for the storm to scalar datetime arrays
+    pd_start_dt = datetime(control.period{idx_storm}{1},'InputFormat','yyyyMMddHHmm','TimeZone','UTC');
+    pd_end_dt = datetime(control.period{idx_storm}{2},'InputFormat','yyyyMMddHHmm','TimeZone','UTC');
 
 	% Determine if the file should be read by ncread or h5read
 	[~,~,filext] = fileparts(Tb_file);
@@ -26,10 +32,6 @@ function use_Tb_file = Filter_file_out_period(idx_storm,Tb_file,control)
 		start_datetime = extractBefore(ncreadtt(Tb_file,'/','time_coverage_start'),18);			
 		end_datetime = extractBefore(ncreadtt(Tb_file,'/','time_coverage_end'),18);
 	end
-    
-    % -convert the start and the end of the period for the storm to scalar datetime arrays
-    pd_start_dt = datetime(control.period{idx_storm}{1},'InputFormat','yyyyMMddHHmm','TimeZone','UTC');
-    pd_end_dt = datetime(control.period{idx_storm}{2},'InputFormat','yyyyMMddHHmm','TimeZone','UTC');
 
     % Skip the Tb file that is not within the period of interest
     if (end_datetime < pd_start_dt) || (start_datetime > pd_end_dt) % || expr2 is not evaluated if expr1 is logical 1 (true).

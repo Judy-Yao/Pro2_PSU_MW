@@ -1,10 +1,19 @@
-% This function reads frequencies in a L1C MW obs file & 
+% ==========================================================================================
+% Generally, this function identifies the relevant attributes to the frequencies of interest
+% ==========================================================================================
+% HDF5:
+% This function reads in available frequencies from a L1C MW obs file in HDF5 format &
 % loops the frequenies of interest listed in control.favF &
-% finds the frequency(ies) in the L1C file that matches the frequency(ies) of interest to the study &
-% returns the location of the frequency(ies) of interest (which swath and which index under that swath)
-
-% Note: in the current study, we are only interested in a low frequency around 18 GHz and a high frequency around 183 GHz (if 183 GHz doesn' t exist, we will use 89 GHz instead)
-% Note: each frequency is treated as an object/item as well as its swath and index under that swath 
+% identifies the frequency(ies) in the L1C file that matches the frequency(ies) of interest to the study & 
+% returns the location of the frequency(ies) of interest (under which swath and with which index under that swath)
+%
+% NC:
+% Instead of reading in the swath name for a specific frequency, this function manually assigns "lores" or "hires" for the frequenies of interest listed in control.favF 
+%
+% Note:
+% - In the current study, we are only interested in a low frequency around 18 GHz and a high frequency around 183 GHz (if 183 GHz doesn' t exist, we will use 89 GHz instead)
+% - Each frequency is treated as an object/item as well as its swath and index under that swath 
+% ------------------------------------------------------------------------------------------------------------------
 
 function [Swath_used, ChIdx_perSwath, ChName_perSwath] = Match_Freq(isensor, Tb_file, control)
     

@@ -20,7 +20,8 @@ function [all_Tbfile_name,all_Swath_used,all_ChIdx_perCh,all_ChName_perCh,all_DA
 		if status ~= 0
 			disp('Warning: cleaning existed symbolic files failed!');
 		end
-	end 
+	end
+ 
 	% Define empty cells (final length of each cell is the number of useful Tbs)
 	all_Tbfile_name = []; % (strings)
 	all_Swath_used = {};
@@ -33,7 +34,7 @@ function [all_Tbfile_name,all_Swath_used,all_ChIdx_perCh,all_ChName_perCh,all_DA
     % --------- Loop through each sensor ---------------
     for isensor = 1:length(control.sensor)
         plfs_eachsensor = control.platform{isensor};
-        % ---- Loop through each platform for a sensor ---
+        % ---- loop through each platform for a sensor ---
         for isensor_plf = 1:length(plfs_eachsensor)
             disp(['Processing sensor: ', control.sensor{isensor}, ' on platform ', plfs_eachsensor{isensor_plf}]);
 
