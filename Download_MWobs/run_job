@@ -1,0 +1,27 @@
+#!/bin/bash
+#SBATCH -p shared
+#SBATCH -A pen116
+#SBATCH --nodes=1
+#SBATCH --ntasks-per-node=8
+#SBATCH -o Output 
+#SBATCH -e Error
+#SBATCH --mail-type=ALL
+#SBATCH --mail-user=zuy121@psu.edu
+#SBATCH -J MWobs
+#SBATCH -t 01:30:00
+
+# Fill in the storm name
+Storm=HarveyRI
+
+# Specify the destination directory
+DownloadTo=/expanse/lustre/projects/pen116/zuy121/Pro2_PSU_MW/raw_Obs/Microwave/${Storm}/
+
+# Execute the main program
+./get_MWobs.sh
+
+# Save the log files
+cp get_MWobs.sh ${DownloadTo}
+mv Output ${DownloadTo}
+mv Error ${DownloadTo}
+
+
