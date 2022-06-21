@@ -20,7 +20,7 @@ Timend=2017082412
 # Evaluate if GPM-calibrated level 1C is used
 GPM_1C="true"
 ## GPM-calibrated sensors
-GPM_sensor=("AMSR2" "ATMS" "GMI" "MHS" "SAPHIR" "SSMIS")
+GPM_sensor=("AMSR2" "ATMS" "GMI" "MHS" "SAPHIR" "SSMIS") 
 ## GPM-calibrated level 1C version
 GPM_1C_ver=05 #07
 ## Path to all GPM-calibrated level 1C data
@@ -146,13 +146,13 @@ else
 			    if [ ! -d AMSR2/GCOMW1 ]
                 then
                     mkdir AMSR2/GCOMW1
+					dataset="${GPM_datapath}GPM_1CGCOMW1AMSR2.${GPM_1C_ver}/"
+					Download_GPM_granule AMSR2/GCOMW1 ${dataset}
+					cd ${DownloadTo} || exit
                 fi	
-				dataset="${GPM_datapath}GPM_1CGCOMW1AMSR2.${GPM_1C_ver}/"
-				Download_GPM_granule AMSR2/GCOMW1 ${dataset}
 				;;
 			
 			ATMS)
-				cd ${DownloadTo} || exit
 				if [ ! -d ATMS ]
 				then
 					mkdir ATMS
@@ -161,13 +161,13 @@ else
                 if [ ! -d ATMS/NPP ]
                 then
                     mkdir ATMS/NPP
+					dataset="${GPM_datapath}GPM_1CNPPATMS.${GPM_1C_ver}/"
+					Download_GPM_granule ATMS/NPP ${dataset}
+					cd ${DownloadTo} || exit
                 fi	
-				dataset="${GPM_datapath}GPM_1CNPPATMS.${GPM_1C_ver}/"
-				Download_GPM_granule ATMS/NPP ${dataset}		
 				;;
 
 			GMI)
-				cd ${DownloadTo} || exit
 				if [ ! -d GMI ]
 				then
 					mkdir GMI
@@ -176,9 +176,10 @@ else
                 if [ ! -d GMI/GPM ]
                 then
                     mkdir GMI/GPM
+					dataset="${GPM_datapath}GPM_1CGPMGMI.${GPM_1C_ver}/"
+					Download_GPM_granule GMI/GPM ${dataset} 
+					cd ${DownloadTo} || exit
                 fi
-				dataset="${GPM_datapath}GPM_1CGPMGMI.${GPM_1C_ver}/"
-				Download_GPM_granule GMI/GPM ${dataset} 
 				;;
 
 			MHS)
@@ -191,30 +192,34 @@ else
 				if [ ! -d MHS/METOPA ]
 				then
 					mkdir MHS/METOPA
+					dataset="${GPM_datapath}GPM_1CMETOPAMHS.${GPM_1C_ver}/"
+					Download_GPM_granule MHS/METOPA ${dataset}
+					cd ${DownloadTo} || exit
 				fi
-				dataset="${GPM_datapath}GPM_1CMETOPAMHS.${GPM_1C_ver}/"
-				Download_GPM_granule MHS/METOPA ${dataset}
 
 				if [ ! -d MHS/METOPB ]
 				then
 					mkdir MHS/METOPB
+					dataset="${GPM_datapath}GPM_1CMETOPBMHS.${GPM_1C_ver}/"
+					Download_GPM_granule MHS/METOPB ${dataset}
+					cd ${DownloadTo} || exit
 				fi
-				dataset="${GPM_datapath}GPM_1CMETOPBMHS.${GPM_1C_ver}/"
-				Download_GPM_granule MHS/METOPB ${dataset}
 
 				if [ ! -d MHS/NOAA18 ]
 				then
 					mkdir MHS/NOAA18
+					dataset="${GPM_datapath}GPM_1CNOAA18MHS.${GPM_1C_ver}/"
+					Download_GPM_granule MHS/NOAA18 ${dataset}
+					cd ${DownloadTo} || exit
 				fi
-				dataset="${GPM_datapath}GPM_1CNOAA18MHS.${GPM_1C_ver}/"
-				Download_GPM_granule MHS/NOAA18 ${dataset}
 
 				if [ ! -d MHS/NOAA19 ]
 				then
 					mkdir MHS/NOAA19
+					dataset="${GPM_datapath}GPM_1CNOAA19MHS.${GPM_1C_ver}/"
+					Download_GPM_granule MHS/NOAA19 ${dataset}
+					cd ${DownloadTo} || exit
 				fi
-				dataset="${GPM_datapath}GPM_1CNOAA19MHS.${GPM_1C_ver}/"
-				Download_GPM_granule MHS/NOAA19 ${dataset}
 				;;
 
 			SAPHIR)
@@ -227,9 +232,10 @@ else
 				if [ ! -d SAPHIR/MT1 ]
 				then
 					mkdir SAPHIR/MI1
+					dataset="${GPM_datapath}GPM_1CMT1SAPHIR.${GPM_1C_ver}/"
+					Download_GPM_granule SAPHIR/MI1 ${dataset}
+					cd ${DownloadTo} || exit
 				fi
-				dataset="${GPM_datapath}GPM_1CMT1SAPHIR.${GPM_1C_ver}/"
-				Download_GPM_granule SAPHIR/MI1 ${dataset}
 				;;
 
 			SSMIS)
@@ -242,30 +248,34 @@ else
 				if [ ! -d SSMIS/F16 ]
 				then
 					mkdir SSMIS/F16
+					dataset="${GPM_datapath}GPM_1CF16SSMIS.${GPM_1C_ver}/"
+					Download_GPM_granule SSMIS/F16 ${dataset}
+					cd ${DownloadTo} || exit
 				fi
-				dataset="${GPM_datapath}GPM_1CF16SSMIS.${GPM_1C_ver}/"
-				Download_GPM_granule SSMIS/F16 ${dataset}
 
 				if [ ! -d SSMIS/F17 ]
 				then
 					mkdir SSMIS/F17
+					dataset="${GPM_datapath}GPM_1CF17SSMIS.${GPM_1C_ver}/"
+					Download_GPM_granule SSMIS/F17 ${dataset}
+					cd ${DownloadTo} || exit
 				fi
-				dataset="${GPM_datapath}GPM_1CF17SSMIS.${GPM_1C_ver}/"
-				Download_GPM_granule SSMIS/F17 ${dataset}
 
 				if [ ! -d SSMIS/F18 ]
 				then
 					mkdir SSMIS/F18
+					dataset="${GPM_datapath}GPM_1CF18SSMIS.${GPM_1C_ver}/"
+					Download_GPM_granule SSMIS/F18 ${dataset}
+					cd ${DownloadTo} || exit
 				fi
-				dataset="${GPM_datapath}GPM_1CF18SSMIS.${GPM_1C_ver}/"
-				Download_GPM_granule SSMIS/F18 ${dataset}
 
 				if [ ! -d SSMIS/F19 ]
 				then
-					mkdir SSMIS/F19	
+					mkdir SSMIS/F19
+					dataset="${GPM_datapath}GPM_1CF19SSMIS.${GPM_1C_ver}/"
+					Download_GPM_granule SSMIS/F19 ${dataset}
+					cd ${DownloadTo} || exit	
 				fi
-				dataset="${GPM_datapath}GPM_1CF19SSMIS.${GPM_1C_ver}/"
-				Download_GPM_granule SSMIS/F19 ${dataset}
 				;;
 				
 		esac	
