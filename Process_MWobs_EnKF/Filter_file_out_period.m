@@ -2,20 +2,30 @@
 
 function use_Tb_file = Filter_file_out_period(idx_storm,Tb_file,control)
 
-    % -read StartGranuleDateTime and StopGranuleDateTime for a Tb file
-    fileheader = split(h5readatt(Tb_file,'/','FileHeader'),';');
-    for i = 1:length(fileheader)
-        if contains(fileheader{i},'StartGranuleDateTime') 
-            time_start = extractBefore(erase(fileheader{i},'StartGranuleDateTime='),18); % only save year-month-date-hour-minutes
-			disp(['    Start Granule Time: ',strtrim(time_start)]);
-		elseif contains(fileheader{i},'StopGranuleDateTime') 
-            time_end = extractBefore(erase(fileheader{i},'StopGranuleDateTime='),18); % only save year-month-date-hour-minutes
-			disp(['    End Granule Time: ',strtrim(time_end)]);
+	% Determine if the file should be read by ncread or h5read
+	[~,~,filext] = fileparts(Tb_file);
+	
+	% Read the beginning and ending of the time coverage for this file
+	if contains(filext,"HDF5")
+		%% HDF5 file
+		fileheader = split(h5readatt(Tb_file,'/','FileHeader'),';');
+		for i = 1:length(fileheader)
+			if contains(fileheader{i},'StartGranuleDateTime') 
+				time_start = extractBefore(erase(fileheader{i},'StartGranuleDateTime='),18); % only save year-month-date-hour-minutes
+				disp(['    Start Granule Time: ',strtrim(time_start)]);
+			elseif contains(fileheader{i},'StopGranuleDateTime') 
+				time_end = extractBefore(erase(fileheader{i},'StopGranuleDateTime='),18); % only save year-month-date-hour-minutes
+				disp(['    End Granule Time: ',strtrim(time_end)]);
+			end
 		end
-    end
-    % -convert saved time strings to scalar datetime arrays
-    start_datetime = datetime(strtrim(time_start),'InputFormat','yyyy-MM-dd''T''HH:mm', 'TimeZone','UTC');
-    end_datetime = datetime(strtrim(time_end),'InputFormat','yyyy-MM-dd''T''HH:mm', 'TimeZone','UTC');
+		%%% convert saved time strings to scalar datetime arrays
+		start_datetime = datetime(strtrim(time_start),'InputFormat','yyyy-MM-dd''T''HH:mm', 'TimeZone','UTC');
+		end_datetime = datetime(strtrim(time_end),'InputFormat','yyyy-MM-dd''T''HH:mm', 'TimeZone','UTC'); 
+	elseif contains(filext,"nc")
+		%% nc file
+		start_datetime = extractBefore(ncreadtt(Tb_file,'/','time_coverage_start'),18);			
+		end_datetime = extractBefore(ncreadtt(Tb_file,'/','time_coverage_end'),18);
+	end
     
     % -convert the start and the end of the period for the storm to scalar datetime arrays
     pd_start_dt = datetime(control.period{idx_storm}{1},'InputFormat','yyyyMMddHHmm','TimeZone','UTC');
