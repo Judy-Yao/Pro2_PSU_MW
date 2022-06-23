@@ -1,11 +1,24 @@
 #!/usr/bin/env python3
 
-# To output necessary sensor parameters to a HDF5 file. 
-# This file may need to be tweaked a bit with the adding/removing of sensors/channels of interest.
-# ----- Details ---------
+# ================================================================================================================================
+# Output necessary sensor parameters to a HDF5 file. 
+# ================================================================================================================================
+# The microwave-observation-preprocessing system (MOPS) requires a lookp table sort of thing for parameters related to sensors.
+# This process, unfortunately, is impossible to automate at this point (June, 2022). Thus, it is the responsibility of the user who 
+# uses this system to eyeball the technical details of the sensor and revise this program before running the system.
+# ---------------------------------------------------------------------------------------------------------------------------------
+
+# !!!!!!!!!!!!!!! Warning !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+# This file may need to be tweaked a bit by adding
+# or removing the sensors/channels of the user's interest.
+# !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+
+# ----------------- Important Details -----------------------------------------
 # Sensor name should be consistent with main_process_MWobs.m 
-# Channel index/number should be consistent with CRTM package
-# Other information is gathered from the internet
+# Channel index/number should be consistent with the ones used in CRTM package
+# Other parameters are gathered from their official sources
+#------------------------------------------------------------------------------
+
 
 import h5py 
 import numpy as np
@@ -77,7 +90,6 @@ amsr2_ch_dset = amsr2_ch.create_dataset("max_scan_angle", data=47.57)
 amsr2_ch_dset.attrs['Units'] = 'degree'
 
 
-
 # Group: ATMS
 atms = f.create_group("ATMS")
 atms.attrs['ScanType'] = 'Cross-track'
@@ -101,6 +113,7 @@ atms_ch_dset.attrs['Dimension'] = '1,nsamples'
 
 atms_ch_dset = atms_ch.create_dataset("max_scan_angle", data=52.725)
 atms_ch_dset.attrs['Units'] = 'degree'
+
 
 # Group: GMI
 gmi = f.create_group("GMI")
@@ -146,6 +159,7 @@ gmi_ch_dset.attrs['Dimension'] = '1,nsamples'
 
 gmi_ch_dset = gmi_ch.create_dataset("max_scan_angle", data=48.5)
 gmi_ch_dset.attrs["Units"] = 'degree'
+
 
 # Group: MHS
 mhs = f.create_group("MHS")
@@ -196,6 +210,52 @@ saphir_ch_dset.attrs['Dimension'] = '1,nsamples'
 saphir_ch_dset = saphir_ch.create_dataset("max_scan_angle", data=42.96)
 saphir_ch_dset.attrs['Units'] = 'degree'
 
+
+# Group: SSMI
+ssmi = f.create_group("SSMI")
+ssmi.attrs['ScanType'] = 'Conical'
+ssmi.attrs['FovType'] = 'EFOV'
+
+# --- low frequency
+ssmi_ch = ssmi.create_group("fcdr_tb19v")
+
+ssmi_ch_dset = ssmi_ch.create_dataset("Channel_num", data=1)
+
+ssmi_ch_dset = ssmi_ch.create_dataset("fovs_alongTrack", data=69)
+ssmi_ch_dset.attrs['Units'] = 'km'
+
+ssmi_ch_dset = ssmi_ch.create_dataset("fovs_crossTrack", data=43)
+ssmi_ch_dset.attrs['Units'] = 'km'
+
+ssmi_lf_nsample = 64
+ssmi_lf_scan = np.full((1,ssmi_lf_nsample), 45)
+ssmi_ch_dset = ssmi_ch.create_dataset("scan_angles", data=ssmi_lf_scan)
+ssmi_ch_dset.attrs["Units"] = 'degree'
+ssmi_ch_dset.attrs['Dimension'] = '1,nsamples'
+
+ssmi_ch_dset = ssmi_ch.create_dataset('max_scan_angle', 45)
+ssmi_ch_dset.attrs['Units'] = 'degree'
+
+# --- high frequency
+ssmi_ch = ssmi.create_group("fcdr_tb85v")
+
+ssmi_ch_dset = ssmi_ch.create_dataset("Channel_num", data=6)
+
+ssmi_ch_dset = ssmi_ch.create_dataset("fovs_alongTrack", data=15)
+ssmi_ch_dset.attrs['Units'] = 'km'
+
+ssmi_ch_dset = ssmi_ch.create_dataset("fovs_crossTrack", data=13)
+ssmi_ch_dset.attrs['Units'] = 'km'
+
+ssmi_hf_nsample = 128
+ssmi_hf_scan = np.full((1,ssmi_hf_nsample), 45)
+ssmi_ch_dset = ssmi_ch.create_dataset("scan_angles", data=ssmi_hf_scan)
+ssmi_ch_dset.attrs["Units"] = 'degree'
+ssmi_ch_dset.attrs['Dimension'] = '1,nsamples'
+
+ssmi_ch_dset = ssmi_ch.create_dataset('max_scan_angle', 45)
+ssmi_ch_dset.attrs['Units'] = 'degree'
+
 # Group: SSMIS
 ssmis = f.create_group("SSMIS")
 ssmis.attrs['ScanType'] = 'Conical'
@@ -216,7 +276,7 @@ ssmis_lf_nsample = 90
 ssmis_lf_scan = np.full((1,ssmis_lf_nsample), 45)
 ssmis_ch_dset = ssmis_ch.create_dataset("scan_angles", data=ssmis_lf_scan)
 ssmis_ch_dset.attrs["Units"] = 'degree'
-saphir_ch_dset.attrs['Dimension'] = '1,nsamples'
+ssmis_ch_dset.attrs['Dimension'] = '1,nsamples'
 
 ssmis_ch_dset = ssmis_ch.create_dataset('max_scan_angle', 45)
 ssmis_ch_dset.attrs['Units'] = 'degree'
