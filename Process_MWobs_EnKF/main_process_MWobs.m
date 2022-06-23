@@ -1,18 +1,26 @@
-% The main script consists of the skeleton of the Process_MWobs_EnKF algorithm
+% =============================================================================================================================
+% This is the main script for the microwave-observation-preprocessing system (MOPS), consisting of the skeleton of the system.
+% =============================================================================================================================
 
+% -------------- Configuration: Set up control variables ----------------
+% !!!!!!!!!!!!!!!!!!!!! Warning !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+% Please carefully evaluate each item and it is the user's responsibility
+% to adjust the value to their needs.
+% !!!!!!!!!!!!!!!!!!!!!!!!!!!!1!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
-% -------------- Set up control variables ----------------------
 control = struct;
 % ----Path
-control.obs_dir = '../../raw_Obs/Microwave/'; % directory where L1C raw observations are
-control.obs_collect_dir = '../../raw_Obs/Collected_MW/'; % directory into which L1C obs files are collected/linked 
+control.obs_dir = '../../raw_Obs/Microwave/'; % directory into which MW L1C raw observations are downloaded using script Download_MWobs/get_MWobs.sh
+control.obs_collect_dir = '../../raw_Obs/Collected_MW/'; % directory into which the useful subset of MW L1C MW raw files are collected/linked 
 control.bestrack_dir = '../../raw_Obs/Bestrack/'; % directory where best-track files are
-control.output_dir = '../../toEnKFobs/MW/'; % directory where this algorithm outputs
+control.output_dir = '../../toEnKFobs/MW/'; % directory into which the microwave-observation-preprocessing system (MOPS) outputs
+
 % ---Storm information
-control.storm_phase = {'MariaRI',};  
+control.storm_phase = {'MariaRI',}; % !!! Recommendation: although this system can process as many storms as possible, it is best to process one storm at a time. 
 %control.storm_phase = ["Irma2ndRI",'JoseRI','MariaRI'};
-control.period = {{'201709160000','201709180000'},};
+control.period = {{'201709160000','201709180000'},}; % Date range of case study (yyyymmddHHMM)
 %control.period = {{'201709030600','201709050600'},{'201709050600','201709070600'},{'201709160000','201709180000'}}; %YYYYMMDDHHmm
+
 % ---Satellite informaiton
 control.sensor = {'SSMI',};
 %control.sensor = {'AMSR2','ATMS','GMI','MHS','SAPHIR','SSMI','SSMIS'};
@@ -20,30 +28,44 @@ control.platform = {{'F15'},};
 %control.platform = {{'GCOMW1'}, {'NPP'}, {'GPM'}, {'METOPA','METOPB','NOAA18','NOAA19'}, {'MT1'}, {'F15'}, {'F16','F17','F18'}};
 control.favFreq = {{'fcdr_tb19v','fcdr_tb85v'},};
 %control.favFreq = {{'18.7GHzV-Pol','89GHzV-PolA-Scan','89GHzV-PolB-Scan'},{'183.31+-7GHzQH-Pol'},{'18.7GHzV-Pol','183.31+/-7GHzV-Pol'},{'190.31GHzV-Pol'},{'183.31+/-6.8GHz'},{'fcdr_tb19v','fcdr_tb85v'},{'19.35GHzV-Pol','183.31+/-6.6GHzH-Pol'}};
-
-% --- Dealing with 89GHzV-PolA-Scan and 89GHzV-PolB-Scan on AMSR2
+% --- Special case: two 89GHz on AMSR2 (89GHzV-PolA-Scan and 89GHzV-PolB-Scan)
 control.comnine_AMSR89GHz = true;
 control.NOTuse_AMSR89GHz = false;
-% --- WRF setup
+
+% --- WRF simulation setup
 control.nx = 297; % number of grid points along X direction
 control.ny = 297; % number of grid points along Y direction
 control.dx = 3; % WRF resolution: 3 km
+
 % --- Other
 control.domain_buffer = 1.5; % scaling factor
 control.search_buffer = 0.2; % degrees: lat/lon
-control.filter_reso = [36;24]; % only for testing!!
-%control.filter_ratio = [6,6];
+control.filter_reso = [36;24]; % !!! Trick: Decreases the resolution if you'd like to quickly find out if MOPS is working by executing the system.
 control.roi_oh = {[200,0]; [60,60]}; % roi [other variables, hydrometeors]
 control.obsError = [3;3];
+
+
+
+% ===================================================== Begin the System =====================================================
+
+date_runMOSP = date;
+disp(['Starting running microwave-observation-preprocessing system (MOPS) on ', date_runMOSP]);
 
 % ---------- Loop through each storm object -------------------
 for istorm = 1:length(control.storm_phase)
 
-    % --- Find times and center locations of the storm in the Best track file (only available on 00, 06, 12, 18 UTC)
+	% ============================================================================================================
+	% Find times and center locations of the storm in the Best track file within the date range of the case study
+	% (These data are only available on 00, 06, 12, 18 UTC)
+	% ============================================================================================================
+	
 	bestrack_str = Bestrack_read(istorm, control); % (cell)
 
-    % --- Collect useful MW Obs files of all sensors among all platforms into a directory
-    disp('Collecting useful MW obs files for this study......');
+    % ============================================================================================================
+    % Collect useful MW Obs files of all sensors among all platforms into a directory every hour
+	% ============================================================================================================
+    
+	disp('Collecting useful MW obs files for this study......');
 	[Tbfile_names,Swath_used,ChIdx_all,ChName_all,DAtime_all,loc_DAtime_all,overpass,singlepass] = Collect_MW_useful(istorm, bestrack_str, control); % ps: per swath
 
     % - Make subdirectory for output
@@ -58,16 +80,22 @@ for istorm = 1:length(control.storm_phase)
 	
 	% - Output hourly best-track location and time
  	filename = strcat(control.output_dir,control.storm_phase{istorm},'/bestrack_perHour');	
-	disp("Output hourly best-track location and time: "+filename);
+	disp("Output hourly best-track location and time: " + filename);
 	formatSpec = '%12s%12.3f%12.3f\n';
 	fileID = fopen(filename,'w');
 	for itime = 1:length(DAtime_all)
 		fprintf(fileID, formatSpec, ...
                 DAtime_all{itime}(1), loc_DAtime_all{1,itime}(1),loc_DAtime_all{1,itime}(2)); 
 	end
-fcdr_tb85v	fclose(fileID);
-	
-	% --- Output file under two situations: overpass or single-pass
+    fclose(fileID);
+
+    % ============================================================================================================
+    % Output file under two situations: overpass or singlepass
+	% ============================================================================================================
+	% Singlepass: at one data-assimilation time, only one sensor provides MW obs of the storm
+	% Overpass: ~, more than one sensor provides MW obs of the storm
+	% ------------------------------------------------------------------------------------------------------------
+
     % - Loop through each useful Tb file via a symbolic link
     Tb_dir = [control.obs_collect_dir,control.storm_phase{istorm},'/*'];
     Tb_files = strsplit(ls(Tb_dir));
@@ -159,7 +187,7 @@ fcdr_tb85v	fclose(fileID);
 
 end % end loop for istorm = 1:length(control.storm_phase)
 
-
+% ===================================================== End the System =====================================================
 
 	
 
@@ -192,77 +220,5 @@ end % end loop for istorm = 1:length(control.storm_phase)
 % There are two ways to represent text in MATLAB: Characters V.S. Strings
 % Character: Single quoted. Eg. str = ['123','3456'] --> str = '1233456'
 % String: Double quoted. Eg. str = ["123","456"] --> str = 1?~W2 string array "123"    "3456"
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 
