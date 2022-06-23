@@ -68,7 +68,7 @@ for istorm = 1:length(control.storm_phase)
 	disp('Collecting useful MW obs files for this study......');
 	[Tbfile_names,Swath_used,ChIdx_all,ChName_all,DAtime_all,loc_DAtime_all,overpass,singlepass] = Collect_MW_useful(istorm, bestrack_str, control); % ps: per swath
 
-    % - Make subdirectory for output
+    % --- Make subdirectory for output
 	if ~exist([control.output_dir,control.storm_phase{istorm}],'dir')
 		[~, msg, ~] = mkdir(control.output_dir,control.storm_phase{istorm});
         if isempty(msg)
@@ -78,7 +78,7 @@ for istorm = 1:length(control.storm_phase)
         end
 	end
 	
-	% - Output hourly best-track location and time
+	% --- Output hourly best-track location and time
  	filename = strcat(control.output_dir,control.storm_phase{istorm},'/bestrack_perHour');	
 	disp("Output hourly best-track location and time: " + filename);
 	formatSpec = '%12s%12.3f%12.3f\n';
@@ -90,18 +90,18 @@ for istorm = 1:length(control.storm_phase)
     fclose(fileID);
 
     % ============================================================================================================
-    % Output file under two situations: overpass or singlepass
+    % Output so file under two situations: overpass or singlepass
 	% ============================================================================================================
 	% Singlepass: at one data-assimilation time, only one sensor provides MW obs of the storm
 	% Overpass: ~, more than one sensor provides MW obs of the storm
 	% ------------------------------------------------------------------------------------------------------------
 
-    % - Loop through each useful Tb file via a symbolic link
+    % --- Loop through each useful Tb file via a symbolic link
     Tb_dir = [control.obs_collect_dir,control.storm_phase{istorm},'/*'];
     Tb_files = strsplit(ls(Tb_dir));
     Tb_files = Tb_files(~cellfun('isempty',Tb_files)); % get rid of annoying empty cell
 
-    % - Output single-pass
+    % --- Output singlepass
     disp('Handling single-pass Tb files......');
     for is = 1:length(singlepass)
         for iTb = 1:length(Tb_files)
@@ -115,34 +115,35 @@ for istorm = 1:length(control.storm_phase)
             end
         end
     end
-    % Note: The order of collecting Tb files is different from the order of listing collected Tb files &
-    % idx_collectedTb records the order of Tbs collected from different sensors & platforms in module Collect_MW_useful.m &
-    % iTb indicates the order of collected Tb files with ls command in a directory
+    % Note: The order of collecting Tb files is different from the order of listing collected Tb files 
+    %		- idx_collectedTb records the order of Tbs collected from different sensors & platforms in module Collect_MW_useful.m 
+	%         (recall the process how useful MW obs and its parameters were collected)
+    %		- iTb indicates the order of collected Tb files with ls command in a directory
 
-    % Note: in a single-pass senario, if an AMSR2 Tb file exists, it will be used anyway
+    % Note: in a single-pass senario, if an AMSR2 or a SSMI Tb file exists, the low frequency (~19GHz) and the high frequency (85GHz) will be definitely used.
 
-	% - Output overpass
+	% --- Output overpass
     disp('Handling over-pass Tb files......');
-	for io = 1:length(overpass)
+	for io = 1:length(overpass) % loop through each DA time where overpass happens
 		file_overpass = []; % (strings)
 		order_overpass = [];
 		sensor_overpass = [];
 		idx_usedTb = []; % (integer)
         % for a specific time, find the overpass files     
-		order_123 = 0;    
-		for iTb = 1:length(Tb_files)
+		order_clt_io = 0;    
+		for iTb = 1:length(Tb_files) % loop through all of collected Tb files
 			Tb_file = Tb_files{iTb};
             [filepath,filename,filext] = fileparts(Tb_file);
             ss_info = split(filename,'.');
             sensor = ss_info{3};
 			% gather names of overpass Tb files
 			if contains(filename,overpass(io))
-				order_123 = order_123 + 1;
-                order_overpass = [order_overpass, order_123];
-                file_overpass = [file_overpass,string(Tb_file)];
+				order_clt_io = order_clt_io + 1; 
+                order_overpass = [order_overpass, order_clt_io]; % Record the identifying order of Tb files that are overpass (e.g., 1,2,3)
+                file_overpass = [file_overpass,string(Tb_file)]; % Record overpass Tb files in the order of being identified
                 sensor_overpass = [sensor_overpass,string(sensor)];
                 idx_collectedTb = find([filename,filext] == Tbfile_names);
-				idx_usedTb(end+1) = idx_collectedTb;
+				idx_usedTb(end+1) = idx_collectedTb; % Record the listing order of the overpass file in the collected files
 			else
 				continue;
 			end
@@ -152,13 +153,14 @@ for istorm = 1:length(control.storm_phase)
 		for iot = 1:length(sensor_overpass)
 			disp(["  over-pass file: " + file_overpass(iot)]);
 		end
-        % if 89GHz on AMSR2 exist, it will be only used if there is no 183 GHz
+
+        % 89GHz will only be used if there is no 183 GHz
         % Below algorithm assumes that if a Tb file of AMSR2 is collected, all 18.7GHzV-Pol & 89GHzV-PolA-Scan & 89GHzV-PolB-Scan exist.
-        if sum("AMSR2" == sensor_overpass) == 0 % No AMSR2 Tb
-			disp("  None of microwave observation is from AMSR2.");
+        if sum(("AMSR2" == sensor_overpass) & ("SSMI" == sensor_overpass)) == 0 % No 89GHz Tb
+			disp('  None of microwave observation is from either AMSR2 or SSMI with 89GHz.');
             Overpass_write(idx_usedTb,istorm,Swath_used,ChIdx_all,ChName_all,DAtime_all,loc_DAtime_all,file_overpass,control); 
-        else % AMSR2 provides one of overpasses
-			idx_order_AMSR2 = find("AMSR2" == sensor_overpass);
+        else % Either AMSR2 or SSMI or both provides one of overpasses
+			idx_order_85GHz = find("AMSR2" == sensor_overpass);
             idx_order_other = order_overpass(order_overpass ~= idx_order_AMSR2);
         
             num_183GHz = 0;    
