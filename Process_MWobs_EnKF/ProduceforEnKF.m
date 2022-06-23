@@ -1,14 +1,18 @@
-% This function reads values of L1C MW obs files into the memory &
+% ========================================================================================================================
+% This function reads L1C data from MW obs files into the memory &
 % generates a grid mesh centered at the location of the storm at the DA_time using the same setup used for WRF simulation (nx,ny,dx,dy) &
-% for each frequency of interest, separates the mesh into different parts &
-% for each grid point of a part, selects a L1C MW obs and return its characteristics such as Tb value, location, angles, scan time...   
+% separates the mesh into different parts for different frequencies of interest &
+% for each grid point in a mesh part, selects a L1C MW obs and return its characteristics such as Tb value, location, angles, scan time...   
+% ========================================================================================================================
 
 function [sat_name,myLat,myLon,myTb,mySat_lat,mySat_lon,mySat_alt,myAzimuth,myScan_angle,myZenith,myFov_crossTrack,myFov_alongTrack,myTimes,myChNum,myRoi_hydro,myRoi_otherVars,myObsErr] = ProduceforEnKF(iTb,Swath_used,ChIdx_all,ChName_all,DAtime_all,loc_DAtime_all,Tb_file,control) 
-    % ---------------------------------------------------------------------
-    % ---- For each L1C MW observation file
-    % ---- Loop through each channel/frequency of interest AND
-    % ---- Read characteristics of sensor into memory
-    % ---------------------------------------------------------------------
+
+% ================================================================================================
+%                                         Step 1
+% ================================================================================================
+% For each L1C MW observation file, loop through each channel/frequency of interest and
+% read characteristics of sensor into memory
+% ------------------------------------------------------------------------------------------------
     
     % Preallocating memory
     lat = cell(size(Swath_used{iTb}));
@@ -50,94 +54,147 @@ function [sat_name,myLat,myLon,myTb,mySat_lat,mySat_lon,mySat_alt,myAzimuth,mySc
         sat_name = "ssmis_f18";
     end
 
-    % Read values from L1C file
+    % Read values from MW obs file
     for it = 1:length(Swath_used{iTb}) % it: item
         
-        % **latitude**
-        lat{it} = h5read(Tb_file,Swath_used{iTb}(it) + '/Latitude'); % npixel, nscan
+		% HDF5 file
+        if contains(filext,"HDF5")  
+        	% **latitude**
+        	lat{it} = h5read(Tb_file,Swath_used{iTb}(it) + '/Latitude'); % npixel, nscan
 
-        % **longitude**
-        lon{it} = h5read(Tb_file,Swath_used{iTb}(it) + '/Longitude'); % npixel, nscan
+        	% **longitude**
+        	lon{it} = h5read(Tb_file,Swath_used{iTb}(it) + '/Longitude'); % npixel, nscan
 
-        % **Tb**
-        Tb_allCh = h5read(Tb_file,Swath_used{iTb}(it) + '/Tc');
-        Tb{it} = squeeze(Tb_allCh(ChIdx_all{iTb}(it),:,:)); % npixel, nscan
+        	% **Tb**
+	        Tb_allCh = h5read(Tb_file,Swath_used{iTb}(it) + '/Tc');
+    	    Tb{it} = squeeze(Tb_allCh(ChIdx_all{iTb}(it),:,:)); % npixel, nscan
 
-        % **zenith angle**: the angle of the satellite from the local zenith as seen at the pixel location on the earth
-        %     satellite   local zenith
-        %         \       /
-        %          \zenith
-        %           \~ /
-        %            \/
-        %            FOV
-        % ----------------------- earth surface
-        % Note: Interpretation on nChUIA
-        % For example, GMI sensor has two swaths. Channel 1-9 are under &
-        % swath 1 and channel 10-14 are under swath 2, which respectively &
-        % corresponds to nChUIA1 and nChUIA2. If nChUIA1 = 1, at a specific (a fov on a scan) &
-        % location, only one value of incidence angle exists for all 9 channels; &
-        % If nChUIA1 = n (n >= 2), at a specific location, each channel &
-        % could in theory reference n values.
-        incidenceAngles = h5read(Tb_file,Swath_used{iTb}(it) + '/incidenceAngle'); % nChUIA1, npixel, nscan
-        iAIndices = h5read(Tb_file,Swath_used{iTb}(it) + '/incidenceAngleIndex'); % nchannel, nscan
-        if size(incidenceAngles,1) == 1
-            zenith{it}(:,:) = squeeze(incidenceAngles(1,:,:));
-        else
-            num_Ch_perSW = size(iAIndices,1);
-            num_unique_perCh = zeros(1,num_Ch_perSW); % size(iAIndices,1): number of channels under this swath
-            for ich = 1:size(iAIndices,1)
-                num_unique_perCh(ich) = length(unique(iAIndices(ich,:)));
-            end
-            if sum(num_unique_perCh) == num_Ch_perSW
-                iAIndices = iAIndices(:,1); % For a channel, all scans are references to the same set of zenith angles
-                zenith{it}(:,:) = squeeze(incidenceAngles(iAIndices(ChIdx_all{iTb}(it)),:,:)); % npixel, nscan
-            else
-                disp("Error: current algorithm does not work!! Please modify it.");
-            end
-        end
+			% **zenith angle**: the angle of the satellite from the local zenith as seen at the pixel location on the earth
+			%     satellite   local zenith
+			%         \       /
+			%          \zenith
+			%           \~ /
+			%            \/
+			%            FOV
+			% ----------------------- earth surface
+			% Note: Interpretation on nChUIA
+			% For example, GMI sensor has two swaths. Channel 1-9 are under &
+			% swath 1 and channel 10-14 are under swath 2, which respectively &
+			% corresponds to nChUIA1 and nChUIA2. If nChUIA1 = 1, at a specific (a fov on a scan) &
+			% location, only one value of incidence angle exists for all 9 channels; &
+			% If nChUIA1 = n (n >= 2), at a specific location, each channel &
+			% could in theory reference n values.
+        	incidenceAngles = h5read(Tb_file,Swath_used{iTb}(it) + '/incidenceAngle'); % nChUIA1, npixel, nscan
+        	iAIndices = h5read(Tb_file,Swath_used{iTb}(it) + '/incidenceAngleIndex'); % nchannel, nscan
+        	if size(incidenceAngles,1) == 1
+            	zenith{it}(:,:) = squeeze(incidenceAngles(1,:,:));
+        	else
+            	num_Ch_perSW = size(iAIndices,1);
+            	num_unique_perCh = zeros(1,num_Ch_perSW); % size(iAIndices,1): number of channels under this swath
+            	for ich = 1:size(iAIndices,1)
+                	num_unique_perCh(ich) = length(unique(iAIndices(ich,:)));
+            	end
+            	if sum(num_unique_perCh) == num_Ch_perSW
+                	iAIndices = iAIndices(:,1); % For a channel, all scans are references to the same set of zenith angles
+                	zenith{it}(:,:) = squeeze(incidenceAngles(iAIndices(ChIdx_all{iTb}(it)),:,:)); % npixel, nscan
+            	else
+                	disp("Error: current algorithm does not work!! Please modify it.");
+            	end
+        	end
 
-        % **latitude of satellite scan**
-        sat_lat{it} = h5read(Tb_file,Swath_used{iTb}(it)+ '/SCstatus/SClatitude'); % nscan
+        	% **latitude of satellite scan**
+        	sat_lat{it} = h5read(Tb_file,Swath_used{iTb}(it)+ '/SCstatus/SClatitude'); % nscan
 
-        % **longitude of satellite scan**
-        sat_lon{it} = h5read(Tb_file,Swath_used{iTb}(it)+ '/SCstatus/SClongitude'); % nscan
+        	% **longitude of satellite scan**
+        	sat_lon{it} = h5read(Tb_file,Swath_used{iTb}(it)+ '/SCstatus/SClongitude'); % nscan
 
-        % **altitude of satellite scan**
-        sat_alt{it} = h5read(Tb_file,Swath_used{iTb}(it)+'/SCstatus/SCaltitude'); % nscan (unit: km)
+        	% **altitude of satellite scan**
+        	sat_alt{it} = h5read(Tb_file,Swath_used{iTb}(it)+'/SCstatus/SCaltitude'); % nscan (unit: km)
 
-        % **azimuth of satellite scan (used in CRTM)**: the angle subtended
-        % by the horizontal projection of a direct line from the satellite
-        % to the FOV and the North-South axis measured cloclwise from North
-        % (0-> 360 degrees)
-        %                     North
-        %                      |AZ /
-        %                      |~ FOV
-        %                      | /
-        %                      |/
-        % West ---------- Satellite ------------- East
-        length_perscan{it} = size(Tb{it},1); % number of pixels per scan
-        azimuth{it} = geodetic2aer(lat{it},                                       lon{it},                                       0, ...
+  	      	% **azimuth of satellite scan (used in CRTM)**: the angle subtended
+    	 	% by the horizontal projection of a direct line from the satellite
+	      	% to the FOV and the North-South axis measured cloclwise from North
+    	  	% (0-> 360 degrees)
+  	      	%                     North
+  	      	%                      |AZ /
+      	  	%                      |~ FOV
+          	%                      | /
+          	%                      |/
+          	% West ---------- Satellite ------------- East
+        	length_perscan{it} = size(Tb{it},1); % number of pixels per scan
+        	azimuth{it} = geodetic2aer(lat{it},                                       lon{it},                                       0, ...
                                              repmat(sat_lat{it}',[length_perscan{it} 1]), repmat(sat_lon{it}',[length_perscan{it} 1]), repmat(sat_alt{it}'*1000,[length_perscan{it} 1]), ...
                                              referenceEllipsoid('WGS 84')); % npixel, nscan
 
-        % ** (Scan) Time** 
-        year   = double(h5read(Tb_file, Swath_used{iTb}(it) + '/ScanTime/Year')); % nscan
-        month  = double(h5read(Tb_file, Swath_used{iTb}(it) + '/ScanTime/Month')); % nscan
-        day    = double(h5read(Tb_file, Swath_used{iTb}(it) + '/ScanTime/DayOfMonth')); % nscan
-        hour   = double(h5read(Tb_file, Swath_used{iTb}(it) +  '/ScanTime/Hour')); % nscan
-        minute = double(h5read(Tb_file, Swath_used{iTb}(it) +  '/ScanTime/Minute')); % nscan
-        second = double(h5read(Tb_file, Swath_used{iTb}(it) +  '/ScanTime/Second')); % nscan
+        	% ** (Scan) Time** 
+        	year   = double(h5read(Tb_file, Swath_used{iTb}(it) + '/ScanTime/Year')); % nscan
+        	month  = double(h5read(Tb_file, Swath_used{iTb}(it) + '/ScanTime/Month')); % nscan
+        	day    = double(h5read(Tb_file, Swath_used{iTb}(it) + '/ScanTime/DayOfMonth')); % nscan
+        	hour   = double(h5read(Tb_file, Swath_used{iTb}(it) +  '/ScanTime/Hour')); % nscan
+        	minute = double(h5read(Tb_file, Swath_used{iTb}(it) +  '/ScanTime/Minute')); % nscan
+        	second = double(h5read(Tb_file, Swath_used{iTb}(it) +  '/ScanTime/Second')); % nscan
         
-        num_scans= size(Tb{it},2); % number of scans
+        	num_scans= size(Tb{it},2); % number of scans
 
-        for i_time = 1:num_scans
-            datetime_temp = datetime(year(i_time), month(i_time), day(i_time), hour(i_time), minute(i_time), second(i_time));
-            if ( second(i_time) >= 30)
-                datetime_temp = datetime_temp + minutes(1);
+        	for i_time = 1:num_scans
+            	datetime_temp = datetime(year(i_time), month(i_time), day(i_time), hour(i_time), minute(i_time), second(i_time));
+            	if ( second(i_time) >= 30)
+                	datetime_temp = datetime_temp + minutes(1);
+            	end
+            	outime{it}(i_time,1) = string(datestr(datetime_temp,'yyyymmddHHMM')); % nscan
+        	end
+
+		elseif contains(filext,"nc")
+       
+		    % **latitude**
+            lat{it} = ncread(Tb_file, ['lat_' + Swath_used{iTb}(it)]); % npixel, nscan
+
+            % **longitude**
+			lon{it} = ncread(Tb_file, ['lon_' + Swath_used{iTb}(it)]); % npixel, nscan
+
+            % **Tb**
+			Tb{it} = ncread(Tb_file, ChName_perSwath{iTb}(it)); % npixel, nscan
+
+            % **zenith angle**: the angle of the satellite from the local zenith as seen at the pixel location on the earth
+            zenith{it} = ncread(Tb_file, ['eia_' + Swath_used{iTb}(it)]); % npixel, nscan
+
+            % **latitude of satellite scan**
+			sat_lat{it} = ncread(Tb_file, ['spacecraft_lat_' + Swath_used{iTb}(it)]);
+
+            % **longitude of satellite scan**
+            sat_lon{it} = ncread(Tb_file, ['spacecraft_lon_' + Swath_used{iTb}(it)]);
+
+            % **altitude of satellite scan**
+			sat_alt{it} = ncread(Tb_file, ['spacecraft_alt_' + Swath_used{iTb}(it)]);
+
+            % **azimuth of satellite scan (used in CRTM)**: the angle subtended
+            length_perscan{it} = size(Tb{it},1); % number of pixels per scan
+            azimuth{it} = geodetic2aer(lat{it},                                       lon{it},                                       0, ...
+                                             repmat(sat_lat{it}',[length_perscan{it} 1]), repmat(sat_lon{it}',[length_perscan{it} 1]), repmat(sat_alt{it}'*1000,[length_perscan{it} 1]), ...
+                                             referenceEllipsoid('WGS 84')); % npixel, nscan
+
+            % ** (Scan) Time** 
+            scan_datetime_name = ['scan_datetime_' + Swath_used(i_ch)];                                                                 
+            scan_datetime = ncread(Tb_file,scan_datetime_name)';
+
+            scan_Year = str2num(scan_datetime(:,1:4));
+            scan_Month = str2num(scan_datetime(:,6:7));
+            scan_Day = str2num(scan_datetime(:,9:10));
+            scan_Hour = str2num(scan_datetime(:,12:13));
+            scan_Minute = str2num(scan_datetime(:,15:16));        
+			scan_Second = str2num(scan_datetime(:,18:19));
+
+            num_scans= size(Tb{it},2); % number of scans
+
+            for i_time = 1:num_scans
+                datetime_temp = datetime(year(i_time), month(i_time), day(i_time), hour(i_time), minute(i_time), second(i_time));
+                if ( second(i_time) >= 30)
+                    datetime_temp = datetime_temp + minutes(1);
+                end
+                outime{it}(i_time,1) = string(datestr(datetime_temp,'yyyymmddHHMM')); % nscan
             end
-            outime{it}(i_time,1) = string(datestr(datetime_temp,'yyyymmddHHMM')); % nscan
-        end
-
+		
+		end
     end
 
     % Special treatment to AMSR2 89GHz
@@ -145,10 +202,13 @@ function [sat_name,myLat,myLon,myTb,mySat_lat,mySat_lon,mySat_alt,myAzimuth,mySc
         [Swath_used,ChIdx_all,ChName_all,lat,lon,Tb,zenith,sat_lat,sat_lon,sat_alt,azimuth,outime] = Handle_AMSR2(iTb,Swath_used,ChIdx_all,ChName_all,DAtime_all,lat,lon,Tb,zenith,sat_lat,sat_lon,sat_alt,azimuth,outime,control);
     end
 
-    % ---------------------------------------------------------------------
-    % ---- Define area of interest for simulation AND
-    % ---- Select the raw obs for every grid point for EnKF assimilation
-    % ---------------------------------------------------------------------
+% ================================================================================================
+%                                         Step 2
+% ================================================================================================
+%  Define area of interest for simulation AND
+%  Select the raw obs for every grid point for EnKF assimilation
+% -----------------------------------------------------------------------------------------------
+
     % Prepare area: best-track location followed
     nx = control.nx*control.domain_buffer; % zoom out
     ny = control.ny*control.domain_buffer; % zoom out
@@ -190,10 +250,11 @@ function [sat_name,myLat,myLon,myTb,mySat_lat,mySat_lon,mySat_alt,myAzimuth,mySc
 	end
     % Note: Each value in the obs_index points at a location in the vectorized array Tb_col [Tb_col = reshape(Tb_raw,[],1)]
 
- 
-    % ---------------------------------------------------------------------
-    % ---- Select MW records for EnKF assimilation
-    % ---------------------------------------------------------------------
+% ================================================================================================
+%                                         Step 3
+% ================================================================================================ 
+%  Select MW records for EnKF assimilation
+% -------------------------------------------------------------------------------------------------
     
     % Preallocating memory
     DA_lat = cell(length(control.roi_oh),length(Swath_used{iTb})); DA_lat_perROI = cell(length(control.roi_oh));
@@ -261,9 +322,11 @@ function [sat_name,myLat,myLon,myTb,mySat_lat,mySat_lon,mySat_alt,myAzimuth,mySc
 	clear DA_lat DA_lon DA_Tb DA_sat_lat DA_sat_lon DA_sat_alt DA_azimuth DA_azimuth DA_zenith DA_fov_crossTrack DA_fov_alongTrack 
 	clear DA_times DA_chNum DA_chNum DA_ROI_hydro DA_ROI_other DA_ROI_other
 
-    % ---------------------------------------------------------------------
-    % ---- Produce MW records for EnKF assimilation with roi
-    % ---------------------------------------------------------------------
+% ================================================================================================
+%                                         Step 4
+% ================================================================================================
+% Produce MW records for EnKF assimilation with roi
+% ------------------------------------------------------------------------------------------------
 
     myLat = cell(size(control.roi_oh));
     myLon = cell(size(control.roi_oh));

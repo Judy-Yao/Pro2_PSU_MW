@@ -56,11 +56,11 @@ function [Swath_used, ChIdx_perSwath, ChName_perSwath] = Match_Freq(isensor, Tb_
 	    for i_ch = 1:length(control.favFreq{isensor})			
 			if contains(control.favFreq{isensor}{i_ch}, 'fcdr_tb19v')
 				Swath_used = [Swath_used, string('lores')];
-				ChName_perSwath = [ChName_perSwath, ""];
+				ChName_perSwath = [ChName_perSwath, string('fcdr_tb19v')];
 				ChIdx_perSwath = [ChIdx_perSwath,NaN];
 			elseif contains(control.favFreq{isensor}{i_ch}, 'fcdr_tb85v')
 				Swath_used = [Swath_used, string('hires')];
-				ChName_perSwath = [ChName_perSwath, ""];
+				ChName_perSwath = [ChName_perSwath, string('fcdr_tb85v')];
 				ChIdx_perSwath = [ChIdx_perSwath,NaN];
 			end 
 		end

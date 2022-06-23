@@ -154,26 +154,40 @@ function [if_swath_good,DAtime_perCh,loc_storm_DAtime] = Find_DAtime_loc(bestrac
     DAtime_perCh = []; % (strings)
     loc_storm_DAtime = {}; % lat,lon
 
-    % --- loop through each frequency of interest
+    % --- Loop through each frequency of interest
     for i_ch = 1:length(Swath_used)
-        % -For a frequency/channel of interest under a swath, get time information of all scans 
-        scan_Year_char = [Swath_used(i_ch) + '/ScanTime/Year'];
-        scan_Month_char = [Swath_used(i_ch) + '/ScanTime/Month'];
-        scan_Day_char = [Swath_used(i_ch) + '/ScanTime/DayOfMonth']; 
-        scan_Hour_char = [Swath_used(i_ch) + '/ScanTime/Hour']; 
-        scan_Minute_char = [Swath_used(i_ch) + '/ScanTime/Minute']; 
+        % For a frequency/channel of interest under a swath, get scan times
+        % HDF5 file
+		if contains(filext,"HDF5")
+			scan_Year_char = [Swath_used(i_ch) + '/ScanTime/Year'];
+			scan_Month_char = [Swath_used(i_ch) + '/ScanTime/Month'];
+			scan_Day_char = [Swath_used(i_ch) + '/ScanTime/DayOfMonth']; 
+			scan_Hour_char = [Swath_used(i_ch) + '/ScanTime/Hour']; 
+			scan_Minute_char = [Swath_used(i_ch) + '/ScanTime/Minute']; 
 
-        scan_Year = h5read(Tb_file,scan_Year_char);
-        scan_Month = h5read(Tb_file,scan_Month_char);
-        scan_Day = h5read(Tb_file,scan_Day_char);
-        scan_Hour = h5read(Tb_file,scan_Hour_char);
-        scan_Minute = h5read(Tb_file,scan_Minute_char);  
+			scan_Year = h5read(Tb_file,scan_Year_char);
+			scan_Month = h5read(Tb_file,scan_Month_char);
+			scan_Day = h5read(Tb_file,scan_Day_char);
+			scan_Hour = h5read(Tb_file,scan_Hour_char);
+			scan_Minute = h5read(Tb_file,scan_Minute_char);  
+		% NC file
+        elseif contains(filext,"nc")
+			scan_datetime_name = ['scan_datetime_' + Swath_used(i_ch)];
+			scan_datetime = ncread(Tb_file,scan_datetime_name)';	
+			
+		    scan_Year = str2num(scan_datetime(:,1:4));
+            scan_Month = str2num(scan_datetime(:,6:7));
+            scan_Day = str2num(scan_datetime(:,9:10));
+            scan_Hour = str2num(scan_datetime(:,12:13));
+            scan_Minute = str2num(scan_datetime(:,15:16));				
+		end
 
+		% Convert scan times to matlab datetime format
         all_scan_time = datetime(scan_Year,scan_Month,scan_Day,scan_Hour,scan_Minute,0,'TimeZone','UTC');
 
         num_useful_scan = zeros(length(DAhh_cand),1);
         loc_perDAcand = zeros(length(DAhh_cand),2);  
-        % ---- loop through DA_time candidate
+        % ---- Loop through DA_time candidate
         for i_cand = 1:length(DAhh_cand)
             %find the start time and end time of the 6h interval where this DA_time is within
             DA_datetime = DA_per_hhcand{i_cand,1};
@@ -218,18 +232,27 @@ function [if_swath_good,DAtime_perCh,loc_storm_DAtime] = Find_DAtime_loc(bestrac
             max_lon = loc_perDAcand(i_cand,2)+0.1;
             % for a DA_time candidate, Find scans that are between the start and the end of effective observations
             idx_all_scan = isbetween(all_scan_time, DA_per_hhcand{i_cand,2},DA_per_hhcand{i_cand,3});
-            % mask observation pixels that are between the start_obs_time of and the end_obs_time of a DA_time candidate (idx_all_scan)  
-            pixel_lat_char = [Swath_used(i_ch) + '/Latitude'];
-            pixel_lon_char = [Swath_used(i_ch) + '/Longitude'];
-            pixel_lat = h5read(Tb_file,pixel_lat_char);
-            pixel_lat = pixel_lat(:,idx_all_scan);
-            pixel_lon = h5read(Tb_file,pixel_lon_char);
-            pixel_lon = pixel_lon(:,idx_all_scan);
-            % determine if any masked observations are within the square area centered at the best-track location at this DA_time candidate
+            % mask observation pixels that are between the start_obs_time of and the end_obs_time of a DA_time candidate (idx_all_scan) 
+			%% HDF5 file
+			if contains(filext,"HDF5") 
+            	pixel_lat_char = [Swath_used(i_ch) + '/Latitude'];
+            	pixel_lon_char = [Swath_used(i_ch) + '/Longitude'];
+            	pixel_lat = h5read(Tb_file,pixel_lat_char);
+            	pixel_lat = pixel_lat(:,idx_all_scan);
+            	pixel_lon = h5read(Tb_file,pixel_lon_char);
+            	pixel_lon = pixel_lon(:,idx_all_scan);
+            %% NC file
+     		elseif contains(filext,"nc")
+				pixel_lat = ncread(Tb_file,['lat_' + Swath_used(i_ch)]);		
+				pixel_lat = pixel_lat(idx_all_scan,:)';
+				pixel_lon = ncread(Tb_file,['lon_' + Swath_used(i_ch)]);
+				pixel_lon = pixel_lon(idx_all_scan,:)';
+			end
+			% determine if any masked observations are within the square area centered at the best-track location at this DA_time candidate
             num_useful_scan(i_cand) = sum((pixel_lon(:) < max_lon) & (pixel_lon(:) > min_lon) & (pixel_lat(:) < max_lat) & (pixel_lat(:) > min_lat)); 
         end
 
-        % store values
+        % Store values
         % if_swath_good(length(Swath_used))
         % DAtime_perCh(length(Swath_used))
         if sum(num_useful_scan) == 0
