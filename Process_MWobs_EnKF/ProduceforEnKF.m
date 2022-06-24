@@ -197,9 +197,9 @@ function [sat_name,myLat,myLon,myTb,mySat_lat,mySat_lon,mySat_alt,myAzimuth,mySc
 		end
     end
 
-    % Special treatment to AMSR2 89GHz
-    if (sensor == "AMSR2") 
-        [Swath_used,ChIdx_all,ChName_all,lat,lon,Tb,zenith,sat_lat,sat_lon,sat_alt,azimuth,outime] = Handle_AMSR2(iTb,Swath_used,ChIdx_all,ChName_all,DAtime_all,lat,lon,Tb,zenith,sat_lat,sat_lon,sat_alt,azimuth,outime,control);
+    % Special treatment to  89GHz
+    if (sensor == "AMSR2") | (sensor == "SSMI")
+        [Swath_used,ChIdx_all,ChName_all,lat,lon,Tb,zenith,sat_lat,sat_lon,sat_alt,azimuth,outime] = Handle_89GHz(iTb,sensor,Swath_used,ChIdx_all,ChName_all,DAtime_all,lat,lon,Tb,zenith,sat_lat,sat_lon,sat_alt,azimuth,outime,control);
     end
 
 % ================================================================================================

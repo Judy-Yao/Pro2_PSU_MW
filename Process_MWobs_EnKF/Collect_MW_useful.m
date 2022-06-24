@@ -62,14 +62,18 @@ function [all_Tbfile_name,all_Swath_used,all_ChIdx_perCh,all_ChName_perCh,all_DA
                         continue;
                     else
 						% ----- Gather the useful Tb file of all sensors !!
-                        [filepath,filename,filext] = fileparts(Tb_file);
                         source_file = erase(Tb_file,'raw_Obs/');
                         % A potential BUG exists: the current algorithm assumes that for all channels of a L1C MW file the best-track locations and DA times are the same
 						if (length(DAtime_perCh) > 1) & (DAtime_perCh(1) ~= DAtime_perCh(2))
 							disp('	Error collecting the Tb file! Potential risk exists!');
 						end
-						newfile_name = ['DAt' + DAtime_perCh(1) + '_1C.' + control.platform{isensor}{isensor_plf} + '.' + control.sensor{isensor} + '.HDF5'];
-                        command = ["ln -s " + source_file + " " + destination + newfile_name];% Symbolic link's path -> source file. The relatively path of source file is relative to symbolic link's path.
+						[filepath,filename,filext] = fileparts(Tb_file);
+						if contains(filext,"HDF5")
+							newfile_name = ['DAt' + DAtime_perCh(1) + '_1C.' + control.platform{isensor}{isensor_plf} + '.' + control.sensor{isensor} + '.HDF5'];
+						elseif contains(filext,"nc")
+							newfile_name = ['DAt' + DAtime_perCh(1) + '_1C.' + control.platform{isensor}{isensor_plf} + '.' + control.sensor{isensor} + '.nc'];	
+						end                    
+						command = ["ln -s " + source_file + " " + destination + newfile_name];% Symbolic link's path -> source file. The relatively path of source file is relative to symbolic link's path.
                         [status,~] = system(command);
                         if status == 0
                             disp(['  ',filename,filext, ' is collected.']);

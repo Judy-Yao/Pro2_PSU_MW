@@ -28,9 +28,9 @@ control.platform = {{'F15'},};
 %control.platform = {{'GCOMW1'}, {'NPP'}, {'GPM'}, {'METOPA','METOPB','NOAA18','NOAA19'}, {'MT1'}, {'F15'}, {'F16','F17','F18'}};
 control.favFreq = {{'fcdr_tb19v','fcdr_tb85v'},};
 %control.favFreq = {{'18.7GHzV-Pol','89GHzV-PolA-Scan','89GHzV-PolB-Scan'},{'183.31+-7GHzQH-Pol'},{'18.7GHzV-Pol','183.31+/-7GHzV-Pol'},{'190.31GHzV-Pol'},{'183.31+/-6.8GHz'},{'fcdr_tb19v','fcdr_tb85v'},{'19.35GHzV-Pol','183.31+/-6.6GHzH-Pol'}};
+control.use89GHz = false; % the value might be altered later in the system
 % --- Special case: two 89GHz on AMSR2 (89GHzV-PolA-Scan and 89GHzV-PolB-Scan)
 control.comnine_AMSR89GHz = true;
-control.NOTuse_AMSR89GHz = false;
 
 % --- WRF simulation setup
 control.nx = 297; % number of grid points along X direction
@@ -96,12 +96,12 @@ for istorm = 1:length(control.storm_phase)
 	% Overpass: ~, more than one sensor provides MW obs of the storm
 	% ------------------------------------------------------------------------------------------------------------
 
-    % --- Loop through each useful Tb file via a symbolic link
+    % --- Loop through each useful Tb file via a symbolic link ---
     Tb_dir = [control.obs_collect_dir,control.storm_phase{istorm},'/*'];
     Tb_files = strsplit(ls(Tb_dir));
     Tb_files = Tb_files(~cellfun('isempty',Tb_files)); % get rid of annoying empty cell
 
-    % --- Output singlepass
+    % --- Output singlepass ---
     disp('Handling single-pass Tb files......');
     for is = 1:length(singlepass)
         for iTb = 1:length(Tb_files)
@@ -122,7 +122,7 @@ for istorm = 1:length(control.storm_phase)
 
     % Note: in a single-pass senario, if an AMSR2 or a SSMI Tb file exists, the low frequency (~19GHz) and the high frequency (85GHz) will be definitely used.
 
-	% --- Output overpass
+	% --- Output overpass ---
     disp('Handling over-pass Tb files......');
 	for io = 1:length(overpass) % loop through each DA time where overpass happens
 		file_overpass = []; % (strings)
@@ -143,7 +143,7 @@ for istorm = 1:length(control.storm_phase)
                 file_overpass = [file_overpass,string(Tb_file)]; % Record overpass Tb files in the order of being identified
                 sensor_overpass = [sensor_overpass,string(sensor)];
                 idx_collectedTb = find([filename,filext] == Tbfile_names);
-				idx_usedTb(end+1) = idx_collectedTb; % Record the listing order of the overpass file in the collected files
+				idx_usedTb(end+1) = idx_collectedTb; % Record the location of the overpass file in the collected files
 			else
 				continue;
 			end
@@ -154,35 +154,43 @@ for istorm = 1:length(control.storm_phase)
 			disp(["  over-pass file: " + file_overpass(iot)]);
 		end
 
-        % 89GHz will only be used if there is no 183 GHz
-        % Below algorithm assumes that if a Tb file of AMSR2 is collected, all 18.7GHzV-Pol & 89GHzV-PolA-Scan & 89GHzV-PolB-Scan exist.
-        if sum(("AMSR2" == sensor_overpass) & ("SSMI" == sensor_overpass)) == 0 % No 89GHz Tb
+		% --------------------------------- Special Treatment to 89GHz -----------------------------------------------
+        % 89GHz will only be used if there is no 183 GHz %Below algorithm assumes that if a Tb file of AMSR2 is collected, all 18.7GHzV-Pol & 89GHzV-PolA-Scan & 89GHzV-PolB-Scan exist.
+		% ------------------------------------------------------------------------------------------------------------
+		num_89GHz_sensors = sum(("AMSR2" == sensor_overpass) & ("SSMI" == sensor_overpass)); 
+
+		if (num_89GHz_sensors == 0) 
+			% 89GHz does not exist.
 			disp('  None of microwave observation is from either AMSR2 or SSMI with 89GHz.');
-            Overpass_write(idx_usedTb,istorm,Swath_used,ChIdx_all,ChName_all,DAtime_all,loc_DAtime_all,file_overpass,control); 
-        else % Either AMSR2 or SSMI or both provides one of overpasses
-			idx_order_85GHz = find("AMSR2" == sensor_overpass);
-            idx_order_other = order_overpass(order_overpass ~= idx_order_AMSR2);
-        
-            num_183GHz = 0;    
-            ChName_other = ChName_all{idx_usedTb(idx_order_other)}; 
-            for it =1:length(ChName_other)
-                if contains(ChName_other{it},'183') | contains(ChName_other{it},'190')  
-                    num_183GHz = num_183GHz + 1;
-                end
-            end
-        
-            if num_183GHz == 0 % AMSR2 exists and only low frequency of other files are used: use all of frequencies of AMSR2. (? even low frequency?)
-                control.comnine_AMSR89GHz = true;
-                control.NOTuse_AMSR89GHz = false; 
-				disp("  ~ 183 GHz from other sensors does not exist. Use 89 GHz of AMSR2 instead!");
-                Overpass_write(idx_usedTb,istorm,Swath_used,ChIdx_all,ChName_all,DAtime_all,loc_DAtime_all,file_overpass,control);
-            else % AMSR2 exist and other files with ~ 183 GHz exist. Only low frequency of AMSR2 is used.
-				disp("  ~ 183 GHz from other sensors exists. Only low frequency of AMSR2 is used!");
-                control.comnine_AMSR89GHz = false;
-                control.NOTuse_AMSR89GHz = true;
-                Overpass_write(idx_usedTb,istorm,Swath_used,ChIdx_all,ChName_all,DAtime_all,loc_DAtime_all,file_overpass,control);
-            end
-        end
+			Overpass_write(idx_usedTb,istorm,Swath_used,ChIdx_all,ChName_all,DAtime_all,loc_DAtime_all,file_overpass,control);
+		else
+			% 89GHz exists, consider if 183GHz existis.
+			num_183GHz = 0;
+			for iot = 1:length(sensor_overpass)
+				if (sensor_overpass(iot) == "AMSR2")
+					continue;
+				elseif (sensor_overpass(iot) == "SSMI")
+					continue;
+				else
+					ChName_other = ChName_all{idx_usedTb(iot)};	
+					if contains(ChName_other,'183') | contains(ChName_other,'190')
+						num_183GHz = num_183GHz + 1;
+					end
+				end
+			end
+			
+			if num_183GHz == 0
+				control.use89GHz = true;
+				disp("  ~ 183 GHz from other sensors does not exist. Use 89 GHz instead!");
+                Overpass_write(idx_usedTb,istorm,Swath_used,ChIdx_all,ChName_all,DAtime_all,loc_DAtime_all,file_overpass,control);	
+			else
+				control.use89GHz = false;
+				control.comnine_AMSR89GHz = false;
+				disp("  ~ 183 GHz from other sensors exists. Only low frequency of AMSR2 or/and SSMI is used!");		
+				Overpass_write(idx_usedTb,istorm,Swath_used,ChIdx_all,ChName_all,DAtime_all,loc_DAtime_all,file_overpass,control);
+			end
+
+		end
 
     end % end loop for io = 1:length(overpass)
 
