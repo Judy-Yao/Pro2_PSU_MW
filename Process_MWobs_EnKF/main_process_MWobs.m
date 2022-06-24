@@ -31,6 +31,7 @@ control.favFreq = {{'fcdr_tb19v','fcdr_tb85v'},};
 control.use89GHz = false; % the value might be altered later in the system
 % --- Special case: two 89GHz on AMSR2 (89GHzV-PolA-Scan and 89GHzV-PolB-Scan)
 control.comnine_AMSR89GHz = true;
+% Test
 
 % --- WRF simulation setup
 control.nx = 297; % number of grid points along X direction
