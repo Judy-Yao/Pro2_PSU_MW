@@ -83,8 +83,8 @@ done
 cat > run_wrf_ens.sh << EOF
 #!/bin/bash -x
 #SBATCH -J run_wrf_ens
-#SBATCH -p skx-dev
-#SBATCH -n 192 -N 4
+#SBATCH -p compute
+#SBATCH -n 256 -N 2
 #SBATCH -t 2:00:00
 #SBATCH -o run_wrf_ens.batch
 

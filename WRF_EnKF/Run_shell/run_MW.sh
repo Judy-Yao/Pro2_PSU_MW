@@ -1,18 +1,19 @@
 #!/bin/bash --login
-#####header for stampede######
-#SBATCH -J BAMS
-#SBATCH -N 4
+#####header for Expanse######
+#SBATCH -J run_MW
+#SBATCH -N 2
 #SBATCH -n 192
-#SBATCH -p skx-dev
-#SBATCH -t 1:59:00
+#SBATCH -p compute
+#SBATCH -A pen116
+#SBATCH -t 2:00:00
 #SBATCH -o out_enkf
 #SBATCH -e error_enkf
 
 #source ~/.bashrc
-source /home1/02191/yuz31/.bashrc
+source /home/zuy121/.bashrc
 
 #load configuration files, functions, parameters
-export CONFIG_FILE=/work2/02191/yuz31/stampede2/scripts/HARVEY/DA/config_IR_MW
+export CONFIG_FILE=/expanse/lustre/projects/pen116/zuy121/Pro2_PSU_MW/SourceCode/WRF_EnKF/Run_shell/config_IR_MW
 
 . "$CONFIG_FILE"
 . util.sh
@@ -22,7 +23,7 @@ cd "$WORK_DIR" || exit
 
 ####total_ntasks####
 if [ "$JOB_SUBMIT_MODE" == 1 ]; then
-  if [[ $HOSTTYPE == "stampede" ]]; then
+  if [[ $HOSTTYPE == "stampede" || $HOSTTYPE == "Expanse"]]; then
     export total_ntasks=$SLURM_NTASKS
   fi
   if [[ $HOSTTYPE == "jet" ]]; then

@@ -97,7 +97,7 @@ echo "  Running PerturbIC..."
 cat > run_wrfvar.sh << EOF
 #!/bin/bash -x
 #SBATCH -J run_wrfvar
-#SBATCH -p skx-dev
+#SBATCH -p shared
 #SBATCH -n 48 -N 1
 #SBATCH -t 0:30:00
 #SBATCH -o run_wrfvar.batch
@@ -177,7 +177,7 @@ if [ $MAX_DOM -gt 1 ]; then
 cat > run_ndown.sh << EOF
 #!/bin/bash -x
 #SBATCH -J run_ndown
-#SBATCH -p skx-dev
+#SBATCH -p shared
 #SBATCH -n 48 -N 1
 #SBATCH -t 0:30:00
 #SBATCH -o run_ndown.batch
