@@ -19,15 +19,15 @@ function [Swath_used, ChIdx_perSwath, ChName_perSwath] = Match_Freq(isensor, Tb_
    
 	% Determine if the file should be read by ncread or h5read
     [~,~,filext] = fileparts(Tb_file); 
+
+    Swath_used= []; % (strings) name(s) of swaths which include the frequency(ies) of interest
+    ChName_perSwath = []; % (strings) name(s) of frequency(ies) of interest under the swath(s)
+    ChIdx_perSwath = []; % (double) index(ices) of frequency(ies) of interest under the swath(s)
    
 	% HDF5 file
 	if contains(filext,"HDF5")
 		file_info = h5info(Tb_file);
 		num_swath = length(file_info.Groups); % total number of swaths per L1C file
-
-		Swath_used= []; % (strings) name(s) of swaths which include the frequency(ies) of interest
-		ChName_perSwath = []; % (strings) name(s) of frequency(ies) of interest under the swath(s)
-		ChIdx_perSwath = []; % (double) index(ices) of frequency(ies) of interest under the swath(s)
 
 		% loop through each swath in L1C file
 		for i_sw = 1:num_swath

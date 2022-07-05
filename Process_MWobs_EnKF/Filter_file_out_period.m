@@ -1,5 +1,5 @@
 % ----------------------------------------------------------------------------------------- %
-% This function simply filters out MW L1C files that don't lie within the period of interest 
+% This function simply filters out MW L1C files that are not within the period of interest 
 % ----------------------------------------------------------------------------------------- %
 
 function use_Tb_file = Filter_file_out_period(idx_storm,Tb_file,control)
@@ -12,7 +12,7 @@ function use_Tb_file = Filter_file_out_period(idx_storm,Tb_file,control)
 	[~,~,filext] = fileparts(Tb_file);
 	
 	% Read the beginning and ending of the time coverage for this file
-	
+    	
 	% HDF5 file
 	if contains(filext,"HDF5")
 		fileheader = split(h5readatt(Tb_file,'/','FileHeader'),';');
@@ -26,16 +26,16 @@ function use_Tb_file = Filter_file_out_period(idx_storm,Tb_file,control)
 			end
 		end
 		% convert saved time strings to scalar datetime arrays
-		start_datetime = datetime(strtrim(time_start),'InputFormat','yyyy-MM-dd''T''HH:mm', 'TimeZone','UTC');
-		end_datetime = datetime(strtrim(time_end),'InputFormat','yyyy-MM-dd''T''HH:mm', 'TimeZone','UTC'); 
+		start_time = datetime(strtrim(time_start),'InputFormat','yyyy-MM-dd''T''HH:mm', 'TimeZone','UTC');
+		end_time = datetime(strtrim(time_end),'InputFormat','yyyy-MM-dd''T''HH:mm', 'TimeZone','UTC'); 
 	% NC file
 	elseif contains(filext,"nc")
-		start_datetime = extractBefore(ncreadtt(Tb_file,'/','time_coverage_start'),18);			
-		end_datetime = extractBefore(ncreadtt(Tb_file,'/','time_coverage_end'),18);
+        start_time = datetime(extractBefore(ncreadatt(Tb_file,'/','time_coverage_start'),17),'InputFormat','yyyy-MM-dd''T''HH:mm', 'TimeZone','UTC');
+		end_time = datetime(extractBefore(ncreadatt(Tb_file,'/','time_coverage_end'),17),'InputFormat','yyyy-MM-dd''T''HH:mm', 'TimeZone','UTC');
 	end
 
     % Skip the Tb file that is not within the period of interest
-    if (end_datetime < pd_start_dt) || (start_datetime > pd_end_dt) % || expr2 is not evaluated if expr1 is logical 1 (true).
+    if (end_time < pd_start_dt) || (start_time > pd_end_dt) % || expr2 is not evaluated if expr1 is logical 1 (true).
         use_Tb_file = false;
     else
         use_Tb_file = true;

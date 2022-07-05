@@ -16,9 +16,9 @@ control.bestrack_dir = '../../raw_Obs/Bestrack/'; % directory where best-track f
 control.output_dir = '../../toEnKFobs/MW/'; % directory into which the microwave-observation-preprocessing system (MOPS) outputs
 
 % ---Storm information
-control.storm_phase = {'MariaRI',}; % !!! Recommendation: although this system can process as many storms as possible, it is best to process one storm at a time. 
+control.storm_phase = {'HarveyRI',}; % !!! Recommendation: although this system can process as many storms as possible, it is best to process one storm at a time. 
 %control.storm_phase = ["Irma2ndRI",'JoseRI','MariaRI'};
-control.period = {{'201709160000','201709180000'},}; % Date range of case study (yyyymmddHHMM)
+control.period = {{'201708221200','201708241200'},}; % Date range of case study (yyyymmddHHMM)
 %control.period = {{'201709030600','201709050600'},{'201709050600','201709070600'},{'201709160000','201709180000'}}; %YYYYMMDDHHmm
 
 % ---Satellite informaiton

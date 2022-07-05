@@ -12,7 +12,7 @@ function [if_swath_good,DAtime_perCh,loc_storm_DAtime] = Find_DAtime_loc(bestrac
 %                                         Step 1
 % =================================================================================================
 %
-%           start_datetime       end_datetime
+%           start_time       end_time
 % |__________|____%______|__________|_%_________|
 % h-1     h-0.5          h        h+0.5        h+1
 % For example, for a MW obs file, if time_coverage_start is 201708170434 and time_coverage_end is
@@ -35,24 +35,24 @@ function [if_swath_good,DAtime_perCh,loc_storm_DAtime] = Find_DAtime_loc(bestrac
             end
         end
         % convert saved time strings to scalar datetime arrays
-        start_datetime = datetime(strtrim(time_start),'InputFormat','yyyy-MM-dd''T''HH:mm', 'TimeZone','UTC');
-        end_datetime = datetime(strtrim(time_end),'InputFormat','yyyy-MM-dd''T''HH:mm', 'TimeZone','UTC');
+        start_time = datetime(strtrim(time_start),'InputFormat','yyyy-MM-dd''T''HH:mm', 'TimeZone','UTC');
+        end_time = datetime(strtrim(time_end),'InputFormat','yyyy-MM-dd''T''HH:mm', 'TimeZone','UTC');
     % NC file
     elseif contains(filext,"nc")
-        start_datetime = extractBefore(ncreadtt(Tb_file,'/','time_coverage_start'),18);
-        end_datetime = extractBefore(ncreadtt(Tb_file,'/','time_coverage_end'),18);
+        start_time = datetime(extractBefore(ncreadatt(Tb_file,'/','time_coverage_start'),17),'InputFormat','yyyy-MM-dd''T''HH:mm', 'TimeZone','UTC');
+        end_time = datetime(extractBefore(ncreadatt(Tb_file,'/','time_coverage_end'),17),'InputFormat','yyyy-MM-dd''T''HH:mm', 'TimeZone','UTC');        
     end
 
     % -------- Get every possible DA_time (especially hour) and its effective Tb observations --------
 
     % StartGranuleDateTime and StopGranuleDateTime are within the same day! E.g., 2017081700h00m00s - 20170817 23h59m59s
-    if day(start_datetime) == day(end_datetime) 
-        DA_year = year(start_datetime);
-        DA_month = month(start_datetime);
-        DA_day = day(start_datetime);
+    if day(start_time) == day(end_time) 
+        DA_year = year(start_time);
+        DA_month = month(start_time);
+        DA_day = day(start_time);
         % list the candidates for DA_hour which lie between StartGranuleDateTime and StopGranuleDateTime
-        start_DAhh_cand = hour(start_datetime)+1; % correct unless start_datetime is on o'clock. E.g., start_DAhh_cand of 2017081700h00m00s should be hour(2017081700h00m00s) 
-        end_DAhh_cand = hour(end_datetime); 
+        start_DAhh_cand = hour(start_time)+1; % correct unless start_time is on o'clock. E.g., start_DAhh_cand of 2017081700h00m00s should be hour(2017081700h00m00s) 
+        end_DAhh_cand = hour(end_time); 
         DAhh_cand = start_DAhh_cand:end_DAhh_cand; 
 
         DA_per_hhcand = cell(length(DAhh_cand),3); % for each DA hour candidate, collect DA_time candidate, start & end of the effective observations for that DA_time
@@ -62,8 +62,8 @@ function [if_swath_good,DAtime_perCh,loc_storm_DAtime] = Find_DAtime_loc(bestrac
 
             % start_obs_time
             if i_cand == 1 % DA_time candidate nearest to StartGranuleDateTime
-                if minute(start_datetime) > 30 
-                    DA_per_hhcand{i_cand,2} = start_datetime;
+                if minute(start_time) > 30 
+                    DA_per_hhcand{i_cand,2} = start_time;
                 else
                     DA_per_hhcand{i_cand,2} =DA_per_hhcand{i_cand,1}-minutes(30);
                 end
@@ -73,8 +73,8 @@ function [if_swath_good,DAtime_perCh,loc_storm_DAtime] = Find_DAtime_loc(bestrac
 
             % end_obs_time
             if i_cand == length(DAhh_cand)
-                if minute(end_datetime) < 30
-                    DA_per_hhcand{i_cand,3} = end_datetime;
+                if minute(end_time) < 30
+                    DA_per_hhcand{i_cand,3} = end_time;
                 else
                     DA_per_hhcand{i_cand,3} = DA_per_hhcand{i_cand,1}+minutes(30);
                 end        
@@ -88,22 +88,22 @@ function [if_swath_good,DAtime_perCh,loc_storm_DAtime] = Find_DAtime_loc(bestrac
     % Feature: It happens around midnight; It defenitely (only) spans two consecutive days; It might span two months
     % Solution: we change the system/base of measuring hours. Instead of using quadrovigesimal (base 24), we use decimal (base 10).
     % Decimal is more convenient calculating the distance between two points.
-        DA_year = year(start_datetime);
+        DA_year = year(start_time);
         % list the candidates for DA_hour which lie between StartGranuleDateTime and StopGranuleDateTime
-        start_DAhh_cand = hour(start_datetime)+1; % correct unless start_datetime is on o'clock.
-        end_DAhh_cand = hour(end_datetime)+24; % 00Z --> 24;01Z --> 25 
+        start_DAhh_cand = hour(start_time)+1; % correct unless start_time is on o'clock.
+        end_DAhh_cand = hour(end_time)+24; % 00Z --> 24;01Z --> 25 
         DAhh_cand = start_DAhh_cand:end_DAhh_cand;
 
         DA_per_hhcand = cell(length(DAhh_cand),3);
 
         for i_cand = 1:length(DAhh_cand)
             if DAhh_cand >= 24
-              DA_month = month(end_datetime); 
-              DA_day = day(end_datetime);
+              DA_month = month(end_time); 
+              DA_day = day(end_time);
               DA_hour = DAhh_cand(i_cand) - 24;
             else
-              DA_month = month(start_datetime); 
-              DA_day = day(start_datetime);
+              DA_month = month(start_time); 
+              DA_day = day(start_time);
               DA_hour = DAhh_cand(i_cand);
             end  
 
@@ -111,8 +111,8 @@ function [if_swath_good,DAtime_perCh,loc_storm_DAtime] = Find_DAtime_loc(bestrac
 
             % start_obs_time
             if i_cand == 1 % DA_time candidate nearest to StartGranuleDateTime
-                if minute(start_datetime) > 30 
-                    DA_per_hhcand{i_cand,2} = start_datetime;
+                if minute(start_time) > 30 
+                    DA_per_hhcand{i_cand,2} = start_time;
                 else
                     DA_per_hhcand{i_cand,2} = DA_per_hhcand{i_cand,1}-minutes(30);
                 end
@@ -122,8 +122,8 @@ function [if_swath_good,DAtime_perCh,loc_storm_DAtime] = Find_DAtime_loc(bestrac
 
             % end_obs_time
             if i_cand == length(DAhh_cand)
-                if minute(end_datetime) < 30
-                    DA_per_hhcand{i_cand,3} = end_datetime;
+                if minute(end_time) < 30
+                    DA_per_hhcand{i_cand,3} = end_time;
                 else
                     DA_per_hhcand{i_cand,3} = DA_per_hhcand{i_cand,1}+minutes(30);
                 end        
@@ -244,9 +244,9 @@ function [if_swath_good,DAtime_perCh,loc_storm_DAtime] = Find_DAtime_loc(bestrac
             %% NC file
      		elseif contains(filext,"nc")
 				pixel_lat = ncread(Tb_file,['lat_' + Swath_used(i_ch)]);		
-				pixel_lat = pixel_lat(idx_all_scan,:)';
+				pixel_lat = pixel_lat(:,idx_all_scan);
 				pixel_lon = ncread(Tb_file,['lon_' + Swath_used(i_ch)]);
-				pixel_lon = pixel_lon(idx_all_scan,:)';
+				pixel_lon = pixel_lon(:,idx_all_scan);
 			end
 			% determine if any masked observations are within the square area centered at the best-track location at this DA_time candidate
             num_useful_scan(i_cand) = sum((pixel_lon(:) < max_lon) & (pixel_lon(:) > min_lon) & (pixel_lat(:) < max_lat) & (pixel_lat(:) > min_lat)); 

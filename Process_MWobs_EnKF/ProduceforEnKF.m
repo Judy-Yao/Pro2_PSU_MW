@@ -46,6 +46,8 @@ function [sat_name,myLat,myLon,myTb,mySat_lat,mySat_lon,mySat_alt,myAzimuth,mySc
         sat_name = "mhs_n19";
     elseif (contains(platform,'MT1'))
         sat_name = "saphir_meghat";
+    elseif (contains(platform,'F15'))
+        sat_name = "ssmi_f15"
     elseif (contains(platform,'F16'))
         sat_name = "ssmis_f16";
     elseif (contains(platform,'F17'))
@@ -153,19 +155,19 @@ function [sat_name,myLat,myLon,myTb,mySat_lat,mySat_lon,mySat_alt,myAzimuth,mySc
 			lon{it} = ncread(Tb_file, ['lon_' + Swath_used{iTb}(it)]); % npixel, nscan
 
             % **Tb**
-			Tb{it} = ncread(Tb_file, ChName_perSwath{iTb}(it)); % npixel, nscan
+			Tb{it} = ncread(Tb_file, ChName_all{iTb}(it)); % npixel, nscan
 
             % **zenith angle**: the angle of the satellite from the local zenith as seen at the pixel location on the earth
             zenith{it} = ncread(Tb_file, ['eia_' + Swath_used{iTb}(it)]); % npixel, nscan
 
             % **latitude of satellite scan**
-			sat_lat{it} = ncread(Tb_file, ['spacecraft_lat_' + Swath_used{iTb}(it)]);
+			sat_lat{it} = ncread(Tb_file, ['spacecraft_lat_' + Swath_used{iTb}(it)]); % nscan
 
             % **longitude of satellite scan**
-            sat_lon{it} = ncread(Tb_file, ['spacecraft_lon_' + Swath_used{iTb}(it)]);
+            sat_lon{it} = ncread(Tb_file, ['spacecraft_lon_' + Swath_used{iTb}(it)]); % nscan
 
             % **altitude of satellite scan**
-			sat_alt{it} = ncread(Tb_file, ['spacecraft_alt_' + Swath_used{iTb}(it)]);
+			sat_alt{it} = ncread(Tb_file, ['spacecraft_alt_' + Swath_used{iTb}(it)]); % nscan
 
             % **azimuth of satellite scan (used in CRTM)**: the angle subtended
             length_perscan{it} = size(Tb{it},1); % number of pixels per scan
@@ -174,15 +176,15 @@ function [sat_name,myLat,myLon,myTb,mySat_lat,mySat_lon,mySat_alt,myAzimuth,mySc
                                              referenceEllipsoid('WGS 84')); % npixel, nscan
 
             % ** (Scan) Time** 
-            scan_datetime_name = ['scan_datetime_' + Swath_used(i_ch)];                                                                 
+            scan_datetime_name = ['scan_datetime_' + Swath_used{iTb}(it)];                                                                 
             scan_datetime = ncread(Tb_file,scan_datetime_name)';
 
-            scan_Year = str2num(scan_datetime(:,1:4));
-            scan_Month = str2num(scan_datetime(:,6:7));
-            scan_Day = str2num(scan_datetime(:,9:10));
-            scan_Hour = str2num(scan_datetime(:,12:13));
-            scan_Minute = str2num(scan_datetime(:,15:16));        
-			scan_Second = str2num(scan_datetime(:,18:19));
+            year = str2num(scan_datetime(:,1:4));
+            month = str2num(scan_datetime(:,6:7));
+            day = str2num(scan_datetime(:,9:10));
+            hour = str2num(scan_datetime(:,12:13));
+            minute = str2num(scan_datetime(:,15:16));        
+			second = str2num(scan_datetime(:,18:19));
 
             num_scans= size(Tb{it},2); % number of scans
 
@@ -259,7 +261,7 @@ function [sat_name,myLat,myLon,myTb,mySat_lat,mySat_lon,mySat_alt,myAzimuth,mySc
     % Preallocating memory
     DA_lat = cell(length(control.roi_oh),length(Swath_used{iTb})); DA_lat_perROI = cell(length(control.roi_oh));
     DA_lon = cell(length(control.roi_oh),length(Swath_used{iTb})); DA_lon_perROI = cell(length(control.roi_oh));
-    DA_Tb = cell(length(control.roi_oh),length(Swath_used{iTb})); DA_Tb_perROi =  
+    DA_Tb = cell(length(control.roi_oh),length(Swath_used{iTb})); DA_Tb_perROi = cell(length(control.roi_oh)); 
 
     DA_sat_lat = cell(length(control.roi_oh),length(Swath_used{iTb})); DA_satLat_perROI = cell(length(control.roi_oh));
     DA_sat_lon = cell(length(control.roi_oh),length(Swath_used{iTb})); DA_satLon_perROI = cell(length(control.roi_oh));
@@ -296,8 +298,9 @@ function [sat_name,myLat,myLon,myTb,mySat_lat,mySat_lon,mySat_alt,myAzimuth,mySc
 			DA_zenith{iroi,it} = all_zenith(obs_index_1d);
 			% **scan angle** 
 			[scantype,ch_num,fov_alongTrack,fov_crossTrack,max_scan_angle,scan_angles] = SensorInfo_read(sensor,ChName_all{iTb}{it});
-			DA_scan_angle{iroi,it} = scan_angles(scan_position)';
-			% **cross-track and along-track FOV**
+			%DA_scan_angle{iroi,it} = scan_angles(scan_position)';
+            DA_scan_angle{iroi,it} = scan_angles(scan_position);
+            % **cross-track and along-track FOV**
 			[DA_fov_crossTrack{iroi,it}, DA_fov_alongTrack{iroi,it}] = Get_pixel_resolution(scantype,ch_num,fov_alongTrack,fov_crossTrack,DA_lat{iroi,it},DA_lon{iroi,it},DA_zenith{iroi,it},DA_sat_lat{iroi,it},DA_sat_lon{iroi,it},DA_sat_alt{iroi,it});
 			% **scan time**
 			%DA_times{it}(scan_num,1) = outime{it}(scan_num);
@@ -310,8 +313,10 @@ function [sat_name,myLat,myLon,myTb,mySat_lat,mySat_lon,mySat_alt,myAzimuth,mySc
 			DA_ROI_hydro{iroi,it} = ones(numel(obs_index_1d),1)*control.roi_oh{iroi}(2);
 	        DA_ROI_other{iroi,it} = ones(numel(obs_index_1d),1)*control.roi_oh{iroi}(1);
 		end
-		DA_lat_perROI{iroi} = cat(1,DA_lat{iroi,:}); DA_lon_perROI{iroi} = cat(1,DA_lon{iroi,:}); DA_lon_perROI{iroi} = cat(1,DA_Tb{iroi,:});
+        % For each ROI plan, combine low-frequency and high-frequency data into one column 
+		DA_lat_perROI{iroi} = cat(1,DA_lat{iroi,:}); DA_lon_perROI{iroi} = cat(1,DA_lon{iroi,:}); DA_Tb_perROI{iroi} = cat(1,DA_Tb{iroi,:});
 		DA_satLat_perROI{iroi} = cat(1,DA_sat_lat{iroi,:}); DA_satLon_perROI{iroi} = cat(1,DA_sat_lon{iroi,:}); DA_satAlt_perROI{iroi} = cat(1,DA_sat_alt{iroi,:});
+
         DA_azimuth_perROI{iroi} = cat(1,DA_azimuth{iroi,:}); DA_scan_perROI{iroi} = cat(1,DA_scan_angle{iroi,:}); DA_zenith_perROI{iroi} = cat(1,DA_zenith{iroi,:});    
 		DA_fovCross_perROI{iroi} = cat(1,DA_fov_crossTrack{iroi,:}); DA_fovAlong_perROI{iroi} = cat(1,DA_fov_alongTrack{iroi,:}); 
 		DA_times_perROI{iroi} = cat(1,DA_times{iroi,:});  DA_chNum_perROI{iroi} = cat(1,DA_chNum{iroi,:});
@@ -349,30 +354,31 @@ function [sat_name,myLat,myLon,myTb,mySat_lat,mySat_lon,mySat_alt,myAzimuth,mySc
 
     for ir = 1:length(control.roi_oh) % ROI first references [200,0] second [60,60]
         % randomize MW records for this ROI 
-        randOrder = randperm(length(cat(1,DA_Tb_perROI{ir}))); % DA_Tb may contain 1 channel (low or high) or contain both low and high channels
+        %randOrder = randperm(length(cat(1,DA_Tb_perROI{:}))); % DA_Tb may contain 1 channel (low or high) or contain both low and high channels
+        randOrder = randperm(length(DA_Tb_perROI{ir}));
 
-        tem_lat = cat(1,DA_lat_perROI{ir});                 myLat{ir} = tem_lat(randOrder); %clear tem_lat
-        tem_lon = cat(1,DA_lon_perROI{ur});                 myLon{ir} = tem_lon(randOrder); %clear tem_lon
-        tem_Tb = cat(1,DA_Tb_perROI{ir});                   myTb{ir} = tem_Tb(randOrder); %clear tem_Tb
-        
-        tem_sat_lat = cat(1,DA_sat_lat{:}); mySat_lat{ir} = tem_sat_lat(randOrder); %clear tem_sat_lat
-        tem_sat_lon = cat(1,DA_sat_lon{:}); mySat_lon{ir} = tem_sat_lon(randOrder); %clear tem_sat_lon
-        tem_sat_alt = cat(1,DA_sat_alt{:}); mySat_alt{ir} = tem_sat_alt(randOrder); %clear tem_sat_alt
-        tem_azimuth = cat(1,DA_azimuth{:}); myAzimuth{ir} = tem_azimuth(randOrder); %clear tem_azimuth
-        tem_scan_angle = cat(2,DA_scan_angle{:}); myScan_angle{ir} = tem_scan_angle(randOrder)'; %clear tem_scan_angle
-        tem_zenith = cat(1,DA_zenith{:}); myZenith{ir} = tem_zenith(randOrder); %clear  tem_zenith
-        tem_fov_crossTrack = cat(1,DA_fov_crossTrack{:}); myFov_crossTrack{ir} = tem_fov_crossTrack(randOrder); %clear  tem_fov_crossTrack
-        tem_fov_alongTrack = cat(1,DA_fov_alongTrack{:}); myFov_alongTrack{ir} = tem_fov_alongTrack(randOrder); %clear tem_fov_alongTrack
-        tem_times = cat(1,DA_times{:}); myTimes{ir} = tem_times(randOrder); %clear tem_times
-        tem_chNum = cat(1,DA_chNum{:}); myChNum{ir} = tem_chNum(randOrder); %clear myTb_chNum
+        tem_lat = DA_lat_perROI{ir}; myLat{ir} = tem_lat(randOrder); %clear tem_lat
+        tem_lon = DA_lon_perROI{ir}; myLon{ir} = tem_lon(randOrder);
+        tem_Tb = DA_Tb_perROI{ir};   myTb{ir} = tem_Tb(randOrder);
+           
+        tem_sat_lat = DA_satLat_perROI{ir}; mySat_lat{ir} = tem_sat_lat(randOrder);
+        tem_sat_lon = DA_satLon_perROI{ir}; mySat_lon{ir} = tem_sat_lon(randOrder);
+        tem_sat_alt = DA_satAlt_perROI{ir}; mySat_alt{ir} = tem_sat_alt(randOrder);
+        tem_azimuth = DA_azimuth_perROI{ir}; myAzimuth{ir} = tem_azimuth(randOrder);
+        tem_scan_angle = DA_scan_perROI{ir}; myScan_angle{ir} = tem_scan_angle(randOrder);
+        tem_zenith = DA_zenith_perROI{ir}; myZenith{ir} = tem_zenith(randOrder);
+        tem_fov_crossTrack = DA_fovCross_perROI{ir}; myFov_crossTrack{ir} = tem_fov_crossTrack(randOrder);
+        tem_fov_alongTrack = DA_fovAlong_perROI{ir}; myFov_alongTrack{ir} = tem_fov_alongTrack(randOrder);
+        tem_times = DA_times_perROI{ir}; myTimes{ir} = tem_times(randOrder);
+        tem_chNum = DA_chNum_perROI{ir}; myChNum{ir} = tem_chNum(randOrder);
 
-        tem_obsErr = cat(1, DA_obsError{:}); myObsErr{ir} = tem_obsErr(randOrder); %clear tem_obsErr
+        tem_obsErr = DA_obsError_perROI{ir}; myObsErr{ir} = tem_obsErr(randOrder);
  
         % deal with ROI
         DA_ROI_other = cell(size(Swath_used{iTb}));
         DA_ROI_hydro = cell(size(Swath_used{iTb}));
         for it = 1:length(Swath_used{iTb}) 
-            obs_index_array = obs_index{it};
+            obs_index_array = obs_index{ir,it};
             obs_index_1d = obs_index_array(obs_index_array(:) == obs_index_array(:));
             DA_ROI_other{it} = ones(numel(obs_index_1d),1)*control.roi_oh{ir}(1);
             DA_ROI_hydro{it} = ones(numel(obs_index_1d),1)*control.roi_oh{ir}(2);
@@ -380,7 +386,6 @@ function [sat_name,myLat,myLon,myTb,mySat_lat,mySat_lon,mySat_alt,myAzimuth,mySc
         tem_ROI_other = cat(1,DA_ROI_other{:}); myRoi_otherVars{ir} = tem_ROI_other(randOrder); %clear tem_ROI_other
         tem_ROI_hydro = cat(1,DA_ROI_hydro{:}); myRoi_hydro{ir} = tem_ROI_hydro(randOrder); %clear tem_ROI_hydro
     end
-    clear DA_lat DA_lon DA_sat_lat DA_sat_lon DA_sat_alt DA_azimuth DA_scan_angle DA_zenith DA_fov_crossTrack DA_fov_alongTrack DA_times DA_chNum DA_obsError DA_ROI_other DA_ROI_hydro
 	
 
 end
