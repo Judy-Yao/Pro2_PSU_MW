@@ -231,9 +231,9 @@ else
 
 				if [ ! -d SAPHIR/MT1 ]
 				then
-					mkdir SAPHIR/MI1
+					mkdir SAPHIR/MT1
 					dataset="${GPM_datapath}GPM_1CMT1SAPHIR.${GPM_1C_ver}/"
-					Download_GPM_granule SAPHIR/MI1 ${dataset}
+					Download_GPM_granule SAPHIR/MT1 ${dataset}
 					cd ${DownloadTo} || exit
 				fi
 				;;
