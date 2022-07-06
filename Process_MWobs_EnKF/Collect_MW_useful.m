@@ -38,7 +38,7 @@ function [all_Tbfile_name,all_Swath_used,all_ChIdx_perCh,all_ChName_perCh,all_DA
         for isensor_plf = 1:length(plfs_eachsensor)
             disp(['Processing sensor: ', control.sensor{isensor}, ' on platform ', plfs_eachsensor{isensor_plf}]);
 
-            if contains(control.sensor{isensor}, "SSMI" )
+            if strcmp(control.sensor{isensor}, "SSMI")
                 Tb_dir = [control.obs_dir, control.storm_phase{istorm}, '/', control.sensor{isensor}, '/', plfs_eachsensor{isensor_plf}, '/*.nc'];
             else
                 Tb_dir = [control.obs_dir, control.storm_phase{istorm}, '/', control.sensor{isensor}, '/', plfs_eachsensor{isensor_plf}, '/*.HDF5'];
@@ -55,7 +55,7 @@ function [all_Tbfile_name,all_Swath_used,all_ChIdx_perCh,all_ChName_perCh,all_DA
                 % determine if this Tb is within the period of interest
                 [use_Tb_file] = Filter_file_out_period(istorm, Tb_file, control); %(logical)
                 if use_Tb_file == 0
-                    disp('  Microwave observations are not within the period of interest! Skip this file.');
+                    disp('    Microwave observations are not within the period of interest! Skip this file.');
                     continue;
                 else
                     % obtain swaths, channel/frequency index under each swath, and frequency(ies) name(s) of interest
@@ -63,14 +63,15 @@ function [all_Tbfile_name,all_Swath_used,all_ChIdx_perCh,all_ChName_perCh,all_DA
 					% subroutine to identify the best DA time for each item
                     [if_swath_good, DAtime_perCh, loc_storm_DAtime] = Find_DAtime_loc(bestrack_str,Swath_used,Tb_file, control); % (logical) (strings) (cell{double})
                     if sum(if_swath_good) == 0
-                        disp('	Microwave observations do not exist in the area of interest at DA time! Skip this file.');
+                        disp('	  Microwave observations do not exist in the area of interest at DA time! Skip this file.');
                         continue;
                     else
-						% ----- Gather the useful Tb file of all sensors !!
+						disp(['      (More) microwave observations exist in the area of interest at DA_time ' + DAtime_perCh(1) + '!']);
+                        % ----- Gather the useful Tb file of all sensors !!
                         source_file = erase(Tb_file,'raw_Obs/');
                         % A potential BUG exists: the current algorithm assumes that for all channels of a L1C MW file the best-track locations and DA times are the same
 						if (length(DAtime_perCh) > 1) & (DAtime_perCh(1) ~= DAtime_perCh(2))
-							disp('	Error collecting the Tb file! Potential risk exists!');
+							disp('	  Error collecting the Tb file! Potential risk exists!');
 						end
 						[filepath,filename,filext] = fileparts(Tb_file);
 						if contains(filext,"HDF5")
@@ -81,9 +82,9 @@ function [all_Tbfile_name,all_Swath_used,all_ChIdx_perCh,all_ChName_perCh,all_DA
 						command = ["ln -s " + source_file + " " + destination + newfile_name];% Symbolic link's path -> source file. The relatively path of source file is relative to symbolic link's path.
                         [status,~] = system(command);
                         if status == 0
-                            disp(['  ',filename,filext, ' is collected.']);
+                            disp(['    ',filename,filext, ' is collected!']);
                         else
-                            disp('  Error collecting the Tb file!');
+                            disp('    Error collecting the Tb file!');
                         end
 						% store useful information with correction from if_swath_good
                         all_Tbfile_name = [all_Tbfile_name,newfile_name]; % (strings)
@@ -102,7 +103,7 @@ function [all_Tbfile_name,all_Swath_used,all_ChIdx_perCh,all_ChName_perCh,all_DA
 
 	% Sanity check
 	if (length(all_Tbfile_name) ~= length(all_Swath_used)) | (length(all_Tbfile_name) ~= length(all_ChName_perCh))
-		disp('  Error collecting useful attributes for Tb files!');
+		disp('    Error collecting useful attributes for Tb files!');
 	end
 
 	% --- Mark satellite overpass and single-pass

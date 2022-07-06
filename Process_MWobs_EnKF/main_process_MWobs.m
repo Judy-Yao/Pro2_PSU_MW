@@ -18,20 +18,17 @@ control.output_dir = '../../toEnKFobs/MW/'; % directory into which the microwave
 % ---Storm information
 control.storm_phase = {'HarveyRI',}; % !!! Recommendation: although this system can process as many storms as possible, it is best to process one storm at a time. 
 %control.storm_phase = ["Irma2ndRI",'JoseRI','MariaRI'};
-control.period = {{'201708221200','201708241200'},}; % Date range of case study (yyyymmddHHMM)
+control.period = {{'201708222100','201708222200'},};
+%control.period = {{'201708221200','201708241200'},}; % Date range of case study (yyyymmddHHMM)
 %control.period = {{'201709030600','201709050600'},{'201709050600','201709070600'},{'201709160000','201709180000'}}; %YYYYMMDDHHmm
 
 % ---Satellite informaiton
-control.sensor = {'SSMI',};
-%control.sensor = {'AMSR2','ATMS','GMI','MHS','SAPHIR','SSMI','SSMIS'};
-control.platform = {{'F15'},};
-%control.platform = {{'GCOMW1'}, {'NPP'}, {'GPM'}, {'METOPA','METOPB','NOAA18','NOAA19'}, {'MT1'}, {'F15'}, {'F16','F17','F18'}};
-control.favFreq = {{'fcdr_tb19v','fcdr_tb85v'},};
-%control.favFreq = {{'18.7GHzV-Pol','89GHzV-PolA-Scan','89GHzV-PolB-Scan'},{'183.31+-7GHzQH-Pol'},{'18.7GHzV-Pol','183.31+/-7GHzV-Pol'},{'190.31GHzV-Pol'},{'183.31+/-6.8GHz'},{'fcdr_tb19v','fcdr_tb85v'},{'19.35GHzV-Pol','183.31+/-6.6GHzH-Pol'}};
-control.use89GHz = false; % the value might be altered later in the system
-% --- Special case: two 89GHz on AMSR2 (89GHzV-PolA-Scan and 89GHzV-PolB-Scan)
+control.sensor = {'AMSR2','ATMS','GMI','MHS','SAPHIR','SSMI','SSMIS'};
+control.platform = {{'GCOMW1'}, {'NPP'}, {'GPM'}, {'METOPA','METOPB','NOAA18','NOAA19'}, {'MT1'}, {'F15'}, {'F16','F17','F18'}};
+control.favFreq = {{'18.7GHzV-Pol','89GHzV-PolA-Scan','89GHzV-PolB-Scan'},{'183.31+-7GHzQH-Pol'},{'18.7GHzV-Pol','183.31+/-7GHzV-Pol'},{'190.31GHzV-Pol'},{'183.31+/-6.8GHz'},{'fcdr_tb19v','fcdr_tb85v'},{'19.35GHzV-Pol','183.31+/-6.6GHzH-Pol'}};
+control.use8xGHz = false; % the value might be altered later in the system; 8x references to 85GHz on SSMI or 89GHz on AMSR2.
+% --- Special case: two 89GHz channels on AMSR2 (89GHzV-PolA-Scan and 89GHzV-PolB-Scan)
 control.comnine_AMSR89GHz = true;
-% Test
 
 % --- WRF simulation setup
 control.nx = 297; % number of grid points along X direction
@@ -78,7 +75,8 @@ for istorm = 1:length(control.storm_phase)
             error('Error: ',msg);
         end
 	end
-	
+
+    disp('---------------------------------------------------------------');	
 	% --- Output hourly best-track location and time
  	filename = strcat(control.output_dir,control.storm_phase{istorm},'/bestrack_perHour');	
 	disp("Output hourly best-track location and time: " + filename);
@@ -102,6 +100,8 @@ for istorm = 1:length(control.storm_phase)
     Tb_files = strsplit(ls(Tb_dir));
     Tb_files = Tb_files(~cellfun('isempty',Tb_files)); % get rid of annoying empty cell
 
+    disp('---------------------------------------------------------------');
+
     % --- Output singlepass ---
     disp('Handling single-pass Tb files......');
     for is = 1:length(singlepass)
@@ -122,6 +122,8 @@ for istorm = 1:length(control.storm_phase)
     %		- iTb indicates the order of collected Tb files with ls command in a directory
 
     % Note: in a single-pass senario, if an AMSR2 or a SSMI Tb file exists, the low frequency (~19GHz) and the high frequency (85GHz) will be definitely used.
+
+    disp('---------------------------------------------------------------');
 
 	% --- Output overpass ---
     disp('Handling over-pass Tb files......');
@@ -150,7 +152,7 @@ for istorm = 1:length(control.storm_phase)
 			end
 		end
 		
-		disp('Processing over-pass Tb files: ');
+        disp('Processing over-pass Tb files: ');
 		for iot = 1:length(sensor_overpass)
 			disp(["  over-pass file: " + file_overpass(iot)]);
 		end
@@ -158,14 +160,14 @@ for istorm = 1:length(control.storm_phase)
 		% --------------------------------- Special Treatment to 89GHz -----------------------------------------------
         % 89GHz will only be used if there is no 183 GHz %Below algorithm assumes that if a Tb file of AMSR2 is collected, all 18.7GHzV-Pol & 89GHzV-PolA-Scan & 89GHzV-PolB-Scan exist.
 		% ------------------------------------------------------------------------------------------------------------
-		num_89GHz_sensors = sum(("AMSR2" == sensor_overpass) & ("SSMI" == sensor_overpass)); 
+		num_8xGHz_sensors = sum(("AMSR2" == sensor_overpass) | ("SSMI" == sensor_overpass)); 
 
-		if (num_89GHz_sensors == 0) 
-			% 89GHz does not exist.
-			disp('  None of microwave observation is from either AMSR2 or SSMI with 89GHz.');
+		if (num_8xGHz_sensors == 0) 
+			% 8xGHz does not exist.
+			disp('  None of microwave observation is from 8x (85 or 89) GHz.');
 			Overpass_write(idx_usedTb,istorm,Swath_used,ChIdx_all,ChName_all,DAtime_all,loc_DAtime_all,file_overpass,control);
 		else
-			% 89GHz exists, consider if 183GHz existis.
+			% 8xGHz exists, consider if 183GHz existis.
 			num_183GHz = 0;
 			for iot = 1:length(sensor_overpass)
 				if (sensor_overpass(iot) == "AMSR2")
@@ -181,11 +183,11 @@ for istorm = 1:length(control.storm_phase)
 			end
 			
 			if num_183GHz == 0
-				control.use89GHz = true;
-				disp("  ~ 183 GHz from other sensors does not exist. Use 89 GHz instead!");
+				control.use8xGHz = true;
+				disp("  ~ 183 GHz from other sensors does not exist. Use 8x (85 or 89) GHz instead!");
                 Overpass_write(idx_usedTb,istorm,Swath_used,ChIdx_all,ChName_all,DAtime_all,loc_DAtime_all,file_overpass,control);	
 			else
-				control.use89GHz = false;
+				control.use8xGHz = false;
 				control.comnine_AMSR89GHz = false;
 				disp("  ~ 183 GHz from other sensors exists. Only low frequency of AMSR2 or/and SSMI is used!");		
 				Overpass_write(idx_usedTb,istorm,Swath_used,ChIdx_all,ChName_all,DAtime_all,loc_DAtime_all,file_overpass,control);

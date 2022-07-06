@@ -47,7 +47,7 @@ function [sat_name,myLat,myLon,myTb,mySat_lat,mySat_lon,mySat_alt,myAzimuth,mySc
     elseif (contains(platform,'MT1'))
         sat_name = "saphir_meghat";
     elseif (contains(platform,'F15'))
-        sat_name = "ssmi_f15"
+        sat_name = "ssmi_f15";
     elseif (contains(platform,'F16'))
         sat_name = "ssmis_f16";
     elseif (contains(platform,'F17'))
@@ -199,9 +199,9 @@ function [sat_name,myLat,myLon,myTb,mySat_lat,mySat_lon,mySat_alt,myAzimuth,mySc
 		end
     end
 
-    % Special treatment to  89GHz
+    % Special treatment to  8xGHz
     if (sensor == "AMSR2") | (sensor == "SSMI")
-        [Swath_used,ChIdx_all,ChName_all,lat,lon,Tb,zenith,sat_lat,sat_lon,sat_alt,azimuth,outime] = Handle_89GHz(iTb,sensor,Swath_used,ChIdx_all,ChName_all,DAtime_all,lat,lon,Tb,zenith,sat_lat,sat_lon,sat_alt,azimuth,outime,control);
+        [Swath_used,ChIdx_all,ChName_all,lat,lon,Tb,zenith,sat_lat,sat_lon,sat_alt,azimuth,outime] = Handle_8xGHz(iTb,sensor,Swath_used,ChIdx_all,ChName_all,DAtime_all,lat,lon,Tb,zenith,sat_lat,sat_lon,sat_alt,azimuth,outime,control);
     end
 
 % ================================================================================================
