@@ -5,9 +5,6 @@
 
 function [if_swath_good,DAtime_perCh,loc_storm_DAtime] = Find_DAtime_loc(bestrack_str,Swath_used,Tb_file, control)
 
-    % Determine if the file should be read by ncread or h5read
-    [~,~,filext] = fileparts(Tb_file);
-
 % ==================================================================================================
 %                                         Step 1
 % =================================================================================================
@@ -23,6 +20,9 @@ function [if_swath_good,DAtime_perCh,loc_storm_DAtime] = Find_DAtime_loc(bestrac
 % ------------------------------------------------------------------------------------------------------------------
 
 	% --------- Read the beginning and ending of the time coverage for this file -------------------
+
+    % Determine if the file should be read by ncread or h5read
+    [~,~,filext] = fileparts(Tb_file);
 
     % HDF5 file
     if contains(filext,"HDF5")
@@ -85,7 +85,7 @@ function [if_swath_good,DAtime_perCh,loc_storm_DAtime] = Find_DAtime_loc(bestrac
     else 
     % StartGranuleDateTime and StopGranuleDateTime are not within the same day 
 
-    % Feature: It happens around midnight; It defenitely (only) spans two consecutive days; It might span two months
+    % Note: It happens around midnight; It defenitely (only) spans two consecutive days; It might span two months
     % Solution: we change the system/base of measuring hours. Instead of using quadrovigesimal (base 24), we use decimal (base 10).
     % Decimal is more convenient calculating the distance between two points.
         DA_year = year(start_time);
@@ -152,7 +152,7 @@ function [if_swath_good,DAtime_perCh,loc_storm_DAtime] = Find_DAtime_loc(bestrac
     num_useful_scan = [];
     if_swath_good = []; % (logical)
     DAtime_perCh = []; % (strings)
-    loc_storm_DAtime = {}; % lat,lon
+    loc_storm_DAtime = {}; % (cell: {[lat,lon],...})
 
     % --- Loop through each frequency of interest
     for i_ch = 1:length(Swath_used)
@@ -225,7 +225,7 @@ function [if_swath_good,DAtime_perCh,loc_storm_DAtime] = Find_DAtime_loc(bestrac
             % linearly interpolate best_track locations at start_6h and end_6h to DA_time
             best_track_weights = [abs((DA_hour)-best_track_times(2)); abs((DA_hour)-best_track_times(1))] / abs(diff(best_track_times));
             loc_perDAcand(i_cand,:) = best_track_locations*best_track_weights;
-            % find a small square area centered at the best-track location at DA_time
+            % find a small square area (0.2 * 0.2 degree) centered at the best-track location at DA_time
             min_lat = loc_perDAcand(i_cand,1)-0.1;
             max_lat = loc_perDAcand(i_cand,1)+0.1;
             min_lon = loc_perDAcand(i_cand,2)-0.1;
@@ -248,7 +248,7 @@ function [if_swath_good,DAtime_perCh,loc_storm_DAtime] = Find_DAtime_loc(bestrac
 				pixel_lon = ncread(Tb_file,['lon_' + Swath_used(i_ch)]);
 				pixel_lon = pixel_lon(:,idx_all_scan);
 			end
-			% determine if any masked observations are within the square area centered at the best-track location at this DA_time candidate
+			% determine if any effective observations are within the square area centered at the best-track location at this DA_time candidate
             num_useful_scan(i_cand) = sum((pixel_lon(:) < max_lon) & (pixel_lon(:) > min_lon) & (pixel_lat(:) < max_lat) & (pixel_lat(:) > min_lat)); 
         end
 
@@ -272,7 +272,6 @@ function [if_swath_good,DAtime_perCh,loc_storm_DAtime] = Find_DAtime_loc(bestrac
 
     end
    
-%    DAtime_perCh = convertCharsToStrings(DAtime_perCh);% convert from cell type to string type
     % sanity check
     if length(if_swath_good) ~= length(Swath_used) || length(DAtime_perCh) ~= length(Swath_used) || length(loc_storm_DAtime) ~= length(Swath_used)
         disp('    Error identifying DA time for each swath/channel!');

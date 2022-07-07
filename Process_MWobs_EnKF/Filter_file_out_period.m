@@ -12,7 +12,6 @@ function use_Tb_file = Filter_file_out_period(idx_storm,Tb_file,control)
 	[~,~,filext] = fileparts(Tb_file);
 	
 	% Read the beginning and ending of the time coverage for this file
-    	
 	% HDF5 file
 	if contains(filext,"HDF5")
 		fileheader = split(h5readatt(Tb_file,'/','FileHeader'),';');

@@ -1,6 +1,8 @@
-% This function loops through all level 1c files directly downloaded from NASA GES DISC website for a storm object 
-% It collects files that meet the requiremens and symbolically links these files to a directory (/Obs/Collected_MW/)
-% It also returns useful attributes for each useful Tb files
+% =============================================================================================================================
+% This function loops through all MW level 1c files that were directly downloaded from their official website for a storm object.
+% It collects files that meet the requiremens and symbolically links these files to ONE directory (/Obs/Collected_MW/).
+% It also returns attributes needed by this study for each useful Tb file.
+% =============================================================================================================================
 
 function [all_Tbfile_name,all_Swath_used,all_ChIdx_perCh,all_ChName_perCh,all_DAtime_perCh,all_loc_storm_DAtime,overpass,singlepass] = Collect_MW_useful(istorm, bestrack_str, control)
 
@@ -16,13 +18,13 @@ function [all_Tbfile_name,all_Swath_used,all_ChIdx_perCh,all_ChName_perCh,all_DA
 	else
 		% Clean existed symbolic files
 		destination = [control.obs_collect_dir,control.storm_phase{istorm},'/'];
-		[status,~] = system(['rm ',destination,'*']); % Tricky part: it seems that it can't delete unsuccessful links!!
+		[status,~] = system(['rm ',destination,'*']); % Tricky part: sometimes MOPS can't automatically delete unsuccessful links!! Manullay delete them then if it happens.
 		if status ~= 0
 			disp('Warning: cleaning existed symbolic files failed!');
 		end
 	end
  
-	% Define empty cells (final length of each cell is the number of useful Tbs)
+	% Define empty lists or cells (final length of each cell is the number of useful Tbs)
 	all_Tbfile_name = []; % (strings)
 	all_Swath_used = {};
 	all_ChIdx_perCh = {};
@@ -31,13 +33,16 @@ function [all_Tbfile_name,all_Swath_used,all_ChIdx_perCh,all_ChName_perCh,all_DA
 	all_DAtime_perCh = {};
 	all_loc_storm_DAtime = {};
     
-    % --------- Loop through each sensor ---------------
+    % ================================================================= 
+    % ----------------- Loop through each sensor ----------------------
+    % =================================================================
     for isensor = 1:length(control.sensor)
         plfs_eachsensor = control.platform{isensor};
-        % ---- loop through each platform for a sensor ---
+        
+        % ------------ loop through each platform of the sensor ----------
         for isensor_plf = 1:length(plfs_eachsensor)
             disp(['Processing sensor: ', control.sensor{isensor}, ' on platform ', plfs_eachsensor{isensor_plf}]);
-
+            
             if strcmp(control.sensor{isensor}, "SSMI")
                 Tb_dir = [control.obs_dir, control.storm_phase{istorm}, '/', control.sensor{isensor}, '/', plfs_eachsensor{isensor_plf}, '/*.nc'];
             else
@@ -46,8 +51,7 @@ function [all_Tbfile_name,all_Swath_used,all_ChIdx_perCh,all_ChName_perCh,all_DA
 
             Tb_files = strsplit(ls(Tb_dir));
             Tb_files = Tb_files(cellfun(@isempty, Tb_files) == 0); % Get rid of the annyoing empty cell
-            %Tb_files = regexprep(ls(Tb_dir),'\n$', '');
-            %Tb_files = regexp(Tb_files,'\n','split');
+           
             % ---- Loop through each file for a sensor on a specific platform ---
             for i = 1:length(Tb_files)
                 Tb_file = Tb_files{i};
@@ -59,20 +63,22 @@ function [all_Tbfile_name,all_Swath_used,all_ChIdx_perCh,all_ChName_perCh,all_DA
                     continue;
                 else
                     % obtain swaths, channel/frequency index under each swath, and frequency(ies) name(s) of interest
-                    [Swath_used, ChIdx_perCh, ChName_perCh] = Match_Freq(isensor, Tb_file, control); % (strings) (double) (strings)
+                    [Swath_used, ChIdx_perCh, ChName_perCh] = Match_Freq(isensor, Tb_file, control); % (strings) (integer) (strings)
 					% subroutine to identify the best DA time for each item
-                    [if_swath_good, DAtime_perCh, loc_storm_DAtime] = Find_DAtime_loc(bestrack_str,Swath_used,Tb_file, control); % (logical) (strings) (cell{double})
+                    [if_swath_good, DAtime_perCh, loc_storm_DAtime] = Find_DAtime_loc(bestrack_str,Swath_used,Tb_file, control); % (logical) (strings) (cell: {double vector})
                     if sum(if_swath_good) == 0
                         disp('	  Microwave observations do not exist in the area of interest at DA time! Skip this file.');
                         continue;
                     else
 						disp(['      (More) microwave observations exist in the area of interest at DA_time ' + DAtime_perCh(1) + '!']);
-                        % ----- Gather the useful Tb file of all sensors !!
+
+                        % ----- Gather the useful Tb file !! --------------------
                         source_file = erase(Tb_file,'raw_Obs/');
-                        % A potential BUG exists: the current algorithm assumes that for all channels of a L1C MW file the best-track locations and DA times are the same
+                        % A potential BUG exists: the current algorithm assumes that for all channels of a L1C MW file the best-track locations and DA times are the same (very unlikely though)
 						if (length(DAtime_perCh) > 1) & (DAtime_perCh(1) ~= DAtime_perCh(2))
 							disp('	  Error collecting the Tb file! Potential risk exists!');
 						end
+
 						[filepath,filename,filext] = fileparts(Tb_file);
 						if contains(filext,"HDF5")
 							newfile_name = ['DAt' + DAtime_perCh(1) + '_1C.' + control.platform{isensor}{isensor_plf} + '.' + control.sensor{isensor} + '.HDF5'];
@@ -89,25 +95,27 @@ function [all_Tbfile_name,all_Swath_used,all_ChIdx_perCh,all_ChName_perCh,all_DA
 						% store useful information with correction from if_swath_good
                         all_Tbfile_name = [all_Tbfile_name,newfile_name]; % (strings)
 						if_swath_good = logical(if_swath_good);
-						all_Swath_used{end+1} = Swath_used(if_swath_good); % (cell{strings})
-						all_ChIdx_perCh{end+1} = ChIdx_perCh(if_swath_good); % (cell{single})
-						all_ChName_perCh{end+1} =  ChName_perCh(if_swath_good); % (cell{strings})
-						all_DAtime_perCh{end+1} = DAtime_perCh(if_swath_good); % (cell{strings})
-						all_loc_storm_DAtime{end+1} = loc_storm_DAtime{if_swath_good}; % (cell{cell{double}})
+						all_Swath_used{end+1} = Swath_used(if_swath_good); % (cell:{strings})
+						all_ChIdx_perCh{end+1} = ChIdx_perCh(if_swath_good); % (cell:{single})
+						all_ChName_perCh{end+1} =  ChName_perCh(if_swath_good); % (cell:{strings})
+						all_DAtime_perCh{end+1} = DAtime_perCh(if_swath_good); % (cell:{strings})
+						all_loc_storm_DAtime{end+1} = loc_storm_DAtime{if_swath_good}; % (cell:{double vector})
                     end
                 end
             end
         end
     end
 		
-
 	% Sanity check
 	if (length(all_Tbfile_name) ~= length(all_Swath_used)) | (length(all_Tbfile_name) ~= length(all_ChName_perCh))
 		disp('    Error collecting useful attributes for Tb files!');
 	end
 
-	% --- Mark satellite overpass and single-pass
-	% Only works only if Each Tb file has only one DAtime 
+    % =============================================================================== 
+    % ----------------- Mark satellite overpass and single-pass ----------------------
+    % ===============================================================================
+
+	% Only works only if Each Tb file has only ONE DAtime for all selected frequencies
 	overpass = [];
 	singlepass = [];
 	strs_date = [];
