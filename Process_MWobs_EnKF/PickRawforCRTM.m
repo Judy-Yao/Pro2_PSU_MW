@@ -14,7 +14,7 @@ function [obs_index] = PickRawforCRTM(lat_raw,lon_raw,Tb_raw,min_XLONG,max_XLONG
 
     % ------------- Select several possible raw-obs candidates for each grid point (x,y) -------------
     for x = slots_x % operation on grids on x direction
-        %x
+        %x;
         idx_obs_slots_x = find(slots_x==x);
         % delineate a range for search of L1C MW obs by longitude bounds 
         myLon = longitudes_crtm(x);
@@ -80,5 +80,8 @@ function [obs_index] = PickRawforCRTM(lat_raw,lon_raw,Tb_raw,min_XLONG,max_XLONG
         %disp(strcat('ob did not take ANY candidate at x = ',num2str(x),' , y = ',num2str(y)));
         end % end loop: for y = slots_y
     end % end loop: for x = slots_x
+
+
+
 
 end

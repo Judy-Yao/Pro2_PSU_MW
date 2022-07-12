@@ -37,8 +37,9 @@ control.use8xGHz = false; % if frequency 85GHz (from AMSR2) or 89GHz (from SSMI)
 
 % --- Other parameters
 control.domain_buffer = 1.5; % scaling factor
-control.search_buffer = 0.2; % degrees: lat/lon
-control.filter_reso = [36;24]; % !!! Trick: Decreases the resolution if you'd like to quickly find out if MOPS is working by executing the system.
+control.search_buffer = 0.1; % degrees: lat/lon % If the value is too large, the same observation might be picked for both ROI plans
+control.filter_reso = [36;24]; % filter resolution for ROI 
+% !!! Trick: Decreases the resolution if you'd like to quickly find out if MOPS is working by executing the system.
 control.roi_oh = {[200,0]; [60,60]}; % ROI plans [other variables, hydrometeors]
 control.obsError = [3;3];
 
@@ -52,7 +53,7 @@ disp(['Starting running microwave-observation-preprocessing system (MOPS) on ', 
 % ---------- Loop through each storm object -------------------
 for istorm = 1:length(control.storm_phase)
 
-    disp(['Storm (and stage): ', control.storm_phase]);    
+    disp(['Storm (and stage): ', control.storm_phase{istorm}]);    
 
 	% ============================================================================================================
 	% Find times and center locations of the storm in the Best track file within the date range of the case study
@@ -66,10 +67,14 @@ for istorm = 1:length(control.storm_phase)
 	% ============================================================================================================
     
 	disp('Collecting useful MW obs files for this study......');
-	[Tbfile_names,Swath_used,ChIdx_all,ChName_all,DAtime_all,loc_DAtime_all,overpass,singlepass] = Collect_MW_useful(istorm, bestrack_str, control); % ps: per swath
+	[Tbfile_names,Swath_used,ChIdx_all,ChName_all,DAtime_all,loc_DAtime_all,overpass_t,singlepass_t] = Collect_MW_useful(istorm, bestrack_str, control); 
+    % Tbfile_names: (string); ChIdx_all: (single); loc_DAtime_all: (cell: {double vector})
+    % Swath_used, ChName_all, DAtime_all: (cell: {string,...})
+    % overpass_t,singlepass_t: (string)
 
-
-
+    % ============================================================================================================
+    % Make output directory and output hourly-interpolated best-track data
+    % ============================================================================================================
 
     % --- Make subdirectory for output
 	if ~exist([control.output_dir,control.storm_phase{istorm}],'dir')
@@ -94,9 +99,9 @@ for istorm = 1:length(control.storm_phase)
     fclose(fileID);
 
     % ============================================================================================================
-    % Output so file under two situations: overpass or singlepass
+    % Output SO observation file under two situations: overpass or singlepass
 	% ============================================================================================================
-	% Singlepass: at one data-assimilation time, only one sensor provides MW obs of the storm
+	% Singlepass: at one DA time, only one sensor provides MW obs of the storm
 	% Overpass: ~, more than one sensor provides MW obs of the storm
 	% ------------------------------------------------------------------------------------------------------------
 
@@ -109,11 +114,11 @@ for istorm = 1:length(control.storm_phase)
 
     % --- Output singlepass ---
     disp('Handling single-pass Tb files......');
-    for is = 1:length(singlepass)
+    for is = 1:length(singlepass_t)
         for iTb = 1:length(Tb_files)
            Tb_file = Tb_files{iTb};
             [filepath,filename,filext] = fileparts(Tb_file);            
-            if contains(filename,singlepass(is))
+            if contains(filename,singlepass_t(is))
                 idx_collectedTb = find([filename,filext] == Tbfile_names);
                 Singlepass_write(idx_collectedTb,istorm,Swath_used,ChIdx_all,ChName_all,DAtime_all,loc_DAtime_all,Tb_file,control);
             else
@@ -132,10 +137,10 @@ for istorm = 1:length(control.storm_phase)
 
 	% --- Output overpass ---
     disp('Handling over-pass Tb files......');
-	for io = 1:length(overpass) % loop through each DA time where overpass happens
-		file_overpass = []; % (strings)
-		order_overpass = [];
-		sensor_overpass = [];
+	for io = 1:length(overpass_t) % loop through each DA time where overpass happens
+		file_overpass = []; % (string)
+		order_overpass = []; % (integer)
+		sensor_overpass = []; % (string)
 		idx_usedTb = []; % (integer)
         % for a specific time, find the overpass files     
 		order_clt_io = 0;    
@@ -145,13 +150,13 @@ for istorm = 1:length(control.storm_phase)
             ss_info = split(filename,'.');
             sensor = ss_info{3};
 			% gather names of overpass Tb files
-			if contains(filename,overpass(io))
+			if contains(filename,overpass_t(io))
 				order_clt_io = order_clt_io + 1; 
                 order_overpass = [order_overpass, order_clt_io]; % Record the identifying order of Tb files that are overpass (e.g., 1,2,3)
                 file_overpass = [file_overpass,string(Tb_file)]; % Record overpass Tb files in the order of being identified
                 sensor_overpass = [sensor_overpass,string(sensor)];
                 idx_collectedTb = find([filename,filext] == Tbfile_names);
-				idx_usedTb(end+1) = idx_collectedTb; % Record the location of the overpass file in the collected files
+				idx_usedTb(end+1) = idx_collectedTb; % Record the location of the overpass file in the collected information list
 			else
 				continue;
 			end
@@ -162,17 +167,17 @@ for istorm = 1:length(control.storm_phase)
 			disp(["  over-pass file: " + file_overpass(iot)]);
 		end
 
-		% --------------------------------- Special Treatment to 89GHz -----------------------------------------------
-        % 89GHz will only be used if there is no 183 GHz %Below algorithm assumes that if a Tb file of AMSR2 is collected, all 18.7GHzV-Pol & 89GHzV-PolA-Scan & 89GHzV-PolB-Scan exist.
+		% --------------------------------- Special Treatment to 8x GHz -----------------------------------------------
+        % 8x GHz will only be used if there is no 183 GHz 
 		% ------------------------------------------------------------------------------------------------------------
-		num_8xGHz_sensors = sum(("AMSR2" == sensor_overpass) | ("SSMI" == sensor_overpass)); 
+		num_8xGHz_sensors = sum(("AMSR2" == sensor_overpass) | ("SSMI" == sensor_overpass));  % 89GHz from AMSR2 and 85GHz from SSMI
 
 		if (num_8xGHz_sensors == 0) 
 			% 8xGHz does not exist.
 			disp('  None of microwave observation is from 8x (85 or 89) GHz.');
 			Overpass_write(idx_usedTb,istorm,Swath_used,ChIdx_all,ChName_all,DAtime_all,loc_DAtime_all,file_overpass,control);
 		else
-			% 8xGHz exists, consider if 183GHz existis.
+			% 8xGHz exists, consider if 183GHz exists.
 			num_183GHz = 0;
 			for iot = 1:length(sensor_overpass)
 				if (sensor_overpass(iot) == "AMSR2")
@@ -188,10 +193,12 @@ for istorm = 1:length(control.storm_phase)
 			end
 			
 			if num_183GHz == 0
+                % 8xGHz exists, 183GHz does not exist
 				control.use8xGHz = true;
 				disp("  ~ 183 GHz from other sensors does not exist. Use 8x (85 or 89) GHz instead!");
                 Overpass_write(idx_usedTb,istorm,Swath_used,ChIdx_all,ChName_all,DAtime_all,loc_DAtime_all,file_overpass,control);	
 			else
+                % 8xGHz exists and 183GHz exists too
 				control.use8xGHz = false;
 				control.comnine_AMSR89GHz = false;
 				disp("  ~ 183 GHz from other sensors exists. Only low frequency of AMSR2 or/and SSMI is used!");		

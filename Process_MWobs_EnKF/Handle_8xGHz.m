@@ -122,7 +122,6 @@ function [Swath_used,ChIdx_all,ChName_all,lat,lon,Tb,zenith,sat_lat,sat_lon,sat_
 
 		error('        Error: double check if this sensor has 8x GHz!');
 
-
     end
 
 

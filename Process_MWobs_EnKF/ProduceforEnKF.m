@@ -25,7 +25,7 @@ function [sat_name,myLat,myLon,myTb,mySat_lat,mySat_lon,mySat_alt,myAzimuth,mySc
     azimuth = cell(size(Swath_used{iTb}));
     outime = cell(size(Swath_used{iTb}));
 
-    % Get platform and sensor names from the Tb file name 
+    % Get platform and sensor names from the symbolically-linked Tb file name 
     [filepath,filename,filext] = fileparts(Tb_file);
     ss_info = split(filename,'.'); platform = ss_info(2); sensor = ss_info(3);
 
@@ -79,28 +79,29 @@ function [sat_name,myLat,myLon,myTb,mySat_lat,mySat_lon,mySat_alt,myAzimuth,mySc
 			%            \/
 			%            FOV
 			% ----------------------- earth surface
+            %
 			% Note: Interpretation on nChUIA
-			% For example, GMI sensor has two swaths. Channel 1-9 are under &
-			% swath 1 and channel 10-14 are under swath 2, which respectively &
-			% corresponds to nChUIA1 and nChUIA2. If nChUIA1 = 1, at a specific (a fov on a scan) &
-			% location, only one value of incidence angle exists for all 9 channels; &
-			% If nChUIA1 = n (n >= 2), at a specific location, each channel &
-			% could in theory reference n values.
-        	incidenceAngles = h5read(Tb_file,Swath_used{iTb}(it) + '/incidenceAngle'); % nChUIA1, npixel, nscan
+            % For a sensor, there might be n sets of scanning setup. 
+            % For example, GMI sensor has two swaths, each of which uses different scanning setup; 
+            % the dimension name for IncidenceAngle for swath 1 or 2 is (nscan1, npixel1, nchUIA1) or (nscan2, npixel2, nchUIA2)
+            % However, it is possible that even for one swath there might be more than one set of scanning setup such as nchUIA1 might be 2.
+            % In such a case, for example, there are 2 channels under one swath and each channel points at different set of geometry value.
+
+        	incidenceAngles = h5read(Tb_file,Swath_used{iTb}(it) + '/incidenceAngle'); % nChUIA, npixel, nscan
         	iAIndices = h5read(Tb_file,Swath_used{iTb}(it) + '/incidenceAngleIndex'); % nchannel, nscan
-        	if size(incidenceAngles,1) == 1
+        	if size(incidenceAngles,1) == 1 % only one scanning setup for the swath
             	zenith{it}(:,:) = squeeze(incidenceAngles(1,:,:));
         	else
-            	num_Ch_perSW = size(iAIndices,1);
-            	num_unique_perCh = zeros(1,num_Ch_perSW); % size(iAIndices,1): number of channels under this swath
-            	for ich = 1:size(iAIndices,1)
+            	num_Ch_perSW = size(iAIndices,1); % number of channels under this swath number of scanning setups for the swath
+            	num_unique_perCh = zeros(1,num_Ch_perSW); 
+            	for ich = 1:num_Ch_perSW
                 	num_unique_perCh(ich) = length(unique(iAIndices(ich,:)));
             	end
-            	if sum(num_unique_perCh) == num_Ch_perSW
-                	iAIndices = iAIndices(:,1); % For a channel, all scans are references to the same set of zenith angles
+            	if sum(num_unique_perCh) == num_Ch_perSW % i.e., all of scans of a channel only points at one set of geometry values
+                	iAIndices = iAIndices(:,1); % For a channel, all scans point to the same set of zenith angles
                 	zenith{it}(:,:) = squeeze(incidenceAngles(iAIndices(ChIdx_all{iTb}(it)),:,:)); % npixel, nscan
-            	else
-                	disp("Error: current algorithm does not work!! Please modify it.");
+            	else % more complicated: some scans points to first set of geometry while others point to other sets of geometry
+                	disp("Error: current algorithm does not work!! Please modify it."); 
             	end
         	end
 
@@ -115,7 +116,7 @@ function [sat_name,myLat,myLon,myTb,mySat_lat,mySat_lon,mySat_alt,myAzimuth,mySc
 
   	      	% **azimuth of satellite scan (used in CRTM)**: the angle subtended
     	 	% by the horizontal projection of a direct line from the satellite
-	      	% to the FOV and the North-South axis measured cloclwise from North
+	      	% to the FOV and the North-South axis measured clockwise from North
     	  	% (0-> 360 degrees)
   	      	%                     North
   	      	%                      |AZ /
@@ -127,6 +128,7 @@ function [sat_name,myLat,myLon,myTb,mySat_lat,mySat_lon,mySat_alt,myAzimuth,mySc
         	azimuth{it} = geodetic2aer(lat{it},                                       lon{it},                                       0, ...
                                              repmat(sat_lat{it}',[length_perscan{it} 1]), repmat(sat_lon{it}',[length_perscan{it} 1]), repmat(sat_alt{it}'*1000,[length_perscan{it} 1]), ...
                                              referenceEllipsoid('WGS 84')); % npixel, nscan
+            % geodetic2aer: transforms the geodetic coordinates specified by lat, lon, and h to the local azimuth-elevation-range (AER) spherical coordinates specified by az, elev, and slantRange.
 
         	% ** (Scan) Time** 
         	year   = double(h5read(Tb_file, Swath_used{iTb}(it) + '/ScanTime/Year')); % nscan
@@ -137,7 +139,6 @@ function [sat_name,myLat,myLon,myTb,mySat_lat,mySat_lon,mySat_alt,myAzimuth,mySc
         	second = double(h5read(Tb_file, Swath_used{iTb}(it) +  '/ScanTime/Second')); % nscan
         
         	num_scans= size(Tb{it},2); % number of scans
-
         	for i_time = 1:num_scans
             	datetime_temp = datetime(year(i_time), month(i_time), day(i_time), hour(i_time), minute(i_time), second(i_time));
             	if ( second(i_time) >= 30)
@@ -177,7 +178,7 @@ function [sat_name,myLat,myLon,myTb,mySat_lat,mySat_lon,mySat_alt,myAzimuth,mySc
 
             % ** (Scan) Time** 
             scan_datetime_name = ['scan_datetime_' + Swath_used{iTb}(it)];                                                                 
-            scan_datetime = ncread(Tb_file,scan_datetime_name)';
+            scan_datetime = ncread(Tb_file,scan_datetime_name)'; % nscan, numchar
 
             year = str2num(scan_datetime(:,1:4));
             month = str2num(scan_datetime(:,6:7));
@@ -204,17 +205,18 @@ function [sat_name,myLat,myLon,myTb,mySat_lat,mySat_lon,mySat_alt,myAzimuth,mySc
         [Swath_used,ChIdx_all,ChName_all,lat,lon,Tb,zenith,sat_lat,sat_lon,sat_alt,azimuth,outime] = Handle_8xGHz(iTb,sensor,Swath_used,ChIdx_all,ChName_all,DAtime_all,lat,lon,Tb,zenith,sat_lat,sat_lon,sat_alt,azimuth,outime,control);
     end
 
+
 % ================================================================================================
 %                                         Step 2
 % ================================================================================================
 %  Define area of interest for simulation AND
-%  Select the raw obs for every grid point for EnKF assimilation
+%  Select the raw obs for staggered grid point for EnKF assimilation (indicated by obs_index)
 % -----------------------------------------------------------------------------------------------
 
-    % Prepare area: best-track location followed
+    % Prepare area: best-track location followed; a slightly larger area that WRF simulation
     nx = control.nx*control.domain_buffer; % zoom out
     ny = control.ny*control.domain_buffer; % zoom out
-    % below algorithm works if only for all frequencies of interest, the DA_time are the same
+    % Below algorithm works if only for all frequencies of interest, the DA_time are the same
 	min_XLAT = loc_DAtime_all{iTb}(1) - (ny/2*control.dx)/(cos(loc_DAtime_all{iTb}(1)*(pi/180))*111);
     max_XLAT = loc_DAtime_all{iTb}(1) + (ny/2*control.dx)/(cos(loc_DAtime_all{iTb}(1)*(pi/180))*111);
     min_XLONG = loc_DAtime_all{iTb}(2) - (nx/2*control.dx)/111;
@@ -225,32 +227,35 @@ function [sat_name,myLat,myLon,myTb,mySat_lat,mySat_lon,mySat_alt,myAzimuth,mySc
     longitudes = linspace(min_XLONG,max_XLONG,nx);
     [XLAT, XLONG] = meshgrid(latitudes,longitudes);
     
-    % Separate gird points for low frequency from for high frequency
-    % Original grid points:         Filtered grid points:
-    %       * * * * *                *   *   * 
-    %       * * * * *                          
-    %       * * * * *                *   *   * 
-    %       * * * * *                          
-    %       * * * * *                *   *   * 
+    % Note: for two ROI plans, Tb at/near different grid points are appreciated because Tb at the same point should not be picked for both large ROI plan and small ROI plan.
+    % Therefore it is important to staggeredly separate gird points for small ROI plan from for large ROI plan.
     slots_x = cell(size(control.roi_oh));
     slots_y = cell(size(control.roi_oh));
     obs_index = cell(length(control.roi_oh),length(Swath_used{iTb}));
     
-	% Locate the start point for each ROI plan
+	% Identify the start point for each ROI plan
     filter_grid_step = control.filter_reso / control.dx;
-    grid_start(2) = floor(filter_grid_step(2) / 2); % start point for ROI plan 1 
-    grid_start(1) = grid_start(2) + .5*(2*filter_grid_step(2) - filter_grid_step(1)); % start point for ROI plan 2  
+    grid_start(2) = floor(filter_grid_step(2) / 2); % start point for one ROI plan  
+    grid_start(1) = grid_start(2) + .5*(2*filter_grid_step(2) - filter_grid_step(1)); % start point for the other ROI plan 
 
-    % For each ROI plan, find the nearest obs of each frequency for each WRF grid
-    % Note: for GOESIR data, the (i,j) obs of 16 channels has the same location. Therefore, loop over channels is not needed.
+    % For each ROI plan, find the nearest obs for each WRF grid
+    % Note: for GOES_IR data, the (i,j) obs of 16 channels has the same location. Therefore, loop over channels is not needed.
 	for iroi = 1:length(control.roi_oh)
 		slots_x{iroi} = grid_start(iroi):filter_grid_step(iroi):nx;
         slots_y{iroi} = grid_start(iroi):filter_grid_step(iroi):ny;
+        % Original grid points:         Filtered grid points:
+        %       * * * * *                *   *   * 
+        %       * * * * *                          
+        %       * * * * *                *   *   * 
+        %       * * * * *                          
+        %       * * * * *                *   *   * 
+        %PickRawforCRTM(lat,lon,Tb,min_XLONG,max_XLONG,min_XLAT,max_XLAT,latitudes,longitudes,slots_x{iroi},slots_y{iroi},obs_indexqcontrol);
 		for it = 1:length(Swath_used{iTb})
 			obs_index{iroi,it} = PickRawforCRTM(lat{it},lon{it},Tb{it},min_XLONG,max_XLONG,min_XLAT,max_XLAT,latitudes,longitudes,slots_x{iroi},slots_y{iroi},control);
+            % Note: Each value in the obs_index points at a location in the vectorized array lat_col/lon_col [lat_col = reshape(lat_raw,[],1)]
 		end
 	end
-    % Note: Each value in the obs_index points at a location in the vectorized array Tb_col [Tb_col = reshape(Tb_raw,[],1)]
+
 
 % ================================================================================================
 %                                         Step 3
@@ -261,7 +266,7 @@ function [sat_name,myLat,myLon,myTb,mySat_lat,mySat_lon,mySat_alt,myAzimuth,mySc
     % Preallocating memory
     DA_lat = cell(length(control.roi_oh),length(Swath_used{iTb})); DA_lat_perROI = cell(length(control.roi_oh));
     DA_lon = cell(length(control.roi_oh),length(Swath_used{iTb})); DA_lon_perROI = cell(length(control.roi_oh));
-    DA_Tb = cell(length(control.roi_oh),length(Swath_used{iTb})); DA_Tb_perROi = cell(length(control.roi_oh)); 
+    DA_Tb = cell(length(control.roi_oh),length(Swath_used{iTb})); DA_Tb_perROI = cell(length(control.roi_oh)); 
 
     DA_sat_lat = cell(length(control.roi_oh),length(Swath_used{iTb})); DA_satLat_perROI = cell(length(control.roi_oh));
     DA_sat_lon = cell(length(control.roi_oh),length(Swath_used{iTb})); DA_satLon_perROI = cell(length(control.roi_oh));
@@ -274,15 +279,13 @@ function [sat_name,myLat,myLon,myTb,mySat_lat,mySat_lon,mySat_alt,myAzimuth,mySc
 
     DA_times = cell(length(control.roi_oh),length(Swath_used{iTb})); DA_times_perROI = cell(length(control.roi_oh));
     DA_chNum = cell(length(control.roi_oh),length(Swath_used{iTb})); DA_chNum_perROI = cell(length(control.roi_oh));
-	DA_ROI_hydro = cell(length(control.roi_oh),length(Swath_used{iTb})); DA_roiHydro_perROI = cell(length(control.roi_oh));
-	DA_ROI_other = cell(length(control.roi_oh),length(Swath_used{iTb})); DA_roiOther_perROI = cell(length(control.roi_oh));
     DA_obsError = cell(length(control.roi_oh),length(Swath_used{iTb})); DA_obsError_perROI = cell(length(control.roi_oh));
     % Assign values
 	for iroi = 1:length(control.roi_oh)
 		for it = 1:length(Swath_used{iTb}) 
-			obs_index_array = obs_index{iroi,it};
+            obs_index_array = obs_index{iroi,it};
 			obs_index_1d = obs_index_array(obs_index_array(:) == obs_index_array(:)); % get rid of obs_index with value NaN
-			% **Tb,lat,lon**
+            % **Tb,lat,lon**
 			allTb = reshape(Tb{it},[],1); all_lat = reshape(lat{it},[],1); all_lon = reshape(lon{it},[],1);
 			DA_Tb{iroi,it}          = allTb(obs_index_1d);
 			DA_lat{iroi,it}         = all_lat(obs_index_1d);
@@ -303,34 +306,30 @@ function [sat_name,myLat,myLon,myTb,mySat_lat,mySat_lon,mySat_alt,myAzimuth,mySc
             % **cross-track and along-track FOV**
 			[DA_fov_crossTrack{iroi,it}, DA_fov_alongTrack{iroi,it}] = Get_pixel_resolution(scantype,ch_num,fov_alongTrack,fov_crossTrack,DA_lat{iroi,it},DA_lon{iroi,it},DA_zenith{iroi,it},DA_sat_lat{iroi,it},DA_sat_lon{iroi,it},DA_sat_alt{iroi,it});
 			% **scan time**
-			%DA_times{it}(scan_num,1) = outime{it}(scan_num);
 			for my_scan_num_idx = 1:length(scan_num)
 				DA_times{iroi,it}(my_scan_num_idx,1) = outime{it}(scan_num(my_scan_num_idx));
 			end
 			% **Channel number, obs error**
 			DA_chNum{iroi,it} = ones(numel(obs_index_1d),1,'int64')*ch_num;
 			DA_obsError{iroi,it} = ones(numel(obs_index_1d),1)*control.obsError(it);
-			DA_ROI_hydro{iroi,it} = ones(numel(obs_index_1d),1)*control.roi_oh{iroi}(2);
-	        DA_ROI_other{iroi,it} = ones(numel(obs_index_1d),1)*control.roi_oh{iroi}(1);
 		end
-        % For each ROI plan, combine low-frequency and high-frequency data into one column 
+        % For each ROI plan, combine low-frequency and high-frequency data into one column if there are at least 2 channels 
 		DA_lat_perROI{iroi} = cat(1,DA_lat{iroi,:}); DA_lon_perROI{iroi} = cat(1,DA_lon{iroi,:}); DA_Tb_perROI{iroi} = cat(1,DA_Tb{iroi,:});
-		DA_satLat_perROI{iroi} = cat(1,DA_sat_lat{iroi,:}); DA_satLon_perROI{iroi} = cat(1,DA_sat_lon{iroi,:}); DA_satAlt_perROI{iroi} = cat(1,DA_sat_alt{iroi,:});
+        DA_satLat_perROI{iroi} = cat(1,DA_sat_lat{iroi,:}); DA_satLon_perROI{iroi} = cat(1,DA_sat_lon{iroi,:}); DA_satAlt_perROI{iroi} = cat(1,DA_sat_alt{iroi,:});
 
         DA_azimuth_perROI{iroi} = cat(1,DA_azimuth{iroi,:}); DA_scan_perROI{iroi} = cat(1,DA_scan_angle{iroi,:}); DA_zenith_perROI{iroi} = cat(1,DA_zenith{iroi,:});    
 		DA_fovCross_perROI{iroi} = cat(1,DA_fov_crossTrack{iroi,:}); DA_fovAlong_perROI{iroi} = cat(1,DA_fov_alongTrack{iroi,:}); 
-		DA_times_perROI{iroi} = cat(1,DA_times{iroi,:});  DA_chNum_perROI{iroi} = cat(1,DA_chNum{iroi,:});
-        DA_roiHydro_perROI{iroi} = cat(1,DA_ROI_hydro{iroi,:}); DA_roiOther_perROI{iroi} = cat(1,DA_ROI_other{iroi,:}); DA_obsError_perROI{iroi} = cat(1,DA_obsError{iroi,:});
+		DA_times_perROI{iroi} = cat(1,DA_times{iroi,:});  DA_chNum_perROI{iroi} = cat(1,DA_chNum{iroi,:});  DA_obsError_perROI{iroi} = cat(1,DA_obsError{iroi,:});
 	end
     clear Tb lat lon sat_lat sat_lon sat_alt azimuth zenith scan_angles outime 
     clear allTb all_lat all_lon all_azimuth all_zenith 
 	clear DA_lat DA_lon DA_Tb DA_sat_lat DA_sat_lon DA_sat_alt DA_azimuth DA_azimuth DA_zenith DA_fov_crossTrack DA_fov_alongTrack 
-	clear DA_times DA_chNum DA_chNum DA_ROI_hydro DA_ROI_other DA_ROI_other
+	clear DA_times DA_chNum DA_obsError DA_ROI_hydro DA_ROI_other 
 
 % ================================================================================================
 %                                         Step 4
 % ================================================================================================
-% Produce MW records for EnKF assimilation with roi
+% Randomize selected MW records
 % ------------------------------------------------------------------------------------------------
 
     myLat = cell(size(control.roi_oh));
@@ -354,9 +353,8 @@ function [sat_name,myLat,myLon,myTb,mySat_lat,mySat_lon,mySat_alt,myAzimuth,mySc
 
     for ir = 1:length(control.roi_oh) % ROI first references [200,0] second [60,60]
         % randomize MW records for this ROI 
-        %randOrder = randperm(length(cat(1,DA_Tb_perROI{:}))); % DA_Tb may contain 1 channel (low or high) or contain both low and high channels
         randOrder = randperm(length(DA_Tb_perROI{ir}));
-
+        
         tem_lat = DA_lat_perROI{ir}; myLat{ir} = tem_lat(randOrder); %clear tem_lat
         tem_lon = DA_lon_perROI{ir}; myLon{ir} = tem_lon(randOrder);
         tem_Tb = DA_Tb_perROI{ir};   myTb{ir} = tem_Tb(randOrder);
@@ -373,7 +371,7 @@ function [sat_name,myLat,myLon,myTb,mySat_lat,mySat_lon,mySat_alt,myAzimuth,mySc
         tem_chNum = DA_chNum_perROI{ir}; myChNum{ir} = tem_chNum(randOrder);
 
         tem_obsErr = DA_obsError_perROI{ir}; myObsErr{ir} = tem_obsErr(randOrder);
- 
+
         % deal with ROI
         DA_ROI_other = cell(size(Swath_used{iTb}));
         DA_ROI_hydro = cell(size(Swath_used{iTb}));
@@ -384,7 +382,7 @@ function [sat_name,myLat,myLon,myTb,mySat_lat,mySat_lon,mySat_alt,myAzimuth,mySc
             DA_ROI_hydro{it} = ones(numel(obs_index_1d),1)*control.roi_oh{ir}(2);
         end
         tem_ROI_other = cat(1,DA_ROI_other{:}); myRoi_otherVars{ir} = tem_ROI_other(randOrder); %clear tem_ROI_other
-        tem_ROI_hydro = cat(1,DA_ROI_hydro{:}); myRoi_hydro{ir} = tem_ROI_hydro(randOrder); %clear tem_ROI_hydro
+        tem_ROI_hydro = cat(1,DA_ROI_hydro{:}); myRoi_hydro{ir} = tem_ROI_hydro(randOrder); %clear tem_ROI_hydro 
     end
 	
 

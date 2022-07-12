@@ -26,7 +26,7 @@ function [bestrack_str] = Bestrack_read(istorm, control)
         bestrack_str{ir,1} = append(erase(record_substr(1,3),' '),'00'); % %YYYYMMDDHHmm
         % Read latitude 
         bestrack_str{ir,2} = record_substr(1,7); %Latitude for the DTG: 0 - 900 tenths of degrees (e.g.,161N)
-        if contains(bestrack_str{ir,2},'W')
+        if contains(bestrack_str{ir,2},'N')
             bestrack_str{ir,2} = str2double(strrep(bestrack_str{ir,2},'N',''))/10; % 0 - 90 degree
         else
             bestrack_str{ir,2} = 0-str2double(strrep(bestrack_str{ir,2},'S',''))/10; 

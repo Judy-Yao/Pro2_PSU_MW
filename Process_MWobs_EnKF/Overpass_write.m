@@ -73,7 +73,7 @@ function [] = Overpass_write(iTb,istorm,Swath_used,ChIdx_all,ChName_all,DAtime_a
 		end
 		% randomize
 		randOrder = randperm(length(tem_Tb));
-	 	myLat{ir} = tem_lat(randOrder); myLon{ir} = tem_lon(randOrder); myTb{ir} = tem_Tb(randOrder);
+        myLat{ir} = tem_lat(randOrder); myLon{ir} = tem_lon(randOrder); myTb{ir} = tem_Tb(randOrder);
 		mySat_lat{ir} = tem_Sat_lat(randOrder); mySat_lon{ir} = tem_Sat_lon(randOrder);
 		mySat_alt{ir} = tem_Sat_alt(randOrder); myazimuth{ir} = tem_Sat_alt(randOrder);
 		myScan_angle{ir} = tem_scan(randOrder); myZenith_angle{ir} = tem_zenith(randOrder);
