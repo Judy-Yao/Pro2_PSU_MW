@@ -11,6 +11,8 @@
 #-----------------------------------------------------------------------
 #export NCARG_ROOT=/contrib
 
+module restore default
+
 #[1] Define job by overriding default environment variables:
 
 export WRFVAR_DIR=/kukui/users/xinzhang/code/WRFDA
@@ -52,3 +54,4 @@ ncl ${GEN_BE_PLOT}/gen_be_corr_yz.ncl
 #--------------------------
 ncl ${GEN_BE_PLOT}/gen_be_corr_ps.ncl 
 #
+module restore default

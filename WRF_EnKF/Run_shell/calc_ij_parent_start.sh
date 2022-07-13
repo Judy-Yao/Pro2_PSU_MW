@@ -34,6 +34,8 @@ done
 iclat=$(echo "${lat[0]}+(${lat[1]} - ${lat[0]})*$minute_off/$LBC_INTERVAL" |bc -l)
 iclon=$(echo "${lon[0]}+(${lon[1]} - ${lon[0]})*$minute_off/$LBC_INTERVAL" |bc -l)
 
+module restore default
+######################
 cat << EOF > ll2ij.ncl
 begin
    opt = True
@@ -56,6 +58,9 @@ tci=`cat tcij |head -n1`
 tcj=`cat tcij |tail -n1`
 cat tcij
 rm -f ll2ij.ncl tcij
+######################
+module restore intel
+
 
 istart=$(echo "$tci - ((${E_WE[1]}-1)/${GRID_RATIO[1]}-1)/2 + 1" |bc)
 jstart=$(echo "$tcj - ((${E_SN[1]}-1)/${GRID_RATIO[1]}-1)/2 + 1" |bc)

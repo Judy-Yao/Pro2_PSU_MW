@@ -29,7 +29,9 @@ for NE in `seq 1 $NUM_ENS_FCST`; do
     dm=d`expr $n + 100 |cut -c2-`
     if $FIRST_CYCLE; then
     	ln -fs $WORK_DIR/fc/$DATE/wrfinput_${dm}_$id wrfinput_$dm
+		module restore default
     	ncl $SCRIPT_DIR/util_change_nc_time.ncl 'ncfile="wrfinput_d01"' 'time="'`wrf_time_string $DATE`'"'
+		module restore intel
     else
     	ln -fs -fs $WORK_DIR/fc/$DATE/wrfinput_${dm}_$id wrfrst_${dm}_`wrf_time_string $DATE` 
     fi

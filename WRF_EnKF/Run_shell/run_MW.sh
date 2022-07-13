@@ -1,29 +1,32 @@
 #!/bin/bash --login
 #####header for Expanse######
+#SBATCH -A pen116
 #SBATCH -J run_MW
-#SBATCH -N 2
+#SBATCH --nodes=2
 #SBATCH -n 192
 #SBATCH -p compute
-#SBATCH -A pen116
 #SBATCH -t 2:00:00
 #SBATCH -o out_enkf
 #SBATCH -e error_enkf
+#SBATCH --mail-type=ALL
+#SBATCH --mail-user=zuy121@psu.edu
+
 
 #source ~/.bashrc
 source /home/zuy121/.bashrc
+module restore intel  # intel compiler used to run PSU WRF-EnKF system
 
 #load configuration files, functions, parameters
 export CONFIG_FILE=/expanse/lustre/projects/pen116/zuy121/Pro2_PSU_MW/SourceCode/WRF_EnKF/Run_shell/config_IR_MW
-
-. "$CONFIG_FILE"
-. util.sh
+source "$CONFIG_FILE"
+source "$SCRIPT_DIR"/util.sh
 
 if [[ ! -d "$WORK_DIR" ]]; then mkdir -p "$WORK_DIR"; fi
 cd "$WORK_DIR" || exit
 
 ####total_ntasks####
 if [ "$JOB_SUBMIT_MODE" == 1 ]; then
-  if [[ $HOSTTYPE == "stampede" || $HOSTTYPE == "Expanse"]]; then
+  if [[ $HOSTTYPE == "stampede" || $HOSTTYPE == "Expanse" ]]; then
     export total_ntasks=$SLURM_NTASKS
   fi
   if [[ $HOSTTYPE == "jet" ]]; then
@@ -99,8 +102,8 @@ while [[ $NEXTDATE -le $DATE_CYCLE_END ]]; do
   # clear error tags
   # ------------------
   for d in run/"$DATE"/*; do  
-    if [[ $(cat run/"$DATE"/"$d"/stat) != "complete" ]]; then
-      echo waiting > run/"$DATE"/"$d"/stat
+    if [[ $(cat "$d"/stat) != "complete" ]]; then
+      echo waiting > "$d"/stat
     fi
   done
 

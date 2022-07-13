@@ -82,12 +82,14 @@ done
 
 cat > run_wrf_ens.sh << EOF
 #!/bin/bash -x
+#SBATCH -A pen116
 #SBATCH -J run_wrf_ens
 #SBATCH -p compute
 #SBATCH -n 256 -N 2
 #SBATCH -t 2:00:00
 #SBATCH -o run_wrf_ens.batch
-
+#SBATCH --mail-type=ALL
+#SBATCH --mail-user=yao.zhu.91@gmail.com
 date
 for NE in \`seq 1 $NUM_ENS\`; do
   id=\`expr \$NE + 1000 |cut -c2-\`

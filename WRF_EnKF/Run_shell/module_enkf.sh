@@ -217,6 +217,7 @@ cat > run_enkf.sh << EOF
 #SBATCH -J enkf
 #SBATCH -p compute
 #SBATCH -n 256 -N 2
+#SBATCH -A pen116
 #SBATCH -t 0:30:00
 #SBATCH -o enkf.batch
 
