@@ -219,7 +219,9 @@ for NE in `seq 1 $NUM_ENS`; do
         if [ $CYCLE_PERIOD -lt $LBC_INTERVAL ]; then
             for n in `seq 1 $MAX_DOM`; do
                 dm=d`expr $n + 100 |cut -c2-`
-                ncl $SCRIPT_DIR/util_linint_nc_time.ncl dmin=$CYCLE_PERIOD 'infile="wrflowinp_'$dm'"' >> lowinp.log 2>&1
+                module restore default
+				ncl $SCRIPT_DIR/util_linint_nc_time.ncl dmin=$CYCLE_PERIOD 'infile="wrflowinp_'$dm'"' >> lowinp.log 2>&1
+				module restore intel
                 mv tmp.nc $WORK_DIR/rc/$DATE/wrflowinp_$dm
             done
         else

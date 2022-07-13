@@ -1,23 +1,26 @@
+#!/bin/bash
+
 #use_for = "perturb"  Use WRF 3DVar randomcv mode to generate ensemble perturbations
 #use_for = "ndown"    Running ndown.exe on nested domain $idom
 #use_for = "wrfw"     Running wrf.exe for domain $RUN_DOMAIN across the cycle window, 
 #                     wrfinput files will be generated for next cycle
 #use_for = "spinhres" Running spin up with delayed start fo hires domain
 
-. $CONFIG_FILE
-end_date=`advance_time $start_date $run_minutes`
+. "$CONFIG_FILE"
+
+end_date=$(advance_time "$start_date" "$run_minutes")
 use_for=$1
 idom=$2
 #echo $idom
 
-domlist=`seq 1 $MAX_DOM`
-domlist2=`seq 1 $[MAX_DOM-1]`
+domlist=$(seq 1 "$MAX_DOM")
+domlist2=$(seq 1 $[MAX_DOM-1])
 LBINT=$LBC_INTERVAL
-if [ $use_for == "perturb" ]; then
+if [ "$use_for" == "perturb" ]; then
   MAX_DOM=1
   domlist=$idom
 fi
-if [ $use_for == "ndown" ]; then
+if [ "$use_for" == "ndown" ]; then
   MAX_DOM=2
   domlist="${PARENT_ID[$idom-1]} $idom"
   LBINT=$((WRFOUT_INTERVAL[${PARENT_ID[$idom-1]}-1]))
@@ -25,10 +28,10 @@ fi
 
 if [ -f ij_parent_start ]; then
   #echo using calculated ij_parent_start
-  i_parent_start=(`cat ij_parent_start |head -n1`)
-  j_parent_start=(`cat ij_parent_start |tail -n1`)
+  i_parent_start=($(cat ij_parent_start |head -n1))
+  j_parent_start=($(cat ij_parent_start |tail -n1))  
 else
-  for n in `seq 1 3`; do
+  for n in $(seq 1 "$MAX_DOM"); do
     i_parent_start[$n-1]=${I_PARENT_START[$n-1]}
     j_parent_start[$n-1]=${J_PARENT_START[$n-1]}
   done
@@ -44,12 +47,12 @@ echo "&time_control"
 #run_minutes = $FORECAST_MINUTES, 
 #EOF
 if $RESTARTING; then
-  echo start_year         = `for i in $domlist; do printf ${restart_date:0:4}, ; done`
-  echo start_month        = `for i in $domlist; do printf ${restart_date:4:2}, ; done`
-  echo start_day          = `for i in $domlist; do printf ${restart_date:6:2}, ; done`
-  echo start_hour         = `for i in $domlist; do printf ${restart_date:8:2}, ; done`
-  echo start_minute       = `for i in $domlist; do printf ${restart_date:10:2}, ; done`
-  echo start_second       = `for i in $domlist; do printf 00, ; done`
+  echo start_year         = $(for i in $domlist; do printf "%s" "${restart_date:0:4}", ; done)
+  echo start_month        = $(for i in $domlist; do printf "%s" "${restart_date:4:2}", ; done)
+  echo start_day          = $(for i in $domlist; do printf "%s" "${restart_date:6:2}", ; done)
+  echo start_hour         = $(for i in $domlist; do printf "%s" "${restart_date:8:2}", ; done)
+  echo start_minute       = $(for i in $domlist; do printf "%s" "${restart_date:10:2}", ; done)
+  echo start_second       = $(for i in $domlist; do printf "%s" "00", ; done)
 #elif [ $use_for == 'spinhres' ]; then
 #  echo start_year         = `for i in $domlist2; do printf ${start_date:0:4}, ; done`${DOMAIN4_START:0:4}, 
 #  echo start_month        = `for i in $domlist2; do printf ${start_date:4:2}, ; done`${DOMAIN4_START:4:2},
@@ -58,32 +61,32 @@ if $RESTARTING; then
 #  echo start_minute       = `for i in $domlist2; do printf ${start_date:10:2}, ; done`${DOMAIN4_START:10:2},
 #  echo start_second       = `for i in $domlist; do printf 00, ; done`
 else
-  echo start_year         = `for i in $domlist; do printf ${start_date:0:4}, ; done`
-  echo start_month        = `for i in $domlist; do printf ${start_date:4:2}, ; done`
-  echo start_day          = `for i in $domlist; do printf ${start_date:6:2}, ; done`
-  echo start_hour         = `for i in $domlist; do printf ${start_date:8:2}, ; done`
-  echo start_minute       = `for i in $domlist; do printf ${start_date:10:2}, ; done`
-  echo start_second       = `for i in $domlist; do printf 00, ; done`
+  echo start_year         = $(for i in $domlist; do printf "%s" "${start_date:0:4}", ; done)
+  echo start_month        = $(for i in $domlist; do printf "%s" "${start_date:4:2}", ; done)
+  echo start_day          = $(for i in $domlist; do printf "%s" "${start_date:6:2}", ; done)
+  echo start_hour         = $(for i in $domlist; do printf "%s" "${start_date:8:2}", ; done)
+  echo start_minute       = $(for i in $domlist; do printf "%s" "${start_date:10:2}", ; done)
+  echo start_second       = $(for i in $domlist; do printf "%s" "00", ; done)
 fi
 cat << EOF
-end_year           = `for i in $domlist; do printf ${end_date:0:4}, ; done`
-end_month          = `for i in $domlist; do printf ${end_date:4:2}, ; done`
-end_day            = `for i in $domlist; do printf ${end_date:6:2}, ; done`
-end_hour           = `for i in $domlist; do printf ${end_date:8:2}, ; done`
-end_minute         = `for i in $domlist; do printf ${end_date:10:2}, ; done`
-end_second         = `for i in $domlist; do printf 00, ; done`
+end_year           = $(for i in $domlist; do printf "%s" "${end_date:0:4}", ; done)
+end_month          = $(for i in $domlist; do printf "%s" "${end_date:4:2}", ; done)
+end_day            = $(for i in $domlist; do printf "%s" "${end_date:6:2}", ; done)
+end_hour           = $(for i in $domlist; do printf "%s" "${end_date:8:2}", ; done)
+end_minute         = $(for i in $domlist; do printf "%s" "${end_date:10:2}", ; done)
+end_second         = $(for i in $domlist; do printf "%s" "00", ; done)
 EOF
 #if [ $use_for == 'spinhres' ]; then
 #echo input_from_file    = .true.,.true.,true.,.false.,
 #else
 cat << EOF
-input_from_file           = `for i in $domlist; do printf .true., ; done`
+input_from_file           = $(for i in $domlist; do printf .true., ; done)
 EOF
 #fi
 cat << EOF
 interval_seconds   = $((LBINT*60)),
-history_interval   = `for i in $domlist; do printf ${WRFOUT_INTERVAL[$i-1]}, ; done`
-frames_per_outfile = `for i in $domlist; do printf 1, ; done`
+history_interval   = $(for i in $domlist; do printf "%s" "${WRFOUT_INTERVAL[$i-1]}", ; done)
+frames_per_outfile = $(for i in $domlist; do printf "%s" "1", ; done)
 EOF
 if $RESTARTING; then
   echo restart                             = .true.,
@@ -131,7 +134,7 @@ fi
 if [[ $SST_UPDATE == 1 ]]; then
   dmin=`min ${CYCLE_PERIOD[@]}`
   echo auxinput4_inname="wrflowinp_d<domain>",
-  echo auxinput4_interval=`for i in $domlist; do printf $dmin, ; done`
+  echo auxinput4_interval=$(for i in $domlist; do printf "%s" "$dmin", ; done)
   echo auxinput4_interval  = 0,
   echo auxinput4_end       = 0,
   echo io_form_auxinput4=2,

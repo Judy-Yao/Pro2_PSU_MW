@@ -79,6 +79,7 @@ nlon=($lonlist)
 ndate=($datelist)
 
 # Get domain d01 i/j at storm center each time
+module restore default
 for i in `seq 0 $m`; do
   cat << EOF > ll2ij.ncl
 begin
@@ -99,13 +100,12 @@ end
 EOF
 #   opt@DX                = ${DX[0]} 
 #   opt@DY                = ${DY[0]}
-
   ncl ll2ij.ncl
   ni[$i]=`cat ij |head -n1`
   nj[$i]=`cat ij |tail -n1`
   rm -f ll2ij.ncl ij
 done
-
+module restore intel
 
 # Generate domain_moves options
 num_moves=0

@@ -196,9 +196,11 @@ if [[ ! `tail -n2 rsl.error.0000 |grep SUCCESS` ]]; then
 
   cat > run_wps_real.sh << EOF
 #!/bin/bash -x
+#SBATCH -A pen116
 #SBATCH -J run_wps
 #SBATCH -p shared
-#SBATCH -n 48 -N 1
+#SBATCH -N 1
+#SBATCH -n 48 
 #SBATCH -t 0:30:00
 #SBATCH -o run_wps.batch
 
@@ -216,14 +218,19 @@ EOF
     if [ $CYCLE_PERIOD -lt $LBC_INTERVAL ]; then
       for n in `seq 1 $MAX_DOM`; do
         dm=d`expr $n + 100 |cut -c2-`
-        ncl $SCRIPT_DIR/util_linint_nc_time.ncl dmin=$CYCLE_PERIOD 'infile="wrflowinp_'$dm'"' >> lowinp.log 2>&1
-        mv tmp.nc $WORK_DIR/rc/$DATE/wrflowinp_$dm
+        module restore default
+		######################
+		ncl $SCRIPT_DIR/util_linint_nc_time.ncl dmin=$CYCLE_PERIOD 'infile="wrflowinp_'$dm'"' >> lowinp.log 2>&1
+		######################
+        module restore intel
+		mv tmp.nc $WORK_DIR/rc/$DATE/wrflowinp_$dm
       done
     else
       cp wrflowinp_d?? $WORK_DIR/rc/$DATE
     fi
   fi
 fi
+
 cp wrfinput_d?? $WORK_DIR/rc/$DATE/.
 cp wrfbdy_d01 $WORK_DIR/rc/$DATE/.
 cp namelist.input $WORK_DIR/rc/$DATE/.

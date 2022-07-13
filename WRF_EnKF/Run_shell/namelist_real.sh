@@ -1,34 +1,36 @@
 #!/bin/bash
+
 #possible usages:
 #use_for = "perturb"  Use WRF 3DVar randomcv mode to generate ensemble perturbations
 #use_for = "ndown"    Running ndown.exe on nested domain $idom
 #use_for = "wrfw"     Running wrf.exe for domain $RUN_DOMAIN across the cycle window, 
 #                     wrfinput files will be generated for next cycle
 
-. $CONFIG_FILE
-end_date=`advance_time $start_date $run_minutes`
+. "$CONFIG_FILE"
+
+end_date=$(advance_time "$start_date" "$run_minutes")
 #end_date=$DATE_END
 
 use_for=$1
 idom=$2
 
 if [ -f ij_parent_start ]; then
-  i_parent_start=(`cat ij_parent_start |head -n1`)
-  j_parent_start=(`cat ij_parent_start |tail -n1`)
+  i_parent_start=($(cat ij_parent_start |head -n1))
+  j_parent_start=($(cat ij_parent_start |tail -n1))  
 else
-  for n in `seq 1 $MAX_DOM`; do
+  for n in $(seq 1 "$MAX_DOM"); do  
     i_parent_start[$n-1]=${I_PARENT_START[$n-1]}
     j_parent_start[$n-1]=${J_PARENT_START[$n-1]}
   done
 fi
 
-domlist=`seq 1 $MAX_DOM`
+domlist=$(seq 1 "$MAX_DOM")
 LBINT=$LBC_INTERVAL
-if [ $use_for == "perturb" ]; then
+if [ "$use_for" == "perturb" ]; then
   MAX_DOM=1
   domlist=$idom
 fi
-if [ $use_for == "ndown" ]; then
+if [ "$use_for" == "ndown" ]; then
   MAX_DOM=2
   domlist="${PARENT_ID[$idom-1]} $idom"
   LBINT=$((WRFOUT_INTERVAL[${PARENT_ID[$idom-1]}-1]))
@@ -38,24 +40,24 @@ fi
 echo "&time_control"
 cat << EOF
 run_minutes        = $run_minutes,
-start_year         = `for i in $domlist; do printf ${start_date:0:4}, ; done`
-start_month        = `for i in $domlist; do printf ${start_date:4:2}, ; done`
-start_day          = `for i in $domlist; do printf ${start_date:6:2}, ; done`
-start_hour         = `for i in $domlist; do printf ${start_date:8:2}, ; done`
-start_minute       = `for i in $domlist; do printf ${start_date:10:2}, ; done`
-start_second       = `for i in $domlist; do printf 00, ; done`
-end_year           = `for i in $domlist; do printf ${end_date:0:4}, ; done`
-end_month          = `for i in $domlist; do printf ${end_date:4:2}, ; done`
-end_day            = `for i in $domlist; do printf ${end_date:6:2}, ; done`
-end_hour           = `for i in $domlist; do printf ${end_date:8:2}, ; done`
-end_minute         = `for i in $domlist; do printf ${end_date:10:2}, ; done`
-end_second         = `for i in $domlist; do printf 00, ; done`
+start_year         = $(for i in $domlist; do printf "%s" "${start_date:0:4}", ; done)
+start_month        = $(for i in $domlist; do printf "%s" "${start_date:4:2}", ; done)
+start_day          = $(for i in $domlist; do printf "%s" "${start_date:6:2}", ; done)
+start_hour         = $(for i in $domlist; do printf "%s" "${start_date:8:2}", ; done)
+start_minute       = $(for i in $domlist; do printf "%s" "${start_date:10:2}", ; done)
+start_second       = $(for i in $domlist; do printf "%s" "00", ; done)
+end_year           = $(for i in $domlist; do printf "%s" "${end_date:0:4}", ; done)
+end_month          = $(for i in $domlist; do printf "%s" "${end_date:4:2}", ; done)
+end_day            = $(for i in $domlist; do printf "%s" "${end_date:6:2}", ; done)
+end_hour           = $(for i in $domlist; do printf "%s" "${end_date:8:2}", ; done)
+end_minute         = $(for i in $domlist; do printf "%s" "${end_date:10:2}", ; done)
+end_second         = $(for i in $domlist; do printf "%s" "00", ; done)
 EOF
-echo "input_from_file       = `for i in $domlist; do printf .true., ; done`"
+echo "input_from_file       = $(for i in $domlist; do printf .true., ; done)"
 cat << EOF
 interval_seconds   = $((LBINT*60)),
-history_interval   = `for i in $domlist; do printf ${WRFOUT_INTERVAL[$i-1]}, ; done`
-frames_per_outfile = `for i in $domlist; do printf 1, ; done`
+history_interval   = $(for i in $domlist; do printf "%s" "${WRFOUT_INTERVAL[$i-1]}", ; done)
+frames_per_outfile = $(for i in $domlist; do printf "%s" "1", ; done)
 debug_level        = 0,
 EOF
 
@@ -75,9 +77,9 @@ if [[ $use_for == "ndown" ]]; then
 fi
 
 if [[ $SST_UPDATE == 1 ]]; then
-  dmin=`min ${CYCLE_PERIOD[@]}`
+  dmin=$(min ${CYCLE_PERIOD[@]})
   echo auxinput4_inname="wrflowinp_d<domain>",
-  echo auxinput4_interval=`for i in $domlist; do printf $dmin, ; done`
+  echo auxinput4_interval=$(for i in $domlist; do printf "%s" "$dmin", ; done)
   echo io_form_auxinput4=2,
 fi
 
@@ -88,11 +90,11 @@ echo "&domains"
 cat << EOF
 time_step=$DT,
 max_dom=$MAX_DOM,
-e_we       = `for i in $domlist; do printf ${E_WE[$i-1]}, ; done`
-e_sn       = `for i in $domlist; do printf ${E_SN[$i-1]}, ; done`
-e_vert     = `for i in $domlist; do printf ${E_VERT[$i-1]}, ; done`
-dx         = `for i in $domlist; do printf ${DX[$i-1]}, ; done`
-dy         = `for i in $domlist; do printf ${DY[$i-1]}, ; done`
+e_we       = $(for i in $domlist; do printf "%s" "${E_WE[$i-1]}", ; done)
+e_sn       = $(for i in $domlist; do printf "%s" "${E_SN[$i-1]}", ; done)
+e_vert     = $(for i in $domlist; do printf "%s" "${E_VERT[$i-1]}", ; done)
+dx         = $(for i in $domlist; do printf "%s" "${DX[$i-1]}", ; done)
+dy         = $(for i in $domlist; do printf "%s" "${DY[$i-1]}", ; done)
 EOF
 
 if [[ $use_for == "ndown" ]]; then
@@ -105,12 +107,12 @@ j_parent_start = 1,${j_parent_start[$idom-1]},
 EOF
 else
 cat << EOF
-grid_id    = `for i in $domlist; do printf $i, ; done`
-parent_id  = 0,`for i in $(seq 2 $MAX_DOM); do printf ${PARENT_ID[$i-1]}, ; done`
-parent_grid_ratio = 1,`for i in $(seq 2 $MAX_DOM); do printf ${GRID_RATIO[$i-1]}, ; done`
-parent_time_step_ratio = 1,`for i in $(seq 2 $MAX_DOM); do printf ${TIME_STEP_RATIO[$i-1]}, ; done`
-i_parent_start = 1,`for i in $(seq 2 $MAX_DOM); do printf ${i_parent_start[$i-1]}, ; done`
-j_parent_start = 1,`for i in $(seq 2 $MAX_DOM); do printf ${j_parent_start[$i-1]}, ; done`
+grid_id    = $(for i in $domlist; do printf "%s" "$i", ; done)
+parent_id  = 0,$(for i in $(seq 2 $MAX_DOM); do printf "%s" "${PARENT_ID[$i-1]}", ; done)
+parent_grid_ratio = 1,$(for i in $(seq 2 $MAX_DOM); do printf "%s" "${GRID_RATIO[$i-1]}", ; done)
+parent_time_step_ratio = 1,$(for i in $(seq 2 $MAX_DOM); do printf "%s" "${TIME_STEP_RATIO[$i-1]}", ; done)
+i_parent_start = 1,$(for i in $(seq 2 $MAX_DOM); do printf "%s" "${i_parent_start[$i-1]}", ; done)
+j_parent_start = 1,$(for i in $(seq 2 $MAX_DOM); do printf "%s" "${j_parent_start[$i-1]}", ; done)
 EOF
 fi
 
@@ -186,29 +188,29 @@ echo "/"
 echo "&physics"
 if $GET_PHYS_FROM_FILE; then
 cat << EOF
-mp_physics         = `for i in $domlist; do printf $(ncdump -h wrfinput_d$(expr $i + 100 |cut -c2-) |grep :MP_PHYSICS |awk '{print $3}'), ; done`
-ra_lw_physics      = `for i in $domlist; do printf $(ncdump -h wrfinput_d$(expr $i + 100 |cut -c2-) |grep :RA_LW_PHYSICS |awk '{print $3}'), ; done`
-ra_sw_physics      = `for i in $domlist; do printf $(ncdump -h wrfinput_d$(expr $i + 100 |cut -c2-) |grep :RA_SW_PHYSICS |awk '{print $3}'), ; done`
-radt               = `for i in $domlist; do printf ${RADT[$i-1]}, ; done`
-sf_sfclay_physics  = `for i in $domlist; do printf $(ncdump -h wrfinput_d$(expr $i + 100 |cut -c2-) |grep :SF_SFCLAY_PHYSICS |awk '{print $3}'), ; done`
-sf_surface_physics = `for i in $domlist; do printf $(ncdump -h wrfinput_d$(expr $i + 100 |cut -c2-) |grep :SF_SURFACE_PHYSICS |awk '{print $3}'), ; done`
-bl_pbl_physics     = `for i in $domlist; do printf $(ncdump -h wrfinput_d$(expr $i + 100 |cut -c2-) |grep :BL_PBL_PHYSICS |awk '{print $3}'), ; done`
-bldt               = `for i in $domlist; do printf ${BLDT[$i-1]}, ; done`
-cu_physics         = `for i in $domlist; do printf $(ncdump -h wrfinput_d$(expr $i + 100 |cut -c2-) |grep :CU_PHYSICS |awk '{print $3}'), ; done`
-cudt               = `for i in $domlist; do printf ${CUDT[$i-1]}, ; done`
+mp_physics         = $(for i in $domlist; do printf "%s" "$(ncdump -h wrfinput_d$(expr "$i" + 100 |cut -c2-) |grep :MP_PHYSICS |awk '{print $3}')", ; done)
+ra_lw_physics      = $(for i in $domlist; do printf "%s" " $(ncdump -h wrfinput_d$(expr "$i" + 100 |cut -c2-) |grep :RA_LW_PHYSICS |awk '{print $3}')", ; done)
+ra_sw_physics      = $(for i in $domlist; do printf "%s" "$(ncdump -h wrfinput_d$(expr "$i" + 100 |cut -c2-) |grep :RA_SW_PHYSICS |awk '{print $3}')", ; done)
+radt               = $(for i in $domlist; do printf "%s" "${RADT[$i-1]}", ; done)
+sf_sfclay_physics  = $(for i in $domlist; do printf "%s" " $(ncdump -h wrfinput_d$(expr "$i" + 100 |cut -c2-) |grep :SF_SFCLAY_PHYSICS |awk '{print $3}')", ; done)
+sf_surface_physics = $(for i in $domlist; do printf "%s" " $(ncdump -h wrfinput_d$(expr "$i" + 100 |cut -c2-) |grep :SF_SURFACE_PHYSICS |awk '{print $3}')", ; done)
+bl_pbl_physics     = $(for i in $domlist; do printf "%s" " $(ncdump -h wrfinput_d$(expr "$i" + 100 |cut -c2-) |grep :BL_PBL_PHYSICS |awk '{print $3}')", ; done)
+bldt               = $(for i in $domlist; do printf "%s" "${BLDT[$i-1]}", ; done)
+cu_physics         = $(for i in $domlist; do printf "%s" " $(ncdump -h wrfinput_d$(expr "$i" + 100 |cut -c2-) |grep :CU_PHYSICS |awk '{print $3}')", ; done)
+cudt               = $(for i in $domlist; do printf "%s" "${CUDT[$i-1]}", ; done)
 EOF
 else
 cat << EOF
-mp_physics         = `for i in $domlist; do printf ${MP_PHYSICS[$i-1]}, ; done`
-ra_lw_physics      = `for i in $domlist; do printf ${RA_LW_PHYSICS[$i-1]}, ; done`
-ra_sw_physics      = `for i in $domlist; do printf ${RA_SW_PHYSICS[$i-1]}, ; done`
-radt               = `for i in $domlist; do printf ${RADT[$i-1]}, ; done`
-sf_sfclay_physics  = `for i in $domlist; do printf ${SF_SFCLAY_PHYSICS[$i-1]}, ; done`
-sf_surface_physics = `for i in $domlist; do printf ${SF_SURFACE_PHYSICS[$i-1]}, ; done`
-bl_pbl_physics     = `for i in $domlist; do printf ${BL_PBL_PHYSICS[$i-1]}, ; done`
-bldt               = `for i in $domlist; do printf ${BLDT[$i-1]}, ; done`
-cu_physics         = `for i in $domlist; do printf ${CU_PHYSICS[$i-1]}, ; done`
-cudt               = `for i in $domlist; do printf ${CUDT[$i-1]}, ; done`
+mp_physics         = $(for i in $domlist; do printf "%s" "${MP_PHYSICS[$i-1]}", ; done)
+ra_lw_physics      = $(for i in $domlist; do printf "%s" "${RA_LW_PHYSICS[$i-1]}", ; done)
+ra_sw_physics      = $(for i in $domlist; do printf "%s" "${RA_SW_PHYSICS[$i-1]}", ; done)
+radt               = $(for i in $domlist; do printf "%s" "${RADT[$i-1]}", ; done)
+sf_sfclay_physics  = $(for i in $domlist; do printf "%s" "${SF_SFCLAY_PHYSICS[$i-1]}", ; done)
+sf_surface_physics = $(for i in $domlist; do printf "%s" "${SF_SURFACE_PHYSICS[$i-1]}", ; done)
+bl_pbl_physics     = $(for i in $domlist; do printf "%s" "${BL_PBL_PHYSICS[$i-1]}", ; done)
+bldt               = $(for i in $domlist; do printf "%s" "${BLDT[$i-1]}", ; done)
+cu_physics         = $(for i in $domlist; do printf "%s" "${CU_PHYSICS[$i-1]}", ; done)
+cudt               = $(for i in $domlist; do printf "%s" "${CUDT[$i-1]}", ; done)
 EOF
 fi
 
@@ -243,17 +245,17 @@ w_damping           = 0,
 use_input_w         = .true.,
 diff_opt            = 2,
 km_opt              = 4,
-diff_6th_opt        = `for i in $domlist; do printf 0, ; done`
-diff_6th_factor     = `for i in $domlist; do printf 0.12, ; done`
+diff_6th_opt        = $(for i in $domlist; do printf 0, ; done)
+diff_6th_factor     = $(for i in $domlist; do printf 0.12, ; done)
 base_temp           = 290.,
 damp_opt            = 3,
-zdamp               = `for i in $domlist; do printf 7000., ; done`
-dampcoef            = `for i in $domlist; do printf 0.1, ; done`
-khdif               = `for i in $domlist; do printf 0, ; done`
-kvdif               = `for i in $domlist; do printf 0, ; done`
-non_hydrostatic     = `for i in $domlist; do printf .true., ; done`
-moist_adv_opt       = `for i in $domlist; do printf 1, ; done`
-scalar_adv_opt      = `for i in $domlist; do printf 1, ; done`
+zdamp               = $(for i in $domlist; do printf 7000., ; done)
+dampcoef            = $(for i in $domlist; do printf 0.1, ; done)
+khdif               = $(for i in $domlist; do printf 0, ; done)
+kvdif               = $(for i in $domlist; do printf 0, ; done)
+non_hydrostatic     = $(for i in $domlist; do printf .true., ; done)
+moist_adv_opt       = $(for i in $domlist; do printf 1, ; done)
+scalar_adv_opt      = $(for i in $domlist; do printf 1, ; done)
 EOF
 #iso_temp            = 0.,
 echo "/"
@@ -264,7 +266,7 @@ cat << EOF
 spec_bdy_width     = 5,
 spec_zone          = 1,
 relax_zone         = 4,
-specified          = `for i in $domlist; do printf .true., ; done`
+specified          = $(for i in $domlist; do printf .true., ; done)
 EOF
 echo "/"
 

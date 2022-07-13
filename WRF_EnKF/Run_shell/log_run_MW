@@ -1,0 +1,130 @@
+nohup: ignoring input
+[H[J
+  % Total    % Received % Xferd  Average Speed   Time    Time     Time  Current
+                                 Dload  Upload   Total   Spent    Left  Speed
+  0     0    0     0    0     0      0      0 --:--:-- --:--:-- --:--:--     0100    14  100    14    0     0    246      0 --:--:-- --:--:-- --:--:--   250
+   IP ADDR: 198.202.100.14
+   USER: zuy121
+   DATE: Tue Jul 12 10:03:59 PDT 2022
+   UPTIME: up 3 weeks, 5 days, 54 minutes
+   HOSTNAME: login02.expanse.sdsc.edu
+   KERNEL: Linux 4.18.0-348.23.1.el8_5.x86_64 x86_64
+   MEMORY: 46Gi/125Gi
+
+Agent pid 2427126
+Identity added: Pro2_PSU_MW_source.id_ed25519 (yao.zhu.91@gmail.com)
+Restoring modules from user's intel
+(standard_in) 2: syntax error
+----------------------------------------------------------------------
+CURRENT CYCLE: 2017-08-22_00:00:00 => 2017-08-22_12:00:00
+[H[J
+  % Total    % Received % Xferd  Average Speed   Time    Time     Time  Current
+                                 Dload  Upload   Total   Spent    Left  Speed
+  0     0    0     0    0     0      0      0 --:--:-- --:--:-- --:--:--     0100    14  100    14    0     0    243      0 --:--:-- --:--:-- --:--:--   245
+   IP ADDR: 198.202.100.14
+   USER: zuy121
+   DATE: Tue Jul 12 10:04:05 PDT 2022
+   UPTIME: up 3 weeks, 5 days, 54 minutes
+   HOSTNAME: login02.expanse.sdsc.edu
+   KERNEL: Linux 4.18.0-348.23.1.el8_5.x86_64 x86_64
+   MEMORY: 46Gi/125Gi
+
+Agent pid 2430303
+Identity added: Pro2_PSU_MW_source.id_ed25519 (yao.zhu.91@gmail.com)
+[H[J
+  % Total    % Received % Xferd  Average Speed   Time    Time     Time  Current
+                                 Dload  Upload   Total   Spent    Left  Speed
+  0     0    0     0    0     0      0      0 --:--:-- --:--:-- --:--:--     0100    14  100    14    0     0    239      0 --:--:-- --:--:-- --:--:--   241
+   IP ADDR: 198.202.100.14
+   USER: zuy121
+   DATE: Tue Jul 12 10:04:07 PDT 2022
+   UPTIME: up 3 weeks, 5 days, 54 minutes
+   HOSTNAME: login02.expanse.sdsc.edu
+   KERNEL: Linux 4.18.0-348.23.1.el8_5.x86_64 x86_64
+   MEMORY: 46Gi/125Gi
+
+Agent pid 2431167
+Identity added: Pro2_PSU_MW_source.id_ed25519 (yao.zhu.91@gmail.com)
+[H[J
+  % Total    % Received % Xferd  Average Speed   Time    Time     Time  Current
+                                 Dload  Upload   Total   Spent    Left  Speed
+  0     0    0     0    0     0      0      0 --:--:-- --:--:-- --:--:--     0100    14  100    14    0     0    234      0 --:--:-- --:--:-- --:--:--   237
+   IP ADDR: 198.202.100.14
+   USER: zuy121
+   DATE: Tue Jul 12 10:04:08 PDT 2022
+   UPTIME: up 3 weeks, 5 days, 54 minutes
+   HOSTNAME: login02.expanse.sdsc.edu
+   KERNEL: Linux 4.18.0-348.23.1.el8_5.x86_64 x86_64
+   MEMORY: 46Gi/125Gi
+
+Agent pid 2432304
+Identity added: Pro2_PSU_MW_source.id_ed25519 (yao.zhu.91@gmail.com)
+  Running WRF ensemble...
+tail: cannot open 'job_submit.log' for reading: No such file or directory
+tail: cannot open 'job_submit.log' for reading: No such file or directory
+tail: cannot open 'job_submit.log' for reading: No such file or directory
+tail: cannot open 'job_submit.log' for reading: No such file or directory
+tail: cannot open 'job_submit.log' for reading: No such file or directory
+tail: cannot open 'job_submit.log' for reading: No such file or directory
+grep: /expanse/lustre/scratch/zuy121/temp_project/Pro2_PSU_MW/HARVEY/MW_THO/run/201708220000/wrf_ens/001/rsl.error.0000: Cannot send after transport endpoint shutdown
+grep: /expanse/lustre/scratch/zuy121/temp_project/Pro2_PSU_MW/HARVEY/MW_THO/run/201708220000/wrf_ens/004/rsl.error.0000: Cannot send after transport endpoint shutdown
+grep: /expanse/lustre/scratch/zuy121/temp_project/Pro2_PSU_MW/HARVEY/MW_THO/run/201708220000/wrf_ens/005/rsl.error.0000: Cannot send after transport endpoint shutdown
+grep: /expanse/lustre/scratch/zuy121/temp_project/Pro2_PSU_MW/HARVEY/MW_THO/run/201708220000/wrf_ens/009/rsl.error.0000: Cannot send after transport endpoint shutdown
+grep: /expanse/lustre/scratch/zuy121/temp_project/Pro2_PSU_MW/HARVEY/MW_THO/run/201708220000/wrf_ens/010/rsl.error.0000: Cannot send after transport endpoint shutdown
+grep: /expanse/lustre/scratch/zuy121/temp_project/Pro2_PSU_MW/HARVEY/MW_THO/run/201708220000/wrf_ens/012/rsl.error.0000: Cannot send after transport endpoint shutdown
+grep: /expanse/lustre/scratch/zuy121/temp_project/Pro2_PSU_MW/HARVEY/MW_THO/run/201708220000/wrf_ens/013/rsl.error.0000: Cannot send after transport endpoint shutdown
+grep: /expanse/lustre/scratch/zuy121/temp_project/Pro2_PSU_MW/HARVEY/MW_THO/run/201708220000/wrf_ens/016/rsl.error.0000: Cannot send after transport endpoint shutdown
+grep: /expanse/lustre/scratch/zuy121/temp_project/Pro2_PSU_MW/HARVEY/MW_THO/run/201708220000/wrf_ens/017/rsl.error.0000: Cannot send after transport endpoint shutdown
+grep: /expanse/lustre/scratch/zuy121/temp_project/Pro2_PSU_MW/HARVEY/MW_THO/run/201708220000/wrf_ens/018/rsl.error.0000: Cannot send after transport endpoint shutdown
+grep: /expanse/lustre/scratch/zuy121/temp_project/Pro2_PSU_MW/HARVEY/MW_THO/run/201708220000/wrf_ens/019/rsl.error.0000: Cannot send after transport endpoint shutdown
+grep: /expanse/lustre/scratch/zuy121/temp_project/Pro2_PSU_MW/HARVEY/MW_THO/run/201708220000/wrf_ens/022/rsl.error.0000: Cannot send after transport endpoint shutdown
+grep: /expanse/lustre/scratch/zuy121/temp_project/Pro2_PSU_MW/HARVEY/MW_THO/run/201708220000/wrf_ens/023/rsl.error.0000: Cannot send after transport endpoint shutdown
+grep: /expanse/lustre/scratch/zuy121/temp_project/Pro2_PSU_MW/HARVEY/MW_THO/run/201708220000/wrf_ens/026/rsl.error.0000: Cannot send after transport endpoint shutdown
+grep: /expanse/lustre/scratch/zuy121/temp_project/Pro2_PSU_MW/HARVEY/MW_THO/run/201708220000/wrf_ens/027/rsl.error.0000: Cannot send after transport endpoint shutdown
+grep: /expanse/lustre/scratch/zuy121/temp_project/Pro2_PSU_MW/HARVEY/MW_THO/run/201708220000/wrf_ens/028/rsl.error.0000: Cannot send after transport endpoint shutdown
+grep: /expanse/lustre/scratch/zuy121/temp_project/Pro2_PSU_MW/HARVEY/MW_THO/run/201708220000/wrf_ens/029/rsl.error.0000: Cannot send after transport endpoint shutdown
+grep: /expanse/lustre/scratch/zuy121/temp_project/Pro2_PSU_MW/HARVEY/MW_THO/run/201708220000/wrf_ens/030/rsl.error.0000: Cannot send after transport endpoint shutdown
+grep: /expanse/lustre/scratch/zuy121/temp_project/Pro2_PSU_MW/HARVEY/MW_THO/run/201708220000/wrf_ens/031/rsl.error.0000: Cannot send after transport endpoint shutdown
+grep: /expanse/lustre/scratch/zuy121/temp_project/Pro2_PSU_MW/HARVEY/MW_THO/run/201708220000/wrf_ens/034/rsl.error.0000: Cannot send after transport endpoint shutdown
+grep: /expanse/lustre/scratch/zuy121/temp_project/Pro2_PSU_MW/HARVEY/MW_THO/run/201708220000/wrf_ens/035/rsl.error.0000: Cannot send after transport endpoint shutdown
+grep: /expanse/lustre/scratch/zuy121/temp_project/Pro2_PSU_MW/HARVEY/MW_THO/run/201708220000/wrf_ens/042/rsl.error.0000: Cannot send after transport endpoint shutdown
+grep: /expanse/lustre/scratch/zuy121/temp_project/Pro2_PSU_MW/HARVEY/MW_THO/run/201708220000/wrf_ens/043/rsl.error.0000: Cannot send after transport endpoint shutdown
+grep: /expanse/lustre/scratch/zuy121/temp_project/Pro2_PSU_MW/HARVEY/MW_THO/run/201708220000/wrf_ens/046/rsl.error.0000: Cannot send after transport endpoint shutdown
+grep: /expanse/lustre/scratch/zuy121/temp_project/Pro2_PSU_MW/HARVEY/MW_THO/run/201708220000/wrf_ens/047/rsl.error.0000: Cannot send after transport endpoint shutdown
+grep: /expanse/lustre/scratch/zuy121/temp_project/Pro2_PSU_MW/HARVEY/MW_THO/run/201708220000/wrf_ens/048/rsl.error.0000: Cannot send after transport endpoint shutdown
+grep: /expanse/lustre/scratch/zuy121/temp_project/Pro2_PSU_MW/HARVEY/MW_THO/run/201708220000/wrf_ens/049/rsl.error.0000: Cannot send after transport endpoint shutdown
+grep: /expanse/lustre/scratch/zuy121/temp_project/Pro2_PSU_MW/HARVEY/MW_THO/run/201708220000/wrf_ens/050/rsl.error.0000: Cannot send after transport endpoint shutdown
+grep: /expanse/lustre/scratch/zuy121/temp_project/Pro2_PSU_MW/HARVEY/MW_THO/run/201708220000/wrf_ens/051/rsl.error.0000: Cannot send after transport endpoint shutdown
+grep: /expanse/lustre/scratch/zuy121/temp_project/Pro2_PSU_MW/HARVEY/MW_THO/run/201708220000/wrf_ens/054/rsl.error.0000: Cannot send after transport endpoint shutdown
+grep: /expanse/lustre/scratch/zuy121/temp_project/Pro2_PSU_MW/HARVEY/MW_THO/run/201708220000/wrf_ens/055/rsl.error.0000: Cannot send after transport endpoint shutdown
+grep: /expanse/lustre/scratch/zuy121/temp_project/Pro2_PSU_MW/HARVEY/MW_THO/run/201708220000/wrf_ens/060/rsl.error.0000: Cannot send after transport endpoint shutdown
+tail: cannot open 'job_submit.log' for reading: Cannot send after transport endpoint shutdown
+tail: cannot open 'job_submit.log' for reading: Cannot send after transport endpoint shutdown
+grep: /expanse/lustre/scratch/zuy121/temp_project/Pro2_PSU_MW/HARVEY/MW_THO/run/201708220000/wrf_ens/*/rsl.error.0000: Cannot send after transport endpoint shutdown
+tail: cannot open 'job_submit.log' for reading: Cannot send after transport endpoint shutdown
+tail: cannot open 'job_submit.log' for reading: Cannot send after transport endpoint shutdown
+grep: /expanse/lustre/scratch/zuy121/temp_project/Pro2_PSU_MW/HARVEY/MW_THO/run/201708220000/wrf_ens/*/rsl.error.0000: Cannot send after transport endpoint shutdown
+tail: cannot open 'job_submit.log' for reading: Cannot send after transport endpoint shutdown
+tail: cannot open 'job_submit.log' for reading: Cannot send after transport endpoint shutdown
+grep: /expanse/lustre/scratch/zuy121/temp_project/Pro2_PSU_MW/HARVEY/MW_THO/run/201708220000/wrf_ens/*/rsl.error.0000: Cannot send after transport endpoint shutdown
+tail: cannot open 'job_submit.log' for reading: Cannot send after transport endpoint shutdown
+tail: cannot open 'job_submit.log' for reading: Cannot send after transport endpoint shutdown
+grep: /expanse/lustre/scratch/zuy121/temp_project/Pro2_PSU_MW/HARVEY/MW_THO/run/201708220000/wrf_ens/*/rsl.error.0000: Cannot send after transport endpoint shutdown
+tail: cannot open 'job_submit.log' for reading: Cannot send after transport endpoint shutdown
+tail: cannot open 'job_submit.log' for reading: Cannot send after transport endpoint shutdown
+grep: /expanse/lustre/scratch/zuy121/temp_project/Pro2_PSU_MW/HARVEY/MW_THO/run/201708220000/wrf_ens/*/rsl.error.0000: Cannot send after transport endpoint shutdown
+tail: cannot open 'job_submit.log' for reading: Cannot send after transport endpoint shutdown
+tail: cannot open 'job_submit.log' for reading: Cannot send after transport endpoint shutdown
+grep: /expanse/lustre/scratch/zuy121/temp_project/Pro2_PSU_MW/HARVEY/MW_THO/run/201708220000/wrf_ens/*/rsl.error.0000: Cannot send after transport endpoint shutdown
+tail: cannot open 'job_submit.log' for reading: Cannot send after transport endpoint shutdown
+tail: cannot open 'job_submit.log' for reading: Cannot send after transport endpoint shutdown
+grep: /expanse/lustre/scratch/zuy121/temp_project/Pro2_PSU_MW/HARVEY/MW_THO/run/201708220000/wrf_ens/*/rsl.error.0000: Cannot send after transport endpoint shutdown
+tail: cannot open 'job_submit.log' for reading: Cannot send after transport endpoint shutdown
+tail: cannot open 'job_submit.log' for reading: Cannot send after transport endpoint shutdown
+grep: /expanse/lustre/scratch/zuy121/temp_project/Pro2_PSU_MW/HARVEY/MW_THO/run/201708220000/wrf_ens/*/rsl.error.0000: Cannot send after transport endpoint shutdown
+tail: cannot open 'job_submit.log' for reading: Cannot send after transport endpoint shutdown
+tail: cannot open 'job_submit.log' for reading: Cannot send after transport endpoint shutdown
+grep: /expanse/lustre/scratch/zuy121/temp_project/Pro2_PSU_MW/HARVEY/MW_THO/run/201708220000/wrf_ens/*/rsl.error.0000: Cannot send after transport endpoint shutdown
+tail: cannot open 'job_submit.log' for reading: Cannot send after transport endpoint shutdown
+tail: cannot open 'job_submit.log' for reading: Cannot send after transport endpoint shutdown
+grep: /expanse/lustre/scratch/zuy121/temp_project/Pro2_PSU_MW/HARVEY/MW_THO/run/201708220000/wrf_ens/007/rsl.error.0000: Cannot send after transport endpoint shutdown

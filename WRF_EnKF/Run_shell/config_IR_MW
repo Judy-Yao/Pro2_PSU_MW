@@ -16,16 +16,16 @@
 # ==== Experiment Design ====
  EXP_NAME=MW_THO
  DATE_START=201708220000
- DATE_END=201708270000
+ DATE_END=201708221400 #201708270000
  DATE_CYCLE_START=201708221200
- DATE_CYCLE_END=201708251200
- STORM_ID=HarveyRI
+ DATE_CYCLE_END=201708221300 #201708251200
+ STORM_ID=HARVEY
 
 # ==== Directories ===
  WORK_DIR=/expanse/lustre/scratch/zuy121/temp_project/Pro2_PSU_MW/${STORM_ID}/${EXP_NAME} #/scratch/02191/yuz31/${STORM_ID}/$EXP_NAME
  SCRIPT_DIR=/expanse/lustre/projects/pen116/zuy121/Pro2_PSU_MW/SourceCode/WRF_EnKF/Run_shell #/work2/02191/yuz31/stampede2/scripts/HARVEY/DA
  CODE_DIR=/home/zuy121/opt #/work2/02191/yuz31/stampede2/scripts/HARVEY/code/  ##CODE_DIR=/work/01770/sbs5130/stampede2/tools
- DATA_DIR=/expanse/lustre/projects/pen116/zuy121/Pro2_PSU_MW/Obs_input_EnKF/HarveyRI #/work2/02191/yuz31/stampede2/scripts/HARVEY/${STORM_ID}
+ DATA_DIR=/expanse/lustre/projects/pen116/zuy121/Pro2_PSU_MW/Obs_input_EnKF/HARVEY #/work2/02191/yuz31/stampede2/scripts/HARVEY/${STORM_ID}
  # Tools
  WPS_DIR=${CODE_DIR}/WPS_install/WPS_VF   #$CODE_DIR/WPS 
  WRF_DIR_FCST=${CODE_DIR}/WRF_install/WRFV3/WRF_VF #$CODE_DIR/WRFV3
@@ -39,7 +39,7 @@
  FG_DIR_GFS=${DATA_DIR}/GFS
  TCVITALS_DIR=${DATA_DIR}/TCvitals
  TCV_DIR=${DATA_DIR}/HPI #location of HPI for assimilation
- GEOG_DIR=/expanse/lustre/projects/pen116/yuz31/data/WPS_GEOG #/work2/02191/yuz31/stampede2/data/geog/ ##GEOG_DIR=$WPS_DIR/geog
+ GEOG_DIR=/expanse/lustre/projects/pen116/zuy121/Pro2_PSU_MW/WPS_GEOG #/work2/02191/yuz31/stampede2/data/geog/ ##GEOG_DIR=$WPS_DIR/geog
  #PERTS_DIR=$WORK_DIR/robs_perts # Should be used. However, the experiment generates the data itself if it starts from the DATE_START.
  #SO_DIR=$DATA_DIR/superob # Not in use because radar observations are not assimilated.
 
