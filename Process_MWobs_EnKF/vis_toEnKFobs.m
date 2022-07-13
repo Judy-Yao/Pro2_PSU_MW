@@ -8,7 +8,7 @@ control = struct;
 control.obs_dir = '../../toEnKFobs/MW/';
 control.output_dir = '../../Visual/toEnKFobs/MW/';
 % ---Storm information
-control.storm_phase = 'HarveyRI';
+control.storm_phase = 'MariaRI';
 control.sensor_list = ["amsr2","atms","gmi","mhs","saphir","ssmi","ssmis"];
 control.freq_list = {{'18.7GHzV-Pol','89GHzV-PolA-Scan','89GHzV-PolB-Scan'},...
         {'183.31+-7GHzQH-Pol'},{'18.7GHzV-Pol','183.31+/-7GHzV-Pol'},{'190.31GHzV-Pol'},{'183.31+/-6.8GHz'},{'fcdr\_tb19v','fcdr\_tb85v'},{'19.35GHzV-Pol','183.31+/-6.6GHzH-Pol'}};

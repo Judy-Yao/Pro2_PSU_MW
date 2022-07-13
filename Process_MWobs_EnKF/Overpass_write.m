@@ -23,7 +23,7 @@ function [] = Overpass_write(iTb,istorm,Swath_used,ChIdx_all,ChName_all,DAtime_a
 	% Loop through each overpass Tb file and read variables with different files into cells
 	for io = 1:length(Tb_overpass)
         disp(["    File: " + Tb_overpass(io)]);
-        disp("      Frequencies of interest are:");
+        disp('      Frequencies of interest are:');
         for item = 1:length(ChName_all{iTb(io)})
             disp(["        " + ChName_all{iTb(io)}(item)]);
         end
@@ -65,7 +65,7 @@ function [] = Overpass_write(iTb,istorm,Swath_used,ChIdx_all,ChName_all,DAtime_a
 			tem_Sat_alt = [tem_Sat_alt; op_Sat_alt{io}{ir}]; tem_azimuth = [tem_azimuth;op_azimuth{io}{ir}];
             tem_crossTrack = [tem_crossTrack; op_Fov_crossTrack{io}{ir}];
 			tem_alongTrack = [tem_alongTrack;op_Fov_alongTrack{io}{ir}];			
-			tem_times = [tem_times; op_times{io}{ir}];
+            tem_times = [tem_times; op_times{io}{ir}];
 			tem_chNum = [tem_chNum; op_chNum{io}{ir}]; tem_ROI_other = [tem_ROI_other; op_ROI_other{io}{ir}];
 			tem_ROI_hydro = [tem_ROI_hydro; op_ROI_hydro{io}{ir}]; tem_ObsErr = [tem_ObsErr;op_ObsErr{io}{ir}];
 			Sat_name_copies = repmat(sat_name{io},[length(op_Tb{io}{ir}),1]);
