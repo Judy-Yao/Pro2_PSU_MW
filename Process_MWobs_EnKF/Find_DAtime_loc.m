@@ -226,10 +226,10 @@ function [if_swath_good,DAtime_perCh,loc_storm_DAtime] = Find_DAtime_loc(bestrac
             best_track_weights = [abs((DA_hour)-best_track_times(2)); abs((DA_hour)-best_track_times(1))] / abs(diff(best_track_times));
             loc_perDAcand(i_cand,:) = best_track_locations*best_track_weights;
             % find a small square area (0.2 * 0.2 degree) centered at the best-track location at DA_time
-            min_lat = loc_perDAcand(i_cand,1)-0.1;
-            max_lat = loc_perDAcand(i_cand,1)+0.1;
-            min_lon = loc_perDAcand(i_cand,2)-0.1;
-            max_lon = loc_perDAcand(i_cand,2)+0.1;
+            min_lat = loc_perDAcand(i_cand,1)-0.15;
+            max_lat = loc_perDAcand(i_cand,1)+0.15;
+            min_lon = loc_perDAcand(i_cand,2)-0.15;
+            max_lon = loc_perDAcand(i_cand,2)+0.15;
             % for a DA_time candidate, Find scans that are between the start and the end of effective observations
             idx_all_scan = isbetween(all_scan_time, DA_per_hhcand{i_cand,2},DA_per_hhcand{i_cand,3});
             % mask observation pixels that are between the start_obs_time of and the end_obs_time of a DA_time candidate (idx_all_scan) 
@@ -271,10 +271,13 @@ function [if_swath_good,DAtime_perCh,loc_storm_DAtime] = Find_DAtime_loc(bestrac
         end   
 
     end
-   
+
     % sanity check
     if length(if_swath_good) ~= length(Swath_used) || length(DAtime_perCh) ~= length(Swath_used) || length(loc_storm_DAtime) ~= length(Swath_used)
         disp('    Error identifying DA time for each swath/channel!');
     end
+
+% Warning: A potential BUG exists: the current algorithm assumes that for all channels of a L1C MW file the best-track locations and DA times are the same (very unlikely though)!!
+
 
 end
