@@ -1,0 +1,91 @@
+FC=mpif90
+QN2RE=/home/zuy121/opt/PSU-EnKF_w_satellites/fortran_src/qn2re
+CRTM_DIR=/home/zuy121/opt/PSU-EnKF_w_satellites/fortran_src/crtm_v2.3.0
+FCFLAG=-f90=ifort -i4 -w -ftz -align all -fno-alias -fp-model precise -assume realloc_lhs -convert little_endian -traceback -I$(QN2RE) #big_endian -traceback -I$(QN2RE)
+NETCDF=${HOME}
+
+all: enkf.mpi replace_perturbationmean_by_initial.exe replace_geo_by_initial.exe replace_xfmean_with_gfs.exe enkf_gfs_hybrid_inflation.exe soairborne_to_3dvar.exe so_to_3dvar.exe ensemble_mean.exe replace_mean.exe replace_environment_by_gfs.exe replace_mean_outside_site.exe replace_environment_by_gfs.exe cal_inflate.mpi
+
+clean:
+	rm -f *.o *.mod *.mpi *.exe
+
+mpi_module.o:
+	$(FC) -c $(FCFLAG) -FR mpi_module.f
+module_structure.o:
+	$(FC) -c $(FCFLAG) -FR -I${NETCDF}/include module_structure.f
+module_netcdf.o:
+	$(FC) -c $(FCFLAG) -I${NETCDF}/include module_netcdf.f
+module_map_utils.o:
+	$(FC) -c $(FCFLAG) module_map_utils.f
+module_wrf_tools.o:
+	$(FC) -c $(FCFLAG) -FR module_wrf_tools.f
+module_radar.o:
+	$(FC) -c $(FCFLAG) -FR module_radar.f
+cal_roi.o:
+	$(FC) -c $(FCFLAG) -FR cal_roi.f
+hurricane_center.o:
+	$(FC) -c $(FCFLAG) -FR hurricane_center.f
+obs_io.o:
+	$(FC) -c $(FCFLAG) -FR obs_io.f
+xb.o:
+	$(FC) -c $(FCFLAG) -FR -I$(NETCDF)/include -I$(CRTM_DIR)/include xb.f
+sub_enkf_util.o:
+	$(FC) -c $(FCFLAG) -FR sub_enkf_util.f
+enkf.o:
+	$(FC) -c $(FCFLAG) -FR enkf.f
+#enkf_hydro.o:
+#	$(FC) -c $(FCFLAG) -FR enkf_hydro.f
+main.o:
+	$(FC) -c $(FCFLAG) -FR main.f
+ensemble_mean.o:
+	$(FC) -c $(FCFLAG) -FR ensemble_mean.f
+replace_mean.o:
+	$(FC) -c $(FCFLAG) -FR replace_mean.f
+replace_environment_by_gfs.o:
+	$(FC) -c $(FCFLAG) -FR replace_environment_by_gfs.f
+cal_inflate_bt.o:
+	$(FC) -c $(FCFLAG) -FR cal_inflate_bt.f
+
+enkf.mpi: module_structure.o mpi_module.o module_netcdf.o module_map_utils.o module_wrf_tools.o module_radar.o cal_roi.o hurricane_center.o obs_io.o xb.o sub_enkf_util.o cal_inflate_bt.o enkf.o
+	$(FC) -o enkf.mpi $(FCFLAG) -FR -I$(NETCDF)/include  module_structure.o mpi_module.o module_netcdf.o module_map_utils.o module_wrf_tools.o module_radar.o cal_roi.o hurricane_center.o obs_io.o xb.o sub_enkf_util.o cal_inflate_bt.o enkf.o -L$(CRTM_DIR)/lib -lcrtm -L$(NETCDF)/lib -lnetcdff -L$(QN2RE) -lqn2re -mkl main.f #-L/work/01770/sbs5130/stampede2/tools/REL-2.3.0_Lu/lib -lcrtm -L$(NETCDF)/lib -lnetcdff -L/work/01770/sbs5130/stampede2/tools/REL-2.3.0_Lu/crtm_mod_v0.2/src_re -lqn2re main.f
+
+#enkf_hydro.mpi: module_structure.o mpi_module.o module_netcdf.o module_map_utils.o module_wrf_tools.o module_radar.o cal_roi.o hurricane_center.o obs_io.o xb.o sub_enkf_util.o cal_inflate_bt.o enkf_hydro.o
+#	$(FC) -o enkf_hydro.mpi $(FCFLAG) -FR -I$(NETCDF)/include  module_structure.o mpi_module.o module_netcdf.o module_map_utils.o module_wrf_tools.o module_radar.o cal_roi.o hurricane_center.o obs_io.o xb.o sub_enkf_util.o cal_inflate_bt.o enkf_hydro.o -L$(CRTM_DIR)/lib -lcrtm -L$(NETCDF)/lib -lnetcdff -L$(QN2RE) -lqn2re -mkl main.f #-L/work/01770/sbs5130/stampede2/tools/REL-2.3.0_Lu/lib -lcrtm -L$(NETCDF)/lib -lnetcdff -L/work/01770/sbs5130/stampede2/tools/REL-2.3.0_Lu/crtm_mod_v0.2/src_re -lqn2re main.f
+
+replace_perturbationmean_by_initial.exe: module_netcdf.o
+	$(FC) -o replace_perturbationmean_by_initial.exe $(FCFLAG) -FR -I$(NETCDF)/include module_netcdf.o -L$(NETCDF)/lib -lnetcdff replace_perturbationmean_by_initial.f
+
+replace_geo_by_initial.exe: module_netcdf.o
+	$(FC) -o replace_geo_by_initial.exe $(FCFLAG) -FR -I$(NETCDF)/include module_netcdf.o -L$(NETCDF)/lib -lnetcdff replace_geo_by_initial.f
+
+replace_mean_outside_site.exe: module_structure.o module_netcdf.o module_wrf_tools.o module_map_utils.o
+	$(FC) -o replace_mean_outside_site.exe $(FCFLAG) -FR -I$(NETCDF)/include module_structure.o module_netcdf.o module_wrf_tools.o module_map_utils.o -L$(NETCDF)/lib -lnetcdff replace_mean_outside_site.f
+
+replace_xfmean_with_gfs.exe: module_structure.o module_netcdf.o module_wrf_tools.o module_map_utils.o
+	$(FC) -o replace_xfmean_with_gfs.exe $(FCFLAG) -FR -I$(NETCDF)/include module_structure.o module_netcdf.o module_wrf_tools.o module_map_utils.o -L$(NETCDF)/lib -lnetcdff replace_xfmean_with_gfs.f
+
+enkf_gfs_hybrid_inflation.exe: module_structure.o module_netcdf.o module_wrf_tools.o module_map_utils.o
+	$(FC) -o enkf_gfs_hybrid_inflation.exe $(FCFLAG) -FR -I$(NETCDF)/include module_structure.o module_netcdf.o module_wrf_tools.o module_map_utils.o -L$(NETCDF)/lib -lnetcdff enkf_gfs_hybrid_inflation.f
+
+soairborne_to_3dvar.exe: module_structure.o mpi_module.o module_netcdf.o module_map_utils.o module_wrf_tools.o module_radar.o cal_roi.o hurricane_center.o obs_io.o xb.o sub_enkf_util.o
+	$(FC) -o soairborne_to_3dvar.exe $(FCFLAG) -FR -I$(NETCDF)/include module_structure.o mpi_module.o module_netcdf.o module_map_utils.o module_wrf_tools.o module_radar.o cal_roi.o hurricane_center.o obs_io.o xb.o sub_enkf_util.o -L$(CRTM_DIR)/lib -lcrtm -L$(NETCDF)/lib -lnetcdff -L$(QN2RE) -lqn2re soairborne_to_3dvar.f #-L/work/01770/sbs5130/stampede2/tools/REL-2.3.0_Lu/lib -lcrtm -L$(NETCDF)/lib -lnetcdff -L/work/01770/sbs5130/stampede2/tools/REL-2.3.0_Lu/crtm_mod_v0.2/src_re -lqn2re soairborne_to_3dvar.f
+
+so_to_3dvar.exe: module_structure.o mpi_module.o module_netcdf.o module_wrf_tools.o module_map_utils.o module_radar.o cal_roi.o hurricane_center.o obs_io.o xb.o sub_enkf_util.o
+	$(FC) -o so_to_3dvar.exe $(FCFLAG) -FR -I$(NETCDF)/include module_structure.o mpi_module.o module_netcdf.o module_map_utils.o module_wrf_tools.o module_radar.o cal_roi.o hurricane_center.o obs_io.o xb.o sub_enkf_util.o -L$(CRTM_DIR)/lib -lcrtm -L$(NETCDF)/lib -lnetcdff -L$(QN2RE) -lqn2re so_to_3dvar.f #-L/work/05012/tg843115/stampede2/opt/CRTM/REL-2.3.0_Lu/lib -lcrtm -L$(NETCDF)/lib -lnetcdff -L/work/01770/sbs5130/stampede2/tools/REL-2.3.0_Lu/crtm_mod_v0.2/src_re -lqn2re so_to_3dvar.f
+
+ensemble_mean.exe: module_structure.o mpi_module.o module_netcdf.o module_map_utils.o module_wrf_tools.o sub_enkf_util.o
+	$(FC) -o ensemble_mean.exe $(FCFLAG) -FR -I$(NETCDF)/include module_structure.o mpi_module.o module_netcdf.o module_map_utils.o module_wrf_tools.o sub_enkf_util.o -L$(CRTM_DIR)/lib -lcrtm -L$(NETCDF)/lib -lnetcdff ensemble_mean.f #-L/work/01770/sbs5130/stampede2/tools/REL-2.3.0_Lu/lib -lcrtm -L$(NETCDF)/lib -lnetcdff ensemble_mean.f
+
+replace_mean.exe: module_netcdf.o mpi_module.o
+	$(FC) -o replace_mean.exe $(FCFLAG) -FR -I$(NETCDF)/include module_netcdf.o mpi_module.o -L$(NETCDF)/lib -lnetcdff replace_mean.f
+
+replace_environment_by_gfs.exe: module_netcdf.o mpi_module.o
+	$(FC) -o replace_environment_by_gfs.exe $(FCFLAG) -FR -I$(NETCDF)/include module_netcdf.o mpi_module.o -L$(NETCDF)/lib -lnetcdff replace_environment_by_gfs.f
+
+wrf2obs3dvar: module_netcdf.o module_map_utils.o module_structure.o module_wrf_tools.o
+	rm -f wrf2obs3dvar.exe
+	$(FC) -o wrf2obs3dvar.exe $(FCFLAG) -FR -I$(NETCDF)/include module_netcdf.o module_map_utils.o module_structure.o module_wrf_tools.o -L$(NETCDF)/lib -lnetcdff wrf2obs3dvar.f #time_calculation.f
+
+cal_inflate.mpi: module_structure.o mpi_module.o module_netcdf.o module_map_utils.o module_wrf_tools.o sub_enkf_util.o
+	$(FC) -o cal_inflate.mpi $(FCFLAG) -FR -I$(NETCDF)/include  module_structure.o mpi_module.o module_netcdf.o module_map_utils.o module_wrf_tools.o sub_enkf_util.o -L$(CRTM_DIR)/lib -lcrtm -L$(NETCDF)/lib -lnetcdff cal_inflate.f #-L/work/01770/sbs5130/stampede2/tools/REL-2.3.0_Lu/lib -lcrtm -L$(NETCDF)/lib -lnetcdff cal_inflate.f
+

@@ -1,0 +1,15 @@
+Yunji Zhang utilized EnKF from two sources to implement and finish the first IR+MW PSU-EnKF experiment for Harvey in 2021 Fall:
+- Major part: PSU-EnKF_w_satellites/fortran_src/EnSRF/src --> enkf.mpi
+- Minor part: his own version of EnKF which is lcoated at Stampede2
+Note: Most of the two are the same except 1. Zhang's version namelist is different from PSU-EnKF_w_satellites/fortran_src/EnSRF/ 2. PSU-EnKF_w_satellites/fortran_src/EnSRF/ only generates binary file (enkf.mpi) while Zhang's version generates other binanry files which are needed if the experiment is run using Zhangs'shell script
+
+Judy Yao's goal (2022 Summer to Fall) is to demonstrate the IR+MW DA works in a statistical sense with a bulk study.
+The first task is to reproduce the Harvey run before implements the method for other 2017 season hurricanes. 
+For the DA part, procedures are:
+1. compile PSU-EnKF_w_satellites/fortran_src/EnSRF/src (enkf.mpi generated)
+2. compile the source code in this directory, and
+3. link all of generated binary files to PSU-EnKF_w_satellites/fortran_src/EnSRF/src
+
+
+
+
