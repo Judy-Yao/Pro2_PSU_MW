@@ -70,20 +70,20 @@ function [all_Tbfile_name,all_Swath_used,all_ChIdx_perCh,all_ChName_perCh,all_DA
                         disp('	  Microwave observations do not exist in the area of interest at DA time! Skip this file.');
                         continue;
                     else
-						disp(['      (More) microwave observations exist in the area of interest at DA_time ' + DAtime_perCh(1) + '!']);
+                        DAtime = unique(DAtime_perCh(DAtime_perCh ~= "")); 
+                        if length(DAtime) > 1
+                            error('      DA time is not unique!');
+                        end
+						disp(['      (More) microwave observations exist in the area of interest at DA_time ' + DAtime + '!']);
 
                         % ----- Gather the useful Tb file !! --------------------
                         source_file = erase(Tb_file,'raw_Obs/');
-                        % A potential BUG exists: the current algorithm assumes that for all channels of a L1C MW file the best-track locations and DA times are the same (very unlikely though)
-						if (length(DAtime_perCh) > 1) & (DAtime_perCh(1) ~= DAtime_perCh(2))
-							disp('	  Error collecting the Tb file! Potential risk exists!');
-						end
 
 						[filepath,filename,filext] = fileparts(Tb_file);
 						if contains(filext,"HDF5")
-							newfile_name = ['DAt' + DAtime_perCh(1) + '_1C.' + control.platform{isensor}{isensor_plf} + '.' + control.sensor{isensor} + '.HDF5'];
+							newfile_name = ['DAt' + DAtime + '_1C.' + control.platform{isensor}{isensor_plf} + '.' + control.sensor{isensor} + '.HDF5'];
 						elseif contains(filext,"nc")
-							newfile_name = ['DAt' + DAtime_perCh(1) + '_1C.' + control.platform{isensor}{isensor_plf} + '.' + control.sensor{isensor} + '.nc'];	
+							newfile_name = ['DAt' + DAtime + '_1C.' + control.platform{isensor}{isensor_plf} + '.' + control.sensor{isensor} + '.nc'];	
 						end                    
 						command = ["ln -s " + source_file + " " + destination + newfile_name];% Symbolic link's path -> source file. The relatively path of source file is relative to symbolic link's path.
                         [status,~] = system(command);
@@ -92,7 +92,7 @@ function [all_Tbfile_name,all_Swath_used,all_ChIdx_perCh,all_ChName_perCh,all_DA
                         else
                             disp('    Error collecting the Tb file!');
                         end
-						% store useful information with correction from if_swath_good
+						% only store information that is good
                         all_Tbfile_name = [all_Tbfile_name,newfile_name]; % (strings)
 						if_swath_good = logical(if_swath_good);
 						all_Swath_used{end+1} = Swath_used(if_swath_good); % (cell:{strings})
