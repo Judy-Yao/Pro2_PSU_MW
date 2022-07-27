@@ -1,0 +1,5 @@
+*.o
+error_*
+out_*
+*.mpi
+*.mod
