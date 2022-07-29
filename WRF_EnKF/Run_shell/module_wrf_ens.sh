@@ -87,6 +87,7 @@ cat > run_wrf_ens.sh << EOF
 #SBATCH -p compute
 #SBATCH -n 256 -N 2
 #SBATCH -t 2:00:00
+#SBATCH --mem=249325M
 #SBATCH -o run_wrf_ens.batch
 #SBATCH --mail-type=ALL
 #SBATCH --mail-user=yao.zhu.91@gmail.com
@@ -118,7 +119,9 @@ for NE in $(seq 1 "$NUM_ENS"); do
   rm "$id"/rsl.*
   echo SUCCESS > "$id"/rsl.error.0000
   #outfile=$id/wrfinput_d01_`wrf_time_string $NEXTDATE`
-  outfile=$id/wrfout_d01_$(wrf_time_string "$NEXTDATE")
+  
+  outfile=$id/wrfout_d01_$(wrf_time_string "$NEXTDATE") ## !!!!
+  
   #outfile=$id/wrfrst_d01_`wrf_time_string $NEXTDATE`
   watch_file "$outfile" 5 "$rundir"
   if $RECENTER && [[ $NE -eq $NUM_ENS ]]; then

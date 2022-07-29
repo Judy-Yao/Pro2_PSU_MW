@@ -220,7 +220,8 @@ cat > run_enkf.sh << EOF
 #SBATCH -A pen116
 #SBATCH -t 0:30:00
 #SBATCH -o enkf.batch
-
+#SBATCH --mail-type=ALL
+#SBATCH --mail-user=yao.zhu.91@gmail.com
 date
 for n in \`seq 1 $MAX_DOM\`; do
   dm=d\`expr \$n + 100 |cut -c2-\`

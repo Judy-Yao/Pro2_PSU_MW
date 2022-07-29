@@ -16,9 +16,9 @@
 # ==== Experiment Design ====
  EXP_NAME=MW_THO
  DATE_START=201708220000
- DATE_END=201708221400 #201708270000
+ DATE_END=201708270000 #201708270000
  DATE_CYCLE_START=201708221200
- DATE_CYCLE_END=201708221300 #201708251200
+ DATE_CYCLE_END=201708221700 #201708251200
  STORM_ID=HARVEY
 
 # ==== Directories ===
@@ -30,11 +30,13 @@
  WPS_DIR=${CODE_DIR}/WPS_install/WPS_VF   #$CODE_DIR/WPS 
  WRF_DIR_FCST=${CODE_DIR}/WRF_install/WRFV3/WRF_VF #$CODE_DIR/WRFV3
  WRF_PRESET_DIR=${CODE_DIR}/WRF_install/WRFV3/WRF_PM #$CODE_DIR/WRF_preset
- WRF_DIR=${WRF_DIR_FCST}
+ # !!!!!!!!!!!!! Attention !!!!!!!!!!!!!!!!!!
+ WRF_DIR=${WRF_PRESET_DIR}  # Spin up/DA cycle: WRF preset moves; Deterministic Forecast: WRF vortex following
+ # !!!!!!!!!!!!! Attention !!!!!!!!!!!!!!!!!!
  WRFDA_DIR=${CODE_DIR}/WRFDA_install/WRFDA #$CODE_DIR/WRFDA
  CRTM_DIR=${SCRIPT_DIR}
  CRTM_COEFF_DIR=${CODE_DIR}/PSU-EnKF_w_satellites/fortran_src/crtm_v2.3.0/coefficients  #/scratch/02191/yuz31/coefficients_l
- ENKF_DIR=${CODE_DIR}/PSU-EnKF_w_satellites/fortran_src/EnSRF/src #/work2/02191/yuz31/stampede2/code/PSU-EnKF_w_satellites/fortran_src/EnSRF/src ##ENKF_DIR=$CODE_DIR/EnKF_crtm_rob/code/EnKF/src
+ ENKF_DIR=${CODE_DIR}/PSU-EnKF_w_satellites/fortran_src/EnSRF/src ##ENKF_DIR=$CODE_DIR/EnKF_crtm_rob/code/EnKF/src
  # Input Data
  FG_DIR_GFS=${DATA_DIR}/GFS
  TCVITALS_DIR=${DATA_DIR}/TCvitals
@@ -51,7 +53,9 @@
  E_VERT=(43 43 43)
  DX=(27000 9000 3000)
  DY=(27000 9000 3000)
- TIME_STEP=90    # Rob used a time step of 60 
+ # !!!!!!!!!!!!! Attention !!!!!!!!!!!!!!!!!!
+ TIME_STEP=60    # Rob used a time step of 60; Jerry used a time step of 90; Judy spins up with 60 and run other part with 90s
+ # !!!!!!!!!!!!! Attention !!!!!!!!!!!!!!!!!!
  PARENT_ID=(0 1 2)
  GRID_RATIO=(1 3 3)
  TIME_STEP_RATIO=(1 3 3)

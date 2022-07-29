@@ -1,7 +1,7 @@
 #!/bin/bash --login
 #####header for Expanse######
 #SBATCH -A pen116
-#SBATCH -J run_MW
+#SBATCH -J run_IRonly
 #SBATCH --nodes=2
 #SBATCH -n 192
 #SBATCH -p compute
@@ -16,12 +16,8 @@
 source /home/zuy121/.bashrc
 module restore intel  # intel compiler used to run PSU WRF-EnKF system
 
-#!!!!!!!!!!!!!!!!!! Attention !!!!!!!!!!!!!!!!!!!!!!!!!!!!
-
 #load configuration files, functions, parameters
-export CONFIG_FILE=/expanse/lustre/projects/pen116/zuy121/Pro2_PSU_MW/SourceCode/WRF_EnKF/Run_shell/config_IR_MW
-#!!!!!!!!!!!!!!!!!! Attention !!!!!!!!!!!!!!!!!!!!!!!!!!!!
-
+export CONFIG_FILE=/expanse/lustre/projects/pen116/zuy121/Pro2_PSU_MW/SourceCode/WRF_EnKF/Run_shell/config_IR
 source "$CONFIG_FILE"
 source "$SCRIPT_DIR"/util.sh
 
@@ -42,6 +38,7 @@ fi
 
 #################################
 #date
+
 
 export DATE=$DATE_START
 export PREVDATE=$DATE_START
@@ -90,6 +87,7 @@ while [[ $NEXTDATE -le $DATE_CYCLE_END ]]; do
     #export LBDATE=$DATE_START
   fi
 
+  echo $(pwd)
   # ------------------
   # FCSTDATE
   # ------------------
