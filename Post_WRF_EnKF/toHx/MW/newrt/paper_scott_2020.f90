@@ -47,7 +47,7 @@ program test
   
   
   
-  call model_state_read_wrf(state, filename_in, 1, error_status, buffer=20)
+  call model_state_read_wrf(state, filename_in, 1, error_status, buffer=25)
   filename_obs = nml_s_filename_obs
   
   call get_microwave(filename_obs, state, obs_mw, error_status)

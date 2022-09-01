@@ -1,0 +1,28 @@
+&rt_settings
+  nml_s_rt_program = 'crtm'
+  nml_l_include_land = T,
+  nml_s_sensor_id='abi_g16',
+  nml_a_channels(:,1) = 10,
+  nml_a_channels(:,2) = 4,5
+!  nml_s_reff_method='default',
+  nml_s_reff_method='mp_physics',
+!  nml_i_x_calc_beg = 140,
+!  nml_i_x_calc_end = 160,
+!  nml_i_y_calc_beg = 140,
+!  nml_i_y_calc_end = 160,
+  nml_i_nicpu = 64,
+  nml_i_njcpu = 16,
+  nml_s_crtm_rainLUT='Thompson08_RainLUT_-109z-1.bin',
+  nml_s_crtm_snowLUT='Thompson08_SnowLUT_-109z-1.bin',
+  nml_s_crtm_graupelLUT='Thompson08_GraupelLUT_-109z-1.bin',
+!  nml_s_crtm_graupelLUT='Thompson08_GraupelLUT_-109z-1_nolowfreq.bin',
+/
+
+$rt_input
+  nml_s_filename_input = 'wrfinput_d01_15'
+/
+
+$rt_output
+  nml_s_filename_output = 'wrfinput_d01_15.tb'
+  nml_l_output_reff = F,
+/

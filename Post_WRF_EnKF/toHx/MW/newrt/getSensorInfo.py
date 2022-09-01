@@ -1,5 +1,7 @@
 #!/usr/bin/env python3
 
+import sys
+
 def main(MW_File):
     # Read the content inside the microwave obs to a list
     with open(MW_File) as f:
@@ -37,16 +39,31 @@ def main(MW_File):
                 Ch_perSS[sensor_uni.index(iss)].append(sensor_Ch[sensor_Ch.index(ir)][1])
             else:
                 continue
-            
+
     # Build a dictionary: sensor = channel1, channel2, ...
     dict_sensor = {}
     for iss in sensor_uni:
         dict_sensor[sensor_uni[sensor_uni.index(iss)]] = Ch_perSS[sensor_uni.index(iss)]
 
-    return dict_sensor
+    # Convert dictionary to list in order to easily pass values to bash variables
+    List_SS_Ch = [ [] for _ in range(len(sensor_uni))]
+
+    for iss in sensor_uni:
+        List_SS_Ch[sensor_uni.index(iss)].append(iss)
+        for ich in Ch_perSS[sensor_uni.index(iss)]:
+            List_SS_Ch[sensor_uni.index(iss)].append(ich)
+        
+
+    return List_SS_Ch
+
 
 if __name__ == '__main__':
-    MW_File = '/work2/06191/tg854905/stampede2/Pro2_PSU_MW/HARVEY/Obs_y/MW/microwave_d03_201708221200_so';
-    dict_sensor = main(MW_File)
-    print(len(dict_sensor))
-    print(dict_sensor)
+    Storm = sys.argv[1]
+    Exper_name = sys.argv[2]
+    MW_time = sys.argv[3]
+    MW_File = '/work2/06191/tg854905/stampede2/Pro2_PSU_MW/'+Storm+'/Obs_y/MW/microwave_d03_'+MW_time+'_so';
+    List_SS_Ch = main(MW_File)
+    with open('/scratch/06191/tg854905/Pro2_PSU_MW/'+Storm+'/'+Exper_name+'/fc/'+MW_time+'/'+MW_time+'_sensorCh','w') as f:
+        for isCh in List_SS_Ch:
+            f.write(" ".join(isCh))
+            f.write('\n')

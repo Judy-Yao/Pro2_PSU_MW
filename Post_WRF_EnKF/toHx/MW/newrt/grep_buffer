@@ -1,0 +1,110 @@
+Binary file ./.paper_scott_2020.f90.swp matches
+./rt_newxb.f90:    call model_state_read_wrf(state, filename_wrf, 1, error_status, buffer=15)
+./out_mw: buffer size not large enough for slant calculation (4)
+./out_mw: buffer size not large enough for slant calculation (4)
+./out_mw: buffer size not large enough for slant calculation (4)
+./out_mw: buffer size not large enough for slant calculation (4)
+./out_mw: buffer size not large enough for slant calculation (4)
+./out_mw: buffer size not large enough for slant calculation (4)
+./out_mw: buffer size not large enough for slant calculation (4)
+./out_mw: buffer size not large enough for slant calculation (4)
+./out_mw: buffer size not large enough for slant calculation (4)
+./out_mw: buffer size not large enough for slant calculation (4)
+./out_mw: buffer size not large enough for slant calculation (4)
+./out_mw: buffer size not large enough for slant calculation (4)
+./out_mw: buffer size not large enough for slant calculation (4)
+./out_mw: buffer size not large enough for slant calculation (4)
+./out_mw: buffer size not large enough for slant calculation (4)
+./out_mw: buffer size not large enough for slant calculation (4)
+./out_mw: buffer size not large enough for slant calculation (4)
+./out_mw: buffer size not large enough for slant calculation (4)
+./out_mw: buffer size not large enough for slant calculation (4)
+./out_mw: buffer size not large enough for slant calculation (4)
+./out_mw: buffer size not large enough for slant calculation (4)
+./out_mw: buffer size not large enough for slant calculation (4)
+./out_mw: buffer size not large enough for slant calculation (4)
+./out_mw: buffer size not large enough for slant calculation (4)
+./out_mw: buffer size not large enough for slant calculation (4)
+./out_mw: buffer size not large enough for slant calculation (4)
+./out_mw: buffer size not large enough for slant calculation (4)
+./out_mw: buffer size not large enough for slant calculation (4)
+./out_mw: buffer size not large enough for slant calculation (4)
+./out_mw: buffer size not large enough for slant calculation (4)
+./out_mw: buffer size not large enough for slant calculation (4)
+./out_mw: buffer size not large enough for slant calculation (4)
+./out_mw: buffer size not large enough for slant calculation (4)
+./out_mw: buffer size not large enough for slant calculation (4)
+./out_mw: buffer size not large enough for slant calculation (4)
+./out_mw: buffer size not large enough for slant calculation (4)
+./out_mw: buffer size not large enough for slant calculation (4)
+./out_mw: buffer size not large enough for slant calculation (4)
+./out_mw: buffer size not large enough for slant calculation (4)
+./out_mw: buffer size not large enough for slant calculation (4)
+./out_mw: buffer size not large enough for slant calculation (4)
+./out_mw: buffer size not large enough for slant calculation (4)
+./out_mw: buffer size not large enough for slant calculation (4)
+./out_mw: buffer size not large enough for slant calculation (4)
+./out_mw: buffer size not large enough for slant calculation (4)
+./out_mw: buffer size not large enough for slant calculation (4)
+./out_mw: buffer size not large enough for slant calculation (4)
+./out_mw: buffer size not large enough for slant calculation (4)
+./out_mw: buffer size not large enough for slant calculation (4)
+./out_mw: buffer size not large enough for slant calculation (4)
+./out_mw: buffer size not large enough for slant calculation (4)
+./out_mw: buffer size not large enough for slant calculation (4)
+./out_mw: buffer size not large enough for slant calculation (4)
+./out_mw: buffer size not large enough for slant calculation (4)
+Binary file ./rt_newxb.o matches
+Binary file ./paper_scott_2020.mpi matches
+Binary file ./rt_state_module.o matches
+./rt_zenith_module.f90:    ! allocate without buffer
+./rt_zenith_module.f90:          ! need to check if the buffer size is large enough
+./rt_zenith_module.f90:              print *, "buffer size not large enough for slant calculation (1)"
+./rt_zenith_module.f90:              print *, "buffer size not large enough for slant calculation (2)"
+./rt_zenith_module.f90:              print *, "buffer size not large enough for slant calculation (3)"
+./rt_zenith_module.f90:              print *, "buffer size not large enough for slant calculation (4)"
+./rt_zenith_module.f90:              print *, "buffer size not large enough for slant calculation (5)"
+./rt_zenith_module.f90:              print *, "buffer size not large enough for slant calculation (6)"
+./rt_zenith_module.f90:              print *, "buffer size not large enough for slant calculation (7)"
+./rt_zenith_module.f90:              print *, "buffer size not large enough for slant calculation (8)"
+Binary file ./rt_state_module.mod matches
+Binary file ./libnewrt.a matches
+Binary file ./test_fv3_restart.mpi matches
+Binary file ./rt_zenith_module.mod matches
+Binary file ./rt_obs_module.mod matches
+./rt_state_module.f90:    integer :: xbeg1 = -1 ! only this processor + buffer
+./rt_state_module.f90:    integer :: xbeg = -1  ! only this processor without buffer
+./rt_state_module.f90:  subroutine model_state_alloc(state, xbeg0, xend0, ybeg0, yend0, xbeg, xend, ybeg, yend, nz, error_status, buffer_in)
+./rt_state_module.f90:    integer, intent(in), optional :: buffer_in
+./rt_state_module.f90:    integer :: buffer
+./rt_state_module.f90:    if (present(buffer_in)) then
+./rt_state_module.f90:      buffer = buffer_in
+./rt_state_module.f90:      buffer = 0
+./rt_state_module.f90:    state%xbeg1 = xbeg - buffer
+./rt_state_module.f90:    state%xend1 = xend + buffer
+./rt_state_module.f90:    state%ybeg1 = ybeg - buffer
+./rt_state_module.f90:    state%yend1 = yend + buffer
+./rt_state_module.f90:  subroutine model_state_read_wrf(state, filename_wrf, time_idx, error_status, buffer)
+./rt_state_module.f90:    integer, intent(in), optional :: buffer
+./rt_state_module.f90:    if (present(buffer)) then
+./rt_state_module.f90:      call model_state_alloc( state, xbeg0, xend0, ybeg0, yend0, xbeg, xend, ybeg, yend, zmax, error_status, buffer)
+./rt_state_module.f90:                                         time_idx, error_status, buffer)
+./rt_state_module.f90:    integer, intent(in), optional :: buffer
+./rt_state_module.f90:    if (present(buffer)) then
+./rt_state_module.f90:      call model_state_alloc( state, xbeg0, xend0, ybeg0, yend0, xbeg, xend, ybeg, yend, zmax, error_status, buffer)
+./rt_state_module.f90:  subroutine model_state_read_hrrr(state, filename_hrrr, time_idx, modeltype, error_status, buffer)
+./rt_state_module.f90:    integer, intent(in), optional :: buffer
+./rt_state_module.f90:    if (present(buffer)) then
+./rt_state_module.f90:      call model_state_alloc( state, xbeg0, xend0, ybeg0, yend0, xbeg, xend, ybeg, yend, zmax, error_status, buffer)
+./test_wrf.f90:  call model_state_read_wrf(state, filename_in, 1, error_status, buffer=15)
+Binary file ./test.exe matches
+Binary file ./rt_newxb.mod matches
+Binary file ./rt_zenith_module.o matches
+Binary file ./rt_crtm_module.o matches
+./paper_mw_scatt.f90:  call model_state_read_hrrr(state, filename_in, 1, 'rap', error_status, buffer=0)
+./test.f90:  call model_state_read_hrrr(state, filename_in, 1, 'rap', error_status, buffer=0)
+./test.f90:  !call model_state_read_wrf(state, filename_in, 1, error_status, buffer=15)
+./paper_scott_2020.f90:  call model_state_read_wrf(state, filename_in, 1, error_status, buffer=20)
+Binary file ./rt_result_module.mod matches
+Binary file ./paper_mw_scatt.mpi matches
+Binary file ./rt_result_module.o matches
