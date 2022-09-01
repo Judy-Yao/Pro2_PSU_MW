@@ -1,0 +1,319 @@
+nohup: ignoring input
+[H[2J[3J
+  % Total    % Received % Xferd  Average Speed   Time    Time     Time  Current
+                                 Dload  Upload   Total   Spent    Left  Speed
+  0     0    0     0    0     0      0      0 --:--:-- --:--:-- --:--:--     0100    14  100    14    0     0    248      0 --:--:-- --:--:-- --:--:--   250
+   IP ADDR: 198.202.100.14
+   USER: zuy121
+   DATE: Thu Sep  1 07:32:13 PDT 2022
+   UPTIME: up 2 days, 17 hours, 24 minutes
+   HOSTNAME: login02.expanse.sdsc.edu
+   KERNEL: Linux 4.18.0-348.23.1.el8_5.x86_64 x86_64
+   MEMORY: 12Gi/125Gi
+
+Agent pid 983655
+Identity added: Pro2_PSU_MW_source.id_ed25519 (yao.zhu.91@gmail.com)
+Restoring modules from user's intel
+(standard_in) 2: syntax error
+----------------------------------------------------------------------
+CURRENT CYCLE: 2017-09-02_18:00:00 => 2017-09-03_06:00:00
+cat: run/201709021800/config_IR.IRMA/stat: Not a directory
+./run_IRonly.sh: line 111: run/201709021800/config_IR.IRMA/stat: Not a directory
+[H[2J[3J
+  % Total    % Received % Xferd  Average Speed   Time    Time     Time  Current
+                                 Dload  Upload   Total   Spent    Left  Speed
+  0     0    0     0    0     0      0      0 --:--:-- --:--:-- --:--:--     0100    14  100    14    0     0    244      0 --:--:-- --:--:-- --:--:--   245
+   IP ADDR: 198.202.100.14
+   USER: zuy121
+   DATE: Thu Sep  1 07:32:15 PDT 2022
+   UPTIME: up 2 days, 17 hours, 24 minutes
+   HOSTNAME: login02.expanse.sdsc.edu
+   KERNEL: Linux 4.18.0-348.23.1.el8_5.x86_64 x86_64
+   MEMORY: 12Gi/125Gi
+
+Agent pid 984615
+Identity added: Pro2_PSU_MW_source.id_ed25519 (yao.zhu.91@gmail.com)
+[H[2J[3J
+  % Total    % Received % Xferd  Average Speed   Time    Time     Time  Current
+                                 Dload  Upload   Total   Spent    Left  Speed
+  0     0    0     0    0     0      0      0 --:--:-- --:--:-- --:--:--     0100    14  100    14    0     0    252      0 --:--:-- --:--:-- --:--:--   254
+   IP ADDR: 198.202.100.14
+   USER: zuy121
+   DATE: Thu Sep  1 07:32:17 PDT 2022
+   UPTIME: up 2 days, 17 hours, 24 minutes
+   HOSTNAME: login02.expanse.sdsc.edu
+   KERNEL: Linux 4.18.0-348.23.1.el8_5.x86_64 x86_64
+   MEMORY: 12Gi/125Gi
+
+Agent pid 985114
+Identity added: Pro2_PSU_MW_source.id_ed25519 (yao.zhu.91@gmail.com)
+[H[2J[3J
+  % Total    % Received % Xferd  Average Speed   Time    Time     Time  Current
+                                 Dload  Upload   Total   Spent    Left  Speed
+  0     0    0     0    0     0      0      0 --:--:-- --:--:-- --:--:--     0100    14  100    14    0     0    246      0 --:--:-- --:--:-- --:--:--   250
+   IP ADDR: 198.202.100.14
+   USER: zuy121
+   DATE: Thu Sep  1 07:32:18 PDT 2022
+   UPTIME: up 2 days, 17 hours, 24 minutes
+   HOSTNAME: login02.expanse.sdsc.edu
+   KERNEL: Linux 4.18.0-348.23.1.el8_5.x86_64 x86_64
+   MEMORY: 12Gi/125Gi
+
+Agent pid 985349
+Identity added: Pro2_PSU_MW_source.id_ed25519 (yao.zhu.91@gmail.com)
+Thu Sep  1 07:32:18 PDT 2022
+cat: run/201709021800/run/201709021800/config_IR.IRMA/stat: No such file or directory
+cat: run/201709021800/run/201709021800/icbc/stat: No such file or directory
+cat: run/201709021800/run/201709021800/perturb_ic/stat: No such file or directory
+cat: run/201709021800/run/201709021800/update_bc/stat: No such file or directory
+cat: run/201709021800/run/201709021800/wrf_ens/stat: No such file or directory
+(standard_in) 2: syntax error
+----------------------------------------------------------------------
+CURRENT CYCLE: 2017-09-03_06:00:00 => 2017-09-03_07:00:00
+cat: run/201709030600/config_IR.IRMA/stat: Not a directory
+./run_IRonly.sh: line 111: run/201709030600/config_IR.IRMA/stat: Not a directory
+[H[2J[3J
+  % Total    % Received % Xferd  Average Speed   Time    Time     Time  Current
+                                 Dload  Upload   Total   Spent    Left  Speed
+  0     0    0     0    0     0      0      0 --:--:-- --:--:-- --:--:--     0100    14  100    14    0     0    241      0 --:--:-- --:--:-- --:--:--   245
+   IP ADDR: 198.202.100.14
+   USER: zuy121
+   DATE: Thu Sep  1 07:32:19 PDT 2022
+   UPTIME: up 2 days, 17 hours, 24 minutes
+   HOSTNAME: login02.expanse.sdsc.edu
+   KERNEL: Linux 4.18.0-348.23.1.el8_5.x86_64 x86_64
+   MEMORY: 12Gi/125Gi
+
+Agent pid 985881
+Identity added: Pro2_PSU_MW_source.id_ed25519 (yao.zhu.91@gmail.com)
+[H[2J[3J
+  % Total    % Received % Xferd  Average Speed   Time    Time     Time  Current
+                                 Dload  Upload   Total   Spent    Left  Speed
+  0     0    0     0    0     0      0      0 --:--:-- --:--:-- --:--:--     0100    14  100    14    0     0    246      0 --:--:-- --:--:-- --:--:--   250
+   IP ADDR: 198.202.100.14
+   USER: zuy121
+   DATE: Thu Sep  1 07:32:21 PDT 2022
+   UPTIME: up 2 days, 17 hours, 24 minutes
+   HOSTNAME: login02.expanse.sdsc.edu
+   KERNEL: Linux 4.18.0-348.23.1.el8_5.x86_64 x86_64
+   MEMORY: 12Gi/125Gi
+
+Agent pid 986117
+Identity added: Pro2_PSU_MW_source.id_ed25519 (yao.zhu.91@gmail.com)
+[H[2J[3J
+  % Total    % Received % Xferd  Average Speed   Time    Time     Time  Current
+                                 Dload  Upload   Total   Spent    Left  Speed
+  0     0    0     0    0     0      0      0 --:--:-- --:--:-- --:--:--     0100    14  100    14    0     0    230      0 --:--:-- --:--:-- --:--:--   233
+   IP ADDR: 198.202.100.14
+   USER: zuy121
+   DATE: Thu Sep  1 07:32:22 PDT 2022
+   UPTIME: up 2 days, 17 hours, 24 minutes
+   HOSTNAME: login02.expanse.sdsc.edu
+   KERNEL: Linux 4.18.0-348.23.1.el8_5.x86_64 x86_64
+   MEMORY: 12Gi/125Gi
+
+Agent pid 986351
+Identity added: Pro2_PSU_MW_source.id_ed25519 (yao.zhu.91@gmail.com)
+[H[2J[3J
+  % Total    % Received % Xferd  Average Speed   Time    Time     Time  Current
+                                 Dload  Upload   Total   Spent    Left  Speed
+  0     0    0     0    0     0      0      0 --:--:-- --:--:-- --:--:--     0100    14  100    14    0     0    245      0 --:--:-- --:--:-- --:--:--   250
+   IP ADDR: 198.202.100.14
+   USER: zuy121
+   DATE: Thu Sep  1 07:32:23 PDT 2022
+   UPTIME: up 2 days, 17 hours, 24 minutes
+   HOSTNAME: login02.expanse.sdsc.edu
+   KERNEL: Linux 4.18.0-348.23.1.el8_5.x86_64 x86_64
+   MEMORY: 12Gi/125Gi
+
+Agent pid 986864
+Identity added: Pro2_PSU_MW_source.id_ed25519 (yao.zhu.91@gmail.com)
+[H[2J[3J
+  % Total    % Received % Xferd  Average Speed   Time    Time     Time  Current
+                                 Dload  Upload   Total   Spent    Left  Speed
+  0     0    0     0    0     0      0      0 --:--:-- --:--:-- --:--:--     0100    14  100    14    0     0    241      0 --:--:-- --:--:-- --:--:--   245
+   IP ADDR: 198.202.100.14
+   USER: zuy121
+   DATE: Thu Sep  1 07:32:24 PDT 2022
+   UPTIME: up 2 days, 17 hours, 24 minutes
+   HOSTNAME: login02.expanse.sdsc.edu
+   KERNEL: Linux 4.18.0-348.23.1.el8_5.x86_64 x86_64
+   MEMORY: 12Gi/125Gi
+
+Agent pid 987111
+Identity added: Pro2_PSU_MW_source.id_ed25519 (yao.zhu.91@gmail.com)
+Thu Sep  1 07:32:24 PDT 2022
+cat: run/201709030600/run/201709030600/config_IR.IRMA/stat: No such file or directory
+cat: run/201709030600/run/201709030600/enkf/stat: No such file or directory
+cat: run/201709030600/run/201709030600/icbc/stat: No such file or directory
+cat: run/201709030600/run/201709030600/obsproc/stat: No such file or directory
+cat: run/201709030600/run/201709030600/perturb_ic/stat: No such file or directory
+cat: run/201709030600/run/201709030600/update_bc/stat: No such file or directory
+cat: run/201709030600/run/201709030600/wrf_ens/stat: No such file or directory
+(standard_in) 2: syntax error
+----------------------------------------------------------------------
+CURRENT CYCLE: 2017-09-03_07:00:00 => 2017-09-03_08:00:00
+[H[2J[3J
+  % Total    % Received % Xferd  Average Speed   Time    Time     Time  Current
+                                 Dload  Upload   Total   Spent    Left  Speed
+  0     0    0     0    0     0      0      0 --:--:-- --:--:-- --:--:--     0100    14  100    14    0     0    247      0 --:--:-- --:--:-- --:--:--   250
+   IP ADDR: 198.202.100.14
+   USER: zuy121
+   DATE: Thu Sep  1 07:32:25 PDT 2022
+   UPTIME: up 2 days, 17 hours, 24 minutes
+   HOSTNAME: login02.expanse.sdsc.edu
+   KERNEL: Linux 4.18.0-348.23.1.el8_5.x86_64 x86_64
+   MEMORY: 12Gi/125Gi
+
+Agent pid 987641
+Identity added: Pro2_PSU_MW_source.id_ed25519 (yao.zhu.91@gmail.com)
+[H[2J[3J
+  % Total    % Received % Xferd  Average Speed   Time    Time     Time  Current
+                                 Dload  Upload   Total   Spent    Left  Speed
+  0     0    0     0    0     0      0      0 --:--:-- --:--:-- --:--:--     0100    14  100    14    0     0    251      0 --:--:-- --:--:-- --:--:--   254
+   IP ADDR: 198.202.100.14
+   USER: zuy121
+   DATE: Thu Sep  1 07:32:26 PDT 2022
+   UPTIME: up 2 days, 17 hours, 24 minutes
+   HOSTNAME: login02.expanse.sdsc.edu
+   KERNEL: Linux 4.18.0-348.23.1.el8_5.x86_64 x86_64
+   MEMORY: 12Gi/125Gi
+
+Agent pid 987873
+Identity added: Pro2_PSU_MW_source.id_ed25519 (yao.zhu.91@gmail.com)
+[H[2J[3J
+  % Total    % Received % Xferd  Average Speed   Time    Time     Time  Current
+                                 Dload  Upload   Total   Spent    Left  Speed
+  0     0    0     0    0     0      0      0 --:--:-- --:--:-- --:--:--     0100    14  100    14    0     0    230      0 --:--:-- --:--:-- --:--:--   233
+   IP ADDR: 198.202.100.14
+   USER: zuy121
+   DATE: Thu Sep  1 07:32:27 PDT 2022
+   UPTIME: up 2 days, 17 hours, 24 minutes
+   HOSTNAME: login02.expanse.sdsc.edu
+   KERNEL: Linux 4.18.0-348.23.1.el8_5.x86_64 x86_64
+   MEMORY: 12Gi/125Gi
+
+Agent pid 988104
+Identity added: Pro2_PSU_MW_source.id_ed25519 (yao.zhu.91@gmail.com)
+[H[2J[3J
+  % Total    % Received % Xferd  Average Speed   Time    Time     Time  Current
+                                 Dload  Upload   Total   Spent    Left  Speed
+  0     0    0     0    0     0      0      0 --:--:-- --:--:-- --:--:--     0100    14  100    14    0     0    249      0 --:--:-- --:--:-- --:--:--   250
+   IP ADDR: 198.202.100.14
+   USER: zuy121
+   DATE: Thu Sep  1 07:32:28 PDT 2022
+   UPTIME: up 2 days, 17 hours, 24 minutes
+   HOSTNAME: login02.expanse.sdsc.edu
+   KERNEL: Linux 4.18.0-348.23.1.el8_5.x86_64 x86_64
+   MEMORY: 12Gi/125Gi
+
+Agent pid 988603
+Identity added: Pro2_PSU_MW_source.id_ed25519 (yao.zhu.91@gmail.com)
+[H[2J[3J
+  % Total    % Received % Xferd  Average Speed   Time    Time     Time  Current
+                                 Dload  Upload   Total   Spent    Left  Speed
+  0     0    0     0    0     0      0      0 --:--:-- --:--:-- --:--:--     0100    14  100    14    0     0    249      0 --:--:-- --:--:-- --:--:--   250
+   IP ADDR: 198.202.100.14
+   USER: zuy121
+   DATE: Thu Sep  1 07:32:30 PDT 2022
+   UPTIME: up 2 days, 17 hours, 24 minutes
+   HOSTNAME: login02.expanse.sdsc.edu
+   KERNEL: Linux 4.18.0-348.23.1.el8_5.x86_64 x86_64
+   MEMORY: 12Gi/125Gi
+
+Agent pid 989001
+Identity added: Pro2_PSU_MW_source.id_ed25519 (yao.zhu.91@gmail.com)
+  Running WRF ensemble...
+Thu Sep  1 08:30:47 PDT 2022
+cat: run/201709030700/run/201709030700/enkf/stat: No such file or directory
+cat: run/201709030700/run/201709030700/icbc/stat: No such file or directory
+cat: run/201709030700/run/201709030700/obsproc/stat: No such file or directory
+cat: run/201709030700/run/201709030700/update_bc/stat: No such file or directory
+cat: run/201709030700/run/201709030700/wrf_ens/stat: No such file or directory
+(standard_in) 2: syntax error
+----------------------------------------------------------------------
+CURRENT CYCLE: 2017-09-03_08:00:00 => 2017-09-03_09:00:00
+cat: 'run/201709030800/*/stat': No such file or directory
+./run_IRonly.sh: line 111: run/201709030800/*/stat: No such file or directory
+[H[2J[3J
+  % Total    % Received % Xferd  Average Speed   Time    Time     Time  Current
+                                 Dload  Upload   Total   Spent    Left  Speed
+  0     0    0     0    0     0      0      0 --:--:-- --:--:-- --:--:--     0100    14  100    14    0     0    138      0 --:--:-- --:--:-- --:--:--   138
+   IP ADDR: 198.202.100.14
+   USER: zuy121
+   DATE: Thu Sep  1 08:30:49 PDT 2022
+   UPTIME: up 2 days, 18 hours, 22 minutes
+   HOSTNAME: login02.expanse.sdsc.edu
+   KERNEL: Linux 4.18.0-348.23.1.el8_5.x86_64 x86_64
+   MEMORY: 17Gi/125Gi
+
+Agent pid 1247878
+Identity added: Pro2_PSU_MW_source.id_ed25519 (yao.zhu.91@gmail.com)
+  Calculating preset nesting...
+[H[2J[3J
+  % Total    % Received % Xferd  Average Speed   Time    Time     Time  Current
+                                 Dload  Upload   Total   Spent    Left  Speed
+  0     0    0     0    0     0      0      0 --:--:-- --:--:-- --:--:--     0100    14  100    14    0     0    246      0 --:--:-- --:--:-- --:--:--   250
+   IP ADDR: 198.202.100.14
+   USER: zuy121
+   DATE: Thu Sep  1 08:31:02 PDT 2022
+   UPTIME: up 2 days, 18 hours, 23 minutes
+   HOSTNAME: login02.expanse.sdsc.edu
+   KERNEL: Linux 4.18.0-348.23.1.el8_5.x86_64 x86_64
+   MEMORY: 16Gi/125Gi
+
+Agent pid 1248726
+Identity added: Pro2_PSU_MW_source.id_ed25519 (yao.zhu.91@gmail.com)
+  Running ObsProc...
+[H[2J[3J
+  % Total    % Received % Xferd  Average Speed   Time    Time     Time  Current
+                                 Dload  Upload   Total   Spent    Left  Speed
+  0     0    0     0    0     0      0      0 --:--:-- --:--:-- --:--:--     0100    14  100    14    0     0    247      0 --:--:-- --:--:-- --:--:--   250
+   IP ADDR: 198.202.100.14
+   USER: zuy121
+   DATE: Thu Sep  1 08:32:26 PDT 2022
+   UPTIME: up 2 days, 18 hours, 24 minutes
+   HOSTNAME: login02.expanse.sdsc.edu
+   KERNEL: Linux 4.18.0-348.23.1.el8_5.x86_64 x86_64
+   MEMORY: 17Gi/125Gi
+
+Agent pid 1253063
+Identity added: Pro2_PSU_MW_source.id_ed25519 (yao.zhu.91@gmail.com)
+  Running EnKF...
+    Linking files for domain d01
+/expanse/lustre/scratch/zuy121/temp_project/Pro2_PSU_MW/IRMA/newWRF_IR_only/run/201709030800/enkf/d01/crtm_out_
+    Linking files for domain d02
+/expanse/lustre/scratch/zuy121/temp_project/Pro2_PSU_MW/IRMA/newWRF_IR_only/run/201709030800/enkf/d02/crtm_out_
+    Linking files for domain d03
+/expanse/lustre/scratch/zuy121/temp_project/Pro2_PSU_MW/IRMA/newWRF_IR_only/run/201709030800/enkf/d03/crtm_out_
+    Running enkf.mpi
+[H[2J[3J
+  % Total    % Received % Xferd  Average Speed   Time    Time     Time  Current
+                                 Dload  Upload   Total   Spent    Left  Speed
+  0     0    0     0    0     0      0      0 --:--:-- --:--:-- --:--:--     0100    14  100    14    0     0    119      0 --:--:-- --:--:-- --:--:--   119
+   IP ADDR: 198.202.100.14
+   USER: zuy121
+   DATE: Thu Sep  1 08:44:22 PDT 2022
+   UPTIME: up 2 days, 18 hours, 36 minutes
+   HOSTNAME: login02.expanse.sdsc.edu
+   KERNEL: Linux 4.18.0-348.23.1.el8_5.x86_64 x86_64
+   MEMORY: 19Gi/125Gi
+
+Agent pid 1297449
+Identity added: Pro2_PSU_MW_source.id_ed25519 (yao.zhu.91@gmail.com)
+  Running UpdateBC...
+[H[2J[3J
+  % Total    % Received % Xferd  Average Speed   Time    Time     Time  Current
+                                 Dload  Upload   Total   Spent    Left  Speed
+  0     0    0     0    0     0      0      0 --:--:-- --:--:-- --:--:--     0100    14  100    14    0     0    236      0 --:--:-- --:--:-- --:--:--   237
+   IP ADDR: 198.202.100.14
+   USER: zuy121
+   DATE: Thu Sep  1 08:46:23 PDT 2022
+   UPTIME: up 2 days, 18 hours, 38 minutes
+   HOSTNAME: login02.expanse.sdsc.edu
+   KERNEL: Linux 4.18.0-348.23.1.el8_5.x86_64 x86_64
+   MEMORY: 20Gi/125Gi
+
+Agent pid 1309682
+Identity added: Pro2_PSU_MW_source.id_ed25519 (yao.zhu.91@gmail.com)
+  Running WRF ensemble...

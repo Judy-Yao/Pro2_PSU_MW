@@ -1,0 +1,136 @@
+Binary file ./.module_wrf_ens.sh.swp matches
+./newWRF_IR_MW.log6:mv: cannot stat '055/wrfbdy_d01_update': No such file or directory
+./newWRF_IR_MW.log6:mv: cannot stat '056/wrfbdy_d01_update': No such file or directory
+./newWRF_IR_MW.log6:mv: cannot stat '057/wrfbdy_d01_update': No such file or directory
+./newWRF_IR_MW.log6:mv: cannot stat '058/wrfbdy_d01_update': No such file or directory
+./newWRF_IR_MW.log6:mv: cannot stat '059/wrfbdy_d01_update': No such file or directory
+./newWRF_IR_MW.log6:mv: cannot stat '060/wrfbdy_d01_update': No such file or directory
+./grep_rc:module_icbc_GEFS.sh:    cp wrfbdy_d01 $WORK_DIR/rc/$DATE/wrfbdy_d01_${id}
+./module_icbc_GEFS.sh:    cp wrfbdy_d01 $WORK_DIR/rc/$DATE/wrfbdy_d01_${id}
+./module_icbc_GEFS.sh:                cp wrfbdy_d01 $WORK_DIR/fc/$DATE/wrfbdy_d01_${id}
+./module_icbc_GEFS.sh:            cp $WORK_DIR/fc/wrfbdy_d01 $WORK_DIR/fc/wrfbdy_d01_window
+./newWRF_IR_MW.log5:mv: cannot stat '001/wrfbdy_d01_update': No such file or directory
+./newWRF_IR_MW.log5:mv: cannot stat '002/wrfbdy_d01_update': No such file or directory
+./newWRF_IR_MW.log5:mv: cannot stat '003/wrfbdy_d01_update': No such file or directory
+./newWRF_IR_MW.log5:mv: cannot stat '004/wrfbdy_d01_update': No such file or directory
+./newWRF_IR_MW.log5:mv: cannot stat '005/wrfbdy_d01_update': No such file or directory
+./newWRF_IR_MW.log5:mv: cannot stat '006/wrfbdy_d01_update': No such file or directory
+./newWRF_IR_MW.log5:mv: cannot stat '007/wrfbdy_d01_update': No such file or directory
+./newWRF_IR_MW.log5:mv: cannot stat '008/wrfbdy_d01_update': No such file or directory
+./newWRF_IR_MW.log5:mv: cannot stat '009/wrfbdy_d01_update': No such file or directory
+./newWRF_IR_MW.log5:mv: cannot stat '010/wrfbdy_d01_update': No such file or directory
+./newWRF_IR_MW.log5:mv: cannot stat '011/wrfbdy_d01_update': No such file or directory
+./newWRF_IR_MW.log5:mv: cannot stat '012/wrfbdy_d01_update': No such file or directory
+./newWRF_IR_MW.log5:mv: cannot stat '013/wrfbdy_d01_update': No such file or directory
+./newWRF_IR_MW.log5:mv: cannot stat '014/wrfbdy_d01_update': No such file or directory
+./newWRF_IR_MW.log5:mv: cannot stat '015/wrfbdy_d01_update': No such file or directory
+./newWRF_IR_MW.log5:mv: cannot stat '016/wrfbdy_d01_update': No such file or directory
+./newWRF_IR_MW.log5:mv: cannot stat '017/wrfbdy_d01_update': No such file or directory
+./newWRF_IR_MW.log5:mv: cannot stat '018/wrfbdy_d01_update': No such file or directory
+./newWRF_IR_MW.log5:mv: cannot stat '019/wrfbdy_d01_update': No such file or directory
+./newWRF_IR_MW.log5:mv: cannot stat '020/wrfbdy_d01_update': No such file or directory
+./newWRF_IR_MW.log5:mv: cannot stat '021/wrfbdy_d01_update': No such file or directory
+./newWRF_IR_MW.log5:mv: cannot stat '022/wrfbdy_d01_update': No such file or directory
+./newWRF_IR_MW.log5:mv: cannot stat '023/wrfbdy_d01_update': No such file or directory
+./newWRF_IR_MW.log5:mv: cannot stat '024/wrfbdy_d01_update': No such file or directory
+./newWRF_IR_MW.log5:mv: cannot stat '025/wrfbdy_d01_update': No such file or directory
+./newWRF_IR_MW.log5:mv: cannot stat '026/wrfbdy_d01_update': No such file or directory
+./newWRF_IR_MW.log5:mv: cannot stat '027/wrfbdy_d01_update': No such file or directory
+./newWRF_IR_MW.log5:mv: cannot stat '028/wrfbdy_d01_update': No such file or directory
+./newWRF_IR_MW.log5:mv: cannot stat '029/wrfbdy_d01_update': No such file or directory
+./newWRF_IR_MW.log5:mv: cannot stat '030/wrfbdy_d01_update': No such file or directory
+./newWRF_IR_MW.log5:mv: cannot stat '031/wrfbdy_d01_update': No such file or directory
+./newWRF_IR_MW.log5:mv: cannot stat '032/wrfbdy_d01_update': No such file or directory
+./newWRF_IR_MW.log5:mv: cannot stat '033/wrfbdy_d01_update': No such file or directory
+./newWRF_IR_MW.log5:mv: cannot stat '034/wrfbdy_d01_update': No such file or directory
+./newWRF_IR_MW.log5:mv: cannot stat '035/wrfbdy_d01_update': No such file or directory
+./newWRF_IR_MW.log5:mv: cannot stat '036/wrfbdy_d01_update': No such file or directory
+./newWRF_IR_MW.log5:mv: cannot stat '037/wrfbdy_d01_update': No such file or directory
+./newWRF_IR_MW.log5:mv: cannot stat '038/wrfbdy_d01_update': No such file or directory
+./newWRF_IR_MW.log5:mv: cannot stat '039/wrfbdy_d01_update': No such file or directory
+./newWRF_IR_MW.log5:mv: cannot stat '040/wrfbdy_d01_update': No such file or directory
+./newWRF_IR_MW.log5:mv: cannot stat '041/wrfbdy_d01_update': No such file or directory
+./newWRF_IR_MW.log5:mv: cannot stat '042/wrfbdy_d01_update': No such file or directory
+./newWRF_IR_MW.log5:mv: cannot stat '043/wrfbdy_d01_update': No such file or directory
+./newWRF_IR_MW.log5:mv: cannot stat '044/wrfbdy_d01_update': No such file or directory
+./newWRF_IR_MW.log5:mv: cannot stat '045/wrfbdy_d01_update': No such file or directory
+./newWRF_IR_MW.log5:mv: cannot stat '046/wrfbdy_d01_update': No such file or directory
+./newWRF_IR_MW.log5:mv: cannot stat '047/wrfbdy_d01_update': No such file or directory
+./newWRF_IR_MW.log5:mv: cannot stat '048/wrfbdy_d01_update': No such file or directory
+./newWRF_IR_MW.log5:mv: cannot stat '049/wrfbdy_d01_update': No such file or directory
+./newWRF_IR_MW.log5:mv: cannot stat '050/wrfbdy_d01_update': No such file or directory
+./newWRF_IR_MW.log5:mv: cannot stat '051/wrfbdy_d01_update': No such file or directory
+./newWRF_IR_MW.log5:mv: cannot stat '052/wrfbdy_d01_update': No such file or directory
+./newWRF_IR_MW.log5:mv: cannot stat '053/wrfbdy_d01_update': No such file or directory
+./newWRF_IR_MW.log5:mv: cannot stat '054/wrfbdy_d01_update': No such file or directory
+./newWRF_IR_MW.log5:mv: cannot stat '055/wrfbdy_d01_update': No such file or directory
+./newWRF_IR_MW.log5:mv: cannot stat '056/wrfbdy_d01_update': No such file or directory
+./newWRF_IR_MW.log5:mv: cannot stat '057/wrfbdy_d01_update': No such file or directory
+./newWRF_IR_MW.log5:mv: cannot stat '058/wrfbdy_d01_update': No such file or directory
+./newWRF_IR_MW.log5:mv: cannot stat '059/wrfbdy_d01_update': No such file or directory
+./newWRF_IR_MW.log5:mv: cannot stat '060/wrfbdy_d01_update': No such file or directory
+./module_wrf_ens.sh:    ln -fs "$WORK_DIR"/fc/"$DATE"/wrfbdy_d01_"$id" wrfbdy_d01
+./module_skipSpin.sh:  ibrun -n 1 -o $tid cp -L $SPIN_DIR/fc/$DATE_START/wrfbdy_d01_$id $WORK_DIR/fc/$DATE_START/wrfbdy_d01_$id >> cpBC.log 2>&1 &
+./module_update_bc.sh: wrf_bdy_file          = 'wrfbdy_d01_update'
+./module_update_bc.sh:    ln -fs $WORK_DIR/fc/$PREVDATE/wrfbdy_d01_$id wrfbdy_d01
+./module_update_bc.sh:  cp -L wrfbdy_d01 wrfbdy_d01_update
+./module_update_bc.sh:  mv $id/wrfbdy_d01_update $WORK_DIR/fc/$DATE/wrfbdy_d01_$id
+./module_update_bc.sh:cp -L wrfbdy_d01 wrfbdy_d01_update
+./module_update_bc.sh:mv mean/wrfbdy_d01_update $WORK_DIR/fc/$DATE/wrfbdy_d01
+./newWRF_IR_MW.log7:mv: cannot stat '001/wrfbdy_d01_update': No such file or directory
+./newWRF_IR_MW.log7:mv: cannot stat '002/wrfbdy_d01_update': No such file or directory
+./newWRF_IR_MW.log7:mv: cannot stat '003/wrfbdy_d01_update': No such file or directory
+./newWRF_IR_MW.log7:mv: cannot stat '004/wrfbdy_d01_update': No such file or directory
+./newWRF_IR_MW.log7:mv: cannot stat '005/wrfbdy_d01_update': No such file or directory
+./newWRF_IR_MW.log7:mv: cannot stat '006/wrfbdy_d01_update': No such file or directory
+./newWRF_IR_MW.log7:mv: cannot stat '007/wrfbdy_d01_update': No such file or directory
+./newWRF_IR_MW.log7:mv: cannot stat '008/wrfbdy_d01_update': No such file or directory
+./newWRF_IR_MW.log7:mv: cannot stat '009/wrfbdy_d01_update': No such file or directory
+./newWRF_IR_MW.log7:mv: cannot stat '010/wrfbdy_d01_update': No such file or directory
+./newWRF_IR_MW.log7:mv: cannot stat '011/wrfbdy_d01_update': No such file or directory
+./newWRF_IR_MW.log7:mv: cannot stat '012/wrfbdy_d01_update': No such file or directory
+./newWRF_IR_MW.log7:mv: cannot stat '013/wrfbdy_d01_update': No such file or directory
+./newWRF_IR_MW.log7:mv: cannot stat '014/wrfbdy_d01_update': No such file or directory
+./newWRF_IR_MW.log7:mv: cannot stat '015/wrfbdy_d01_update': No such file or directory
+./newWRF_IR_MW.log7:mv: cannot stat '016/wrfbdy_d01_update': No such file or directory
+./newWRF_IR_MW.log7:mv: cannot stat '017/wrfbdy_d01_update': No such file or directory
+./newWRF_IR_MW.log7:mv: cannot stat '018/wrfbdy_d01_update': No such file or directory
+./newWRF_IR_MW.log7:mv: cannot stat '019/wrfbdy_d01_update': No such file or directory
+./newWRF_IR_MW.log7:mv: cannot stat '020/wrfbdy_d01_update': No such file or directory
+./newWRF_IR_MW.log7:mv: cannot stat '021/wrfbdy_d01_update': No such file or directory
+./newWRF_IR_MW.log7:mv: cannot stat '022/wrfbdy_d01_update': No such file or directory
+./newWRF_IR_MW.log7:mv: cannot stat '023/wrfbdy_d01_update': No such file or directory
+./newWRF_IR_MW.log7:mv: cannot stat '024/wrfbdy_d01_update': No such file or directory
+./newWRF_IR_MW.log7:mv: cannot stat '025/wrfbdy_d01_update': No such file or directory
+./newWRF_IR_MW.log7:mv: cannot stat '026/wrfbdy_d01_update': No such file or directory
+./newWRF_IR_MW.log7:mv: cannot stat '027/wrfbdy_d01_update': No such file or directory
+./newWRF_IR_MW.log7:mv: cannot stat '028/wrfbdy_d01_update': No such file or directory
+./newWRF_IR_MW.log7:mv: cannot stat '029/wrfbdy_d01_update': No such file or directory
+./newWRF_IR_MW.log7:mv: cannot stat '030/wrfbdy_d01_update': No such file or directory
+./newWRF_IR_MW.log7:mv: cannot stat '031/wrfbdy_d01_update': No such file or directory
+./newWRF_IR_MW.log7:mv: cannot stat '032/wrfbdy_d01_update': No such file or directory
+./newWRF_IR_MW.log7:mv: cannot stat '033/wrfbdy_d01_update': No such file or directory
+./newWRF_IR_MW.log7:mv: cannot stat '034/wrfbdy_d01_update': No such file or directory
+./newWRF_IR_MW.log7:mv: cannot stat '035/wrfbdy_d01_update': No such file or directory
+./newWRF_IR_MW.log7:mv: cannot stat '036/wrfbdy_d01_update': No such file or directory
+./newWRF_IR_MW.log7:mv: cannot stat '037/wrfbdy_d01_update': No such file or directory
+./newWRF_IR_MW.log7:mv: cannot stat '038/wrfbdy_d01_update': No such file or directory
+./newWRF_IR_MW.log7:mv: cannot stat '039/wrfbdy_d01_update': No such file or directory
+./newWRF_IR_MW.log7:mv: cannot stat '040/wrfbdy_d01_update': No such file or directory
+./newWRF_IR_MW.log7:mv: cannot stat '041/wrfbdy_d01_update': No such file or directory
+./newWRF_IR_MW.log7:mv: cannot stat '042/wrfbdy_d01_update': No such file or directory
+./newWRF_IR_MW.log7:mv: cannot stat '043/wrfbdy_d01_update': No such file or directory
+./newWRF_IR_MW.log7:mv: cannot stat '044/wrfbdy_d01_update': No such file or directory
+./newWRF_IR_MW.log7:mv: cannot stat '045/wrfbdy_d01_update': No such file or directory
+./newWRF_IR_MW.log7:mv: cannot stat '046/wrfbdy_d01_update': No such file or directory
+./newWRF_IR_MW.log7:mv: cannot stat '047/wrfbdy_d01_update': No such file or directory
+./newWRF_IR_MW.log7:mv: cannot stat '048/wrfbdy_d01_update': No such file or directory
+./newWRF_IR_MW.log7:mv: cannot stat '049/wrfbdy_d01_update': No such file or directory
+./newWRF_IR_MW.log7:mv: cannot stat '050/wrfbdy_d01_update': No such file or directory
+./newWRF_IR_MW.log7:mv: cannot stat '051/wrfbdy_d01_update': No such file or directory
+./newWRF_IR_MW.log7:mv: cannot stat '052/wrfbdy_d01_update': No such file or directory
+./newWRF_IR_MW.log7:mv: cannot stat '053/wrfbdy_d01_update': No such file or directory
+./newWRF_IR_MW.log7:mv: cannot stat '054/wrfbdy_d01_update': No such file or directory
+./newWRF_IR_MW.log7:mv: cannot stat 'mean/wrfbdy_d01_update': No such file or directory
+./module_icbc.sh:    cp $WORK_DIR/fc/wrfbdy_d01 $WORK_DIR/fc/wrfbdy_d01_window
+./module_wrf_ens_fcst.sh:  ln -fs $WORK_DIR/fc/$DATE/wrfbdy_d01_$id wrfbdy_d01

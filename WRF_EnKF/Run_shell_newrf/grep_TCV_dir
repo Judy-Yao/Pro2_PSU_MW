@@ -1,0 +1,4 @@
+module_obsproc.sh:    ln -sf $TCV_DIR/HPI_obs_gts_`wrf_time_string $DATE`.3DVAR TCV_3dvar_${DATE}00
+module_obsproc.sh:    #ln -sf $TCV_DIR/HPI_EnKF_fmt_`wrf_time_string $DATE` TCV_3dvar_${DATE}00
+config_IR: TCV_DIR=${DATA_DIR}/HPI #location of HPI for assimilation
+config_IR_MW: TCV_DIR=${DATA_DIR}/HPI #location of HPI for assimilation

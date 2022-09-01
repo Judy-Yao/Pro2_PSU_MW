@@ -1,0 +1,5 @@
+./run_fcst.sh:  if $RUN_DETERMINISTIC; then
+./run_MW.sh:  if $RUN_DETERMINISTIC; then
+./run_gefs.sh:  if $RUN_DETERMINISTIC; then
+./config_IR_MW: RUN_DETERMINISTIC=true
+./run_IR.sh:  if $RUN_DETERMINISTIC; then

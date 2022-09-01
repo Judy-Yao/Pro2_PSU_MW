@@ -1,0 +1,1073 @@
+nohup: ignoring input
+[H[2J[3J
+  % Total    % Received % Xferd  Average Speed   Time    Time     Time  Current
+                                 Dload  Upload   Total   Spent    Left  Speed
+  0     0    0     0    0     0      0      0 --:--:-- --:--:-- --:--:--     0  0     0    0     0    0     0      0      0 --:--:-- --:--:-- --:--:--     0100    14  100    14    0     0     90      0 --:--:-- --:--:-- --:--:--    90
+   IP ADDR: 198.202.100.13
+   USER: zuy121
+   DATE: Sun Aug 28 07:26:42 PDT 2022
+   UPTIME: up 6 weeks, 4 days, 13 hours, 49 minutes
+   HOSTNAME: login01.expanse.sdsc.edu
+   KERNEL: Linux 4.18.0-348.23.1.el8_5.x86_64 x86_64
+   MEMORY: 39Gi/125Gi
+
+Agent pid 1466448
+Identity added: Pro2_PSU_MW_source.id_ed25519 (yao.zhu.91@gmail.com)
+Restoring modules from user's intel
+(standard_in) 2: syntax error
+----------------------------------------------------------------------
+CURRENT CYCLE: 2017-09-02_18:00:00 => 2017-09-03_06:00:00
+cat: run/201709021800/config_IR_MW.IRMA/stat: Not a directory
+./run_MW.sh: line 111: run/201709021800/config_IR_MW.IRMA/stat: Not a directory
+[H[2J[3J
+  % Total    % Received % Xferd  Average Speed   Time    Time     Time  Current
+                                 Dload  Upload   Total   Spent    Left  Speed
+  0     0    0     0    0     0      0      0 --:--:-- --:--:-- --:--:--     0100    14  100    14    0     0    245      0 --:--:-- --:--:-- --:--:--   250
+   IP ADDR: 198.202.100.13
+   USER: zuy121
+   DATE: Sun Aug 28 07:26:46 PDT 2022
+   UPTIME: up 6 weeks, 4 days, 13 hours, 49 minutes
+   HOSTNAME: login01.expanse.sdsc.edu
+   KERNEL: Linux 4.18.0-348.23.1.el8_5.x86_64 x86_64
+   MEMORY: 40Gi/125Gi
+
+Agent pid 1466902
+Identity added: Pro2_PSU_MW_source.id_ed25519 (yao.zhu.91@gmail.com)
+[H[2J[3J
+  % Total    % Received % Xferd  Average Speed   Time    Time     Time  Current
+                                 Dload  Upload   Total   Spent    Left  Speed
+  0     0    0     0    0     0      0      0 --:--:-- --:--:-- --:--:--     0100    14  100    14    0     0    246      0 --:--:-- --:--:-- --:--:--   250
+   IP ADDR: 198.202.100.13
+   USER: zuy121
+   DATE: Sun Aug 28 07:26:48 PDT 2022
+   UPTIME: up 6 weeks, 4 days, 13 hours, 49 minutes
+   HOSTNAME: login01.expanse.sdsc.edu
+   KERNEL: Linux 4.18.0-348.23.1.el8_5.x86_64 x86_64
+   MEMORY: 40Gi/125Gi
+
+Agent pid 1467021
+Identity added: Pro2_PSU_MW_source.id_ed25519 (yao.zhu.91@gmail.com)
+[H[2J[3J
+  % Total    % Received % Xferd  Average Speed   Time    Time     Time  Current
+                                 Dload  Upload   Total   Spent    Left  Speed
+  0     0    0     0    0     0      0      0 --:--:-- --:--:-- --:--:--     0100    14  100    14    0     0    248      0 --:--:-- --:--:-- --:--:--   250
+   IP ADDR: 198.202.100.13
+   USER: zuy121
+   DATE: Sun Aug 28 07:26:49 PDT 2022
+   UPTIME: up 6 weeks, 4 days, 13 hours, 49 minutes
+   HOSTNAME: login01.expanse.sdsc.edu
+   KERNEL: Linux 4.18.0-348.23.1.el8_5.x86_64 x86_64
+   MEMORY: 40Gi/125Gi
+
+Agent pid 1467131
+Identity added: Pro2_PSU_MW_source.id_ed25519 (yao.zhu.91@gmail.com)
+Sun Aug 28 07:26:49 PDT 2022
+cat: run/201709021800/run/201709021800/config_IR_MW.IRMA/stat: No such file or directory
+cat: run/201709021800/run/201709021800/icbc/stat: No such file or directory
+cat: run/201709021800/run/201709021800/perturb_ic/stat: No such file or directory
+cat: run/201709021800/run/201709021800/update_bc/stat: No such file or directory
+cat: run/201709021800/run/201709021800/wrf_ens/stat: No such file or directory
+(standard_in) 2: syntax error
+----------------------------------------------------------------------
+CURRENT CYCLE: 2017-09-03_06:00:00 => 2017-09-03_07:00:00
+cat: 'run/201709030600/*/stat': No such file or directory
+./run_MW.sh: line 111: run/201709030600/*/stat: No such file or directory
+[H[2J[3J
+  % Total    % Received % Xferd  Average Speed   Time    Time     Time  Current
+                                 Dload  Upload   Total   Spent    Left  Speed
+  0     0    0     0    0     0      0      0 --:--:-- --:--:-- --:--:--     0100    14  100    14    0     0    246      0 --:--:-- --:--:-- --:--:--   250
+   IP ADDR: 198.202.100.13
+   USER: zuy121
+   DATE: Sun Aug 28 07:26:50 PDT 2022
+   UPTIME: up 6 weeks, 4 days, 13 hours, 49 minutes
+   HOSTNAME: login01.expanse.sdsc.edu
+   KERNEL: Linux 4.18.0-348.23.1.el8_5.x86_64 x86_64
+   MEMORY: 40Gi/125Gi
+
+Agent pid 1467485
+Identity added: Pro2_PSU_MW_source.id_ed25519 (yao.zhu.91@gmail.com)
+  Calculating preset nesting...
+  Running ungrib.exe...
+201709030600
+/expanse/lustre/projects/pen116/zuy121/Pro2_PSU_MW/Obs_input_EnKF/IRMA/GFS/gfs.0p25.2017090306.f000.grib2
+/expanse/lustre/projects/pen116/zuy121/Pro2_PSU_MW/Obs_input_EnKF/IRMA/GFS/gfs.0p25.2017090306.f006.grib2
+/expanse/lustre/projects/pen116/zuy121/Pro2_PSU_MW/Obs_input_EnKF/IRMA/GFS/gfs.0p25.2017090306.f012.grib2
+/expanse/lustre/projects/pen116/zuy121/Pro2_PSU_MW/Obs_input_EnKF/IRMA/GFS/gfs.0p25.2017090306.f000.grib2 /expanse/lustre/projects/pen116/zuy121/Pro2_PSU_MW/Obs_input_EnKF/IRMA/GFS/gfs.0p25.2017090306.f006.grib2 /expanse/lustre/projects/pen116/zuy121/Pro2_PSU_MW/Obs_input_EnKF/IRMA/GFS/gfs.0p25.2017090306.f012.grib2
+  Running geogrid.exe, metgrid.exe, and real.exe...
+  Running PerturbIC...
+    Generating perturbations using WRF 3DVar
+/expanse/lustre/scratch/zuy121/temp_project/Pro2_PSU_MW/IRMA/newWRF_MW_THO/run/201709030600/perturb_ic
+/expanse/lustre/scratch/zuy121/temp_project/Pro2_PSU_MW/IRMA/newWRF_MW_THO/run/201709030600/perturb_ic
+/expanse/lustre/scratch/zuy121/temp_project/Pro2_PSU_MW/IRMA/newWRF_MW_THO/run/201709030600/perturb_ic
+/expanse/lustre/scratch/zuy121/temp_project/Pro2_PSU_MW/IRMA/newWRF_MW_THO/run/201709030600/perturb_ic
+/expanse/lustre/scratch/zuy121/temp_project/Pro2_PSU_MW/IRMA/newWRF_MW_THO/run/201709030600/perturb_ic
+/expanse/lustre/scratch/zuy121/temp_project/Pro2_PSU_MW/IRMA/newWRF_MW_THO/run/201709030600/perturb_ic
+/expanse/lustre/scratch/zuy121/temp_project/Pro2_PSU_MW/IRMA/newWRF_MW_THO/run/201709030600/perturb_ic
+/expanse/lustre/scratch/zuy121/temp_project/Pro2_PSU_MW/IRMA/newWRF_MW_THO/run/201709030600/perturb_ic
+/expanse/lustre/scratch/zuy121/temp_project/Pro2_PSU_MW/IRMA/newWRF_MW_THO/run/201709030600/perturb_ic
+/expanse/lustre/scratch/zuy121/temp_project/Pro2_PSU_MW/IRMA/newWRF_MW_THO/run/201709030600/perturb_ic
+/expanse/lustre/scratch/zuy121/temp_project/Pro2_PSU_MW/IRMA/newWRF_MW_THO/run/201709030600/perturb_ic
+/expanse/lustre/scratch/zuy121/temp_project/Pro2_PSU_MW/IRMA/newWRF_MW_THO/run/201709030600/perturb_ic
+/expanse/lustre/scratch/zuy121/temp_project/Pro2_PSU_MW/IRMA/newWRF_MW_THO/run/201709030600/perturb_ic
+/expanse/lustre/scratch/zuy121/temp_project/Pro2_PSU_MW/IRMA/newWRF_MW_THO/run/201709030600/perturb_ic
+/expanse/lustre/scratch/zuy121/temp_project/Pro2_PSU_MW/IRMA/newWRF_MW_THO/run/201709030600/perturb_ic
+/expanse/lustre/scratch/zuy121/temp_project/Pro2_PSU_MW/IRMA/newWRF_MW_THO/run/201709030600/perturb_ic
+/expanse/lustre/scratch/zuy121/temp_project/Pro2_PSU_MW/IRMA/newWRF_MW_THO/run/201709030600/perturb_ic
+/expanse/lustre/scratch/zuy121/temp_project/Pro2_PSU_MW/IRMA/newWRF_MW_THO/run/201709030600/perturb_ic
+/expanse/lustre/scratch/zuy121/temp_project/Pro2_PSU_MW/IRMA/newWRF_MW_THO/run/201709030600/perturb_ic
+/expanse/lustre/scratch/zuy121/temp_project/Pro2_PSU_MW/IRMA/newWRF_MW_THO/run/201709030600/perturb_ic
+/expanse/lustre/scratch/zuy121/temp_project/Pro2_PSU_MW/IRMA/newWRF_MW_THO/run/201709030600/perturb_ic
+/expanse/lustre/scratch/zuy121/temp_project/Pro2_PSU_MW/IRMA/newWRF_MW_THO/run/201709030600/perturb_ic
+/expanse/lustre/scratch/zuy121/temp_project/Pro2_PSU_MW/IRMA/newWRF_MW_THO/run/201709030600/perturb_ic
+/expanse/lustre/scratch/zuy121/temp_project/Pro2_PSU_MW/IRMA/newWRF_MW_THO/run/201709030600/perturb_ic
+/expanse/lustre/scratch/zuy121/temp_project/Pro2_PSU_MW/IRMA/newWRF_MW_THO/run/201709030600/perturb_ic
+/expanse/lustre/scratch/zuy121/temp_project/Pro2_PSU_MW/IRMA/newWRF_MW_THO/run/201709030600/perturb_ic
+/expanse/lustre/scratch/zuy121/temp_project/Pro2_PSU_MW/IRMA/newWRF_MW_THO/run/201709030600/perturb_ic
+/expanse/lustre/scratch/zuy121/temp_project/Pro2_PSU_MW/IRMA/newWRF_MW_THO/run/201709030600/perturb_ic
+/expanse/lustre/scratch/zuy121/temp_project/Pro2_PSU_MW/IRMA/newWRF_MW_THO/run/201709030600/perturb_ic
+/expanse/lustre/scratch/zuy121/temp_project/Pro2_PSU_MW/IRMA/newWRF_MW_THO/run/201709030600/perturb_ic
+/expanse/lustre/scratch/zuy121/temp_project/Pro2_PSU_MW/IRMA/newWRF_MW_THO/run/201709030600/perturb_ic
+/expanse/lustre/scratch/zuy121/temp_project/Pro2_PSU_MW/IRMA/newWRF_MW_THO/run/201709030600/perturb_ic
+/expanse/lustre/scratch/zuy121/temp_project/Pro2_PSU_MW/IRMA/newWRF_MW_THO/run/201709030600/perturb_ic
+/expanse/lustre/scratch/zuy121/temp_project/Pro2_PSU_MW/IRMA/newWRF_MW_THO/run/201709030600/perturb_ic
+/expanse/lustre/scratch/zuy121/temp_project/Pro2_PSU_MW/IRMA/newWRF_MW_THO/run/201709030600/perturb_ic
+/expanse/lustre/scratch/zuy121/temp_project/Pro2_PSU_MW/IRMA/newWRF_MW_THO/run/201709030600/perturb_ic
+/expanse/lustre/scratch/zuy121/temp_project/Pro2_PSU_MW/IRMA/newWRF_MW_THO/run/201709030600/perturb_ic
+/expanse/lustre/scratch/zuy121/temp_project/Pro2_PSU_MW/IRMA/newWRF_MW_THO/run/201709030600/perturb_ic
+/expanse/lustre/scratch/zuy121/temp_project/Pro2_PSU_MW/IRMA/newWRF_MW_THO/run/201709030600/perturb_ic
+/expanse/lustre/scratch/zuy121/temp_project/Pro2_PSU_MW/IRMA/newWRF_MW_THO/run/201709030600/perturb_ic
+/expanse/lustre/scratch/zuy121/temp_project/Pro2_PSU_MW/IRMA/newWRF_MW_THO/run/201709030600/perturb_ic
+/expanse/lustre/scratch/zuy121/temp_project/Pro2_PSU_MW/IRMA/newWRF_MW_THO/run/201709030600/perturb_ic
+/expanse/lustre/scratch/zuy121/temp_project/Pro2_PSU_MW/IRMA/newWRF_MW_THO/run/201709030600/perturb_ic
+/expanse/lustre/scratch/zuy121/temp_project/Pro2_PSU_MW/IRMA/newWRF_MW_THO/run/201709030600/perturb_ic
+/expanse/lustre/scratch/zuy121/temp_project/Pro2_PSU_MW/IRMA/newWRF_MW_THO/run/201709030600/perturb_ic
+/expanse/lustre/scratch/zuy121/temp_project/Pro2_PSU_MW/IRMA/newWRF_MW_THO/run/201709030600/perturb_ic
+/expanse/lustre/scratch/zuy121/temp_project/Pro2_PSU_MW/IRMA/newWRF_MW_THO/run/201709030600/perturb_ic
+/expanse/lustre/scratch/zuy121/temp_project/Pro2_PSU_MW/IRMA/newWRF_MW_THO/run/201709030600/perturb_ic
+/expanse/lustre/scratch/zuy121/temp_project/Pro2_PSU_MW/IRMA/newWRF_MW_THO/run/201709030600/perturb_ic
+/expanse/lustre/scratch/zuy121/temp_project/Pro2_PSU_MW/IRMA/newWRF_MW_THO/run/201709030600/perturb_ic
+/expanse/lustre/scratch/zuy121/temp_project/Pro2_PSU_MW/IRMA/newWRF_MW_THO/run/201709030600/perturb_ic
+/expanse/lustre/scratch/zuy121/temp_project/Pro2_PSU_MW/IRMA/newWRF_MW_THO/run/201709030600/perturb_ic
+/expanse/lustre/scratch/zuy121/temp_project/Pro2_PSU_MW/IRMA/newWRF_MW_THO/run/201709030600/perturb_ic
+/expanse/lustre/scratch/zuy121/temp_project/Pro2_PSU_MW/IRMA/newWRF_MW_THO/run/201709030600/perturb_ic
+/expanse/lustre/scratch/zuy121/temp_project/Pro2_PSU_MW/IRMA/newWRF_MW_THO/run/201709030600/perturb_ic
+/expanse/lustre/scratch/zuy121/temp_project/Pro2_PSU_MW/IRMA/newWRF_MW_THO/run/201709030600/perturb_ic
+/expanse/lustre/scratch/zuy121/temp_project/Pro2_PSU_MW/IRMA/newWRF_MW_THO/run/201709030600/perturb_ic
+/expanse/lustre/scratch/zuy121/temp_project/Pro2_PSU_MW/IRMA/newWRF_MW_THO/run/201709030600/perturb_ic
+/expanse/lustre/scratch/zuy121/temp_project/Pro2_PSU_MW/IRMA/newWRF_MW_THO/run/201709030600/perturb_ic
+/expanse/lustre/scratch/zuy121/temp_project/Pro2_PSU_MW/IRMA/newWRF_MW_THO/run/201709030600/perturb_ic
+    Nestdown perturbation for inner domains...
+begin nest down for d02
+  any need to work on member  001
+/expanse/lustre/scratch/zuy121/temp_project/Pro2_PSU_MW/IRMA/newWRF_MW_THO/run/201709030600/perturb_ic/001/d02/rsl.error.0000
+  yes
+  any need to work on member  002
+/expanse/lustre/scratch/zuy121/temp_project/Pro2_PSU_MW/IRMA/newWRF_MW_THO/run/201709030600/perturb_ic/002/d02/rsl.error.0000
+  yes
+  any need to work on member  003
+/expanse/lustre/scratch/zuy121/temp_project/Pro2_PSU_MW/IRMA/newWRF_MW_THO/run/201709030600/perturb_ic/003/d02/rsl.error.0000
+  yes
+  any need to work on member  004
+/expanse/lustre/scratch/zuy121/temp_project/Pro2_PSU_MW/IRMA/newWRF_MW_THO/run/201709030600/perturb_ic/004/d02/rsl.error.0000
+  yes
+  any need to work on member  005
+/expanse/lustre/scratch/zuy121/temp_project/Pro2_PSU_MW/IRMA/newWRF_MW_THO/run/201709030600/perturb_ic/005/d02/rsl.error.0000
+  yes
+  any need to work on member  006
+/expanse/lustre/scratch/zuy121/temp_project/Pro2_PSU_MW/IRMA/newWRF_MW_THO/run/201709030600/perturb_ic/006/d02/rsl.error.0000
+  yes
+  any need to work on member  007
+/expanse/lustre/scratch/zuy121/temp_project/Pro2_PSU_MW/IRMA/newWRF_MW_THO/run/201709030600/perturb_ic/007/d02/rsl.error.0000
+  yes
+  any need to work on member  008
+/expanse/lustre/scratch/zuy121/temp_project/Pro2_PSU_MW/IRMA/newWRF_MW_THO/run/201709030600/perturb_ic/008/d02/rsl.error.0000
+  yes
+  any need to work on member  009
+/expanse/lustre/scratch/zuy121/temp_project/Pro2_PSU_MW/IRMA/newWRF_MW_THO/run/201709030600/perturb_ic/009/d02/rsl.error.0000
+  yes
+  any need to work on member  010
+/expanse/lustre/scratch/zuy121/temp_project/Pro2_PSU_MW/IRMA/newWRF_MW_THO/run/201709030600/perturb_ic/010/d02/rsl.error.0000
+  yes
+  any need to work on member  011
+/expanse/lustre/scratch/zuy121/temp_project/Pro2_PSU_MW/IRMA/newWRF_MW_THO/run/201709030600/perturb_ic/011/d02/rsl.error.0000
+  yes
+  any need to work on member  012
+/expanse/lustre/scratch/zuy121/temp_project/Pro2_PSU_MW/IRMA/newWRF_MW_THO/run/201709030600/perturb_ic/012/d02/rsl.error.0000
+  yes
+  any need to work on member  013
+/expanse/lustre/scratch/zuy121/temp_project/Pro2_PSU_MW/IRMA/newWRF_MW_THO/run/201709030600/perturb_ic/013/d02/rsl.error.0000
+  yes
+  any need to work on member  014
+/expanse/lustre/scratch/zuy121/temp_project/Pro2_PSU_MW/IRMA/newWRF_MW_THO/run/201709030600/perturb_ic/014/d02/rsl.error.0000
+  yes
+  any need to work on member  015
+/expanse/lustre/scratch/zuy121/temp_project/Pro2_PSU_MW/IRMA/newWRF_MW_THO/run/201709030600/perturb_ic/015/d02/rsl.error.0000
+  yes
+  any need to work on member  016
+/expanse/lustre/scratch/zuy121/temp_project/Pro2_PSU_MW/IRMA/newWRF_MW_THO/run/201709030600/perturb_ic/016/d02/rsl.error.0000
+  yes
+  any need to work on member  017
+/expanse/lustre/scratch/zuy121/temp_project/Pro2_PSU_MW/IRMA/newWRF_MW_THO/run/201709030600/perturb_ic/017/d02/rsl.error.0000
+  yes
+  any need to work on member  018
+/expanse/lustre/scratch/zuy121/temp_project/Pro2_PSU_MW/IRMA/newWRF_MW_THO/run/201709030600/perturb_ic/018/d02/rsl.error.0000
+  yes
+  any need to work on member  019
+/expanse/lustre/scratch/zuy121/temp_project/Pro2_PSU_MW/IRMA/newWRF_MW_THO/run/201709030600/perturb_ic/019/d02/rsl.error.0000
+  yes
+  any need to work on member  020
+/expanse/lustre/scratch/zuy121/temp_project/Pro2_PSU_MW/IRMA/newWRF_MW_THO/run/201709030600/perturb_ic/020/d02/rsl.error.0000
+  yes
+  any need to work on member  021
+/expanse/lustre/scratch/zuy121/temp_project/Pro2_PSU_MW/IRMA/newWRF_MW_THO/run/201709030600/perturb_ic/021/d02/rsl.error.0000
+  yes
+  any need to work on member  022
+/expanse/lustre/scratch/zuy121/temp_project/Pro2_PSU_MW/IRMA/newWRF_MW_THO/run/201709030600/perturb_ic/022/d02/rsl.error.0000
+  yes
+  any need to work on member  023
+/expanse/lustre/scratch/zuy121/temp_project/Pro2_PSU_MW/IRMA/newWRF_MW_THO/run/201709030600/perturb_ic/023/d02/rsl.error.0000
+  yes
+  any need to work on member  024
+/expanse/lustre/scratch/zuy121/temp_project/Pro2_PSU_MW/IRMA/newWRF_MW_THO/run/201709030600/perturb_ic/024/d02/rsl.error.0000
+  yes
+  any need to work on member  025
+/expanse/lustre/scratch/zuy121/temp_project/Pro2_PSU_MW/IRMA/newWRF_MW_THO/run/201709030600/perturb_ic/025/d02/rsl.error.0000
+  yes
+  any need to work on member  026
+/expanse/lustre/scratch/zuy121/temp_project/Pro2_PSU_MW/IRMA/newWRF_MW_THO/run/201709030600/perturb_ic/026/d02/rsl.error.0000
+  yes
+  any need to work on member  027
+/expanse/lustre/scratch/zuy121/temp_project/Pro2_PSU_MW/IRMA/newWRF_MW_THO/run/201709030600/perturb_ic/027/d02/rsl.error.0000
+  yes
+  any need to work on member  028
+/expanse/lustre/scratch/zuy121/temp_project/Pro2_PSU_MW/IRMA/newWRF_MW_THO/run/201709030600/perturb_ic/028/d02/rsl.error.0000
+  yes
+  any need to work on member  029
+/expanse/lustre/scratch/zuy121/temp_project/Pro2_PSU_MW/IRMA/newWRF_MW_THO/run/201709030600/perturb_ic/029/d02/rsl.error.0000
+  yes
+  any need to work on member  030
+/expanse/lustre/scratch/zuy121/temp_project/Pro2_PSU_MW/IRMA/newWRF_MW_THO/run/201709030600/perturb_ic/030/d02/rsl.error.0000
+  yes
+  any need to work on member  031
+/expanse/lustre/scratch/zuy121/temp_project/Pro2_PSU_MW/IRMA/newWRF_MW_THO/run/201709030600/perturb_ic/031/d02/rsl.error.0000
+  yes
+  any need to work on member  032
+/expanse/lustre/scratch/zuy121/temp_project/Pro2_PSU_MW/IRMA/newWRF_MW_THO/run/201709030600/perturb_ic/032/d02/rsl.error.0000
+  yes
+  any need to work on member  033
+/expanse/lustre/scratch/zuy121/temp_project/Pro2_PSU_MW/IRMA/newWRF_MW_THO/run/201709030600/perturb_ic/033/d02/rsl.error.0000
+  yes
+  any need to work on member  034
+/expanse/lustre/scratch/zuy121/temp_project/Pro2_PSU_MW/IRMA/newWRF_MW_THO/run/201709030600/perturb_ic/034/d02/rsl.error.0000
+  yes
+  any need to work on member  035
+/expanse/lustre/scratch/zuy121/temp_project/Pro2_PSU_MW/IRMA/newWRF_MW_THO/run/201709030600/perturb_ic/035/d02/rsl.error.0000
+  yes
+  any need to work on member  036
+/expanse/lustre/scratch/zuy121/temp_project/Pro2_PSU_MW/IRMA/newWRF_MW_THO/run/201709030600/perturb_ic/036/d02/rsl.error.0000
+  yes
+  any need to work on member  037
+/expanse/lustre/scratch/zuy121/temp_project/Pro2_PSU_MW/IRMA/newWRF_MW_THO/run/201709030600/perturb_ic/037/d02/rsl.error.0000
+  yes
+  any need to work on member  038
+/expanse/lustre/scratch/zuy121/temp_project/Pro2_PSU_MW/IRMA/newWRF_MW_THO/run/201709030600/perturb_ic/038/d02/rsl.error.0000
+  yes
+  any need to work on member  039
+/expanse/lustre/scratch/zuy121/temp_project/Pro2_PSU_MW/IRMA/newWRF_MW_THO/run/201709030600/perturb_ic/039/d02/rsl.error.0000
+  yes
+  any need to work on member  040
+/expanse/lustre/scratch/zuy121/temp_project/Pro2_PSU_MW/IRMA/newWRF_MW_THO/run/201709030600/perturb_ic/040/d02/rsl.error.0000
+  yes
+  any need to work on member  041
+/expanse/lustre/scratch/zuy121/temp_project/Pro2_PSU_MW/IRMA/newWRF_MW_THO/run/201709030600/perturb_ic/041/d02/rsl.error.0000
+  yes
+  any need to work on member  042
+/expanse/lustre/scratch/zuy121/temp_project/Pro2_PSU_MW/IRMA/newWRF_MW_THO/run/201709030600/perturb_ic/042/d02/rsl.error.0000
+  yes
+  any need to work on member  043
+/expanse/lustre/scratch/zuy121/temp_project/Pro2_PSU_MW/IRMA/newWRF_MW_THO/run/201709030600/perturb_ic/043/d02/rsl.error.0000
+  yes
+  any need to work on member  044
+/expanse/lustre/scratch/zuy121/temp_project/Pro2_PSU_MW/IRMA/newWRF_MW_THO/run/201709030600/perturb_ic/044/d02/rsl.error.0000
+  yes
+  any need to work on member  045
+/expanse/lustre/scratch/zuy121/temp_project/Pro2_PSU_MW/IRMA/newWRF_MW_THO/run/201709030600/perturb_ic/045/d02/rsl.error.0000
+  yes
+  any need to work on member  046
+/expanse/lustre/scratch/zuy121/temp_project/Pro2_PSU_MW/IRMA/newWRF_MW_THO/run/201709030600/perturb_ic/046/d02/rsl.error.0000
+  yes
+  any need to work on member  047
+/expanse/lustre/scratch/zuy121/temp_project/Pro2_PSU_MW/IRMA/newWRF_MW_THO/run/201709030600/perturb_ic/047/d02/rsl.error.0000
+  yes
+  any need to work on member  048
+/expanse/lustre/scratch/zuy121/temp_project/Pro2_PSU_MW/IRMA/newWRF_MW_THO/run/201709030600/perturb_ic/048/d02/rsl.error.0000
+  yes
+  any need to work on member  049
+/expanse/lustre/scratch/zuy121/temp_project/Pro2_PSU_MW/IRMA/newWRF_MW_THO/run/201709030600/perturb_ic/049/d02/rsl.error.0000
+  yes
+  any need to work on member  050
+/expanse/lustre/scratch/zuy121/temp_project/Pro2_PSU_MW/IRMA/newWRF_MW_THO/run/201709030600/perturb_ic/050/d02/rsl.error.0000
+  yes
+  any need to work on member  051
+/expanse/lustre/scratch/zuy121/temp_project/Pro2_PSU_MW/IRMA/newWRF_MW_THO/run/201709030600/perturb_ic/051/d02/rsl.error.0000
+  yes
+  any need to work on member  052
+/expanse/lustre/scratch/zuy121/temp_project/Pro2_PSU_MW/IRMA/newWRF_MW_THO/run/201709030600/perturb_ic/052/d02/rsl.error.0000
+  yes
+  any need to work on member  053
+/expanse/lustre/scratch/zuy121/temp_project/Pro2_PSU_MW/IRMA/newWRF_MW_THO/run/201709030600/perturb_ic/053/d02/rsl.error.0000
+  yes
+  any need to work on member  054
+/expanse/lustre/scratch/zuy121/temp_project/Pro2_PSU_MW/IRMA/newWRF_MW_THO/run/201709030600/perturb_ic/054/d02/rsl.error.0000
+  yes
+  any need to work on member  055
+/expanse/lustre/scratch/zuy121/temp_project/Pro2_PSU_MW/IRMA/newWRF_MW_THO/run/201709030600/perturb_ic/055/d02/rsl.error.0000
+  yes
+  any need to work on member  056
+/expanse/lustre/scratch/zuy121/temp_project/Pro2_PSU_MW/IRMA/newWRF_MW_THO/run/201709030600/perturb_ic/056/d02/rsl.error.0000
+  yes
+  any need to work on member  057
+/expanse/lustre/scratch/zuy121/temp_project/Pro2_PSU_MW/IRMA/newWRF_MW_THO/run/201709030600/perturb_ic/057/d02/rsl.error.0000
+  yes
+  any need to work on member  058
+/expanse/lustre/scratch/zuy121/temp_project/Pro2_PSU_MW/IRMA/newWRF_MW_THO/run/201709030600/perturb_ic/058/d02/rsl.error.0000
+  yes
+  any need to work on member  059
+/expanse/lustre/scratch/zuy121/temp_project/Pro2_PSU_MW/IRMA/newWRF_MW_THO/run/201709030600/perturb_ic/059/d02/rsl.error.0000
+  yes
+  any need to work on member  060
+/expanse/lustre/scratch/zuy121/temp_project/Pro2_PSU_MW/IRMA/newWRF_MW_THO/run/201709030600/perturb_ic/060/d02/rsl.error.0000
+  yes
+begin nest down for d03
+  any need to work on member  001
+/expanse/lustre/scratch/zuy121/temp_project/Pro2_PSU_MW/IRMA/newWRF_MW_THO/run/201709030600/perturb_ic/001/d03/rsl.error.0000
+  yes
+  any need to work on member  002
+/expanse/lustre/scratch/zuy121/temp_project/Pro2_PSU_MW/IRMA/newWRF_MW_THO/run/201709030600/perturb_ic/002/d03/rsl.error.0000
+  yes
+  any need to work on member  003
+/expanse/lustre/scratch/zuy121/temp_project/Pro2_PSU_MW/IRMA/newWRF_MW_THO/run/201709030600/perturb_ic/003/d03/rsl.error.0000
+  yes
+  any need to work on member  004
+/expanse/lustre/scratch/zuy121/temp_project/Pro2_PSU_MW/IRMA/newWRF_MW_THO/run/201709030600/perturb_ic/004/d03/rsl.error.0000
+  yes
+  any need to work on member  005
+/expanse/lustre/scratch/zuy121/temp_project/Pro2_PSU_MW/IRMA/newWRF_MW_THO/run/201709030600/perturb_ic/005/d03/rsl.error.0000
+  yes
+  any need to work on member  006
+/expanse/lustre/scratch/zuy121/temp_project/Pro2_PSU_MW/IRMA/newWRF_MW_THO/run/201709030600/perturb_ic/006/d03/rsl.error.0000
+  yes
+  any need to work on member  007
+/expanse/lustre/scratch/zuy121/temp_project/Pro2_PSU_MW/IRMA/newWRF_MW_THO/run/201709030600/perturb_ic/007/d03/rsl.error.0000
+  yes
+  any need to work on member  008
+/expanse/lustre/scratch/zuy121/temp_project/Pro2_PSU_MW/IRMA/newWRF_MW_THO/run/201709030600/perturb_ic/008/d03/rsl.error.0000
+  yes
+  any need to work on member  009
+/expanse/lustre/scratch/zuy121/temp_project/Pro2_PSU_MW/IRMA/newWRF_MW_THO/run/201709030600/perturb_ic/009/d03/rsl.error.0000
+  yes
+  any need to work on member  010
+/expanse/lustre/scratch/zuy121/temp_project/Pro2_PSU_MW/IRMA/newWRF_MW_THO/run/201709030600/perturb_ic/010/d03/rsl.error.0000
+  yes
+  any need to work on member  011
+/expanse/lustre/scratch/zuy121/temp_project/Pro2_PSU_MW/IRMA/newWRF_MW_THO/run/201709030600/perturb_ic/011/d03/rsl.error.0000
+  yes
+  any need to work on member  012
+/expanse/lustre/scratch/zuy121/temp_project/Pro2_PSU_MW/IRMA/newWRF_MW_THO/run/201709030600/perturb_ic/012/d03/rsl.error.0000
+  yes
+  any need to work on member  013
+/expanse/lustre/scratch/zuy121/temp_project/Pro2_PSU_MW/IRMA/newWRF_MW_THO/run/201709030600/perturb_ic/013/d03/rsl.error.0000
+  yes
+  any need to work on member  014
+/expanse/lustre/scratch/zuy121/temp_project/Pro2_PSU_MW/IRMA/newWRF_MW_THO/run/201709030600/perturb_ic/014/d03/rsl.error.0000
+  yes
+  any need to work on member  015
+/expanse/lustre/scratch/zuy121/temp_project/Pro2_PSU_MW/IRMA/newWRF_MW_THO/run/201709030600/perturb_ic/015/d03/rsl.error.0000
+  yes
+  any need to work on member  016
+/expanse/lustre/scratch/zuy121/temp_project/Pro2_PSU_MW/IRMA/newWRF_MW_THO/run/201709030600/perturb_ic/016/d03/rsl.error.0000
+  yes
+  any need to work on member  017
+/expanse/lustre/scratch/zuy121/temp_project/Pro2_PSU_MW/IRMA/newWRF_MW_THO/run/201709030600/perturb_ic/017/d03/rsl.error.0000
+  yes
+  any need to work on member  018
+/expanse/lustre/scratch/zuy121/temp_project/Pro2_PSU_MW/IRMA/newWRF_MW_THO/run/201709030600/perturb_ic/018/d03/rsl.error.0000
+  yes
+  any need to work on member  019
+/expanse/lustre/scratch/zuy121/temp_project/Pro2_PSU_MW/IRMA/newWRF_MW_THO/run/201709030600/perturb_ic/019/d03/rsl.error.0000
+  yes
+  any need to work on member  020
+/expanse/lustre/scratch/zuy121/temp_project/Pro2_PSU_MW/IRMA/newWRF_MW_THO/run/201709030600/perturb_ic/020/d03/rsl.error.0000
+  yes
+  any need to work on member  021
+/expanse/lustre/scratch/zuy121/temp_project/Pro2_PSU_MW/IRMA/newWRF_MW_THO/run/201709030600/perturb_ic/021/d03/rsl.error.0000
+  yes
+  any need to work on member  022
+/expanse/lustre/scratch/zuy121/temp_project/Pro2_PSU_MW/IRMA/newWRF_MW_THO/run/201709030600/perturb_ic/022/d03/rsl.error.0000
+  yes
+  any need to work on member  023
+/expanse/lustre/scratch/zuy121/temp_project/Pro2_PSU_MW/IRMA/newWRF_MW_THO/run/201709030600/perturb_ic/023/d03/rsl.error.0000
+  yes
+  any need to work on member  024
+/expanse/lustre/scratch/zuy121/temp_project/Pro2_PSU_MW/IRMA/newWRF_MW_THO/run/201709030600/perturb_ic/024/d03/rsl.error.0000
+  yes
+  any need to work on member  025
+/expanse/lustre/scratch/zuy121/temp_project/Pro2_PSU_MW/IRMA/newWRF_MW_THO/run/201709030600/perturb_ic/025/d03/rsl.error.0000
+  yes
+  any need to work on member  026
+/expanse/lustre/scratch/zuy121/temp_project/Pro2_PSU_MW/IRMA/newWRF_MW_THO/run/201709030600/perturb_ic/026/d03/rsl.error.0000
+  yes
+  any need to work on member  027
+/expanse/lustre/scratch/zuy121/temp_project/Pro2_PSU_MW/IRMA/newWRF_MW_THO/run/201709030600/perturb_ic/027/d03/rsl.error.0000
+  yes
+  any need to work on member  028
+/expanse/lustre/scratch/zuy121/temp_project/Pro2_PSU_MW/IRMA/newWRF_MW_THO/run/201709030600/perturb_ic/028/d03/rsl.error.0000
+  yes
+  any need to work on member  029
+/expanse/lustre/scratch/zuy121/temp_project/Pro2_PSU_MW/IRMA/newWRF_MW_THO/run/201709030600/perturb_ic/029/d03/rsl.error.0000
+  yes
+  any need to work on member  030
+/expanse/lustre/scratch/zuy121/temp_project/Pro2_PSU_MW/IRMA/newWRF_MW_THO/run/201709030600/perturb_ic/030/d03/rsl.error.0000
+  yes
+  any need to work on member  031
+/expanse/lustre/scratch/zuy121/temp_project/Pro2_PSU_MW/IRMA/newWRF_MW_THO/run/201709030600/perturb_ic/031/d03/rsl.error.0000
+  yes
+  any need to work on member  032
+/expanse/lustre/scratch/zuy121/temp_project/Pro2_PSU_MW/IRMA/newWRF_MW_THO/run/201709030600/perturb_ic/032/d03/rsl.error.0000
+  yes
+  any need to work on member  033
+/expanse/lustre/scratch/zuy121/temp_project/Pro2_PSU_MW/IRMA/newWRF_MW_THO/run/201709030600/perturb_ic/033/d03/rsl.error.0000
+  yes
+  any need to work on member  034
+/expanse/lustre/scratch/zuy121/temp_project/Pro2_PSU_MW/IRMA/newWRF_MW_THO/run/201709030600/perturb_ic/034/d03/rsl.error.0000
+  yes
+  any need to work on member  035
+/expanse/lustre/scratch/zuy121/temp_project/Pro2_PSU_MW/IRMA/newWRF_MW_THO/run/201709030600/perturb_ic/035/d03/rsl.error.0000
+  yes
+  any need to work on member  036
+/expanse/lustre/scratch/zuy121/temp_project/Pro2_PSU_MW/IRMA/newWRF_MW_THO/run/201709030600/perturb_ic/036/d03/rsl.error.0000
+  yes
+  any need to work on member  037
+/expanse/lustre/scratch/zuy121/temp_project/Pro2_PSU_MW/IRMA/newWRF_MW_THO/run/201709030600/perturb_ic/037/d03/rsl.error.0000
+  yes
+  any need to work on member  038
+/expanse/lustre/scratch/zuy121/temp_project/Pro2_PSU_MW/IRMA/newWRF_MW_THO/run/201709030600/perturb_ic/038/d03/rsl.error.0000
+  yes
+  any need to work on member  039
+/expanse/lustre/scratch/zuy121/temp_project/Pro2_PSU_MW/IRMA/newWRF_MW_THO/run/201709030600/perturb_ic/039/d03/rsl.error.0000
+  yes
+  any need to work on member  040
+/expanse/lustre/scratch/zuy121/temp_project/Pro2_PSU_MW/IRMA/newWRF_MW_THO/run/201709030600/perturb_ic/040/d03/rsl.error.0000
+  yes
+  any need to work on member  041
+/expanse/lustre/scratch/zuy121/temp_project/Pro2_PSU_MW/IRMA/newWRF_MW_THO/run/201709030600/perturb_ic/041/d03/rsl.error.0000
+  yes
+  any need to work on member  042
+/expanse/lustre/scratch/zuy121/temp_project/Pro2_PSU_MW/IRMA/newWRF_MW_THO/run/201709030600/perturb_ic/042/d03/rsl.error.0000
+  yes
+  any need to work on member  043
+/expanse/lustre/scratch/zuy121/temp_project/Pro2_PSU_MW/IRMA/newWRF_MW_THO/run/201709030600/perturb_ic/043/d03/rsl.error.0000
+  yes
+  any need to work on member  044
+/expanse/lustre/scratch/zuy121/temp_project/Pro2_PSU_MW/IRMA/newWRF_MW_THO/run/201709030600/perturb_ic/044/d03/rsl.error.0000
+  yes
+  any need to work on member  045
+/expanse/lustre/scratch/zuy121/temp_project/Pro2_PSU_MW/IRMA/newWRF_MW_THO/run/201709030600/perturb_ic/045/d03/rsl.error.0000
+  yes
+  any need to work on member  046
+/expanse/lustre/scratch/zuy121/temp_project/Pro2_PSU_MW/IRMA/newWRF_MW_THO/run/201709030600/perturb_ic/046/d03/rsl.error.0000
+  yes
+  any need to work on member  047
+/expanse/lustre/scratch/zuy121/temp_project/Pro2_PSU_MW/IRMA/newWRF_MW_THO/run/201709030600/perturb_ic/047/d03/rsl.error.0000
+  yes
+  any need to work on member  048
+/expanse/lustre/scratch/zuy121/temp_project/Pro2_PSU_MW/IRMA/newWRF_MW_THO/run/201709030600/perturb_ic/048/d03/rsl.error.0000
+  yes
+  any need to work on member  049
+/expanse/lustre/scratch/zuy121/temp_project/Pro2_PSU_MW/IRMA/newWRF_MW_THO/run/201709030600/perturb_ic/049/d03/rsl.error.0000
+  yes
+  any need to work on member  050
+/expanse/lustre/scratch/zuy121/temp_project/Pro2_PSU_MW/IRMA/newWRF_MW_THO/run/201709030600/perturb_ic/050/d03/rsl.error.0000
+  yes
+  any need to work on member  051
+/expanse/lustre/scratch/zuy121/temp_project/Pro2_PSU_MW/IRMA/newWRF_MW_THO/run/201709030600/perturb_ic/051/d03/rsl.error.0000
+  yes
+  any need to work on member  052
+/expanse/lustre/scratch/zuy121/temp_project/Pro2_PSU_MW/IRMA/newWRF_MW_THO/run/201709030600/perturb_ic/052/d03/rsl.error.0000
+  yes
+  any need to work on member  053
+/expanse/lustre/scratch/zuy121/temp_project/Pro2_PSU_MW/IRMA/newWRF_MW_THO/run/201709030600/perturb_ic/053/d03/rsl.error.0000
+  yes
+  any need to work on member  054
+/expanse/lustre/scratch/zuy121/temp_project/Pro2_PSU_MW/IRMA/newWRF_MW_THO/run/201709030600/perturb_ic/054/d03/rsl.error.0000
+  yes
+  any need to work on member  055
+/expanse/lustre/scratch/zuy121/temp_project/Pro2_PSU_MW/IRMA/newWRF_MW_THO/run/201709030600/perturb_ic/055/d03/rsl.error.0000
+  yes
+  any need to work on member  056
+/expanse/lustre/scratch/zuy121/temp_project/Pro2_PSU_MW/IRMA/newWRF_MW_THO/run/201709030600/perturb_ic/056/d03/rsl.error.0000
+  yes
+  any need to work on member  057
+/expanse/lustre/scratch/zuy121/temp_project/Pro2_PSU_MW/IRMA/newWRF_MW_THO/run/201709030600/perturb_ic/057/d03/rsl.error.0000
+  yes
+  any need to work on member  058
+/expanse/lustre/scratch/zuy121/temp_project/Pro2_PSU_MW/IRMA/newWRF_MW_THO/run/201709030600/perturb_ic/058/d03/rsl.error.0000
+  yes
+  any need to work on member  059
+/expanse/lustre/scratch/zuy121/temp_project/Pro2_PSU_MW/IRMA/newWRF_MW_THO/run/201709030600/perturb_ic/059/d03/rsl.error.0000
+  yes
+  any need to work on member  060
+/expanse/lustre/scratch/zuy121/temp_project/Pro2_PSU_MW/IRMA/newWRF_MW_THO/run/201709030600/perturb_ic/060/d03/rsl.error.0000
+  yes
+[H[2J[3J
+  % Total    % Received % Xferd  Average Speed   Time    Time     Time  Current
+                                 Dload  Upload   Total   Spent    Left  Speed
+  0     0    0     0    0     0      0      0 --:--:-- --:--:-- --:--:--     0100    14  100    14    0     0    125      0 --:--:-- --:--:-- --:--:--   126
+   IP ADDR: 198.202.100.13
+   USER: zuy121
+   DATE: Sun Aug 28 07:59:19 PDT 2022
+   UPTIME: up 6 weeks, 4 days, 14 hours, 21 minutes
+   HOSTNAME: login01.expanse.sdsc.edu
+   KERNEL: Linux 4.18.0-348.23.1.el8_5.x86_64 x86_64
+   MEMORY: 39Gi/125Gi
+
+Agent pid 1603883
+Identity added: Pro2_PSU_MW_source.id_ed25519 (yao.zhu.91@gmail.com)
+  Running ObsProc...
+[H[2J[3J
+  % Total    % Received % Xferd  Average Speed   Time    Time     Time  Current
+                                 Dload  Upload   Total   Spent    Left  Speed
+  0     0    0     0    0     0      0      0 --:--:-- --:--:-- --:--:--     0100    14  100    14    0     0    251      0 --:--:-- --:--:-- --:--:--   254
+   IP ADDR: 198.202.100.13
+   USER: zuy121
+   DATE: Sun Aug 28 08:00:48 PDT 2022
+   UPTIME: up 6 weeks, 4 days, 14 hours, 23 minutes
+   HOSTNAME: login01.expanse.sdsc.edu
+   KERNEL: Linux 4.18.0-348.23.1.el8_5.x86_64 x86_64
+   MEMORY: 40Gi/125Gi
+
+Agent pid 1620873
+Identity added: Pro2_PSU_MW_source.id_ed25519 (yao.zhu.91@gmail.com)
+  Running EnKF...
+    Linking files for domain d01
+/expanse/lustre/scratch/zuy121/temp_project/Pro2_PSU_MW/IRMA/newWRF_MW_THO/run/201709030600/enkf/d01/crtm_out_
+    Linking files for domain d02
+/expanse/lustre/scratch/zuy121/temp_project/Pro2_PSU_MW/IRMA/newWRF_MW_THO/run/201709030600/enkf/d02/crtm_out_
+    Linking files for domain d03
+fort.80011
+entered read_WRF
+14.279152
+3.0
+/expanse/lustre/scratch/zuy121/temp_project/Pro2_PSU_MW/IRMA/newWRF_MW_THO/run/201709030600/enkf/d03/crtm_out_
+    Running enkf.mpi
+  Replacing environment with GFS for domain d01
+  Replacing environment with GFS for domain d02
+  Replacing environment with GFS for domain d03
+[H[2J[3J
+  % Total    % Received % Xferd  Average Speed   Time    Time     Time  Current
+                                 Dload  Upload   Total   Spent    Left  Speed
+  0     0    0     0    0     0      0      0 --:--:-- --:--:-- --:--:--     0100    14  100    14    0     0    106      0 --:--:-- --:--:-- --:--:--   106100    14  100    14    0     0    106      0 --:--:-- --:--:-- --:--:--   106
+   IP ADDR: 198.202.100.13
+   USER: zuy121
+   DATE: Sun Aug 28 08:23:43 PDT 2022
+   UPTIME: up 6 weeks, 4 days, 14 hours, 46 minutes
+   HOSTNAME: login01.expanse.sdsc.edu
+   KERNEL: Linux 4.18.0-348.23.1.el8_5.x86_64 x86_64
+   MEMORY: 40Gi/125Gi
+
+Agent pid 1689003
+Identity added: Pro2_PSU_MW_source.id_ed25519 (yao.zhu.91@gmail.com)
+  Running UpdateBC...
+[H[2J[3J
+  % Total    % Received % Xferd  Average Speed   Time    Time     Time  Current
+                                 Dload  Upload   Total   Spent    Left  Speed
+  0     0    0     0    0     0      0      0 --:--:-- --:--:-- --:--:--     0100    14  100    14    0     0    244      0 --:--:-- --:--:-- --:--:--   245
+   IP ADDR: 198.202.100.13
+   USER: zuy121
+   DATE: Sun Aug 28 08:24:55 PDT 2022
+   UPTIME: up 6 weeks, 4 days, 14 hours, 47 minutes
+   HOSTNAME: login01.expanse.sdsc.edu
+   KERNEL: Linux 4.18.0-348.23.1.el8_5.x86_64 x86_64
+   MEMORY: 39Gi/125Gi
+
+Agent pid 1693651
+Identity added: Pro2_PSU_MW_source.id_ed25519 (yao.zhu.91@gmail.com)
+  Running WRF ensemble...
+Sun Aug 28 12:10:44 PDT 2022
+cat: run/201709030600/run/201709030600/enkf/stat: No such file or directory
+cat: run/201709030600/run/201709030600/icbc/stat: No such file or directory
+cat: run/201709030600/run/201709030600/obsproc/stat: No such file or directory
+cat: run/201709030600/run/201709030600/perturb_ic/stat: No such file or directory
+cat: run/201709030600/run/201709030600/update_bc/stat: No such file or directory
+cat: run/201709030600/run/201709030600/wrf_ens/stat: No such file or directory
+(standard_in) 2: syntax error
+----------------------------------------------------------------------
+CURRENT CYCLE: 2017-09-03_07:00:00 => 2017-09-03_08:00:00
+cat: 'run/201709030700/*/stat': No such file or directory
+./run_MW.sh: line 111: run/201709030700/*/stat: No such file or directory
+[H[2J[3J
+  % Total    % Received % Xferd  Average Speed   Time    Time     Time  Current
+                                 Dload  Upload   Total   Spent    Left  Speed
+  0     0    0     0    0     0      0      0 --:--:-- --:--:-- --:--:--     0100    14  100    14    0     0    245      0 --:--:-- --:--:-- --:--:--   250
+   IP ADDR: 198.202.100.13
+   USER: zuy121
+   DATE: Sun Aug 28 12:10:46 PDT 2022
+   UPTIME: up 6 weeks, 4 days, 18 hours, 33 minutes
+   HOSTNAME: login01.expanse.sdsc.edu
+   KERNEL: Linux 4.18.0-348.23.1.el8_5.x86_64 x86_64
+   MEMORY: 40Gi/125Gi
+
+Agent pid 2253727
+Identity added: Pro2_PSU_MW_source.id_ed25519 (yao.zhu.91@gmail.com)
+  Calculating preset nesting...
+[H[2J[3J
+  % Total    % Received % Xferd  Average Speed   Time    Time     Time  Current
+                                 Dload  Upload   Total   Spent    Left  Speed
+  0     0    0     0    0     0      0      0 --:--:-- --:--:-- --:--:--     0100    14  100    14    0     0    245      0 --:--:-- --:--:-- --:--:--   250
+   IP ADDR: 198.202.100.13
+   USER: zuy121
+   DATE: Sun Aug 28 12:10:51 PDT 2022
+   UPTIME: up 6 weeks, 4 days, 18 hours, 33 minutes
+   HOSTNAME: login01.expanse.sdsc.edu
+   KERNEL: Linux 4.18.0-348.23.1.el8_5.x86_64 x86_64
+   MEMORY: 41Gi/125Gi
+
+Agent pid 2254497
+Identity added: Pro2_PSU_MW_source.id_ed25519 (yao.zhu.91@gmail.com)
+  Running ObsProc...
+[H[2J[3J
+  % Total    % Received % Xferd  Average Speed   Time    Time     Time  Current
+                                 Dload  Upload   Total   Spent    Left  Speed
+  0     0    0     0    0     0      0      0 --:--:-- --:--:-- --:--:--     0100    14  100    14    0     0    246      0 --:--:-- --:--:-- --:--:--   250
+   IP ADDR: 198.202.100.13
+   USER: zuy121
+   DATE: Sun Aug 28 12:11:41 PDT 2022
+   UPTIME: up 6 weeks, 4 days, 18 hours, 34 minutes
+   HOSTNAME: login01.expanse.sdsc.edu
+   KERNEL: Linux 4.18.0-348.23.1.el8_5.x86_64 x86_64
+   MEMORY: 40Gi/125Gi
+
+Agent pid 2256453
+Identity added: Pro2_PSU_MW_source.id_ed25519 (yao.zhu.91@gmail.com)
+  Running EnKF...
+    Linking files for domain d01
+/expanse/lustre/scratch/zuy121/temp_project/Pro2_PSU_MW/IRMA/newWRF_MW_THO/run/201709030700/enkf/d01/crtm_out_
+    Linking files for domain d02
+/expanse/lustre/scratch/zuy121/temp_project/Pro2_PSU_MW/IRMA/newWRF_MW_THO/run/201709030700/enkf/d02/crtm_out_
+    Linking files for domain d03
+fort.80011
+entered read_WRF
+14.188545
+3.0
+/expanse/lustre/scratch/zuy121/temp_project/Pro2_PSU_MW/IRMA/newWRF_MW_THO/run/201709030700/enkf/d03/crtm_out_
+    Running enkf.mpi
+[H[2J[3J
+  % Total    % Received % Xferd  Average Speed   Time    Time     Time  Current
+                                 Dload  Upload   Total   Spent    Left  Speed
+  0     0    0     0    0     0      0      0 --:--:-- --:--:-- --:--:--     0100    14  100    14    0     0    123      0 --:--:-- --:--:-- --:--:--   125
+   IP ADDR: 198.202.100.13
+   USER: zuy121
+   DATE: Sun Aug 28 12:29:34 PDT 2022
+   UPTIME: up 6 weeks, 4 days, 18 hours, 51 minutes
+   HOSTNAME: login01.expanse.sdsc.edu
+   KERNEL: Linux 4.18.0-348.23.1.el8_5.x86_64 x86_64
+   MEMORY: 39Gi/125Gi
+
+Agent pid 2291232
+Identity added: Pro2_PSU_MW_source.id_ed25519 (yao.zhu.91@gmail.com)
+  Running UpdateBC...
+[H[2J[3J
+  % Total    % Received % Xferd  Average Speed   Time    Time     Time  Current
+                                 Dload  Upload   Total   Spent    Left  Speed
+  0     0    0     0    0     0      0      0 --:--:-- --:--:-- --:--:--     0100    14  100    14    0     0    251      0 --:--:-- --:--:-- --:--:--   254
+   IP ADDR: 198.202.100.13
+   USER: zuy121
+   DATE: Sun Aug 28 12:30:58 PDT 2022
+   UPTIME: up 6 weeks, 4 days, 18 hours, 53 minutes
+   HOSTNAME: login01.expanse.sdsc.edu
+   KERNEL: Linux 4.18.0-348.23.1.el8_5.x86_64 x86_64
+   MEMORY: 40Gi/125Gi
+
+Agent pid 2311702
+Identity added: Pro2_PSU_MW_source.id_ed25519 (yao.zhu.91@gmail.com)
+  Running WRF ensemble...
+Sun Aug 28 16:27:17 PDT 2022
+cat: run/201709030700/run/201709030700/enkf/stat: No such file or directory
+cat: run/201709030700/run/201709030700/icbc/stat: No such file or directory
+cat: run/201709030700/run/201709030700/obsproc/stat: No such file or directory
+cat: run/201709030700/run/201709030700/update_bc/stat: No such file or directory
+cat: run/201709030700/run/201709030700/wrf_ens/stat: No such file or directory
+(standard_in) 2: syntax error
+----------------------------------------------------------------------
+CURRENT CYCLE: 2017-09-03_08:00:00 => 2017-09-03_09:00:00
+cat: 'run/201709030800/*/stat': No such file or directory
+./run_MW.sh: line 111: run/201709030800/*/stat: No such file or directory
+[H[2J[3J
+  % Total    % Received % Xferd  Average Speed   Time    Time     Time  Current
+                                 Dload  Upload   Total   Spent    Left  Speed
+  0     0    0     0    0     0      0      0 --:--:-- --:--:-- --:--:--     0  0     0    0     0    0     0      0      0 --:--:-- --:--:-- --:--:--     0100    14  100    14    0     0    117      0 --:--:-- --:--:-- --:--:--   117
+   IP ADDR: 198.202.100.13
+   USER: zuy121
+   DATE: Sun Aug 28 16:27:20 PDT 2022
+   UPTIME: up 6 weeks, 4 days, 22 hours, 49 minutes
+   HOSTNAME: login01.expanse.sdsc.edu
+   KERNEL: Linux 4.18.0-348.23.1.el8_5.x86_64 x86_64
+   MEMORY: 40Gi/125Gi
+
+Agent pid 2865133
+Identity added: Pro2_PSU_MW_source.id_ed25519 (yao.zhu.91@gmail.com)
+  Calculating preset nesting...
+[H[2J[3J
+  % Total    % Received % Xferd  Average Speed   Time    Time     Time  Current
+                                 Dload  Upload   Total   Spent    Left  Speed
+  0     0    0     0    0     0      0      0 --:--:-- --:--:-- --:--:--     0100    14  100    14    0     0    244      0 --:--:-- --:--:-- --:--:--   245
+   IP ADDR: 198.202.100.13
+   USER: zuy121
+   DATE: Sun Aug 28 16:27:48 PDT 2022
+   UPTIME: up 6 weeks, 4 days, 22 hours, 50 minutes
+   HOSTNAME: login01.expanse.sdsc.edu
+   KERNEL: Linux 4.18.0-348.23.1.el8_5.x86_64 x86_64
+   MEMORY: 41Gi/125Gi
+
+Agent pid 2866272
+Identity added: Pro2_PSU_MW_source.id_ed25519 (yao.zhu.91@gmail.com)
+  Running ObsProc...
+[H[2J[3J
+  % Total    % Received % Xferd  Average Speed   Time    Time     Time  Current
+                                 Dload  Upload   Total   Spent    Left  Speed
+  0     0    0     0    0     0      0      0 --:--:-- --:--:-- --:--:--     0100    14  100    14    0     0    250      0 --:--:-- --:--:-- --:--:--   254
+   IP ADDR: 198.202.100.13
+   USER: zuy121
+   DATE: Sun Aug 28 16:29:19 PDT 2022
+   UPTIME: up 6 weeks, 4 days, 22 hours, 51 minutes
+   HOSTNAME: login01.expanse.sdsc.edu
+   KERNEL: Linux 4.18.0-348.23.1.el8_5.x86_64 x86_64
+   MEMORY: 42Gi/125Gi
+
+Agent pid 2869808
+Identity added: Pro2_PSU_MW_source.id_ed25519 (yao.zhu.91@gmail.com)
+  Running EnKF...
+    Linking files for domain d01
+/expanse/lustre/scratch/zuy121/temp_project/Pro2_PSU_MW/IRMA/newWRF_MW_THO/run/201709030800/enkf/d01/crtm_out_
+    Linking files for domain d02
+/expanse/lustre/scratch/zuy121/temp_project/Pro2_PSU_MW/IRMA/newWRF_MW_THO/run/201709030800/enkf/d02/crtm_out_
+    Linking files for domain d03
+/expanse/lustre/scratch/zuy121/temp_project/Pro2_PSU_MW/IRMA/newWRF_MW_THO/run/201709030800/enkf/d03/crtm_out_
+    Running enkf.mpi
+[H[2J[3J
+  % Total    % Received % Xferd  Average Speed   Time    Time     Time  Current
+                                 Dload  Upload   Total   Spent    Left  Speed
+  0     0    0     0    0     0      0      0 --:--:-- --:--:-- --:--:--     0100    14  100    14    0     0    240      0 --:--:-- --:--:-- --:--:--   241
+   IP ADDR: 198.202.100.13
+   USER: zuy121
+   DATE: Sun Aug 28 16:40:26 PDT 2022
+   UPTIME: up 6 weeks, 4 days, 23 hours, 2 minutes
+   HOSTNAME: login01.expanse.sdsc.edu
+   KERNEL: Linux 4.18.0-348.23.1.el8_5.x86_64 x86_64
+   MEMORY: 39Gi/125Gi
+
+Agent pid 2913107
+Identity added: Pro2_PSU_MW_source.id_ed25519 (yao.zhu.91@gmail.com)
+  Running UpdateBC...
+[H[2J[3J
+  % Total    % Received % Xferd  Average Speed   Time    Time     Time  Current
+                                 Dload  Upload   Total   Spent    Left  Speed
+  0     0    0     0    0     0      0      0 --:--:-- --:--:-- --:--:--     0100    14  100    14    0     0    251      0 --:--:-- --:--:-- --:--:--   254
+   IP ADDR: 198.202.100.13
+   USER: zuy121
+   DATE: Sun Aug 28 16:41:42 PDT 2022
+   UPTIME: up 6 weeks, 4 days, 23 hours, 4 minutes
+   HOSTNAME: login01.expanse.sdsc.edu
+   KERNEL: Linux 4.18.0-348.23.1.el8_5.x86_64 x86_64
+   MEMORY: 40Gi/125Gi
+
+Agent pid 2924381
+Identity added: Pro2_PSU_MW_source.id_ed25519 (yao.zhu.91@gmail.com)
+  Running WRF ensemble...
+Sun Aug 28 20:24:06 PDT 2022
+cat: run/201709030800/run/201709030800/enkf/stat: No such file or directory
+cat: run/201709030800/run/201709030800/icbc/stat: No such file or directory
+cat: run/201709030800/run/201709030800/obsproc/stat: No such file or directory
+cat: run/201709030800/run/201709030800/update_bc/stat: No such file or directory
+cat: run/201709030800/run/201709030800/wrf_ens/stat: No such file or directory
+(standard_in) 2: syntax error
+----------------------------------------------------------------------
+CURRENT CYCLE: 2017-09-03_09:00:00 => 2017-09-03_10:00:00
+cat: 'run/201709030900/*/stat': No such file or directory
+./run_MW.sh: line 111: run/201709030900/*/stat: No such file or directory
+[H[2J[3J
+  % Total    % Received % Xferd  Average Speed   Time    Time     Time  Current
+                                 Dload  Upload   Total   Spent    Left  Speed
+  0     0    0     0    0     0      0      0 --:--:-- --:--:-- --:--:--     0100    14  100    14    0     0    114      0 --:--:-- --:--:-- --:--:--   115
+   IP ADDR: 198.202.100.13
+   USER: zuy121
+   DATE: Sun Aug 28 20:24:09 PDT 2022
+   UPTIME: up 6 weeks, 5 days, 2 hours, 46 minutes
+   HOSTNAME: login01.expanse.sdsc.edu
+   KERNEL: Linux 4.18.0-348.23.1.el8_5.x86_64 x86_64
+   MEMORY: 42Gi/125Gi
+
+Agent pid 3342055
+Identity added: Pro2_PSU_MW_source.id_ed25519 (yao.zhu.91@gmail.com)
+  Calculating preset nesting...
+[H[2J[3J
+  % Total    % Received % Xferd  Average Speed   Time    Time     Time  Current
+                                 Dload  Upload   Total   Spent    Left  Speed
+  0     0    0     0    0     0      0      0 --:--:-- --:--:-- --:--:--     0100    14  100    14    0     0    245      0 --:--:-- --:--:-- --:--:--   250
+   IP ADDR: 198.202.100.13
+   USER: zuy121
+   DATE: Sun Aug 28 20:24:42 PDT 2022
+   UPTIME: up 6 weeks, 5 days, 2 hours, 47 minutes
+   HOSTNAME: login01.expanse.sdsc.edu
+   KERNEL: Linux 4.18.0-348.23.1.el8_5.x86_64 x86_64
+   MEMORY: 38Gi/125Gi
+
+Agent pid 3344136
+Identity added: Pro2_PSU_MW_source.id_ed25519 (yao.zhu.91@gmail.com)
+  Running ObsProc...
+[H[2J[3J
+  % Total    % Received % Xferd  Average Speed   Time    Time     Time  Current
+                                 Dload  Upload   Total   Spent    Left  Speed
+  0     0    0     0    0     0      0      0 --:--:-- --:--:-- --:--:--     0100    14  100    14    0     0    217      0 --:--:-- --:--:-- --:--:--   218
+   IP ADDR: 198.202.100.13
+   USER: zuy121
+   DATE: Sun Aug 28 20:26:03 PDT 2022
+   UPTIME: up 6 weeks, 5 days, 2 hours, 48 minutes
+   HOSTNAME: login01.expanse.sdsc.edu
+   KERNEL: Linux 4.18.0-348.23.1.el8_5.x86_64 x86_64
+   MEMORY: 40Gi/125Gi
+
+Agent pid 3347344
+Identity added: Pro2_PSU_MW_source.id_ed25519 (yao.zhu.91@gmail.com)
+  Running EnKF...
+    Linking files for domain d01
+/expanse/lustre/scratch/zuy121/temp_project/Pro2_PSU_MW/IRMA/newWRF_MW_THO/run/201709030900/enkf/d01/crtm_out_
+    Linking files for domain d02
+/expanse/lustre/scratch/zuy121/temp_project/Pro2_PSU_MW/IRMA/newWRF_MW_THO/run/201709030900/enkf/d02/crtm_out_
+    Linking files for domain d03
+/expanse/lustre/scratch/zuy121/temp_project/Pro2_PSU_MW/IRMA/newWRF_MW_THO/run/201709030900/enkf/d03/crtm_out_
+    Running enkf.mpi
+[H[2J[3J
+  % Total    % Received % Xferd  Average Speed   Time    Time     Time  Current
+                                 Dload  Upload   Total   Spent    Left  Speed
+  0     0    0     0    0     0      0      0 --:--:-- --:--:-- --:--:--     0100    14  100    14    0     0    135      0 --:--:-- --:--:-- --:--:--   135
+   IP ADDR: 198.202.100.13
+   USER: zuy121
+   DATE: Sun Aug 28 20:39:17 PDT 2022
+   UPTIME: up 6 weeks, 5 days, 3 hours, 1 minute
+   HOSTNAME: login01.expanse.sdsc.edu
+   KERNEL: Linux 4.18.0-348.23.1.el8_5.x86_64 x86_64
+   MEMORY: 42Gi/125Gi
+
+Agent pid 3383854
+Identity added: Pro2_PSU_MW_source.id_ed25519 (yao.zhu.91@gmail.com)
+  Running UpdateBC...
+[H[2J[3J
+  % Total    % Received % Xferd  Average Speed   Time    Time     Time  Current
+                                 Dload  Upload   Total   Spent    Left  Speed
+  0     0    0     0    0     0      0      0 --:--:-- --:--:-- --:--:--     0100    14  100    14    0     0    222      0 --:--:-- --:--:-- --:--:--   225
+   IP ADDR: 198.202.100.13
+   USER: zuy121
+   DATE: Sun Aug 28 20:40:50 PDT 2022
+   UPTIME: up 6 weeks, 5 days, 3 hours, 3 minutes
+   HOSTNAME: login01.expanse.sdsc.edu
+   KERNEL: Linux 4.18.0-348.23.1.el8_5.x86_64 x86_64
+   MEMORY: 39Gi/125Gi
+
+Agent pid 3396500
+Identity added: Pro2_PSU_MW_source.id_ed25519 (yao.zhu.91@gmail.com)
+  Running WRF ensemble...
+Mon Aug 29 00:35:49 PDT 2022
+cat: run/201709030900/run/201709030900/enkf/stat: No such file or directory
+cat: run/201709030900/run/201709030900/icbc/stat: No such file or directory
+cat: run/201709030900/run/201709030900/obsproc/stat: No such file or directory
+cat: run/201709030900/run/201709030900/update_bc/stat: No such file or directory
+cat: run/201709030900/run/201709030900/wrf_ens/stat: No such file or directory
+(standard_in) 2: syntax error
+----------------------------------------------------------------------
+CURRENT CYCLE: 2017-09-03_10:00:00 => 2017-09-03_11:00:00
+cat: 'run/201709031000/*/stat': No such file or directory
+./run_MW.sh: line 111: run/201709031000/*/stat: No such file or directory
+[H[2J[3J
+  % Total    % Received % Xferd  Average Speed   Time    Time     Time  Current
+                                 Dload  Upload   Total   Spent    Left  Speed
+  0     0    0     0    0     0      0      0 --:--:-- --:--:-- --:--:--     0100    14  100    14    0     0    127      0 --:--:-- --:--:-- --:--:--   128
+   IP ADDR: 198.202.100.13
+   USER: zuy121
+   DATE: Mon Aug 29 00:35:52 PDT 2022
+   UPTIME: up 6 weeks, 5 days, 6 hours, 58 minutes
+   HOSTNAME: login01.expanse.sdsc.edu
+   KERNEL: Linux 4.18.0-348.23.1.el8_5.x86_64 x86_64
+   MEMORY: 39Gi/125Gi
+
+Agent pid 4028631
+Identity added: Pro2_PSU_MW_source.id_ed25519 (yao.zhu.91@gmail.com)
+  Calculating preset nesting...
+[H[2J[3J
+  % Total    % Received % Xferd  Average Speed   Time    Time     Time  Current
+                                 Dload  Upload   Total   Spent    Left  Speed
+  0     0    0     0    0     0      0      0 --:--:-- --:--:-- --:--:--     0100    14  100    14    0     0    248      0 --:--:-- --:--:-- --:--:--   250
+   IP ADDR: 198.202.100.13
+   USER: zuy121
+   DATE: Mon Aug 29 00:36:28 PDT 2022
+   UPTIME: up 6 weeks, 5 days, 6 hours, 58 minutes
+   HOSTNAME: login01.expanse.sdsc.edu
+   KERNEL: Linux 4.18.0-348.23.1.el8_5.x86_64 x86_64
+   MEMORY: 40Gi/125Gi
+
+Agent pid 4032538
+Identity added: Pro2_PSU_MW_source.id_ed25519 (yao.zhu.91@gmail.com)
+  Running ObsProc...
+[H[2J[3J
+  % Total    % Received % Xferd  Average Speed   Time    Time     Time  Current
+                                 Dload  Upload   Total   Spent    Left  Speed
+  0     0    0     0    0     0      0      0 --:--:-- --:--:-- --:--:--     0100    14  100    14    0     0    250      0 --:--:-- --:--:-- --:--:--   254
+   IP ADDR: 198.202.100.13
+   USER: zuy121
+   DATE: Mon Aug 29 00:38:29 PDT 2022
+   UPTIME: up 6 weeks, 5 days, 7 hours
+   HOSTNAME: login01.expanse.sdsc.edu
+   KERNEL: Linux 4.18.0-348.23.1.el8_5.x86_64 x86_64
+   MEMORY: 39Gi/125Gi
+
+Agent pid 4039308
+Identity added: Pro2_PSU_MW_source.id_ed25519 (yao.zhu.91@gmail.com)
+  Running EnKF...
+    Linking files for domain d01
+/expanse/lustre/scratch/zuy121/temp_project/Pro2_PSU_MW/IRMA/newWRF_MW_THO/run/201709031000/enkf/d01/crtm_out_
+    Linking files for domain d02
+/expanse/lustre/scratch/zuy121/temp_project/Pro2_PSU_MW/IRMA/newWRF_MW_THO/run/201709031000/enkf/d02/crtm_out_
+    Linking files for domain d03
+fort.80011
+entered read_WRF
+13.916512
+3.0
+/expanse/lustre/scratch/zuy121/temp_project/Pro2_PSU_MW/IRMA/newWRF_MW_THO/run/201709031000/enkf/d03/crtm_out_
+    Running enkf.mpi
+[H[2J[3J
+  % Total    % Received % Xferd  Average Speed   Time    Time     Time  Current
+                                 Dload  Upload   Total   Spent    Left  Speed
+  0     0    0     0    0     0      0      0 --:--:-- --:--:-- --:--:--     0100    14  100    14    0     0    115      0 --:--:-- --:--:-- --:--:--   115
+   IP ADDR: 198.202.100.13
+   USER: zuy121
+   DATE: Mon Aug 29 00:57:34 PDT 2022
+   UPTIME: up 6 weeks, 5 days, 7 hours, 19 minutes
+   HOSTNAME: login01.expanse.sdsc.edu
+   KERNEL: Linux 4.18.0-348.23.1.el8_5.x86_64 x86_64
+   MEMORY: 39Gi/125Gi
+
+Agent pid 4100251
+Identity added: Pro2_PSU_MW_source.id_ed25519 (yao.zhu.91@gmail.com)
+  Running UpdateBC...
+[H[2J[3J
+  % Total    % Received % Xferd  Average Speed   Time    Time     Time  Current
+                                 Dload  Upload   Total   Spent    Left  Speed
+  0     0    0     0    0     0      0      0 --:--:-- --:--:-- --:--:--     0100    14  100    14    0     0    245      0 --:--:-- --:--:-- --:--:--   245
+   IP ADDR: 198.202.100.13
+   USER: zuy121
+   DATE: Mon Aug 29 00:58:58 PDT 2022
+   UPTIME: up 6 weeks, 5 days, 7 hours, 21 minutes
+   HOSTNAME: login01.expanse.sdsc.edu
+   KERNEL: Linux 4.18.0-348.23.1.el8_5.x86_64 x86_64
+   MEMORY: 40Gi/125Gi
+
+Agent pid 4110399
+Identity added: Pro2_PSU_MW_source.id_ed25519 (yao.zhu.91@gmail.com)
+  Running WRF ensemble...
+Mon Aug 29 04:48:38 PDT 2022
+cat: run/201709031000/run/201709031000/enkf/stat: No such file or directory
+cat: run/201709031000/run/201709031000/icbc/stat: No such file or directory
+cat: run/201709031000/run/201709031000/obsproc/stat: No such file or directory
+cat: run/201709031000/run/201709031000/update_bc/stat: No such file or directory
+cat: run/201709031000/run/201709031000/wrf_ens/stat: No such file or directory
+(standard_in) 2: syntax error
+----------------------------------------------------------------------
+CURRENT CYCLE: 2017-09-03_11:00:00 => 2017-09-03_12:00:00
+cat: 'run/201709031100/*/stat': No such file or directory
+./run_MW.sh: line 111: run/201709031100/*/stat: No such file or directory
+[H[2J[3J
+  % Total    % Received % Xferd  Average Speed   Time    Time     Time  Current
+                                 Dload  Upload   Total   Spent    Left  Speed
+  0     0    0     0    0     0      0      0 --:--:-- --:--:-- --:--:--     0  0     0    0     0    0     0      0      0 --:--:-- --:--:-- --:--:--     0100    14  100    14    0     0    123      0 --:--:-- --:--:-- --:--:--   122
+   IP ADDR: 198.202.100.13
+   USER: zuy121
+   DATE: Mon Aug 29 04:48:40 PDT 2022
+   UPTIME: up 6 weeks, 5 days, 11 hours, 11 minutes
+   HOSTNAME: login01.expanse.sdsc.edu
+   KERNEL: Linux 4.18.0-348.23.1.el8_5.x86_64 x86_64
+   MEMORY: 40Gi/125Gi
+
+Agent pid 466969
+Identity added: Pro2_PSU_MW_source.id_ed25519 (yao.zhu.91@gmail.com)
+  Calculating preset nesting...
+[H[2J[3J
+  % Total    % Received % Xferd  Average Speed   Time    Time     Time  Current
+                                 Dload  Upload   Total   Spent    Left  Speed
+  0     0    0     0    0     0      0      0 --:--:-- --:--:-- --:--:--     0100    14  100    14    0     0    251      0 --:--:-- --:--:-- --:--:--   254
+   IP ADDR: 198.202.100.13
+   USER: zuy121
+   DATE: Mon Aug 29 04:49:06 PDT 2022
+   UPTIME: up 6 weeks, 5 days, 11 hours, 11 minutes
+   HOSTNAME: login01.expanse.sdsc.edu
+   KERNEL: Linux 4.18.0-348.23.1.el8_5.x86_64 x86_64
+   MEMORY: 40Gi/125Gi
+
+Agent pid 468436
+Identity added: Pro2_PSU_MW_source.id_ed25519 (yao.zhu.91@gmail.com)
+  Running ObsProc...
+[H[2J[3J
+  % Total    % Received % Xferd  Average Speed   Time    Time     Time  Current
+                                 Dload  Upload   Total   Spent    Left  Speed
+  0     0    0     0    0     0      0      0 --:--:-- --:--:-- --:--:--     0100    14  100    14    0     0    239      0 --:--:-- --:--:-- --:--:--   241
+   IP ADDR: 198.202.100.13
+   USER: zuy121
+   DATE: Mon Aug 29 04:49:49 PDT 2022
+   UPTIME: up 6 weeks, 5 days, 11 hours, 12 minutes
+   HOSTNAME: login01.expanse.sdsc.edu
+   KERNEL: Linux 4.18.0-348.23.1.el8_5.x86_64 x86_64
+   MEMORY: 38Gi/125Gi
+
+Agent pid 470249
+Identity added: Pro2_PSU_MW_source.id_ed25519 (yao.zhu.91@gmail.com)
+  Running EnKF...
+    Linking files for domain d01
+/expanse/lustre/scratch/zuy121/temp_project/Pro2_PSU_MW/IRMA/newWRF_MW_THO/run/201709031100/enkf/d01/crtm_out_
+    Linking files for domain d02
+/expanse/lustre/scratch/zuy121/temp_project/Pro2_PSU_MW/IRMA/newWRF_MW_THO/run/201709031100/enkf/d02/crtm_out_
+    Linking files for domain d03
+fort.80011
+entered read_WRF
+13.8257675
+3.0
+/expanse/lustre/scratch/zuy121/temp_project/Pro2_PSU_MW/IRMA/newWRF_MW_THO/run/201709031100/enkf/d03/crtm_out_
+    Running enkf.mpi
+[H[2J[3J
+  % Total    % Received % Xferd  Average Speed   Time    Time     Time  Current
+                                 Dload  Upload   Total   Spent    Left  Speed
+  0     0    0     0    0     0      0      0 --:--:-- --:--:-- --:--:--     0100    14  100    14    0     0    118      0 --:--:-- --:--:-- --:--:--   118
+   IP ADDR: 198.202.100.13
+   USER: zuy121
+   DATE: Mon Aug 29 05:08:50 PDT 2022
+   UPTIME: up 6 weeks, 5 days, 11 hours, 31 minutes
+   HOSTNAME: login01.expanse.sdsc.edu
+   KERNEL: Linux 4.18.0-348.23.1.el8_5.x86_64 x86_64
+   MEMORY: 41Gi/125Gi
+
+Agent pid 522846
+Identity added: Pro2_PSU_MW_source.id_ed25519 (yao.zhu.91@gmail.com)
+  Running UpdateBC...
+[H[2J[3J
+  % Total    % Received % Xferd  Average Speed   Time    Time     Time  Current
+                                 Dload  Upload   Total   Spent    Left  Speed
+  0     0    0     0    0     0      0      0 --:--:-- --:--:-- --:--:--     0100    14  100    14    0     0    242      0 --:--:-- --:--:-- --:--:--   245
+   IP ADDR: 198.202.100.13
+   USER: zuy121
+   DATE: Mon Aug 29 05:09:59 PDT 2022
+   UPTIME: up 6 weeks, 5 days, 11 hours, 32 minutes
+   HOSTNAME: login01.expanse.sdsc.edu
+   KERNEL: Linux 4.18.0-348.23.1.el8_5.x86_64 x86_64
+   MEMORY: 38Gi/125Gi
+
+Agent pid 530519
+Identity added: Pro2_PSU_MW_source.id_ed25519 (yao.zhu.91@gmail.com)
+  Running WRF ensemble...
