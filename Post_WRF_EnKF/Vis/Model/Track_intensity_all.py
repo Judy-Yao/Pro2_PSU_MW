@@ -20,16 +20,15 @@ from matplotlib import pyplot as plt
 from cartopy import crs as ccrs
 from cartopy.mpl.gridliner import LONGITUDE_FORMATTER, LATITUDE_FORMATTER
 
-matplotlib.rcParams['lines.linewidth'] = 2
-matplotlib.rcParams['lines.markersize'] = 2
-matplotlib.rcParams['lines.markeredgewidth'] = 0
-matplotlib.rcParams['font.size'] = 6
 
 matplotlib.rcParams['xtick.direction'] = 'in'
 matplotlib.rcParams['ytick.direction'] = 'in'
 matplotlib.rcParams['xtick.top'] = True
 matplotlib.rcParams['ytick.right'] = True
-
+matplotlib.rcParams['lines.linewidth'] = 1.5
+matplotlib.rcParams['lines.markersize'] = 2
+matplotlib.rcParams['lines.markeredgewidth'] = 0
+matplotlib.rcParams['font.size'] = 6
 
 # Read the post-storm best-track file of the storm at all times
 def read_bestrack(Storm):
@@ -208,13 +207,30 @@ def read_rsl_error(Storm, Exper_name, directory, DF_start, DF_end):
     return dict_model
 
 
-def plot_one( ax0, ax1, ax2,  state, linestyle, label, step=1):
-    dates = [datetime.strptime(i,"%Y%m%d%H%M") for i in state['time']]
-    #hours = np.array([date.hour for date in dates])
-    #idx = np.mod(hours.astype(int), step) == 0
-    ax0.plot(state['lon'], state['lat'], linestyle, label=label, transform=ccrs.PlateCarree())
-    ax1.plot_date(dates, state['min_slp'], linestyle, label=label)
-    ax2.plot_date(dates, state['max_ws'], linestyle, label=label)
+def plot_one( ax0, ax1, ax2,  state, color, label, step=1):
+   
+    if label == 'Best track':
+        times = state['time']
+        lon = state['lon']
+        lat = state['lat']
+    else:
+        times = state['time'][::6]
+        lon = state['lon'][::6]
+        lat = state['lat'][::6]
+   
+    ax0.plot(lon, lat, marker='o', markersize=2, color=color,linewidth=1, label=label, transform=ccrs.PlateCarree())
+    
+    idx = 0
+    for it in times:
+        if it[8:10] == '00':
+            ax0.scatter( lon[idx], lat[idx],s=5, marker='o',edgecolor="white",transform=ccrs.PlateCarree())    
+            ax0.annotate(it[6:8], xy=(lon[idx], lat[idx]),  xycoords='data', transform=ccrs.PlateCarree())
+            #ax0.text((state['lon'][idx], state['lat'][idx],it[6:8], fontsize=4,transform=ccrs.PlateCarree())
+        idx = idx + 1
+
+    dates = [datetime.strptime(i,"%Y%m%d%H%M") for i in state['time']] 
+    ax1.plot_date(dates, state['min_slp'], color, label=label)
+    ax2.plot_date(dates, state['max_ws'], color, label=label)
 
 
 def plot_hpi(Storm, wrf_dir, read_HPI_wrfout, domain_range, output_dir=None):
@@ -232,18 +248,21 @@ def plot_hpi(Storm, wrf_dir, read_HPI_wrfout, domain_range, output_dir=None):
     ax2 = fig.add_subplot( gs[0,2] )
 
     # Plot HPI from post-storm analysis
-    Btk_start = '201709030600'
-    Btk_end = '201709090000'
+    #Btk_start = '201708221200'
+    #Btk_end = '201708270000'
+    Btk_start = '201709161800'#'201708221200'#'201709030600'
+    Btk_end = '201709210600'#'201708270000'#'201709090000'
     best_track = btk_in_duration(Storm, Btk_start, Btk_end)
-    plot_one ( ax0, ax1, ax2, best_track,  'k-', 'Best track', step=step )
+    plot_one ( ax0, ax1, ax2, best_track,  'black', 'Best track', step=step )
 
     # Plot HPI from deterministic forecasts
-    DF_model_end  = '201709090000' #''201708270000'
+    #DF_model_end  = '201708270000'
+    DF_model_end  = '201709210600'
     IR_init_times = sorted(os.listdir(  wrf_dir+'/'+Storm+'/newWRF_IR_only/wrf_df/' ))
     IRMW_init_times = sorted(os.listdir(  wrf_dir+'/'+Storm+'/newWRF_MW_THO/wrf_df/' ))
     
-    IR_color = [ '#FFB5A6','#FF998B','FF7E72','E36359','C44841','A62C2B']
-    IRMW_color = [ '#b8d5cd', '#8abaae', '#5ca08e', '2e856e', '006a4e']
+    IRMW_color = [ '#FFB5A6','#FF998B','#E36359','#C44841','#A62C2B']
+    IR_color = [ '#BAE4B5', '#82CEA9', '#63AD9C', '#167856']
 
     if read_HPI_wrfout == True:
         i = 0
@@ -277,8 +296,12 @@ def plot_hpi(Storm, wrf_dir, read_HPI_wrfout, domain_range, output_dir=None):
     gl.xlabel_style = {'size': 6}
     gl.ylabel_style = {'size': 6}  
     
-    ax1.set_xlim([datetime(2017, 9, 3, 6, 0, 0), datetime(2017, 9, 9)])
-    ax2.set_xlim([datetime(2017, 9, 3, 6, 0, 0), datetime(2017, 9, 9)])
+    #ax1.set_xlim([datetime(2017, 8, 22, 12, 0, 0), datetime(2017, 8, 27)])
+    #ax2.set_xlim([datetime(2017, 8, 22, 12, 0, 0), datetime(2017, 8, 27)]) 
+    #ax1.set_xlim([datetime(2017, 9, 3, 6, 0, 0), datetime(2017, 9, 9)])
+    #ax2.set_xlim([datetime(2017, 9, 3, 6, 0, 0), datetime(2017, 9, 9)])
+    ax1.set_xlim([datetime(2017, 9, 16, 18, 0, 0), datetime(2017, 9, 21)])
+    ax2.set_xlim([datetime(2017, 9, 16, 18, 0, 0), datetime(2017, 9, 21)])
     ax1.tick_params(axis='x', labelrotation=45)
     ax2.tick_params(axis='x', labelrotation=45)
     ax2.legend(frameon=False, loc='upper left')
@@ -296,15 +319,27 @@ def plot_hpi(Storm, wrf_dir, read_HPI_wrfout, domain_range, output_dir=None):
 
 
 if __name__ == '__main__':
-    Storm = 'IRMA'
+    
+    #Storm = 'HARVEY'
+    Storm = 'MARIA'
     wrf_dir = '/scratch/06191/tg854905/Pro2_PSU_MW/'
 
     read_HPI_wrfout = False
 
-    lon_min = -85
-    lon_max = -45
-    lat_min = 12
-    lat_max = 30
+    #lon_min = -101
+    #lon_max = -86
+    #lat_min = 16
+    #lat_max = 31
+
+    #lon_min = -85
+    #lon_max = -45
+    #lat_min = 12
+    #lat_max = 30
+    
+    lon_min = -70
+    lon_max = -48
+    lat_min = 5
+    lat_max = 20
     domain_range = [lon_min, lon_max, lat_min, lat_max]
 
     plot_hpi( Storm, wrf_dir, read_HPI_wrfout, domain_range, output_dir = './out')

@@ -1,0 +1,6 @@
+
+--------------------- Call Matlab Function From Python ----------------
+1. To use matlab functions in python, we import the module matlab.engine into python
+2. It is strongly recommended that matlab version older than 2020b should be used.
+
+

@@ -1,4 +1,4 @@
-#!/usr/bin/env python3
+#!/work2/06191/tg854905/stampede2/opt/anaconda3/lib/python3.7
 
 import os
 import glob
@@ -11,6 +11,8 @@ import cartopy.crs as ccrs
 from cartopy.mpl.gridliner import LONGITUDE_FORMATTER, LATITUDE_FORMATTER
 from global_land_mask import globe
 import math
+import matlab.engine
+
 
 def read_obs(obs_file, sensor):
 
@@ -38,6 +40,64 @@ def read_obs(obs_file, sensor):
 
     dict_obs_all = {'Ch_obs': Ch_obs, 'Lat_obs': Lat_obs, 'Lon_obs': Lon_obs, 'Yo_obs': Yo_obs} 
     return dict_obs_all
+
+def read_TCvitals(tc_file, DAtime):
+
+    with open(tc_file) as tmp:
+        tc_all = tmp.readlines()
+    
+    tc_lat = []
+    tc_lon = []
+    for line in tc_all:
+        line_split = line.split()
+        tc_time = line_split[3]+line_split[4]
+        
+        if tc_time == DAtime:
+            print('Time from TCvitals:', tc_time)
+            # Read latitude
+            if 'N' in line_split[5]:
+                tc_lat.append(float(line_split[5].replace('N',''))/10)
+            else:
+                tc_lat.append( 0-float(line_split[5].replace('S',''))/10)
+            # Read longitude
+            if 'W' in line_split[6]:
+                tc_lon.append(0-float(line_split[6].replace('W',''))/10)
+            else:
+                tc_lon.append(float(line_split[6].replace('E',''))/10)
+    
+            break
+
+    return tc_lon, tc_lat
+
+def read_bestrack(btk_file, DAtime):
+
+    with open(btk_file) as f:
+        all_lines = f.readlines()
+
+    # Process all of records to our format/unit 
+    btk_lat = []
+    btk_lon = []
+    for line in all_lines:
+        # split one record into different parts
+        split_line = line.split()
+        # Read time
+        btk_time = split_line[2].replace(',','') + '00'
+        if btk_time == DAtime:
+            # Read latitude
+            lat_line = split_line[6].replace(',','')
+            if 'N' in lat_line:
+                btk_lat.append(float(lat_line.replace('N',''))/10)
+            else:
+                btk_lat.append(0-float(lat_line.replace('S',''))/10)
+            # Read longitute
+            lon_line = split_line[7].replace(',','')
+            if 'W' in lon_line:
+                btk_lon.append(0-float(lon_line.replace('W',''))/10)
+            else:
+                btk_lon.append(float(lon_line.replace('E',''))/10)
+
+            return btk_lon, btk_lat
+
 
 
 def getSensor_Ch(obs_file):
@@ -145,32 +205,36 @@ def read_simu_Tb(Hxb_files, Hxa_files):
     dict_simu_Tb = {'Ch_x': Ch_x, 'Lat_x': Lat_x, 'Lon_x': Lon_x, 'Yb_x': Yb_x, 'Ya_x': Ya_x}
     return dict_simu_Tb
 
+
     
 def plot_Tb(Storm, Exper_name, DAtime, sensor):
    
     ch_num = [int(ich) for ich in dict_ss_ch[sensor]]
     # Define the low and high frequency for each sensor
-    d_lowf = {'atms_npp':0, 'amsr2':7, 'gmi_gpm':3, 'mhs_n19':0, 'mhs_n18':0, 'mhs_metop-a':0, 'mhs_metop-b':0, 'saphir_meghat':0, 'ssmi': 13}
-    # categorize ssmi and ssmis as one kind 'ssmi' since they share the same channel number set up
-    if 'ssmi' in sensor:
-        sensor_short = 'ssmi'
-    else:
-        sensor_short = sensor
+    d_lowf = {'atms_npp':0, 'amsr2_gcom-w1':7, 'gmi_gpm':3, 'mhs_n19':0, 'mhs_n18':0, 'mhs_metop-a':0, 'mhs_metop-b':0, 'saphir_meghat':0, 'ssmis_f16': 13, 'ssmis_f17': 13, 'ssmis_f18': 13, 'ssmi_f15':1}
 
-    # Read data
+    # Read obs data
     obs_file_name = 'microwave_d03_' + DAtime + '_so'
     d_obs = read_obs('/work2/06191/tg854905/stampede2/Pro2_PSU_MW/'+Storm+'/Obs_y/MW/'+obs_file_name, sensor)
-   
+    # Read simulated Tbs 
     Hx_dir = '/scratch/06191/tg854905/Pro2_PSU_MW/'+Storm+'/'+Exper_name+'/Obs_Hx/MW/'+DAtime
     if sensor == 'gmi_gpm':
-        Hxb_file = [Hx_dir+'/wrf_enkf_input_d03_mean.tb.gmi_gpm_lf.crtm.nc', Hx_dir+'/wrf_enkf_input_d03_mean.tb.gmi_gpm_hf.crtm.nc']
-        Hxa_file = [Hx_dir+'/wrf_enkf_output_d03_mean.tb.gmi_gpm_lf.crtm.nc', Hx_dir+'/wrf_enkf_output_d03_mean.tb.gmi_gpm_hf.crtm.nc']
+        Hxb_file = [Hx_dir+'/wrf_enkf_input_d03_mean_'+DAtime+'_tb.gmi_gpm_lf.crtm.nc', Hx_dir+'/wrf_enkf_input_d03_mean_'+DAtime+'_tb.gmi_gpm_hf.crtm.nc']
+        Hxa_file = [Hx_dir+'/wrf_enkf_output_d03_mean_'+DAtime+'_tb.gmi_gpm_lf.crtm.nc', Hx_dir+'/wrf_enkf_output_d03_mean_'+DAtime+'_tb.gmi_gpm_hf.crtm.nc']
     else:
-        Hxb_file = [Hx_dir+'/wrf_enkf_input_d03_mean.tb.'+sensor+'.crtm.nc',]
-        Hxa_file = [Hx_dir+'/wrf_enkf_output_d03_mean.tb.'+sensor+'.crtm.nc',]  
-
+        Hxb_file = [Hx_dir+'/wrf_enkf_input_d03_mean_'+DAtime+'_tb.'+sensor+'.crtm.nc',]
+        Hxa_file = [Hx_dir+'/wrf_enkf_output_d03_mean_'+DAtime+'_tb.'+sensor+'.crtm.nc',]  
+    
     d_simu = read_simu_Tb( Hxb_file, Hxa_file )
-
+    # Read location from TCvitals
+    if any( hh in DAtime[8:10] for hh in ['00','06','12','18']):
+        tc_lon, tc_lat = read_TCvitals('/work2/06191/tg854905/stampede2/Pro2_PSU_MW/'+Storm+'/TCvitals/'+Storm+'_tcvitals', DAtime)
+        print( 'Location from TCvital: ', tc_lon, tc_lat )
+    # Read location from best-track
+    if any( hh in DAtime[8:10] for hh in ['00','06','12','18']):
+        Best_track_file = os.listdir('/work2/06191/tg854905/stampede2/Pro2_PSU_MW/' + Storm + '/Post_Storm_btk')
+        btk_lon, btk_lat = read_bestrack('/work2/06191/tg854905/stampede2/Pro2_PSU_MW/' + Storm + '/Post_Storm_btk/' + Best_track_file[0], DAtime)
+        print( 'Location from Best-track: ', btk_lon, btk_lat )
     # ------------------ Plot -----------------------
     f, ax=plt.subplots(2, 3, subplot_kw={'projection': ccrs.PlateCarree()}, gridspec_kw = {'wspace':0, 'hspace':0}, linewidth=0.5, sharex='all', sharey='all',  figsize=(6,4), dpi=400)
     
@@ -187,16 +251,17 @@ def plot_Tb(Storm, Exper_name, DAtime, sensor):
     lon_min = np.amin(d_simu['Lon_x'].flatten())
     lon_max = np.amax(d_simu['Lon_x'].flatten())
 
+
     # Loop over low frequency and high frequency if available
     for input_it in range(2):
         # make sure the idex is not out of range    
         if len(ch_num) == 2:
-            if ch_num[input_it] == d_lowf[sensor_short]:
+            if ch_num[input_it] == d_lowf[sensor]:
                 i = 0
             else:
                 i = 1
         else:
-            if ch_num[0] == d_lowf[sensor_short]:
+            if ch_num[0] == d_lowf[sensor]:
                 i = 0
             else:
                 i =  1
@@ -212,7 +277,7 @@ def plot_Tb(Storm, Exper_name, DAtime, sensor):
         Yo_obs_ch = d_obs['Yo_obs'][ch_idx]
    
         #if ch_num[input_it] == d_lowf[sensor_short]:
-        if d_obs['Ch_obs'][ch_idx][0] == d_lowf[sensor_short]:
+        if d_obs['Ch_obs'][ch_idx][0] == d_lowf[sensor]:
             is_ocean = globe.is_ocean(Lat_obs_ch, Lon_obs_ch)
             mask_x = is_ocean
         else:
@@ -233,58 +298,82 @@ def plot_Tb(Storm, Exper_name, DAtime, sensor):
                     Ch_idx = d_simu['Ch_x'].tolist().index(ich)      
         
         if sensor == 'gmi_gpm':
-            Lat_x_ch = d_simu['Lat_x'][Ch_idx,:,:]
-            Lon_x_ch = d_simu['Lon_x'][Ch_idx,:,:]
-            Yb_x_ch = d_simu['Yb_x'][Ch_idx,:,:] 
-            Ya_x_ch = d_simu['Ya_x'][Ch_idx,:,:]
-   
-            if d_simu['Ch_x'][Ch_idx] == d_lowf[sensor_short]:
-                is_ocean = globe.is_ocean(Lat_x_ch.flatten(), Lon_x_ch.flatten())  
-                mask_x = is_ocean
-            else:
-                mask_x = np.full((np.size(Lat_x_ch.flatten()), ), True)
+            Lat_x_ch = d_simu['Lat_x'][Ch_idx,:,:].flatten()
+            Lon_x_ch = d_simu['Lon_x'][Ch_idx,:,:].flatten()
+            Yb_x_ch = d_simu['Yb_x'][Ch_idx,:,:].flatten()
+            Ya_x_ch = d_simu['Ya_x'][Ch_idx,:,:].flatten()
+           
+            # interpolate simulated Tbs to obs physical space
+            #Yb_obspace, Ya_obspace = matlab_Interpolant(Lat_obs_ch, Lon_obs_ch, Yo_obs_ch, Lat_x_ch, Lon_x_ch, Yb_x_ch, Ya_x_ch)
+            mYb_obspace = eng.griddata(matlab.double(Lon_x_ch.tolist()), matlab.double(Lat_x_ch.tolist()), matlab.double(Yb_x_ch.tolist()), matlab.double(Lon_obs_ch.tolist()), matlab.double(Lat_obs_ch.tolist()))
+            Yb_obspace = np.array(mYb_obspace._data)
+            mYa_obspace = eng.griddata(matlab.double(Lon_x_ch.tolist()), matlab.double(Lat_x_ch.tolist()), matlab.double(Ya_x_ch.tolist()), matlab.double(Lon_obs_ch.tolist()), matlab.double(Lat_obs_ch.tolist()))
+            Ya_obspace = np.array(mYa_obspace._data)
+            #if d_simu['Ch_x'][Ch_idx] == d_lowf[sensor]:
+            #    is_ocean = globe.is_ocean(Lat_x_ch.flatten(), Lon_x_ch.flatten())  
+            #    mask_x = is_ocean
+            #else:
+            #    mask_x = np.full((np.size(Lat_x_ch.flatten()), ), True)
       
             ax[i,1].set_extent([lon_min, lon_max, lat_min, lat_max], crs=ccrs.PlateCarree())
             ax[i,1].coastlines(resolution='10m', color='black',linewidth=0.5)
-            ax[i,1].scatter(Lon_x_ch.flatten()[mask_x], Lat_x_ch.flatten()[mask_x],2.5,c=Yb_x_ch.flatten()[mask_x],\
+            ax[i,1].scatter(Lon_obs_ch[mask_x], Lat_obs_ch.flatten()[mask_x],2.5,c=Yb_obspace[mask_x],\
                 edgecolors='none', cmap=MWJet, vmin=min_T, vmax=max_T, transform=ccrs.PlateCarree()) 
+            if any( hh in DAtime[8:10] for hh in ['00','06','12','18']):
+                ax[i,1].scatter(tc_lon, tc_lat, s=3, marker='*', edgecolors='black', transform=ccrs.PlateCarree())        
+                #ax[i,1].scatter(btk_lon, btk_lat, s=3, marker='o', facecolors='none', edgecolors='black', transform=ccrs.PlateCarree())
 
             ax[i,2].set_extent([lon_min, lon_max, lat_min, lat_max], crs=ccrs.PlateCarree())
             ax[i,2].coastlines(resolution='10m', color='black',linewidth=0.5)
-            cs = ax[i,2].scatter(Lon_x_ch.flatten()[mask_x], Lat_x_ch.flatten()[mask_x],2.5,c=Ya_x_ch.flatten()[mask_x],\
+            cs = ax[i,2].scatter(Lon_obs_ch[mask_x], Lat_obs_ch[mask_x],2.5,c=Ya_obspace[mask_x],\
                 edgecolors='none', cmap=MWJet, vmin=min_T, vmax=max_T, transform=ccrs.PlateCarree())
+            if any( hh in DAtime[8:10] for hh in ['00','06','12','18']):
+                ax[i,2].scatter(tc_lon, tc_lat, s=3, marker='*', edgecolors='black', transform=ccrs.PlateCarree())
+                #ax[i,2].scatter(btk_lon, btk_lat, s=3, marker='o', facecolors='none', edgecolors='black', transform=ccrs.PlateCarree())
         else:
-            Yb_x_ch = d_simu['Yb_x'][Ch_idx,:,:]
-            Ya_x_ch = d_simu['Ya_x'][Ch_idx,:,:]
-   
-            if d_simu['Ch_x'][Ch_idx] == d_lowf[sensor_short]:
-                is_ocean = globe.is_ocean(d_simu['Lat_x'].flatten(), d_simu['Lon_x'].flatten())
-                mask_x = is_ocean
-            else:
-                mask_x = np.full((np.size(d_simu['Lon_x'].flatten()), ), True)
+            Lat_x_ch = d_simu['Lat_x'][:,:].flatten()
+            Lon_x_ch = d_simu['Lon_x'][:,:].flatten()
+            Yb_x_ch = d_simu['Yb_x'][Ch_idx,:,:].flatten()
+            Ya_x_ch = d_simu['Ya_x'][Ch_idx,:,:].flatten()
+
+            # interpolate simulated Tbs to obs physical space
+            #Yb_obspace, Ya_obspace = matlab_Interpolant(Lat_obs_ch, Lon_obs_ch, Yo_obs_ch, Lat_x_ch, Lon_x_ch, Yb_x_ch, Ya_x_ch)
+            mYb_obspace = eng.griddata(matlab.double(Lon_x_ch.tolist()), matlab.double(Lat_x_ch.tolist()), matlab.double(Yb_x_ch.tolist()), matlab.double(Lon_obs_ch.tolist()), matlab.double(Lat_obs_ch.tolist()))
+            Yb_obspace = np.array(mYb_obspace._data)
+            mYa_obspace = eng.griddata(matlab.double(Lon_x_ch.tolist()), matlab.double(Lat_x_ch.tolist()), matlab.double(Ya_x_ch.tolist()), matlab.double(Lon_obs_ch.tolist()), matlab.double(Lat_obs_ch.tolist())) 
+            Ya_obspace = np.array(mYa_obspace._data)
+            #if d_simu['Ch_x'][Ch_idx] == d_lowf[sensor]:
+            #    is_ocean = globe.is_ocean(d_simu['Lat_x'].flatten(), d_simu['Lon_x'].flatten())
+            #    mask_x = is_ocean
+            #else:
+            #    mask_x = np.full((np.size(d_simu['Lon_x'].flatten()), ), True)
       
             ax[i,1].set_extent([lon_min, lon_max, lat_min, lat_max], crs=ccrs.PlateCarree())
             ax[i,1].coastlines(resolution='10m', color='black',linewidth=0.5)
-            ax[i,1].scatter(d_simu['Lon_x'].flatten()[mask_x], d_simu['Lat_x'].flatten()[mask_x],2.5,c=Yb_x_ch.flatten()[mask_x],\
+            ax[i,1].scatter(Lon_obs_ch[mask_x], Lat_obs_ch[mask_x],2.5,c=Yb_obspace[mask_x],\
                 edgecolors='none', cmap=MWJet, vmin=min_T, vmax=max_T, transform=ccrs.PlateCarree())
+            if any( hh in DAtime[8:10] for hh in ['00','06','12','18'] ):
+                ax[i,1].scatter(tc_lon, tc_lat, s=3, marker='*', edgecolors='black', transform=ccrs.PlateCarree())
+                #ax[i,1].scatter(btk_lon, btk_lat, s=3, marker='o', facecolors='none', edgecolors='black', transform=ccrs.PlateCarree())
 
             ax[i,2].set_extent([lon_min, lon_max, lat_min, lat_max], crs=ccrs.PlateCarree())
             ax[i,2].coastlines(resolution='10m', color='black',linewidth=0.5)
-            cs = ax[i,2].scatter(d_simu['Lon_x'].flatten()[mask_x], d_simu['Lat_x'].flatten()[mask_x],2.5,c=Ya_x_ch.flatten()[mask_x],\
+            cs = ax[i,2].scatter(Lon_obs_ch[mask_x], Lat_obs_ch[mask_x],2.5,c=Ya_obspace[mask_x],\
                 edgecolors='none', cmap=MWJet, vmin=min_T, vmax=max_T, transform=ccrs.PlateCarree())
-
-
+            if any( hh in DAtime[8:10] for hh in ['00','06','12','18'] ):
+                ax[i,2].scatter(tc_lon, tc_lat, s=3, marker='*', edgecolors='black', transform=ccrs.PlateCarree())
+                #ax[i,2].scatter(btk_lon, btk_lat, s=3, marker='o', facecolors='none', edgecolors='black', transform=ccrs.PlateCarree())
     # Colorbar
     caxes = f.add_axes([0.2, 0.97, 0.6, 0.02])
     cbar = f.colorbar(cs, orientation="horizontal", cax=caxes)
     cbar.ax.tick_params(labelsize=6)
     #plt.text( 0.8, 0.7, 'Brightness Temperature (K)', fontsize=6, transform=transAxes)
-
+    
     #subplot title
     font = {'size':8,}
     ax[0,0].set_title('Yo', font, fontweight='bold')
-    ax[0,1].set_title('HXb', font, fontweight='bold')
-    ax[0,2].set_title('HXa', font, fontweight='bold')
+    ax[0,1].set_title('H(Xb)', font, fontweight='bold')
+    ax[0,2].set_title('H(Xa)', font, fontweight='bold')
 
     # Axis labels
     #lon_gridlines = list(range(math.floor(lon_min)-1, math.ceil(lon_max)+1,1))
@@ -316,13 +405,18 @@ def plot_Tb(Storm, Exper_name, DAtime, sensor):
             gl.xlabel_style = {'size': 4}
             gl.ylabel_style = {'size': 6} 
     
-    plt.savefig('/work2/06191/tg854905/stampede2/Pro2_PSU_MW/'+Storm+'/'+Exper_name+'/Vis_analyze/Tb/MW/'+DAtime+'_'+sensor+'.png', dpi=300)
+    plt.savefig('/work2/06191/tg854905/stampede2/Pro2_PSU_MW/'+Storm+'/'+Exper_name+'/Vis_analyze/Tb/MW/'+DAtime+'_'+sensor+'_Obspace.png', dpi=300)
     
 
 if __name__ == '__main__':
-    Storm = 'IRMA'
+
+    Storm = 'MARIA'
     Exper_name = 'newWRF_IR_only'
-    MW_times = ['201709030700',]#'201708221300', '201708221900',  '201708222100',  '201708222300']
+
+    MW_times = ['201709170500',]
+    #MW_times = ['201709161800','201709161900','201709162100','201709162200','201709162300','201709170100','201709170400','201709170500']
+
+    eng = matlab.engine.start_matlab() # start a new matlab process
     for DAtime in MW_times:
         obs_file_name = 'microwave_d03_' + DAtime + '_so'
         dict_ss_ch = getSensor_Ch( '/work2/06191/tg854905/stampede2/Pro2_PSU_MW/'+Storm+'/Obs_y/MW/'+obs_file_name )
@@ -330,9 +424,9 @@ if __name__ == '__main__':
         for sensor in dict_ss_ch:
             print(sensor)
             print(dict_ss_ch[sensor])
-            plot_Tb( Storm, Exper_name, DAtime, sensor )
+            plot_Tb( Storm, Exper_name, DAtime, sensor ) 
 
-
+    eng.quit()
 
     # Path
     #F_Obs = 'microwave_d03_201708221200_so.txt'
