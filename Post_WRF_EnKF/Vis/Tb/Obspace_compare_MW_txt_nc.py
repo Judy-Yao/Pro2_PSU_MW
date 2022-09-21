@@ -214,7 +214,7 @@ def plot_Tb(Storm, Exper_name, DAtime, sensor):
     d_lowf = {'atms_npp':0, 'amsr2_gcom-w1':7, 'gmi_gpm':3, 'mhs_n19':0, 'mhs_n18':0, 'mhs_metop-a':0, 'mhs_metop-b':0, 'saphir_meghat':0, 'ssmis_f16': 13, 'ssmis_f17': 13, 'ssmis_f18': 13, 'ssmi_f15':1}
 
     # Read obs data
-    obs_file_name = 'microwave_d03_' + DAtime + '_so'
+    obs_file_name = 'microwave_' + DAtime + '_so'
     d_obs = read_obs('/work2/06191/tg854905/stampede2/Pro2_PSU_MW/'+Storm+'/Obs_y/MW/'+obs_file_name, sensor)
     # Read simulated Tbs 
     Hx_dir = '/scratch/06191/tg854905/Pro2_PSU_MW/'+Storm+'/'+Exper_name+'/Obs_Hx/MW/'+DAtime
@@ -277,16 +277,17 @@ def plot_Tb(Storm, Exper_name, DAtime, sensor):
         Yo_obs_ch = d_obs['Yo_obs'][ch_idx]
    
         #if ch_num[input_it] == d_lowf[sensor_short]:
-        if d_obs['Ch_obs'][ch_idx][0] == d_lowf[sensor]:
-            is_ocean = globe.is_ocean(Lat_obs_ch, Lon_obs_ch)
-            mask_x = is_ocean
-        else:
-            mask_x = np.full((np.size(Lon_obs_ch), ), True)
+        #if d_obs['Ch_obs'][ch_idx][0] == d_lowf[sensor]:
+        #    is_ocean = globe.is_ocean(Lat_obs_ch, Lon_obs_ch)
+        #    mask_x = is_ocean
+        #else:
+        #    mask_x = np.full((np.size(Lon_obs_ch), ), True)
    
         ax[i,0].set_extent([lon_min,lon_max,lat_min,lat_max], crs=ccrs.PlateCarree())
         ax[i,0].coastlines(resolution='10m', color='black',linewidth=0.5)
-        ax[i,0].scatter(Lon_obs_ch[mask_x],Lat_obs_ch[mask_x],2.5,c=Yo_obs_ch[mask_x],edgecolors='none', cmap=MWJet, vmin=min_T, vmax=max_T,transform=ccrs.PlateCarree())
-   
+        #ax[i,0].scatter(Lon_obs_ch[mask_x],Lat_obs_ch[mask_x],2.5,c=Yo_obs_ch[mask_x],edgecolors='none', cmap=MWJet, vmin=min_T, vmax=max_T,transform=ccrs.PlateCarree())
+        ax[i,0].scatter(Lon_obs_ch,Lat_obs_ch,2.5,c=Yo_obs_ch,edgecolors='none', cmap=MWJet, vmin=min_T, vmax=max_T,transform=ccrs.PlateCarree())
+
         # ------------ simulated Tb ----------------------
         if len(ch_num) == 2:
             for ich in d_simu['Ch_x'].tolist():
@@ -317,16 +318,20 @@ def plot_Tb(Storm, Exper_name, DAtime, sensor):
       
             ax[i,1].set_extent([lon_min, lon_max, lat_min, lat_max], crs=ccrs.PlateCarree())
             ax[i,1].coastlines(resolution='10m', color='black',linewidth=0.5)
-            ax[i,1].scatter(Lon_obs_ch[mask_x], Lat_obs_ch.flatten()[mask_x],2.5,c=Yb_obspace[mask_x],\
-                edgecolors='none', cmap=MWJet, vmin=min_T, vmax=max_T, transform=ccrs.PlateCarree()) 
+            #ax[i,1].scatter(Lon_obs_ch[mask_x], Lat_obs_ch.flatten()[mask_x],2.5,c=Yb_obspace[mask_x],\
+            #    edgecolors='none', cmap=MWJet, vmin=min_T, vmax=max_T, transform=ccrs.PlateCarree()) 
+            ax[i,1].scatter(Lon_obs_ch, Lat_obs_ch,2.5,c=Yb_obspace,\
+                 edgecolors='none', cmap=MWJet, vmin=min_T, vmax=max_T, transform=ccrs.PlateCarree()) 
             if any( hh in DAtime[8:10] for hh in ['00','06','12','18']):
                 ax[i,1].scatter(tc_lon, tc_lat, s=3, marker='*', edgecolors='black', transform=ccrs.PlateCarree())        
                 #ax[i,1].scatter(btk_lon, btk_lat, s=3, marker='o', facecolors='none', edgecolors='black', transform=ccrs.PlateCarree())
 
             ax[i,2].set_extent([lon_min, lon_max, lat_min, lat_max], crs=ccrs.PlateCarree())
             ax[i,2].coastlines(resolution='10m', color='black',linewidth=0.5)
-            cs = ax[i,2].scatter(Lon_obs_ch[mask_x], Lat_obs_ch[mask_x],2.5,c=Ya_obspace[mask_x],\
-                edgecolors='none', cmap=MWJet, vmin=min_T, vmax=max_T, transform=ccrs.PlateCarree())
+            #cs = ax[i,2].scatter(Lon_obs_ch[mask_x], Lat_obs_ch[mask_x],2.5,c=Ya_obspace[mask_x],\
+            #    edgecolors='none', cmap=MWJet, vmin=min_T, vmax=max_T, transform=ccrs.PlateCarree())
+            cs = ax[i,2].scatter(Lon_obs_ch, Lat_obs_ch,2.5,c=Ya_obspace,\
+                 edgecolors='none', cmap=MWJet, vmin=min_T, vmax=max_T, transform=ccrs.PlateCarree())
             if any( hh in DAtime[8:10] for hh in ['00','06','12','18']):
                 ax[i,2].scatter(tc_lon, tc_lat, s=3, marker='*', edgecolors='black', transform=ccrs.PlateCarree())
                 #ax[i,2].scatter(btk_lon, btk_lat, s=3, marker='o', facecolors='none', edgecolors='black', transform=ccrs.PlateCarree())
@@ -350,16 +355,20 @@ def plot_Tb(Storm, Exper_name, DAtime, sensor):
       
             ax[i,1].set_extent([lon_min, lon_max, lat_min, lat_max], crs=ccrs.PlateCarree())
             ax[i,1].coastlines(resolution='10m', color='black',linewidth=0.5)
-            ax[i,1].scatter(Lon_obs_ch[mask_x], Lat_obs_ch[mask_x],2.5,c=Yb_obspace[mask_x],\
-                edgecolors='none', cmap=MWJet, vmin=min_T, vmax=max_T, transform=ccrs.PlateCarree())
+            #ax[i,1].scatter(Lon_obs_ch[mask_x], Lat_obs_ch[mask_x],2.5,c=Yb_obspace[mask_x],\
+            #    edgecolors='none', cmap=MWJet, vmin=min_T, vmax=max_T, transform=ccrs.PlateCarree())
+            ax[i,1].scatter(Lon_obs_ch, Lat_obs_ch,2.5,c=Yb_obspace,\
+                 edgecolors='none', cmap=MWJet, vmin=min_T, vmax=max_T, transform=ccrs.PlateCarree())
             if any( hh in DAtime[8:10] for hh in ['00','06','12','18'] ):
                 ax[i,1].scatter(tc_lon, tc_lat, s=3, marker='*', edgecolors='black', transform=ccrs.PlateCarree())
                 #ax[i,1].scatter(btk_lon, btk_lat, s=3, marker='o', facecolors='none', edgecolors='black', transform=ccrs.PlateCarree())
 
             ax[i,2].set_extent([lon_min, lon_max, lat_min, lat_max], crs=ccrs.PlateCarree())
             ax[i,2].coastlines(resolution='10m', color='black',linewidth=0.5)
-            cs = ax[i,2].scatter(Lon_obs_ch[mask_x], Lat_obs_ch[mask_x],2.5,c=Ya_obspace[mask_x],\
-                edgecolors='none', cmap=MWJet, vmin=min_T, vmax=max_T, transform=ccrs.PlateCarree())
+            #cs = ax[i,2].scatter(Lon_obs_ch[mask_x], Lat_obs_ch[mask_x],2.5,c=Ya_obspace[mask_x],\
+            #    edgecolors='none', cmap=MWJet, vmin=min_T, vmax=max_T, transform=ccrs.PlateCarree())
+            cs = ax[i,2].scatter(Lon_obs_ch, Lat_obs_ch,2.5,c=Ya_obspace,\
+                 edgecolors='none', cmap=MWJet, vmin=min_T, vmax=max_T, transform=ccrs.PlateCarree())
             if any( hh in DAtime[8:10] for hh in ['00','06','12','18'] ):
                 ax[i,2].scatter(tc_lon, tc_lat, s=3, marker='*', edgecolors='black', transform=ccrs.PlateCarree())
                 #ax[i,2].scatter(btk_lon, btk_lat, s=3, marker='o', facecolors='none', edgecolors='black', transform=ccrs.PlateCarree())
@@ -405,20 +414,19 @@ def plot_Tb(Storm, Exper_name, DAtime, sensor):
             gl.xlabel_style = {'size': 4}
             gl.ylabel_style = {'size': 6} 
     
-    plt.savefig('/work2/06191/tg854905/stampede2/Pro2_PSU_MW/'+Storm+'/'+Exper_name+'/Vis_analyze/Tb/MW/'+DAtime+'_'+sensor+'_Obspace.png', dpi=300)
+    plt.savefig('/work2/06191/tg854905/stampede2/Pro2_PSU_MW/'+Storm+'/'+Exper_name+'/Vis_analyze/Tb/MW/Obspace/'+DAtime+'_'+sensor+'_Obspace.png', dpi=300)
     
 
 if __name__ == '__main__':
 
     Storm = 'MARIA'
-    Exper_name = 'newWRF_IR_only'
+    Exper_name = 'newWRF_MW_THO'
 
-    MW_times = ['201709170500',]
-    #MW_times = ['201709161800','201709161900','201709162100','201709162200','201709162300','201709170100','201709170400','201709170500']
+    MW_times = ['201709161800','201709161900','201709162100','201709162200','201709162300','201709170100','201709170400','201709170500','201709170700','201709170900','201709171000','201709171100','201709171300','201709171700']
 
     eng = matlab.engine.start_matlab() # start a new matlab process
     for DAtime in MW_times:
-        obs_file_name = 'microwave_d03_' + DAtime + '_so'
+        obs_file_name = 'microwave_' + DAtime + '_so'
         dict_ss_ch = getSensor_Ch( '/work2/06191/tg854905/stampede2/Pro2_PSU_MW/'+Storm+'/Obs_y/MW/'+obs_file_name )
         
         for sensor in dict_ss_ch:
@@ -428,9 +436,3 @@ if __name__ == '__main__':
 
     eng.quit()
 
-    # Path
-    #F_Obs = 'microwave_d03_201708221200_so.txt'
-    #F_Hxb_mean = 'wrf_enkf_input_d03_mean.tb.ssmis_f17.crtm.conv.txt'
-    #F_Hxa_mean = 'wrf_enkf_output_d03_mean.tb.ssmis_f17.crtm.conv.txt' 
-
-    #SSMIS(F_Obs, F_Hxb_mean, F_Hxa_mean)

@@ -208,7 +208,7 @@ def read_rsl_error(Storm, Exper_name, directory, DF_start, DF_end):
 
 
 def plot_one( ax0, ax1, ax2,  state, color, label, step=1):
-   
+  
     if label == 'Best track':
         times = state['time']
         lon = state['lon']
@@ -217,11 +217,12 @@ def plot_one( ax0, ax1, ax2,  state, color, label, step=1):
         times = state['time'][::6]
         lon = state['lon'][::6]
         lat = state['lat'][::6]
-   
+  
     ax0.plot(lon, lat, marker='o', markersize=2, color=color,linewidth=1, label=label, transform=ccrs.PlateCarree())
     
     idx = 0
     for it in times:
+        print(it)
         if it[8:10] == '00':
             ax0.scatter( lon[idx], lat[idx],s=5, marker='o',edgecolor="white",transform=ccrs.PlateCarree())    
             ax0.annotate(it[6:8], xy=(lon[idx], lat[idx]),  xycoords='data', transform=ccrs.PlateCarree())
@@ -251,18 +252,18 @@ def plot_hpi(Storm, wrf_dir, read_HPI_wrfout, domain_range, output_dir=None):
     #Btk_start = '201708221200'
     #Btk_end = '201708270000'
     Btk_start = '201709161800'#'201708221200'#'201709030600'
-    Btk_end = '201709210600'#'201708270000'#'201709090000'
+    Btk_end = '201709210000'#'201708270000'#'201709090000'
     best_track = btk_in_duration(Storm, Btk_start, Btk_end)
     plot_one ( ax0, ax1, ax2, best_track,  'black', 'Best track', step=step )
 
     # Plot HPI from deterministic forecasts
     #DF_model_end  = '201708270000'
-    DF_model_end  = '201709210600'
+    DF_model_end  = '201709210000'
     IR_init_times = sorted(os.listdir(  wrf_dir+'/'+Storm+'/newWRF_IR_only/wrf_df/' ))
     IRMW_init_times = sorted(os.listdir(  wrf_dir+'/'+Storm+'/newWRF_MW_THO/wrf_df/' ))
     
     IRMW_color = [ '#FFB5A6','#FF998B','#E36359','#C44841','#A62C2B']
-    IR_color = [ '#BAE4B5', '#82CEA9', '#63AD9C', '#167856']
+    IR_color = [ '#BAE4B5', '#82CEA9', '#63AD9C', '#167856','#0a3728']
 
     if read_HPI_wrfout == True:
         i = 0
