@@ -16,6 +16,8 @@ from cartopy.mpl.gridliner import LONGITUDE_FORMATTER, LATITUDE_FORMATTER
 from Track_intensity_all import read_bestrack
 
 
+USAF_idx_var = {'GMT':0,'GPSA':9,'LAT':12,'LON':13,'WSpd':30,'TD':31}
+
 
 class Info_USAF_clt:
     '''This object is designed to collect information for each wrf day'''
@@ -31,18 +33,18 @@ def read_USAF_mission( time_mission, mission_path, attr_itt ):
 
     # find the indices of the attributes of interest
     idx_itt = [] 
-    all_attr = all_lines[5].split() # all of attribute names
+    #all_attr = all_lines[5].split() # all of attribute names
     for it in attr_itt:
-        idx = [it == it_all for it_all in all_attr]
-        idx_itt.append( int(np.where(idx)[0]) )
+        idx_itt.append( USAF_idx_var[it] )
+    #    idx = [it == it_all for it_all in all_attr]
+    #    idx_itt.append( int(np.where(idx)[0]) )
+    
+    # print(idx_itt)
+    # create a list of several empty sub lists
+    lists = [ [] for i in range(len(attr_itt)) ]    
 
-    time = []
-    gpsa = []
-    lat = []
-    lon = []
-
+    # put variables of interest to the sub lists of the large list
     time_mission_dt = datetime.strptime(time_mission,"%Y%m%d")
-
     dayAddone = False
     for line in all_lines[6:]:
         split_line = line.split()
@@ -50,20 +52,28 @@ def read_USAF_mission( time_mission, mission_path, attr_itt ):
         hhmmss = split_line[idx_itt[0]]
         if hhmmss == '00:00:00':
             dayAddone = True
-
         if dayAddone == False:
             time_dt = time_mission_dt + timedelta(hours=int(hhmmss[0:2]),minutes=int(hhmmss[3:5]),seconds=int(hhmmss[6:8]))
         if dayAddone == True:
             time_dt = time_mission_dt + timedelta(days=1,hours=int(hhmmss[0:2]),minutes=int(hhmmss[3:5]),seconds=int(hhmmss[6:8]))
-        time.append( time_dt )
-        gpsa.append( float(split_line[idx_itt[1]-1]) )
-        lat.append( float(split_line[idx_itt[2]-1]) ) # GMT Time is supposed to be the same entry
-        lon.append( float(split_line[idx_itt[3]-1]) )
-
-    dict_AF_mission = {'times':time, 'gpsa': gpsa, 'lat': lat, 'lon':lon}
+        
+        lists[0].append( time_dt )
+        for it in range( 1,len(attr_itt) ):
+            #print(split_line[31])
+            lists[it].append( float(split_line[idx_itt[it]])  )
+    
+    # gather these values into a dictionary
+    dict_AF_mission = { }
+    for it in range( len(attr_itt) ):
+        dict_AF_mission[ attr_itt[it] ] = lists[it]
+    
+    # sanity check to make sure the correct variables are read
+    print( 'Sanity check values of a record...' )
+    for ik,iv in dict_AF_mission.items():
+        print( ik, iv[15000] )
     
     # identify the unique hour of days
-    all_times_str = [ datetime.strftime(it, "%Y%m%d%H%M%S")[0:10] for it in dict_AF_mission['times'] ]
+    all_times_str = [ datetime.strftime(it, "%Y%m%d%H%M%S")[0:10] for it in dict_AF_mission['GMT'] ]
     uni_hhdd = list(sorted(set(all_times_str)))
     #print('Unique hours of days are: ', uni_hhdd)
     
@@ -239,16 +249,16 @@ def mask_time_of_t( dict_AF_all, uni_dt, Nminutes ):
    
     dict_AF_masked = {}
     # check if the time range exists
-    if time_start not in dict_AF_all['times']:
+    if time_start not in dict_AF_all['GMT']:
         print('AF obs does not exist within the time span!')
         dict_AF_masked = None
-    elif time_end not in dict_AF_all['times']:
+    elif time_end not in dict_AF_all['GMT']:
         print('AF obs does not exist within the time span!')
         dict_AF_masked = None
     else:
         print('Time starts: '+ datetime.strftime(time_start,"%Y%m%d %H:%M"))
         print('Time ends: '+ datetime.strftime(time_end,"%Y%m%d %H:%M"))
-        idx = [time_start <= time_possible <= time_end for time_possible in dict_AF_all['times']]
+        idx = [time_start <= time_possible <= time_end for time_possible in dict_AF_all['GMT']]
         idx_masktime = np.where(idx)[0]
         for ikey, ivalue in dict_AF_all.items():
             dict_AF_masked[ikey] = np.array(ivalue)[idx_masktime]
@@ -261,14 +271,14 @@ def Plot_hourly_track( Storm, dict_AF_mission, dict_btk, uni_hhdd, attrs_itt, pl
     lon_min = -71#np.amin( dict_AF_mission['lon'] )
     lon_max = -57#np.amax( dict_AF_mission['lon'] )
     lat_min = 10#np.amin( dict_AF_mission['lat'] )
-    lat_max = 17#np.amax( dict_AF_mission['lat'] )
+    lat_max = 20#np.amax( dict_AF_mission['lat'] )
     gpsa_min = 0
     gpsa_max = np.amax( dict_AF_mission['gpsa'] )
 
     btk_dt = [datetime.strptime(it_str,"%Y%m%d%H%M") for it_str in dict_btk['time']]
 
     # Plot figure for each unique hours of days
-    Nminutes = 20
+    Nminutes = 30
     for it_str in uni_hhdd:
         it_dt = datetime.strptime(it_str,"%Y%m%d%H")
         print('Dealing with time: ', it_dt)
@@ -305,7 +315,7 @@ def Plot_hourly_track( Storm, dict_AF_mission, dict_btk, uni_hhdd, attrs_itt, pl
         if if_btk_exist:
             ax.scatter(dict_btk['lon'][idx_btk],dict_btk['lat'][idx_btk], 5, 'red', marker='*',transform=ccrs.PlateCarree())
         # Title    
-        ax.set_title( datetime.strftime(it_dt, '%Y-%m-%d %H'),fontweight='bold')
+        ax.set_title( datetime.strftime(it_dt, '%Y-%m-%d %H'),fontweight='bold',fontsize=10)
         # Axis labels
         lon_ticks = list(range(math.ceil(lon_min)-2, math.ceil(lon_max)+2,2))
         lat_ticks = list(range(math.ceil(lat_min)-2, math.ceil(lat_max)+2,2))
@@ -325,18 +335,9 @@ def Plot_hourly_track( Storm, dict_AF_mission, dict_btk, uni_hhdd, attrs_itt, pl
         print('Saving the figure: ', plot_dir+Storm+'_'+datetime.strftime(it_dt, '%Y-%m-%d_%H')+'.png')
         plt.close()
 
+def track_height( Storm, big_dir, small_dir, plot_dir):
 
-
-
-
-if __name__ == '__main__':
-
-    Storm = 'MARIA'
-    big_dir = '/scratch/06191/tg854905/Pro2_PSU_MW/'
-    small_dir = '/work2/06191/tg854905/stampede2/Pro2_PSU_MW/'
-    plot_dir = small_dir + Storm + '/USAF/Vis/'
-
-    USAF_list = sorted(glob.glob( small_dir + Storm + '/USAF/*.txt' ))
+    USAF_list = sorted(glob.glob( small_dir + Storm + '/USAF/20170918*.txt' ))
 
     # define attributes of interest to read
     attrs_itt = ['GMT','GPSA','LAT','LON'] # GMT time / GPS Altimeter (height of the air plane)
@@ -348,13 +349,24 @@ if __name__ == '__main__':
         mission_head_tail = os.path.split( imission )
         time_mission = mission_head_tail[1][0:8] # e.g., '20170918'
         dict_AF_mission,uni_hhdd = read_USAF_mission( time_mission, imission, attrs_itt )
-        
+
         # Best-track
         dict_btk = read_bestrack(Storm)
 
         # Plot
         Plot_hourly_track( Storm, dict_AF_mission, dict_btk, uni_hhdd, attrs_itt, plot_dir )
 
+
+
+
+if __name__ == '__main__':
+
+    Storm = 'MARIA'
+    big_dir = '/scratch/06191/tg854905/Pro2_PSU_MW/'
+    small_dir = '/work2/06191/tg854905/stampede2/Pro2_PSU_MW/'
+    plot_dir = small_dir + Storm + '/USAF/Vis/'
+
+    
 
 
 
