@@ -1,0 +1,1805 @@
+nohup: ignoring input
+[H[2J[3J
+  % Total    % Received % Xferd  Average Speed   Time    Time     Time  Current
+                                 Dload  Upload   Total   Spent    Left  Speed
+  0     0    0     0    0     0      0      0 --:--:-- --:--:-- --:--:--     0100    14  100    14    0     0    243      0 --:--:-- --:--:-- --:--:--   245
+   IP ADDR: 198.202.100.14
+   USER: zuy121
+   DATE: Wed Oct  5 14:37:20 PDT 2022
+   UPTIME: up 5 weeks, 2 days, 29 minutes
+   HOSTNAME: login02.expanse.sdsc.edu
+   KERNEL: Linux 4.18.0-348.23.1.el8_5.x86_64 x86_64
+   MEMORY: 37Gi/125Gi
+
+Restoring modules from user's intel
+(standard_in) 2: syntax error
+----------------------------------------------------------------------
+CURRENT CYCLE: 2017-08-22_00:00:00 => 2017-08-22_12:00:00
+cat: run/201708220000/config_IR.HARVEY/stat: Not a directory
+./HARVEY_IR.sh: line 111: run/201708220000/config_IR.HARVEY/stat: Not a directory
+[H[2J[3J
+  % Total    % Received % Xferd  Average Speed   Time    Time     Time  Current
+                                 Dload  Upload   Total   Spent    Left  Speed
+  0     0    0     0    0     0      0      0 --:--:-- --:--:-- --:--:--     0100    14  100    14    0     0    252      0 --:--:-- --:--:-- --:--:--   254
+   IP ADDR: 198.202.100.14
+   USER: zuy121
+   DATE: Wed Oct  5 14:37:22 PDT 2022
+   UPTIME: up 5 weeks, 2 days, 29 minutes
+   HOSTNAME: login02.expanse.sdsc.edu
+   KERNEL: Linux 4.18.0-348.23.1.el8_5.x86_64 x86_64
+   MEMORY: 37Gi/125Gi
+
+[H[2J[3J
+  % Total    % Received % Xferd  Average Speed   Time    Time     Time  Current
+                                 Dload  Upload   Total   Spent    Left  Speed
+  0     0    0     0    0     0      0      0 --:--:-- --:--:-- --:--:--     0100    14  100    14    0     0    253      0 --:--:-- --:--:-- --:--:--   254
+   IP ADDR: 198.202.100.14
+   USER: zuy121
+   DATE: Wed Oct  5 14:37:24 PDT 2022
+   UPTIME: up 5 weeks, 2 days, 29 minutes
+   HOSTNAME: login02.expanse.sdsc.edu
+   KERNEL: Linux 4.18.0-348.23.1.el8_5.x86_64 x86_64
+   MEMORY: 37Gi/125Gi
+
+[H[2J[3J
+  % Total    % Received % Xferd  Average Speed   Time    Time     Time  Current
+                                 Dload  Upload   Total   Spent    Left  Speed
+  0     0    0     0    0     0      0      0 --:--:-- --:--:-- --:--:--     0100    14  100    14    0     0    245      0 --:--:-- --:--:-- --:--:--   245
+   IP ADDR: 198.202.100.14
+   USER: zuy121
+   DATE: Wed Oct  5 14:37:25 PDT 2022
+   UPTIME: up 5 weeks, 2 days, 29 minutes
+   HOSTNAME: login02.expanse.sdsc.edu
+   KERNEL: Linux 4.18.0-348.23.1.el8_5.x86_64 x86_64
+   MEMORY: 37Gi/125Gi
+
+Wed Oct  5 14:37:25 PDT 2022
+cat: run/201708220000/run/201708220000/config_IR.HARVEY/stat: No such file or directory
+cat: run/201708220000/run/201708220000/icbc/stat: No such file or directory
+cat: run/201708220000/run/201708220000/perturb_ic/stat: No such file or directory
+cat: run/201708220000/run/201708220000/update_bc/stat: No such file or directory
+cat: run/201708220000/run/201708220000/wrf_ens/stat: No such file or directory
+(standard_in) 2: syntax error
+----------------------------------------------------------------------
+CURRENT CYCLE: 2017-08-22_12:00:00 => 2017-08-22_13:00:00
+cat: run/201708221200/config_IR.HARVEY/stat: Not a directory
+./HARVEY_IR.sh: line 111: run/201708221200/config_IR.HARVEY/stat: Not a directory
+[H[2J[3J
+  % Total    % Received % Xferd  Average Speed   Time    Time     Time  Current
+                                 Dload  Upload   Total   Spent    Left  Speed
+  0     0    0     0    0     0      0      0 --:--:-- --:--:-- --:--:--     0100    14  100    14    0     0    247      0 --:--:-- --:--:-- --:--:--   250
+   IP ADDR: 198.202.100.14
+   USER: zuy121
+   DATE: Wed Oct  5 14:37:27 PDT 2022
+   UPTIME: up 5 weeks, 2 days, 29 minutes
+   HOSTNAME: login02.expanse.sdsc.edu
+   KERNEL: Linux 4.18.0-348.23.1.el8_5.x86_64 x86_64
+   MEMORY: 37Gi/125Gi
+
+[H[2J[3J
+  % Total    % Received % Xferd  Average Speed   Time    Time     Time  Current
+                                 Dload  Upload   Total   Spent    Left  Speed
+  0     0    0     0    0     0      0      0 --:--:-- --:--:-- --:--:--     0100    14  100    14    0     0    232      0 --:--:-- --:--:-- --:--:--   233
+   IP ADDR: 198.202.100.14
+   USER: zuy121
+   DATE: Wed Oct  5 14:37:28 PDT 2022
+   UPTIME: up 5 weeks, 2 days, 29 minutes
+   HOSTNAME: login02.expanse.sdsc.edu
+   KERNEL: Linux 4.18.0-348.23.1.el8_5.x86_64 x86_64
+   MEMORY: 37Gi/125Gi
+
+[H[2J[3J
+  % Total    % Received % Xferd  Average Speed   Time    Time     Time  Current
+                                 Dload  Upload   Total   Spent    Left  Speed
+  0     0    0     0    0     0      0      0 --:--:-- --:--:-- --:--:--     0100    14  100    14    0     0    250      0 --:--:-- --:--:-- --:--:--   254
+   IP ADDR: 198.202.100.14
+   USER: zuy121
+   DATE: Wed Oct  5 14:37:29 PDT 2022
+   UPTIME: up 5 weeks, 2 days, 29 minutes
+   HOSTNAME: login02.expanse.sdsc.edu
+   KERNEL: Linux 4.18.0-348.23.1.el8_5.x86_64 x86_64
+   MEMORY: 37Gi/125Gi
+
+[H[2J[3J
+  % Total    % Received % Xferd  Average Speed   Time    Time     Time  Current
+                                 Dload  Upload   Total   Spent    Left  Speed
+  0     0    0     0    0     0      0      0 --:--:-- --:--:-- --:--:--     0100    14  100    14    0     0    245      0 --:--:-- --:--:-- --:--:--   250
+   IP ADDR: 198.202.100.14
+   USER: zuy121
+   DATE: Wed Oct  5 14:37:31 PDT 2022
+   UPTIME: up 5 weeks, 2 days, 29 minutes
+   HOSTNAME: login02.expanse.sdsc.edu
+   KERNEL: Linux 4.18.0-348.23.1.el8_5.x86_64 x86_64
+   MEMORY: 37Gi/125Gi
+
+[H[2J[3J
+  % Total    % Received % Xferd  Average Speed   Time    Time     Time  Current
+                                 Dload  Upload   Total   Spent    Left  Speed
+  0     0    0     0    0     0      0      0 --:--:-- --:--:-- --:--:--     0100    14  100    14    0     0    248      0 --:--:-- --:--:-- --:--:--   250
+   IP ADDR: 198.202.100.14
+   USER: zuy121
+   DATE: Wed Oct  5 14:37:32 PDT 2022
+   UPTIME: up 5 weeks, 2 days, 29 minutes
+   HOSTNAME: login02.expanse.sdsc.edu
+   KERNEL: Linux 4.18.0-348.23.1.el8_5.x86_64 x86_64
+   MEMORY: 37Gi/125Gi
+
+Wed Oct  5 14:37:32 PDT 2022
+cat: run/201708221200/run/201708221200/config_IR.HARVEY/stat: No such file or directory
+cat: run/201708221200/run/201708221200/enkf/stat: No such file or directory
+cat: run/201708221200/run/201708221200/icbc/stat: No such file or directory
+cat: run/201708221200/run/201708221200/obsproc/stat: No such file or directory
+cat: run/201708221200/run/201708221200/perturb_ic/stat: No such file or directory
+cat: run/201708221200/run/201708221200/update_bc/stat: No such file or directory
+cat: run/201708221200/run/201708221200/wrf_ens/stat: No such file or directory
+(standard_in) 2: syntax error
+----------------------------------------------------------------------
+CURRENT CYCLE: 2017-08-22_13:00:00 => 2017-08-22_14:00:00
+cat: run/201708221300/config_IR.HARVEY/stat: Not a directory
+./HARVEY_IR.sh: line 111: run/201708221300/config_IR.HARVEY/stat: Not a directory
+[H[2J[3J
+  % Total    % Received % Xferd  Average Speed   Time    Time     Time  Current
+                                 Dload  Upload   Total   Spent    Left  Speed
+  0     0    0     0    0     0      0      0 --:--:-- --:--:-- --:--:--     0100    14  100    14    0     0    248      0 --:--:-- --:--:-- --:--:--   250
+   IP ADDR: 198.202.100.14
+   USER: zuy121
+   DATE: Wed Oct  5 14:37:33 PDT 2022
+   UPTIME: up 5 weeks, 2 days, 29 minutes
+   HOSTNAME: login02.expanse.sdsc.edu
+   KERNEL: Linux 4.18.0-348.23.1.el8_5.x86_64 x86_64
+   MEMORY: 37Gi/125Gi
+
+[H[2J[3J
+  % Total    % Received % Xferd  Average Speed   Time    Time     Time  Current
+                                 Dload  Upload   Total   Spent    Left  Speed
+  0     0    0     0    0     0      0      0 --:--:-- --:--:-- --:--:--     0100    14  100    14    0     0    247      0 --:--:-- --:--:-- --:--:--   250
+   IP ADDR: 198.202.100.14
+   USER: zuy121
+   DATE: Wed Oct  5 14:37:35 PDT 2022
+   UPTIME: up 5 weeks, 2 days, 29 minutes
+   HOSTNAME: login02.expanse.sdsc.edu
+   KERNEL: Linux 4.18.0-348.23.1.el8_5.x86_64 x86_64
+   MEMORY: 37Gi/125Gi
+
+[H[2J[3J
+  % Total    % Received % Xferd  Average Speed   Time    Time     Time  Current
+                                 Dload  Upload   Total   Spent    Left  Speed
+  0     0    0     0    0     0      0      0 --:--:-- --:--:-- --:--:--     0100    14  100    14    0     0    252      0 --:--:-- --:--:-- --:--:--   254
+   IP ADDR: 198.202.100.14
+   USER: zuy121
+   DATE: Wed Oct  5 14:37:36 PDT 2022
+   UPTIME: up 5 weeks, 2 days, 29 minutes
+   HOSTNAME: login02.expanse.sdsc.edu
+   KERNEL: Linux 4.18.0-348.23.1.el8_5.x86_64 x86_64
+   MEMORY: 37Gi/125Gi
+
+[H[2J[3J
+  % Total    % Received % Xferd  Average Speed   Time    Time     Time  Current
+                                 Dload  Upload   Total   Spent    Left  Speed
+  0     0    0     0    0     0      0      0 --:--:-- --:--:-- --:--:--     0100    14  100    14    0     0    250      0 --:--:-- --:--:-- --:--:--   250100    14  100    14    0     0    249      0 --:--:-- --:--:-- --:--:--   245
+   IP ADDR: 198.202.100.14
+   USER: zuy121
+   DATE: Wed Oct  5 14:37:37 PDT 2022
+   UPTIME: up 5 weeks, 2 days, 29 minutes
+   HOSTNAME: login02.expanse.sdsc.edu
+   KERNEL: Linux 4.18.0-348.23.1.el8_5.x86_64 x86_64
+   MEMORY: 37Gi/125Gi
+
+[H[2J[3J
+  % Total    % Received % Xferd  Average Speed   Time    Time     Time  Current
+                                 Dload  Upload   Total   Spent    Left  Speed
+  0     0    0     0    0     0      0      0 --:--:-- --:--:-- --:--:--     0100    14  100    14    0     0    244      0 --:--:-- --:--:-- --:--:--   245
+   IP ADDR: 198.202.100.14
+   USER: zuy121
+   DATE: Wed Oct  5 14:37:38 PDT 2022
+   UPTIME: up 5 weeks, 2 days, 29 minutes
+   HOSTNAME: login02.expanse.sdsc.edu
+   KERNEL: Linux 4.18.0-348.23.1.el8_5.x86_64 x86_64
+   MEMORY: 37Gi/125Gi
+
+Wed Oct  5 14:37:39 PDT 2022
+cat: run/201708221300/run/201708221300/config_IR.HARVEY/stat: No such file or directory
+cat: run/201708221300/run/201708221300/enkf/stat: No such file or directory
+cat: run/201708221300/run/201708221300/icbc/stat: No such file or directory
+cat: run/201708221300/run/201708221300/obsproc/stat: No such file or directory
+cat: run/201708221300/run/201708221300/update_bc/stat: No such file or directory
+cat: run/201708221300/run/201708221300/wrf_ens/stat: No such file or directory
+(standard_in) 2: syntax error
+----------------------------------------------------------------------
+CURRENT CYCLE: 2017-08-22_14:00:00 => 2017-08-22_15:00:00
+cat: run/201708221400/config_IR.HARVEY/stat: Not a directory
+./HARVEY_IR.sh: line 111: run/201708221400/config_IR.HARVEY/stat: Not a directory
+[H[2J[3J
+  % Total    % Received % Xferd  Average Speed   Time    Time     Time  Current
+                                 Dload  Upload   Total   Spent    Left  Speed
+  0     0    0     0    0     0      0      0 --:--:-- --:--:-- --:--:--     0100    14  100    14    0     0    236      0 --:--:-- --:--:-- --:--:--   237
+   IP ADDR: 198.202.100.14
+   USER: zuy121
+   DATE: Wed Oct  5 14:37:40 PDT 2022
+   UPTIME: up 5 weeks, 2 days, 29 minutes
+   HOSTNAME: login02.expanse.sdsc.edu
+   KERNEL: Linux 4.18.0-348.23.1.el8_5.x86_64 x86_64
+   MEMORY: 37Gi/125Gi
+
+[H[2J[3J
+  % Total    % Received % Xferd  Average Speed   Time    Time     Time  Current
+                                 Dload  Upload   Total   Spent    Left  Speed
+  0     0    0     0    0     0      0      0 --:--:-- --:--:-- --:--:--     0100    14  100    14    0     0    241      0 --:--:-- --:--:-- --:--:--   245
+   IP ADDR: 198.202.100.14
+   USER: zuy121
+   DATE: Wed Oct  5 14:37:41 PDT 2022
+   UPTIME: up 5 weeks, 2 days, 29 minutes
+   HOSTNAME: login02.expanse.sdsc.edu
+   KERNEL: Linux 4.18.0-348.23.1.el8_5.x86_64 x86_64
+   MEMORY: 37Gi/125Gi
+
+[H[2J[3J
+  % Total    % Received % Xferd  Average Speed   Time    Time     Time  Current
+                                 Dload  Upload   Total   Spent    Left  Speed
+  0     0    0     0    0     0      0      0 --:--:-- --:--:-- --:--:--     0100    14  100    14    0     0    246      0 --:--:-- --:--:-- --:--:--   250
+   IP ADDR: 198.202.100.14
+   USER: zuy121
+   DATE: Wed Oct  5 14:37:42 PDT 2022
+   UPTIME: up 5 weeks, 2 days, 29 minutes
+   HOSTNAME: login02.expanse.sdsc.edu
+   KERNEL: Linux 4.18.0-348.23.1.el8_5.x86_64 x86_64
+   MEMORY: 37Gi/125Gi
+
+[H[2J[3J
+  % Total    % Received % Xferd  Average Speed   Time    Time     Time  Current
+                                 Dload  Upload   Total   Spent    Left  Speed
+  0     0    0     0    0     0      0      0 --:--:-- --:--:-- --:--:--     0100    14  100    14    0     0    247      0 --:--:-- --:--:-- --:--:--   250
+   IP ADDR: 198.202.100.14
+   USER: zuy121
+   DATE: Wed Oct  5 14:37:44 PDT 2022
+   UPTIME: up 5 weeks, 2 days, 29 minutes
+   HOSTNAME: login02.expanse.sdsc.edu
+   KERNEL: Linux 4.18.0-348.23.1.el8_5.x86_64 x86_64
+   MEMORY: 37Gi/125Gi
+
+[H[2J[3J
+  % Total    % Received % Xferd  Average Speed   Time    Time     Time  Current
+                                 Dload  Upload   Total   Spent    Left  Speed
+  0     0    0     0    0     0      0      0 --:--:-- --:--:-- --:--:--     0100    14  100    14    0     0    217      0 --:--:-- --:--:-- --:--:--   218
+   IP ADDR: 198.202.100.14
+   USER: zuy121
+   DATE: Wed Oct  5 14:37:45 PDT 2022
+   UPTIME: up 5 weeks, 2 days, 29 minutes
+   HOSTNAME: login02.expanse.sdsc.edu
+   KERNEL: Linux 4.18.0-348.23.1.el8_5.x86_64 x86_64
+   MEMORY: 37Gi/125Gi
+
+Wed Oct  5 14:37:45 PDT 2022
+cat: run/201708221400/run/201708221400/config_IR.HARVEY/stat: No such file or directory
+cat: run/201708221400/run/201708221400/enkf/stat: No such file or directory
+cat: run/201708221400/run/201708221400/icbc/stat: No such file or directory
+cat: run/201708221400/run/201708221400/obsproc/stat: No such file or directory
+cat: run/201708221400/run/201708221400/update_bc/stat: No such file or directory
+cat: run/201708221400/run/201708221400/wrf_ens/stat: No such file or directory
+(standard_in) 2: syntax error
+----------------------------------------------------------------------
+CURRENT CYCLE: 2017-08-22_15:00:00 => 2017-08-22_16:00:00
+cat: run/201708221500/config_IR.HARVEY/stat: Not a directory
+./HARVEY_IR.sh: line 111: run/201708221500/config_IR.HARVEY/stat: Not a directory
+[H[2J[3J
+  % Total    % Received % Xferd  Average Speed   Time    Time     Time  Current
+                                 Dload  Upload   Total   Spent    Left  Speed
+  0     0    0     0    0     0      0      0 --:--:-- --:--:-- --:--:--     0100    14  100    14    0     0    243      0 --:--:-- --:--:-- --:--:--   245
+   IP ADDR: 198.202.100.14
+   USER: zuy121
+   DATE: Wed Oct  5 14:37:46 PDT 2022
+   UPTIME: up 5 weeks, 2 days, 29 minutes
+   HOSTNAME: login02.expanse.sdsc.edu
+   KERNEL: Linux 4.18.0-348.23.1.el8_5.x86_64 x86_64
+   MEMORY: 37Gi/125Gi
+
+[H[2J[3J
+  % Total    % Received % Xferd  Average Speed   Time    Time     Time  Current
+                                 Dload  Upload   Total   Spent    Left  Speed
+  0     0    0     0    0     0      0      0 --:--:-- --:--:-- --:--:--     0100    14  100    14    0     0    231      0 --:--:-- --:--:-- --:--:--   233
+   IP ADDR: 198.202.100.14
+   USER: zuy121
+   DATE: Wed Oct  5 14:37:47 PDT 2022
+   UPTIME: up 5 weeks, 2 days, 29 minutes
+   HOSTNAME: login02.expanse.sdsc.edu
+   KERNEL: Linux 4.18.0-348.23.1.el8_5.x86_64 x86_64
+   MEMORY: 37Gi/125Gi
+
+[H[2J[3J
+  % Total    % Received % Xferd  Average Speed   Time    Time     Time  Current
+                                 Dload  Upload   Total   Spent    Left  Speed
+  0     0    0     0    0     0      0      0 --:--:-- --:--:-- --:--:--     0100    14  100    14    0     0    252      0 --:--:-- --:--:-- --:--:--   254
+   IP ADDR: 198.202.100.14
+   USER: zuy121
+   DATE: Wed Oct  5 14:37:49 PDT 2022
+   UPTIME: up 5 weeks, 2 days, 29 minutes
+   HOSTNAME: login02.expanse.sdsc.edu
+   KERNEL: Linux 4.18.0-348.23.1.el8_5.x86_64 x86_64
+   MEMORY: 37Gi/125Gi
+
+[H[2J[3J
+  % Total    % Received % Xferd  Average Speed   Time    Time     Time  Current
+                                 Dload  Upload   Total   Spent    Left  Speed
+  0     0    0     0    0     0      0      0 --:--:-- --:--:-- --:--:--     0100    14  100    14    0     0    153      0 --:--:-- --:--:-- --:--:--   153
+   IP ADDR: 198.202.100.14
+   USER: zuy121
+   DATE: Wed Oct  5 14:37:50 PDT 2022
+   UPTIME: up 5 weeks, 2 days, 29 minutes
+   HOSTNAME: login02.expanse.sdsc.edu
+   KERNEL: Linux 4.18.0-348.23.1.el8_5.x86_64 x86_64
+   MEMORY: 37Gi/125Gi
+
+[H[2J[3J
+  % Total    % Received % Xferd  Average Speed   Time    Time     Time  Current
+                                 Dload  Upload   Total   Spent    Left  Speed
+  0     0    0     0    0     0      0      0 --:--:-- --:--:-- --:--:--     0100    14  100    14    0     0    245      0 --:--:-- --:--:-- --:--:--   250
+   IP ADDR: 198.202.100.14
+   USER: zuy121
+   DATE: Wed Oct  5 14:37:51 PDT 2022
+   UPTIME: up 5 weeks, 2 days, 29 minutes
+   HOSTNAME: login02.expanse.sdsc.edu
+   KERNEL: Linux 4.18.0-348.23.1.el8_5.x86_64 x86_64
+   MEMORY: 37Gi/125Gi
+
+Wed Oct  5 14:37:51 PDT 2022
+cat: run/201708221500/run/201708221500/config_IR.HARVEY/stat: No such file or directory
+cat: run/201708221500/run/201708221500/enkf/stat: No such file or directory
+cat: run/201708221500/run/201708221500/icbc/stat: No such file or directory
+cat: run/201708221500/run/201708221500/obsproc/stat: No such file or directory
+cat: run/201708221500/run/201708221500/update_bc/stat: No such file or directory
+cat: run/201708221500/run/201708221500/wrf_ens/stat: No such file or directory
+(standard_in) 2: syntax error
+----------------------------------------------------------------------
+CURRENT CYCLE: 2017-08-22_16:00:00 => 2017-08-22_17:00:00
+cat: run/201708221600/config_IR.HARVEY/stat: Not a directory
+./HARVEY_IR.sh: line 111: run/201708221600/config_IR.HARVEY/stat: Not a directory
+[H[2J[3J
+  % Total    % Received % Xferd  Average Speed   Time    Time     Time  Current
+                                 Dload  Upload   Total   Spent    Left  Speed
+  0     0    0     0    0     0      0      0 --:--:-- --:--:-- --:--:--     0100    14  100    14    0     0    241      0 --:--:-- --:--:-- --:--:--   245
+   IP ADDR: 198.202.100.14
+   USER: zuy121
+   DATE: Wed Oct  5 14:37:53 PDT 2022
+   UPTIME: up 5 weeks, 2 days, 29 minutes
+   HOSTNAME: login02.expanse.sdsc.edu
+   KERNEL: Linux 4.18.0-348.23.1.el8_5.x86_64 x86_64
+   MEMORY: 37Gi/125Gi
+
+[H[2J[3J
+  % Total    % Received % Xferd  Average Speed   Time    Time     Time  Current
+                                 Dload  Upload   Total   Spent    Left  Speed
+  0     0    0     0    0     0      0      0 --:--:-- --:--:-- --:--:--     0100    14  100    14    0     0    257      0 --:--:-- --:--:-- --:--:--   259
+   IP ADDR: 198.202.100.14
+   USER: zuy121
+   DATE: Wed Oct  5 14:37:54 PDT 2022
+   UPTIME: up 5 weeks, 2 days, 29 minutes
+   HOSTNAME: login02.expanse.sdsc.edu
+   KERNEL: Linux 4.18.0-348.23.1.el8_5.x86_64 x86_64
+   MEMORY: 37Gi/125Gi
+
+[H[2J[3J
+  % Total    % Received % Xferd  Average Speed   Time    Time     Time  Current
+                                 Dload  Upload   Total   Spent    Left  Speed
+  0     0    0     0    0     0      0      0 --:--:-- --:--:-- --:--:--     0100    14  100    14    0     0    237      0 --:--:-- --:--:-- --:--:--   241
+   IP ADDR: 198.202.100.14
+   USER: zuy121
+   DATE: Wed Oct  5 14:37:55 PDT 2022
+   UPTIME: up 5 weeks, 2 days, 30 minutes
+   HOSTNAME: login02.expanse.sdsc.edu
+   KERNEL: Linux 4.18.0-348.23.1.el8_5.x86_64 x86_64
+   MEMORY: 37Gi/125Gi
+
+[H[2J[3J
+  % Total    % Received % Xferd  Average Speed   Time    Time     Time  Current
+                                 Dload  Upload   Total   Spent    Left  Speed
+  0     0    0     0    0     0      0      0 --:--:-- --:--:-- --:--:--     0100    14  100    14    0     0    246      0 --:--:-- --:--:-- --:--:--   250
+   IP ADDR: 198.202.100.14
+   USER: zuy121
+   DATE: Wed Oct  5 14:37:56 PDT 2022
+   UPTIME: up 5 weeks, 2 days, 30 minutes
+   HOSTNAME: login02.expanse.sdsc.edu
+   KERNEL: Linux 4.18.0-348.23.1.el8_5.x86_64 x86_64
+   MEMORY: 37Gi/125Gi
+
+[H[2J[3J
+  % Total    % Received % Xferd  Average Speed   Time    Time     Time  Current
+                                 Dload  Upload   Total   Spent    Left  Speed
+  0     0    0     0    0     0      0      0 --:--:-- --:--:-- --:--:--     0100    14  100    14    0     0    248      0 --:--:-- --:--:-- --:--:--   250
+   IP ADDR: 198.202.100.14
+   USER: zuy121
+   DATE: Wed Oct  5 14:37:58 PDT 2022
+   UPTIME: up 5 weeks, 2 days, 30 minutes
+   HOSTNAME: login02.expanse.sdsc.edu
+   KERNEL: Linux 4.18.0-348.23.1.el8_5.x86_64 x86_64
+   MEMORY: 37Gi/125Gi
+
+Wed Oct  5 14:37:58 PDT 2022
+cat: run/201708221600/run/201708221600/config_IR.HARVEY/stat: No such file or directory
+cat: run/201708221600/run/201708221600/enkf/stat: No such file or directory
+cat: run/201708221600/run/201708221600/icbc/stat: No such file or directory
+cat: run/201708221600/run/201708221600/obsproc/stat: No such file or directory
+cat: run/201708221600/run/201708221600/update_bc/stat: No such file or directory
+cat: run/201708221600/run/201708221600/wrf_ens/stat: No such file or directory
+(standard_in) 2: syntax error
+----------------------------------------------------------------------
+CURRENT CYCLE: 2017-08-22_17:00:00 => 2017-08-22_18:00:00
+cat: run/201708221700/config_IR.HARVEY/stat: Not a directory
+./HARVEY_IR.sh: line 111: run/201708221700/config_IR.HARVEY/stat: Not a directory
+[H[2J[3J
+  % Total    % Received % Xferd  Average Speed   Time    Time     Time  Current
+                                 Dload  Upload   Total   Spent    Left  Speed
+  0     0    0     0    0     0      0      0 --:--:-- --:--:-- --:--:--     0100    14  100    14    0     0    241      0 --:--:-- --:--:-- --:--:--   245
+   IP ADDR: 198.202.100.14
+   USER: zuy121
+   DATE: Wed Oct  5 14:37:59 PDT 2022
+   UPTIME: up 5 weeks, 2 days, 30 minutes
+   HOSTNAME: login02.expanse.sdsc.edu
+   KERNEL: Linux 4.18.0-348.23.1.el8_5.x86_64 x86_64
+   MEMORY: 37Gi/125Gi
+
+[H[2J[3J
+  % Total    % Received % Xferd  Average Speed   Time    Time     Time  Current
+                                 Dload  Upload   Total   Spent    Left  Speed
+  0     0    0     0    0     0      0      0 --:--:-- --:--:-- --:--:--     0100    14  100    14    0     0    236      0 --:--:-- --:--:-- --:--:--   237100    14  100    14    0     0    235      0 --:--:-- --:--:-- --:--:--   233
+   IP ADDR: 198.202.100.14
+   USER: zuy121
+   DATE: Wed Oct  5 14:38:02 PDT 2022
+   UPTIME: up 5 weeks, 2 days, 30 minutes
+   HOSTNAME: login02.expanse.sdsc.edu
+   KERNEL: Linux 4.18.0-348.23.1.el8_5.x86_64 x86_64
+   MEMORY: 37Gi/125Gi
+
+[H[2J[3J
+  % Total    % Received % Xferd  Average Speed   Time    Time     Time  Current
+                                 Dload  Upload   Total   Spent    Left  Speed
+  0     0    0     0    0     0      0      0 --:--:-- --:--:-- --:--:--     0100    14  100    14    0     0    252      0 --:--:-- --:--:-- --:--:--   254
+   IP ADDR: 198.202.100.14
+   USER: zuy121
+   DATE: Wed Oct  5 14:38:04 PDT 2022
+   UPTIME: up 5 weeks, 2 days, 30 minutes
+   HOSTNAME: login02.expanse.sdsc.edu
+   KERNEL: Linux 4.18.0-348.23.1.el8_5.x86_64 x86_64
+   MEMORY: 37Gi/125Gi
+
+[H[2J[3J
+  % Total    % Received % Xferd  Average Speed   Time    Time     Time  Current
+                                 Dload  Upload   Total   Spent    Left  Speed
+  0     0    0     0    0     0      0      0 --:--:-- --:--:-- --:--:--     0100    14  100    14    0     0    248      0 --:--:-- --:--:-- --:--:--   250
+   IP ADDR: 198.202.100.14
+   USER: zuy121
+   DATE: Wed Oct  5 14:38:05 PDT 2022
+   UPTIME: up 5 weeks, 2 days, 30 minutes
+   HOSTNAME: login02.expanse.sdsc.edu
+   KERNEL: Linux 4.18.0-348.23.1.el8_5.x86_64 x86_64
+   MEMORY: 37Gi/125Gi
+
+[H[2J[3J
+  % Total    % Received % Xferd  Average Speed   Time    Time     Time  Current
+                                 Dload  Upload   Total   Spent    Left  Speed
+  0     0    0     0    0     0      0      0 --:--:-- --:--:-- --:--:--     0100    14  100    14    0     0    241      0 --:--:-- --:--:-- --:--:--   245
+   IP ADDR: 198.202.100.14
+   USER: zuy121
+   DATE: Wed Oct  5 14:38:06 PDT 2022
+   UPTIME: up 5 weeks, 2 days, 30 minutes
+   HOSTNAME: login02.expanse.sdsc.edu
+   KERNEL: Linux 4.18.0-348.23.1.el8_5.x86_64 x86_64
+   MEMORY: 37Gi/125Gi
+
+Wed Oct  5 14:38:07 PDT 2022
+cat: run/201708221700/run/201708221700/config_IR.HARVEY/stat: No such file or directory
+cat: run/201708221700/run/201708221700/enkf/stat: No such file or directory
+cat: run/201708221700/run/201708221700/icbc/stat: No such file or directory
+cat: run/201708221700/run/201708221700/obsproc/stat: No such file or directory
+cat: run/201708221700/run/201708221700/update_bc/stat: No such file or directory
+cat: run/201708221700/run/201708221700/wrf_ens/stat: No such file or directory
+(standard_in) 2: syntax error
+----------------------------------------------------------------------
+CURRENT CYCLE: 2017-08-22_18:00:00 => 2017-08-22_19:00:00
+cat: run/201708221800/config_IR.HARVEY/stat: Not a directory
+./HARVEY_IR.sh: line 111: run/201708221800/config_IR.HARVEY/stat: Not a directory
+[H[2J[3J
+  % Total    % Received % Xferd  Average Speed   Time    Time     Time  Current
+                                 Dload  Upload   Total   Spent    Left  Speed
+  0     0    0     0    0     0      0      0 --:--:-- --:--:-- --:--:--     0100    14  100    14    0     0    249      0 --:--:-- --:--:-- --:--:--   245100    14  100    14    0     0    247      0 --:--:-- --:--:-- --:--:--   245
+   IP ADDR: 198.202.100.14
+   USER: zuy121
+   DATE: Wed Oct  5 14:38:08 PDT 2022
+   UPTIME: up 5 weeks, 2 days, 30 minutes
+   HOSTNAME: login02.expanse.sdsc.edu
+   KERNEL: Linux 4.18.0-348.23.1.el8_5.x86_64 x86_64
+   MEMORY: 37Gi/125Gi
+
+[H[2J[3J
+  % Total    % Received % Xferd  Average Speed   Time    Time     Time  Current
+                                 Dload  Upload   Total   Spent    Left  Speed
+  0     0    0     0    0     0      0      0 --:--:-- --:--:-- --:--:--     0100    14  100    14    0     0    248      0 --:--:-- --:--:-- --:--:--   250
+   IP ADDR: 198.202.100.14
+   USER: zuy121
+   DATE: Wed Oct  5 14:38:09 PDT 2022
+   UPTIME: up 5 weeks, 2 days, 30 minutes
+   HOSTNAME: login02.expanse.sdsc.edu
+   KERNEL: Linux 4.18.0-348.23.1.el8_5.x86_64 x86_64
+   MEMORY: 37Gi/125Gi
+
+[H[2J[3J
+  % Total    % Received % Xferd  Average Speed   Time    Time     Time  Current
+                                 Dload  Upload   Total   Spent    Left  Speed
+  0     0    0     0    0     0      0      0 --:--:-- --:--:-- --:--:--     0100    14  100    14    0     0    217      0 --:--:-- --:--:-- --:--:--   218
+   IP ADDR: 198.202.100.14
+   USER: zuy121
+   DATE: Wed Oct  5 14:38:11 PDT 2022
+   UPTIME: up 5 weeks, 2 days, 30 minutes
+   HOSTNAME: login02.expanse.sdsc.edu
+   KERNEL: Linux 4.18.0-348.23.1.el8_5.x86_64 x86_64
+   MEMORY: 37Gi/125Gi
+
+[H[2J[3J
+  % Total    % Received % Xferd  Average Speed   Time    Time     Time  Current
+                                 Dload  Upload   Total   Spent    Left  Speed
+  0     0    0     0    0     0      0      0 --:--:-- --:--:-- --:--:--     0100    14  100    14    0     0    248      0 --:--:-- --:--:-- --:--:--   250
+   IP ADDR: 198.202.100.14
+   USER: zuy121
+   DATE: Wed Oct  5 14:38:12 PDT 2022
+   UPTIME: up 5 weeks, 2 days, 30 minutes
+   HOSTNAME: login02.expanse.sdsc.edu
+   KERNEL: Linux 4.18.0-348.23.1.el8_5.x86_64 x86_64
+   MEMORY: 37Gi/125Gi
+
+[H[2J[3J
+  % Total    % Received % Xferd  Average Speed   Time    Time     Time  Current
+                                 Dload  Upload   Total   Spent    Left  Speed
+  0     0    0     0    0     0      0      0 --:--:-- --:--:-- --:--:--     0100    14  100    14    0     0    257      0 --:--:-- --:--:-- --:--:--   259
+   IP ADDR: 198.202.100.14
+   USER: zuy121
+   DATE: Wed Oct  5 14:38:13 PDT 2022
+   UPTIME: up 5 weeks, 2 days, 30 minutes
+   HOSTNAME: login02.expanse.sdsc.edu
+   KERNEL: Linux 4.18.0-348.23.1.el8_5.x86_64 x86_64
+   MEMORY: 37Gi/125Gi
+
+Wed Oct  5 14:38:13 PDT 2022
+cat: run/201708221800/run/201708221800/config_IR.HARVEY/stat: No such file or directory
+cat: run/201708221800/run/201708221800/enkf/stat: No such file or directory
+cat: run/201708221800/run/201708221800/icbc/stat: No such file or directory
+cat: run/201708221800/run/201708221800/obsproc/stat: No such file or directory
+cat: run/201708221800/run/201708221800/perturb_ic/stat: No such file or directory
+cat: run/201708221800/run/201708221800/update_bc/stat: No such file or directory
+cat: run/201708221800/run/201708221800/wrf_ens/stat: No such file or directory
+(standard_in) 2: syntax error
+----------------------------------------------------------------------
+CURRENT CYCLE: 2017-08-22_19:00:00 => 2017-08-22_20:00:00
+cat: run/201708221900/config_IR.HARVEY/stat: Not a directory
+./HARVEY_IR.sh: line 111: run/201708221900/config_IR.HARVEY/stat: Not a directory
+[H[2J[3J
+  % Total    % Received % Xferd  Average Speed   Time    Time     Time  Current
+                                 Dload  Upload   Total   Spent    Left  Speed
+  0     0    0     0    0     0      0      0 --:--:-- --:--:-- --:--:--     0100    14  100    14    0     0    208      0 --:--:-- --:--:-- --:--:--   212
+   IP ADDR: 198.202.100.14
+   USER: zuy121
+   DATE: Wed Oct  5 14:38:15 PDT 2022
+   UPTIME: up 5 weeks, 2 days, 30 minutes
+   HOSTNAME: login02.expanse.sdsc.edu
+   KERNEL: Linux 4.18.0-348.23.1.el8_5.x86_64 x86_64
+   MEMORY: 37Gi/125Gi
+
+[H[2J[3J
+  % Total    % Received % Xferd  Average Speed   Time    Time     Time  Current
+                                 Dload  Upload   Total   Spent    Left  Speed
+  0     0    0     0    0     0      0      0 --:--:-- --:--:-- --:--:--     0100    14  100    14    0     0    247      0 --:--:-- --:--:-- --:--:--   245100    14  100    14    0     0    246      0 --:--:-- --:--:-- --:--:--   245
+   IP ADDR: 198.202.100.14
+   USER: zuy121
+   DATE: Wed Oct  5 14:38:16 PDT 2022
+   UPTIME: up 5 weeks, 2 days, 30 minutes
+   HOSTNAME: login02.expanse.sdsc.edu
+   KERNEL: Linux 4.18.0-348.23.1.el8_5.x86_64 x86_64
+   MEMORY: 37Gi/125Gi
+
+[H[2J[3J
+  % Total    % Received % Xferd  Average Speed   Time    Time     Time  Current
+                                 Dload  Upload   Total   Spent    Left  Speed
+  0     0    0     0    0     0      0      0 --:--:-- --:--:-- --:--:--     0100    14  100    14    0     0    249      0 --:--:-- --:--:-- --:--:--   250
+   IP ADDR: 198.202.100.14
+   USER: zuy121
+   DATE: Wed Oct  5 14:38:17 PDT 2022
+   UPTIME: up 5 weeks, 2 days, 30 minutes
+   HOSTNAME: login02.expanse.sdsc.edu
+   KERNEL: Linux 4.18.0-348.23.1.el8_5.x86_64 x86_64
+   MEMORY: 37Gi/125Gi
+
+[H[2J[3J
+  % Total    % Received % Xferd  Average Speed   Time    Time     Time  Current
+                                 Dload  Upload   Total   Spent    Left  Speed
+  0     0    0     0    0     0      0      0 --:--:-- --:--:-- --:--:--     0100    14  100    14    0     0    228      0 --:--:-- --:--:-- --:--:--   229
+   IP ADDR: 198.202.100.14
+   USER: zuy121
+   DATE: Wed Oct  5 14:38:18 PDT 2022
+   UPTIME: up 5 weeks, 2 days, 30 minutes
+   HOSTNAME: login02.expanse.sdsc.edu
+   KERNEL: Linux 4.18.0-348.23.1.el8_5.x86_64 x86_64
+   MEMORY: 37Gi/125Gi
+
+[H[2J[3J
+  % Total    % Received % Xferd  Average Speed   Time    Time     Time  Current
+                                 Dload  Upload   Total   Spent    Left  Speed
+  0     0    0     0    0     0      0      0 --:--:-- --:--:-- --:--:--     0100    14  100    14    0     0    240      0 --:--:-- --:--:-- --:--:--   241
+   IP ADDR: 198.202.100.14
+   USER: zuy121
+   DATE: Wed Oct  5 14:38:20 PDT 2022
+   UPTIME: up 5 weeks, 2 days, 30 minutes
+   HOSTNAME: login02.expanse.sdsc.edu
+   KERNEL: Linux 4.18.0-348.23.1.el8_5.x86_64 x86_64
+   MEMORY: 37Gi/125Gi
+
+Wed Oct  5 14:38:20 PDT 2022
+cat: run/201708221900/run/201708221900/config_IR.HARVEY/stat: No such file or directory
+cat: run/201708221900/run/201708221900/enkf/stat: No such file or directory
+cat: run/201708221900/run/201708221900/icbc/stat: No such file or directory
+cat: run/201708221900/run/201708221900/obsproc/stat: No such file or directory
+cat: run/201708221900/run/201708221900/update_bc/stat: No such file or directory
+cat: run/201708221900/run/201708221900/wrf_ens/stat: No such file or directory
+(standard_in) 2: syntax error
+----------------------------------------------------------------------
+CURRENT CYCLE: 2017-08-22_20:00:00 => 2017-08-22_21:00:00
+cat: run/201708222000/config_IR.HARVEY/stat: Not a directory
+./HARVEY_IR.sh: line 111: run/201708222000/config_IR.HARVEY/stat: Not a directory
+[H[2J[3J
+  % Total    % Received % Xferd  Average Speed   Time    Time     Time  Current
+                                 Dload  Upload   Total   Spent    Left  Speed
+  0     0    0     0    0     0      0      0 --:--:-- --:--:-- --:--:--     0100    14  100    14    0     0    235      0 --:--:-- --:--:-- --:--:--   237
+   IP ADDR: 198.202.100.14
+   USER: zuy121
+   DATE: Wed Oct  5 14:38:21 PDT 2022
+   UPTIME: up 5 weeks, 2 days, 30 minutes
+   HOSTNAME: login02.expanse.sdsc.edu
+   KERNEL: Linux 4.18.0-348.23.1.el8_5.x86_64 x86_64
+   MEMORY: 37Gi/125Gi
+
+[H[2J[3J
+  % Total    % Received % Xferd  Average Speed   Time    Time     Time  Current
+                                 Dload  Upload   Total   Spent    Left  Speed
+  0     0    0     0    0     0      0      0 --:--:-- --:--:-- --:--:--     0100    14  100    14    0     0    250      0 --:--:-- --:--:-- --:--:--   254
+   IP ADDR: 198.202.100.14
+   USER: zuy121
+   DATE: Wed Oct  5 14:38:22 PDT 2022
+   UPTIME: up 5 weeks, 2 days, 30 minutes
+   HOSTNAME: login02.expanse.sdsc.edu
+   KERNEL: Linux 4.18.0-348.23.1.el8_5.x86_64 x86_64
+   MEMORY: 37Gi/125Gi
+
+[H[2J[3J
+  % Total    % Received % Xferd  Average Speed   Time    Time     Time  Current
+                                 Dload  Upload   Total   Spent    Left  Speed
+  0     0    0     0    0     0      0      0 --:--:-- --:--:-- --:--:--     0100    14  100    14    0     0    251      0 --:--:-- --:--:-- --:--:--   254
+   IP ADDR: 198.202.100.14
+   USER: zuy121
+   DATE: Wed Oct  5 14:38:24 PDT 2022
+   UPTIME: up 5 weeks, 2 days, 30 minutes
+   HOSTNAME: login02.expanse.sdsc.edu
+   KERNEL: Linux 4.18.0-348.23.1.el8_5.x86_64 x86_64
+   MEMORY: 37Gi/125Gi
+
+[H[2J[3J
+  % Total    % Received % Xferd  Average Speed   Time    Time     Time  Current
+                                 Dload  Upload   Total   Spent    Left  Speed
+  0     0    0     0    0     0      0      0 --:--:-- --:--:-- --:--:--     0100    14  100    14    0     0    240      0 --:--:-- --:--:-- --:--:--   241
+   IP ADDR: 198.202.100.14
+   USER: zuy121
+   DATE: Wed Oct  5 14:38:25 PDT 2022
+   UPTIME: up 5 weeks, 2 days, 30 minutes
+   HOSTNAME: login02.expanse.sdsc.edu
+   KERNEL: Linux 4.18.0-348.23.1.el8_5.x86_64 x86_64
+   MEMORY: 37Gi/125Gi
+
+[H[2J[3J
+  % Total    % Received % Xferd  Average Speed   Time    Time     Time  Current
+                                 Dload  Upload   Total   Spent    Left  Speed
+  0     0    0     0    0     0      0      0 --:--:-- --:--:-- --:--:--     0100    14  100    14    0     0    255      0 --:--:-- --:--:-- --:--:--   259
+   IP ADDR: 198.202.100.14
+   USER: zuy121
+   DATE: Wed Oct  5 14:38:26 PDT 2022
+   UPTIME: up 5 weeks, 2 days, 30 minutes
+   HOSTNAME: login02.expanse.sdsc.edu
+   KERNEL: Linux 4.18.0-348.23.1.el8_5.x86_64 x86_64
+   MEMORY: 37Gi/125Gi
+
+Wed Oct  5 14:38:26 PDT 2022
+cat: run/201708222000/run/201708222000/config_IR.HARVEY/stat: No such file or directory
+cat: run/201708222000/run/201708222000/enkf/stat: No such file or directory
+cat: run/201708222000/run/201708222000/icbc/stat: No such file or directory
+cat: run/201708222000/run/201708222000/obsproc/stat: No such file or directory
+cat: run/201708222000/run/201708222000/update_bc/stat: No such file or directory
+cat: run/201708222000/run/201708222000/wrf_ens/stat: No such file or directory
+(standard_in) 2: syntax error
+----------------------------------------------------------------------
+CURRENT CYCLE: 2017-08-22_21:00:00 => 2017-08-22_22:00:00
+cat: run/201708222100/config_IR.HARVEY/stat: Not a directory
+./HARVEY_IR.sh: line 111: run/201708222100/config_IR.HARVEY/stat: Not a directory
+[H[2J[3J
+  % Total    % Received % Xferd  Average Speed   Time    Time     Time  Current
+                                 Dload  Upload   Total   Spent    Left  Speed
+  0     0    0     0    0     0      0      0 --:--:-- --:--:-- --:--:--     0100    14  100    14    0     0    257      0 --:--:-- --:--:-- --:--:--   259
+   IP ADDR: 198.202.100.14
+   USER: zuy121
+   DATE: Wed Oct  5 14:38:28 PDT 2022
+   UPTIME: up 5 weeks, 2 days, 30 minutes
+   HOSTNAME: login02.expanse.sdsc.edu
+   KERNEL: Linux 4.18.0-348.23.1.el8_5.x86_64 x86_64
+   MEMORY: 37Gi/125Gi
+
+[H[2J[3J
+  % Total    % Received % Xferd  Average Speed   Time    Time     Time  Current
+                                 Dload  Upload   Total   Spent    Left  Speed
+  0     0    0     0    0     0      0      0 --:--:-- --:--:-- --:--:--     0100    14  100    14    0     0    249      0 --:--:-- --:--:-- --:--:--   250
+   IP ADDR: 198.202.100.14
+   USER: zuy121
+   DATE: Wed Oct  5 14:38:29 PDT 2022
+   UPTIME: up 5 weeks, 2 days, 30 minutes
+   HOSTNAME: login02.expanse.sdsc.edu
+   KERNEL: Linux 4.18.0-348.23.1.el8_5.x86_64 x86_64
+   MEMORY: 37Gi/125Gi
+
+[H[2J[3J
+  % Total    % Received % Xferd  Average Speed   Time    Time     Time  Current
+                                 Dload  Upload   Total   Spent    Left  Speed
+  0     0    0     0    0     0      0      0 --:--:-- --:--:-- --:--:--     0100    14  100    14    0     0    249      0 --:--:-- --:--:-- --:--:--   254
+   IP ADDR: 198.202.100.14
+   USER: zuy121
+   DATE: Wed Oct  5 14:38:30 PDT 2022
+   UPTIME: up 5 weeks, 2 days, 30 minutes
+   HOSTNAME: login02.expanse.sdsc.edu
+   KERNEL: Linux 4.18.0-348.23.1.el8_5.x86_64 x86_64
+   MEMORY: 37Gi/125Gi
+
+[H[2J[3J
+  % Total    % Received % Xferd  Average Speed   Time    Time     Time  Current
+                                 Dload  Upload   Total   Spent    Left  Speed
+  0     0    0     0    0     0      0      0 --:--:-- --:--:-- --:--:--     0100    14  100    14    0     0    244      0 --:--:-- --:--:-- --:--:--   245
+   IP ADDR: 198.202.100.14
+   USER: zuy121
+   DATE: Wed Oct  5 14:38:31 PDT 2022
+   UPTIME: up 5 weeks, 2 days, 30 minutes
+   HOSTNAME: login02.expanse.sdsc.edu
+   KERNEL: Linux 4.18.0-348.23.1.el8_5.x86_64 x86_64
+   MEMORY: 37Gi/125Gi
+
+[H[2J[3J
+  % Total    % Received % Xferd  Average Speed   Time    Time     Time  Current
+                                 Dload  Upload   Total   Spent    Left  Speed
+  0     0    0     0    0     0      0      0 --:--:-- --:--:-- --:--:--     0100    14  100    14    0     0    252      0 --:--:-- --:--:-- --:--:--   254
+   IP ADDR: 198.202.100.14
+   USER: zuy121
+   DATE: Wed Oct  5 14:38:33 PDT 2022
+   UPTIME: up 5 weeks, 2 days, 30 minutes
+   HOSTNAME: login02.expanse.sdsc.edu
+   KERNEL: Linux 4.18.0-348.23.1.el8_5.x86_64 x86_64
+   MEMORY: 37Gi/125Gi
+
+Wed Oct  5 14:38:33 PDT 2022
+cat: run/201708222100/run/201708222100/config_IR.HARVEY/stat: No such file or directory
+cat: run/201708222100/run/201708222100/enkf/stat: No such file or directory
+cat: run/201708222100/run/201708222100/icbc/stat: No such file or directory
+cat: run/201708222100/run/201708222100/obsproc/stat: No such file or directory
+cat: run/201708222100/run/201708222100/update_bc/stat: No such file or directory
+cat: run/201708222100/run/201708222100/wrf_ens/stat: No such file or directory
+(standard_in) 2: syntax error
+----------------------------------------------------------------------
+CURRENT CYCLE: 2017-08-22_22:00:00 => 2017-08-22_23:00:00
+cat: run/201708222200/config_IR.HARVEY/stat: Not a directory
+./HARVEY_IR.sh: line 111: run/201708222200/config_IR.HARVEY/stat: Not a directory
+[H[2J[3J
+  % Total    % Received % Xferd  Average Speed   Time    Time     Time  Current
+                                 Dload  Upload   Total   Spent    Left  Speed
+  0     0    0     0    0     0      0      0 --:--:-- --:--:-- --:--:--     0100    14  100    14    0     0    251      0 --:--:-- --:--:-- --:--:--   254
+   IP ADDR: 198.202.100.14
+   USER: zuy121
+   DATE: Wed Oct  5 14:38:34 PDT 2022
+   UPTIME: up 5 weeks, 2 days, 30 minutes
+   HOSTNAME: login02.expanse.sdsc.edu
+   KERNEL: Linux 4.18.0-348.23.1.el8_5.x86_64 x86_64
+   MEMORY: 37Gi/125Gi
+
+[H[2J[3J
+  % Total    % Received % Xferd  Average Speed   Time    Time     Time  Current
+                                 Dload  Upload   Total   Spent    Left  Speed
+  0     0    0     0    0     0      0      0 --:--:-- --:--:-- --:--:--     0100    14  100    14    0     0    248      0 --:--:-- --:--:-- --:--:--   250
+   IP ADDR: 198.202.100.14
+   USER: zuy121
+   DATE: Wed Oct  5 14:38:36 PDT 2022
+   UPTIME: up 5 weeks, 2 days, 30 minutes
+   HOSTNAME: login02.expanse.sdsc.edu
+   KERNEL: Linux 4.18.0-348.23.1.el8_5.x86_64 x86_64
+   MEMORY: 37Gi/125Gi
+
+[H[2J[3J
+  % Total    % Received % Xferd  Average Speed   Time    Time     Time  Current
+                                 Dload  Upload   Total   Spent    Left  Speed
+  0     0    0     0    0     0      0      0 --:--:-- --:--:-- --:--:--     0100    14  100    14    0     0    253      0 --:--:-- --:--:-- --:--:--   254
+   IP ADDR: 198.202.100.14
+   USER: zuy121
+   DATE: Wed Oct  5 14:38:37 PDT 2022
+   UPTIME: up 5 weeks, 2 days, 30 minutes
+   HOSTNAME: login02.expanse.sdsc.edu
+   KERNEL: Linux 4.18.0-348.23.1.el8_5.x86_64 x86_64
+   MEMORY: 37Gi/125Gi
+
+[H[2J[3J
+  % Total    % Received % Xferd  Average Speed   Time    Time     Time  Current
+                                 Dload  Upload   Total   Spent    Left  Speed
+  0     0    0     0    0     0      0      0 --:--:-- --:--:-- --:--:--     0100    14  100    14    0     0    246      0 --:--:-- --:--:-- --:--:--   250
+   IP ADDR: 198.202.100.14
+   USER: zuy121
+   DATE: Wed Oct  5 14:38:38 PDT 2022
+   UPTIME: up 5 weeks, 2 days, 30 minutes
+   HOSTNAME: login02.expanse.sdsc.edu
+   KERNEL: Linux 4.18.0-348.23.1.el8_5.x86_64 x86_64
+   MEMORY: 37Gi/125Gi
+
+[H[2J[3J
+  % Total    % Received % Xferd  Average Speed   Time    Time     Time  Current
+                                 Dload  Upload   Total   Spent    Left  Speed
+  0     0    0     0    0     0      0      0 --:--:-- --:--:-- --:--:--     0100    14  100    14    0     0    238      0 --:--:-- --:--:-- --:--:--   237100    14  100    14    0     0    237      0 --:--:-- --:--:-- --:--:--   237
+   IP ADDR: 198.202.100.14
+   USER: zuy121
+   DATE: Wed Oct  5 14:38:39 PDT 2022
+   UPTIME: up 5 weeks, 2 days, 30 minutes
+   HOSTNAME: login02.expanse.sdsc.edu
+   KERNEL: Linux 4.18.0-348.23.1.el8_5.x86_64 x86_64
+   MEMORY: 37Gi/125Gi
+
+Wed Oct  5 14:38:40 PDT 2022
+cat: run/201708222200/run/201708222200/config_IR.HARVEY/stat: No such file or directory
+cat: run/201708222200/run/201708222200/enkf/stat: No such file or directory
+cat: run/201708222200/run/201708222200/icbc/stat: No such file or directory
+cat: run/201708222200/run/201708222200/obsproc/stat: No such file or directory
+cat: run/201708222200/run/201708222200/update_bc/stat: No such file or directory
+cat: run/201708222200/run/201708222200/wrf_ens/stat: No such file or directory
+(standard_in) 2: syntax error
+----------------------------------------------------------------------
+CURRENT CYCLE: 2017-08-22_23:00:00 => 2017-08-23_00:00:00
+cat: run/201708222300/config_IR.HARVEY/stat: Not a directory
+./HARVEY_IR.sh: line 111: run/201708222300/config_IR.HARVEY/stat: Not a directory
+[H[2J[3J
+  % Total    % Received % Xferd  Average Speed   Time    Time     Time  Current
+                                 Dload  Upload   Total   Spent    Left  Speed
+  0     0    0     0    0     0      0      0 --:--:-- --:--:-- --:--:--     0100    14  100    14    0     0    244      0 --:--:-- --:--:-- --:--:--   245
+   IP ADDR: 198.202.100.14
+   USER: zuy121
+   DATE: Wed Oct  5 14:38:41 PDT 2022
+   UPTIME: up 5 weeks, 2 days, 30 minutes
+   HOSTNAME: login02.expanse.sdsc.edu
+   KERNEL: Linux 4.18.0-348.23.1.el8_5.x86_64 x86_64
+   MEMORY: 37Gi/125Gi
+
+[H[2J[3J
+  % Total    % Received % Xferd  Average Speed   Time    Time     Time  Current
+                                 Dload  Upload   Total   Spent    Left  Speed
+  0     0    0     0    0     0      0      0 --:--:-- --:--:-- --:--:--     0100    14  100    14    0     0    246      0 --:--:-- --:--:-- --:--:--   250
+   IP ADDR: 198.202.100.14
+   USER: zuy121
+   DATE: Wed Oct  5 14:38:42 PDT 2022
+   UPTIME: up 5 weeks, 2 days, 30 minutes
+   HOSTNAME: login02.expanse.sdsc.edu
+   KERNEL: Linux 4.18.0-348.23.1.el8_5.x86_64 x86_64
+   MEMORY: 37Gi/125Gi
+
+[H[2J[3J
+  % Total    % Received % Xferd  Average Speed   Time    Time     Time  Current
+                                 Dload  Upload   Total   Spent    Left  Speed
+  0     0    0     0    0     0      0      0 --:--:-- --:--:-- --:--:--     0100    14  100    14    0     0    249      0 --:--:-- --:--:-- --:--:--   250
+   IP ADDR: 198.202.100.14
+   USER: zuy121
+   DATE: Wed Oct  5 14:38:43 PDT 2022
+   UPTIME: up 5 weeks, 2 days, 30 minutes
+   HOSTNAME: login02.expanse.sdsc.edu
+   KERNEL: Linux 4.18.0-348.23.1.el8_5.x86_64 x86_64
+   MEMORY: 37Gi/125Gi
+
+[H[2J[3J
+  % Total    % Received % Xferd  Average Speed   Time    Time     Time  Current
+                                 Dload  Upload   Total   Spent    Left  Speed
+  0     0    0     0    0     0      0      0 --:--:-- --:--:-- --:--:--     0100    14  100    14    0     0    242      0 --:--:-- --:--:-- --:--:--   245
+   IP ADDR: 198.202.100.14
+   USER: zuy121
+   DATE: Wed Oct  5 14:38:44 PDT 2022
+   UPTIME: up 5 weeks, 2 days, 30 minutes
+   HOSTNAME: login02.expanse.sdsc.edu
+   KERNEL: Linux 4.18.0-348.23.1.el8_5.x86_64 x86_64
+   MEMORY: 38Gi/125Gi
+
+[H[2J[3J
+  % Total    % Received % Xferd  Average Speed   Time    Time     Time  Current
+                                 Dload  Upload   Total   Spent    Left  Speed
+  0     0    0     0    0     0      0      0 --:--:-- --:--:-- --:--:--     0100    14  100    14    0     0    249      0 --:--:-- --:--:-- --:--:--   254
+   IP ADDR: 198.202.100.14
+   USER: zuy121
+   DATE: Wed Oct  5 14:38:46 PDT 2022
+   UPTIME: up 5 weeks, 2 days, 30 minutes
+   HOSTNAME: login02.expanse.sdsc.edu
+   KERNEL: Linux 4.18.0-348.23.1.el8_5.x86_64 x86_64
+   MEMORY: 38Gi/125Gi
+
+Wed Oct  5 14:38:46 PDT 2022
+cat: run/201708222300/run/201708222300/config_IR.HARVEY/stat: No such file or directory
+cat: run/201708222300/run/201708222300/enkf/stat: No such file or directory
+cat: run/201708222300/run/201708222300/icbc/stat: No such file or directory
+cat: run/201708222300/run/201708222300/obsproc/stat: No such file or directory
+cat: run/201708222300/run/201708222300/update_bc/stat: No such file or directory
+cat: run/201708222300/run/201708222300/wrf_ens/stat: No such file or directory
+(standard_in) 2: syntax error
+----------------------------------------------------------------------
+CURRENT CYCLE: 2017-08-23_00:00:00 => 2017-08-23_01:00:00
+cat: run/201708230000/config_IR.HARVEY/stat: Not a directory
+./HARVEY_IR.sh: line 111: run/201708230000/config_IR.HARVEY/stat: Not a directory
+[H[2J[3J
+  % Total    % Received % Xferd  Average Speed   Time    Time     Time  Current
+                                 Dload  Upload   Total   Spent    Left  Speed
+  0     0    0     0    0     0      0      0 --:--:-- --:--:-- --:--:--     0100    14  100    14    0     0    246      0 --:--:-- --:--:-- --:--:--   250
+   IP ADDR: 198.202.100.14
+   USER: zuy121
+   DATE: Wed Oct  5 14:38:47 PDT 2022
+   UPTIME: up 5 weeks, 2 days, 30 minutes
+   HOSTNAME: login02.expanse.sdsc.edu
+   KERNEL: Linux 4.18.0-348.23.1.el8_5.x86_64 x86_64
+   MEMORY: 38Gi/125Gi
+
+[H[2J[3J
+  % Total    % Received % Xferd  Average Speed   Time    Time     Time  Current
+                                 Dload  Upload   Total   Spent    Left  Speed
+  0     0    0     0    0     0      0      0 --:--:-- --:--:-- --:--:--     0100    14  100    14    0     0    247      0 --:--:-- --:--:-- --:--:--   250
+   IP ADDR: 198.202.100.14
+   USER: zuy121
+   DATE: Wed Oct  5 14:38:49 PDT 2022
+   UPTIME: up 5 weeks, 2 days, 30 minutes
+   HOSTNAME: login02.expanse.sdsc.edu
+   KERNEL: Linux 4.18.0-348.23.1.el8_5.x86_64 x86_64
+   MEMORY: 37Gi/125Gi
+
+[H[2J[3J
+  % Total    % Received % Xferd  Average Speed   Time    Time     Time  Current
+                                 Dload  Upload   Total   Spent    Left  Speed
+  0     0    0     0    0     0      0      0 --:--:-- --:--:-- --:--:--     0100    14  100    14    0     0    244      0 --:--:-- --:--:-- --:--:--   241100    14  100    14    0     0    243      0 --:--:-- --:--:-- --:--:--   241
+   IP ADDR: 198.202.100.14
+   USER: zuy121
+   DATE: Wed Oct  5 14:38:50 PDT 2022
+   UPTIME: up 5 weeks, 2 days, 30 minutes
+   HOSTNAME: login02.expanse.sdsc.edu
+   KERNEL: Linux 4.18.0-348.23.1.el8_5.x86_64 x86_64
+   MEMORY: 37Gi/125Gi
+
+[H[2J[3J
+  % Total    % Received % Xferd  Average Speed   Time    Time     Time  Current
+                                 Dload  Upload   Total   Spent    Left  Speed
+  0     0    0     0    0     0      0      0 --:--:-- --:--:-- --:--:--     0100    14  100    14    0     0    251      0 --:--:-- --:--:-- --:--:--   254
+   IP ADDR: 198.202.100.14
+   USER: zuy121
+   DATE: Wed Oct  5 14:38:51 PDT 2022
+   UPTIME: up 5 weeks, 2 days, 30 minutes
+   HOSTNAME: login02.expanse.sdsc.edu
+   KERNEL: Linux 4.18.0-348.23.1.el8_5.x86_64 x86_64
+   MEMORY: 37Gi/125Gi
+
+[H[2J[3J
+  % Total    % Received % Xferd  Average Speed   Time    Time     Time  Current
+                                 Dload  Upload   Total   Spent    Left  Speed
+  0     0    0     0    0     0      0      0 --:--:-- --:--:-- --:--:--     0100    14  100    14    0     0    232      0 --:--:-- --:--:-- --:--:--   233
+   IP ADDR: 198.202.100.14
+   USER: zuy121
+   DATE: Wed Oct  5 14:38:53 PDT 2022
+   UPTIME: up 5 weeks, 2 days, 30 minutes
+   HOSTNAME: login02.expanse.sdsc.edu
+   KERNEL: Linux 4.18.0-348.23.1.el8_5.x86_64 x86_64
+   MEMORY: 37Gi/125Gi
+
+Wed Oct  5 14:38:53 PDT 2022
+cat: run/201708230000/run/201708230000/config_IR.HARVEY/stat: No such file or directory
+cat: run/201708230000/run/201708230000/enkf/stat: No such file or directory
+cat: run/201708230000/run/201708230000/icbc/stat: No such file or directory
+cat: run/201708230000/run/201708230000/obsproc/stat: No such file or directory
+cat: run/201708230000/run/201708230000/perturb_ic/stat: No such file or directory
+cat: run/201708230000/run/201708230000/update_bc/stat: No such file or directory
+cat: run/201708230000/run/201708230000/wrf_ens/stat: No such file or directory
+(standard_in) 2: syntax error
+----------------------------------------------------------------------
+CURRENT CYCLE: 2017-08-23_01:00:00 => 2017-08-23_02:00:00
+[H[2J[3J
+  % Total    % Received % Xferd  Average Speed   Time    Time     Time  Current
+                                 Dload  Upload   Total   Spent    Left  Speed
+  0     0    0     0    0     0      0      0 --:--:-- --:--:-- --:--:--     0100    14  100    14    0     0    248      0 --:--:-- --:--:-- --:--:--   250
+   IP ADDR: 198.202.100.14
+   USER: zuy121
+   DATE: Wed Oct  5 14:38:54 PDT 2022
+   UPTIME: up 5 weeks, 2 days, 30 minutes
+   HOSTNAME: login02.expanse.sdsc.edu
+   KERNEL: Linux 4.18.0-348.23.1.el8_5.x86_64 x86_64
+   MEMORY: 37Gi/125Gi
+
+[H[2J[3J
+  % Total    % Received % Xferd  Average Speed   Time    Time     Time  Current
+                                 Dload  Upload   Total   Spent    Left  Speed
+  0     0    0     0    0     0      0      0 --:--:-- --:--:-- --:--:--     0100    14  100    14    0     0    255      0 --:--:-- --:--:-- --:--:--   259
+   IP ADDR: 198.202.100.14
+   USER: zuy121
+   DATE: Wed Oct  5 14:38:55 PDT 2022
+   UPTIME: up 5 weeks, 2 days, 31 minutes
+   HOSTNAME: login02.expanse.sdsc.edu
+   KERNEL: Linux 4.18.0-348.23.1.el8_5.x86_64 x86_64
+   MEMORY: 37Gi/125Gi
+
+[H[2J[3J
+  % Total    % Received % Xferd  Average Speed   Time    Time     Time  Current
+                                 Dload  Upload   Total   Spent    Left  Speed
+  0     0    0     0    0     0      0      0 --:--:-- --:--:-- --:--:--     0100    14  100    14    0     0    256      0 --:--:-- --:--:-- --:--:--   259
+   IP ADDR: 198.202.100.14
+   USER: zuy121
+   DATE: Wed Oct  5 14:38:56 PDT 2022
+   UPTIME: up 5 weeks, 2 days, 31 minutes
+   HOSTNAME: login02.expanse.sdsc.edu
+   KERNEL: Linux 4.18.0-348.23.1.el8_5.x86_64 x86_64
+   MEMORY: 37Gi/125Gi
+
+  Running EnKF...
+    Linking files for domain d01
+/expanse/lustre/scratch/zuy121/temp_project/Pro2_PSU_MW/HARVEY/newWRF_IR_only/run/201708230100/enkf/d01/crtm_out_
+    Linking files for domain d02
+/expanse/lustre/scratch/zuy121/temp_project/Pro2_PSU_MW/HARVEY/newWRF_IR_only/run/201708230100/enkf/d02/crtm_out_
+    Linking files for domain d03
+/expanse/lustre/scratch/zuy121/temp_project/Pro2_PSU_MW/HARVEY/newWRF_IR_only/run/201708230100/enkf/d03/crtm_out_
+    Running enkf.mpi
+[H[2J[3J
+  % Total    % Received % Xferd  Average Speed   Time    Time     Time  Current
+                                 Dload  Upload   Total   Spent    Left  Speed
+  0     0    0     0    0     0      0      0 --:--:-- --:--:-- --:--:--     0100    14  100    14    0     0    132      0 --:--:-- --:--:-- --:--:--   133
+   IP ADDR: 198.202.100.14
+   USER: zuy121
+   DATE: Wed Oct  5 15:56:49 PDT 2022
+   UPTIME: up 5 weeks, 2 days, 1 hour, 48 minutes
+   HOSTNAME: login02.expanse.sdsc.edu
+   KERNEL: Linux 4.18.0-348.23.1.el8_5.x86_64 x86_64
+   MEMORY: 36Gi/125Gi
+
+  Running UpdateBC...
+[H[2J[3J
+  % Total    % Received % Xferd  Average Speed   Time    Time     Time  Current
+                                 Dload  Upload   Total   Spent    Left  Speed
+  0     0    0     0    0     0      0      0 --:--:-- --:--:-- --:--:--     0100    14  100    14    0     0    240      0 --:--:-- --:--:-- --:--:--   241
+   IP ADDR: 198.202.100.14
+   USER: zuy121
+   DATE: Wed Oct  5 16:00:13 PDT 2022
+   UPTIME: up 5 weeks, 2 days, 1 hour, 52 minutes
+   HOSTNAME: login02.expanse.sdsc.edu
+   KERNEL: Linux 4.18.0-348.23.1.el8_5.x86_64 x86_64
+   MEMORY: 36Gi/125Gi
+
+  Running WRF ensemble...
+Wed Oct  5 19:35:56 PDT 2022
+cat: run/201708230100/run/201708230100/enkf/stat: No such file or directory
+cat: run/201708230100/run/201708230100/icbc/stat: No such file or directory
+cat: run/201708230100/run/201708230100/obsproc/stat: No such file or directory
+cat: run/201708230100/run/201708230100/update_bc/stat: No such file or directory
+cat: run/201708230100/run/201708230100/wrf_ens/stat: No such file or directory
+(standard_in) 2: syntax error
+----------------------------------------------------------------------
+CURRENT CYCLE: 2017-08-23_02:00:00 => 2017-08-23_03:00:00
+cat: 'run/201708230200/*/stat': No such file or directory
+./HARVEY_IR.sh: line 111: run/201708230200/*/stat: No such file or directory
+[H[2J[3J
+  % Total    % Received % Xferd  Average Speed   Time    Time     Time  Current
+                                 Dload  Upload   Total   Spent    Left  Speed
+  0     0    0     0    0     0      0      0 --:--:-- --:--:-- --:--:--     0100    14  100    14    0     0    248      0 --:--:-- --:--:-- --:--:--   250
+   IP ADDR: 198.202.100.14
+   USER: zuy121
+   DATE: Wed Oct  5 19:35:57 PDT 2022
+   UPTIME: up 5 weeks, 2 days, 5 hours, 28 minutes
+   HOSTNAME: login02.expanse.sdsc.edu
+   KERNEL: Linux 4.18.0-348.23.1.el8_5.x86_64 x86_64
+   MEMORY: 47Gi/125Gi
+
+  Calculating preset nesting...
+[H[2J[3J
+  % Total    % Received % Xferd  Average Speed   Time    Time     Time  Current
+                                 Dload  Upload   Total   Spent    Left  Speed
+  0     0    0     0    0     0      0      0 --:--:-- --:--:-- --:--:--     0100    14  100    14    0     0    244      0 --:--:-- --:--:-- --:--:--   245
+   IP ADDR: 198.202.100.14
+   USER: zuy121
+   DATE: Wed Oct  5 19:36:34 PDT 2022
+   UPTIME: up 5 weeks, 2 days, 5 hours, 28 minutes
+   HOSTNAME: login02.expanse.sdsc.edu
+   KERNEL: Linux 4.18.0-348.23.1.el8_5.x86_64 x86_64
+   MEMORY: 47Gi/125Gi
+
+  Running ObsProc...
+[H[2J[3J
+  % Total    % Received % Xferd  Average Speed   Time    Time     Time  Current
+                                 Dload  Upload   Total   Spent    Left  Speed
+  0     0    0     0    0     0      0      0 --:--:-- --:--:-- --:--:--     0100    14  100    14    0     0    244      0 --:--:-- --:--:-- --:--:--   245
+   IP ADDR: 198.202.100.14
+   USER: zuy121
+   DATE: Wed Oct  5 19:36:55 PDT 2022
+   UPTIME: up 5 weeks, 2 days, 5 hours, 29 minutes
+   HOSTNAME: login02.expanse.sdsc.edu
+   KERNEL: Linux 4.18.0-348.23.1.el8_5.x86_64 x86_64
+   MEMORY: 47Gi/125Gi
+
+  Running EnKF...
+    Linking files for domain d01
+/expanse/lustre/scratch/zuy121/temp_project/Pro2_PSU_MW/HARVEY/newWRF_IR_only/run/201708230200/enkf/d01/crtm_out_
+    Linking files for domain d02
+/expanse/lustre/scratch/zuy121/temp_project/Pro2_PSU_MW/HARVEY/newWRF_IR_only/run/201708230200/enkf/d02/crtm_out_
+    Linking files for domain d03
+/expanse/lustre/scratch/zuy121/temp_project/Pro2_PSU_MW/HARVEY/newWRF_IR_only/run/201708230200/enkf/d03/crtm_out_
+    Running enkf.mpi
+[H[2J[3J
+  % Total    % Received % Xferd  Average Speed   Time    Time     Time  Current
+                                 Dload  Upload   Total   Spent    Left  Speed
+  0     0    0     0    0     0      0      0 --:--:-- --:--:-- --:--:--     0  0     0    0     0    0     0      0      0 --:--:-- --:--:-- --:--:--     0100    14  100    14    0     0    124      0 --:--:-- --:--:-- --:--:--   125
+   IP ADDR: 198.202.100.14
+   USER: zuy121
+   DATE: Wed Oct  5 19:47:39 PDT 2022
+   UPTIME: up 5 weeks, 2 days, 5 hours, 39 minutes
+   HOSTNAME: login02.expanse.sdsc.edu
+   KERNEL: Linux 4.18.0-348.23.1.el8_5.x86_64 x86_64
+   MEMORY: 47Gi/125Gi
+
+  Running UpdateBC...
+[H[2J[3J
+  % Total    % Received % Xferd  Average Speed   Time    Time     Time  Current
+                                 Dload  Upload   Total   Spent    Left  Speed
+  0     0    0     0    0     0      0      0 --:--:-- --:--:-- --:--:--     0100    14  100    14    0     0    246      0 --:--:-- --:--:-- --:--:--   250
+   IP ADDR: 198.202.100.14
+   USER: zuy121
+   DATE: Wed Oct  5 19:49:50 PDT 2022
+   UPTIME: up 5 weeks, 2 days, 5 hours, 41 minutes
+   HOSTNAME: login02.expanse.sdsc.edu
+   KERNEL: Linux 4.18.0-348.23.1.el8_5.x86_64 x86_64
+   MEMORY: 47Gi/125Gi
+
+  Running WRF ensemble...
+Wed Oct  5 22:39:59 PDT 2022
+cat: run/201708230200/run/201708230200/enkf/stat: No such file or directory
+cat: run/201708230200/run/201708230200/icbc/stat: No such file or directory
+cat: run/201708230200/run/201708230200/obsproc/stat: No such file or directory
+cat: run/201708230200/run/201708230200/update_bc/stat: No such file or directory
+cat: run/201708230200/run/201708230200/wrf_ens/stat: No such file or directory
+(standard_in) 2: syntax error
+----------------------------------------------------------------------
+CURRENT CYCLE: 2017-08-23_03:00:00 => 2017-08-23_04:00:00
+cat: 'run/201708230300/*/stat': No such file or directory
+./HARVEY_IR.sh: line 111: run/201708230300/*/stat: No such file or directory
+[H[2J[3J
+  % Total    % Received % Xferd  Average Speed   Time    Time     Time  Current
+                                 Dload  Upload   Total   Spent    Left  Speed
+  0     0    0     0    0     0      0      0 --:--:-- --:--:-- --:--:--     0100    14  100    14    0     0     90      0 --:--:-- --:--:-- --:--:--    90
+   IP ADDR: 198.202.100.14
+   USER: zuy121
+   DATE: Wed Oct  5 22:40:01 PDT 2022
+   UPTIME: up 5 weeks, 2 days, 8 hours, 32 minutes
+   HOSTNAME: login02.expanse.sdsc.edu
+   KERNEL: Linux 4.18.0-348.23.1.el8_5.x86_64 x86_64
+   MEMORY: 36Gi/125Gi
+
+  Calculating preset nesting...
+[H[2J[3J
+  % Total    % Received % Xferd  Average Speed   Time    Time     Time  Current
+                                 Dload  Upload   Total   Spent    Left  Speed
+  0     0    0     0    0     0      0      0 --:--:-- --:--:-- --:--:--     0100    14  100    14    0     0    243      0 --:--:-- --:--:-- --:--:--   245
+   IP ADDR: 198.202.100.14
+   USER: zuy121
+   DATE: Wed Oct  5 22:40:29 PDT 2022
+   UPTIME: up 5 weeks, 2 days, 8 hours, 32 minutes
+   HOSTNAME: login02.expanse.sdsc.edu
+   KERNEL: Linux 4.18.0-348.23.1.el8_5.x86_64 x86_64
+   MEMORY: 36Gi/125Gi
+
+  Running ObsProc...
+[H[2J[3J
+  % Total    % Received % Xferd  Average Speed   Time    Time     Time  Current
+                                 Dload  Upload   Total   Spent    Left  Speed
+  0     0    0     0    0     0      0      0 --:--:-- --:--:-- --:--:--     0100    14  100    14    0     0    238      0 --:--:-- --:--:-- --:--:--   241
+   IP ADDR: 198.202.100.14
+   USER: zuy121
+   DATE: Wed Oct  5 22:41:03 PDT 2022
+   UPTIME: up 5 weeks, 2 days, 8 hours, 33 minutes
+   HOSTNAME: login02.expanse.sdsc.edu
+   KERNEL: Linux 4.18.0-348.23.1.el8_5.x86_64 x86_64
+   MEMORY: 36Gi/125Gi
+
+  Running EnKF...
+    Linking files for domain d01
+/expanse/lustre/scratch/zuy121/temp_project/Pro2_PSU_MW/HARVEY/newWRF_IR_only/run/201708230300/enkf/d01/crtm_out_
+    Linking files for domain d02
+/expanse/lustre/scratch/zuy121/temp_project/Pro2_PSU_MW/HARVEY/newWRF_IR_only/run/201708230300/enkf/d02/crtm_out_
+    Linking files for domain d03
+/expanse/lustre/scratch/zuy121/temp_project/Pro2_PSU_MW/HARVEY/newWRF_IR_only/run/201708230300/enkf/d03/crtm_out_
+    Running enkf.mpi
+[H[2J[3J
+  % Total    % Received % Xferd  Average Speed   Time    Time     Time  Current
+                                 Dload  Upload   Total   Spent    Left  Speed
+  0     0    0     0    0     0      0      0 --:--:-- --:--:-- --:--:--     0100    14  100    14    0     0    125      0 --:--:-- --:--:-- --:--:--   126
+   IP ADDR: 198.202.100.14
+   USER: zuy121
+   DATE: Wed Oct  5 22:53:51 PDT 2022
+   UPTIME: up 5 weeks, 2 days, 8 hours, 45 minutes
+   HOSTNAME: login02.expanse.sdsc.edu
+   KERNEL: Linux 4.18.0-348.23.1.el8_5.x86_64 x86_64
+   MEMORY: 36Gi/125Gi
+
+  Running UpdateBC...
+[H[2J[3J
+  % Total    % Received % Xferd  Average Speed   Time    Time     Time  Current
+                                 Dload  Upload   Total   Spent    Left  Speed
+  0     0    0     0    0     0      0      0 --:--:-- --:--:-- --:--:--     0100    14  100    14    0     0    240      0 --:--:-- --:--:-- --:--:--   241
+   IP ADDR: 198.202.100.14
+   USER: zuy121
+   DATE: Wed Oct  5 22:56:09 PDT 2022
+   UPTIME: up 5 weeks, 2 days, 8 hours, 48 minutes
+   HOSTNAME: login02.expanse.sdsc.edu
+   KERNEL: Linux 4.18.0-348.23.1.el8_5.x86_64 x86_64
+   MEMORY: 36Gi/125Gi
+
+  Running WRF ensemble...
+Thu Oct  6 02:32:35 PDT 2022
+cat: run/201708230300/run/201708230300/enkf/stat: No such file or directory
+cat: run/201708230300/run/201708230300/icbc/stat: No such file or directory
+cat: run/201708230300/run/201708230300/obsproc/stat: No such file or directory
+cat: run/201708230300/run/201708230300/update_bc/stat: No such file or directory
+cat: run/201708230300/run/201708230300/wrf_ens/stat: No such file or directory
+(standard_in) 2: syntax error
+----------------------------------------------------------------------
+CURRENT CYCLE: 2017-08-23_04:00:00 => 2017-08-23_05:00:00
+cat: 'run/201708230400/*/stat': No such file or directory
+./HARVEY_IR.sh: line 111: run/201708230400/*/stat: No such file or directory
+[H[2J[3J
+  % Total    % Received % Xferd  Average Speed   Time    Time     Time  Current
+                                 Dload  Upload   Total   Spent    Left  Speed
+  0     0    0     0    0     0      0      0 --:--:-- --:--:-- --:--:--     0100    14  100    14    0     0    112      0 --:--:-- --:--:-- --:--:--   113
+   IP ADDR: 198.202.100.14
+   USER: zuy121
+   DATE: Thu Oct  6 02:32:38 PDT 2022
+   UPTIME: up 5 weeks, 2 days, 12 hours, 24 minutes
+   HOSTNAME: login02.expanse.sdsc.edu
+   KERNEL: Linux 4.18.0-348.23.1.el8_5.x86_64 x86_64
+   MEMORY: 33Gi/125Gi
+
+  Calculating preset nesting...
+[H[2J[3J
+  % Total    % Received % Xferd  Average Speed   Time    Time     Time  Current
+                                 Dload  Upload   Total   Spent    Left  Speed
+  0     0    0     0    0     0      0      0 --:--:-- --:--:-- --:--:--     0100    14  100    14    0     0    246      0 --:--:-- --:--:-- --:--:--   250
+   IP ADDR: 198.202.100.14
+   USER: zuy121
+   DATE: Thu Oct  6 02:33:06 PDT 2022
+   UPTIME: up 5 weeks, 2 days, 12 hours, 25 minutes
+   HOSTNAME: login02.expanse.sdsc.edu
+   KERNEL: Linux 4.18.0-348.23.1.el8_5.x86_64 x86_64
+   MEMORY: 33Gi/125Gi
+
+  Running ObsProc...
+[H[2J[3J
+  % Total    % Received % Xferd  Average Speed   Time    Time     Time  Current
+                                 Dload  Upload   Total   Spent    Left  Speed
+  0     0    0     0    0     0      0      0 --:--:-- --:--:-- --:--:--     0100    14  100    14    0     0    244      0 --:--:-- --:--:-- --:--:--   245
+   IP ADDR: 198.202.100.14
+   USER: zuy121
+   DATE: Thu Oct  6 02:33:25 PDT 2022
+   UPTIME: up 5 weeks, 2 days, 12 hours, 25 minutes
+   HOSTNAME: login02.expanse.sdsc.edu
+   KERNEL: Linux 4.18.0-348.23.1.el8_5.x86_64 x86_64
+   MEMORY: 33Gi/125Gi
+
+  Running EnKF...
+    Linking files for domain d01
+/expanse/lustre/scratch/zuy121/temp_project/Pro2_PSU_MW/HARVEY/newWRF_IR_only/run/201708230400/enkf/d01/crtm_out_
+    Linking files for domain d02
+/expanse/lustre/scratch/zuy121/temp_project/Pro2_PSU_MW/HARVEY/newWRF_IR_only/run/201708230400/enkf/d02/crtm_out_
+    Linking files for domain d03
+/expanse/lustre/scratch/zuy121/temp_project/Pro2_PSU_MW/HARVEY/newWRF_IR_only/run/201708230400/enkf/d03/crtm_out_
+    Running enkf.mpi
+[H[2J[3J
+  % Total    % Received % Xferd  Average Speed   Time    Time     Time  Current
+                                 Dload  Upload   Total   Spent    Left  Speed
+  0     0    0     0    0     0      0      0 --:--:-- --:--:-- --:--:--     0100    14  100    14    0     0    139      0 --:--:-- --:--:-- --:--:--   140
+   IP ADDR: 198.202.100.14
+   USER: zuy121
+   DATE: Thu Oct  6 03:05:04 PDT 2022
+   UPTIME: up 5 weeks, 2 days, 12 hours, 57 minutes
+   HOSTNAME: login02.expanse.sdsc.edu
+   KERNEL: Linux 4.18.0-348.23.1.el8_5.x86_64 x86_64
+   MEMORY: 32Gi/125Gi
+
+  Running UpdateBC...
+[H[2J[3J
+  % Total    % Received % Xferd  Average Speed   Time    Time     Time  Current
+                                 Dload  Upload   Total   Spent    Left  Speed
+  0     0    0     0    0     0      0      0 --:--:-- --:--:-- --:--:--     0100    14  100    14    0     0    249      0 --:--:-- --:--:-- --:--:--   250
+   IP ADDR: 198.202.100.14
+   USER: zuy121
+   DATE: Thu Oct  6 03:08:14 PDT 2022
+   UPTIME: up 5 weeks, 2 days, 13 hours
+   HOSTNAME: login02.expanse.sdsc.edu
+   KERNEL: Linux 4.18.0-348.23.1.el8_5.x86_64 x86_64
+   MEMORY: 32Gi/125Gi
+
+  Running WRF ensemble...
+/expanse/lustre/scratch/zuy121/temp_project/Pro2_PSU_MW/HARVEY/newWRF_IR_only/run/201708230400/wrf_ens/045/rsl.error.0000 stagnant for 5 minutes! Abort.
+Thu Oct  6 06:04:54 PDT 2022
+cat: run/201708230400/run/201708230400/enkf/stat: No such file or directory
+cat: run/201708230400/run/201708230400/icbc/stat: No such file or directory
+cat: run/201708230400/run/201708230400/obsproc/stat: No such file or directory
+cat: run/201708230400/run/201708230400/update_bc/stat: No such file or directory
+cat: run/201708230400/run/201708230400/wrf_ens/stat: No such file or directory
+(standard_in) 2: syntax error
+----------------------------------------------------------------------
+CURRENT CYCLE: 2017-08-23_05:00:00 => 2017-08-23_06:00:00
+cat: 'run/201708230500/*/stat': No such file or directory
+./HARVEY_IR.sh: line 111: run/201708230500/*/stat: No such file or directory
+[H[2J[3J
+  % Total    % Received % Xferd  Average Speed   Time    Time     Time  Current
+                                 Dload  Upload   Total   Spent    Left  Speed
+  0     0    0     0    0     0      0      0 --:--:-- --:--:-- --:--:--     0100    14  100    14    0     0    124      0 --:--:-- --:--:-- --:--:--   125
+   IP ADDR: 198.202.100.14
+   USER: zuy121
+   DATE: Thu Oct  6 06:04:56 PDT 2022
+   UPTIME: up 5 weeks, 2 days, 15 hours, 57 minutes
+   HOSTNAME: login02.expanse.sdsc.edu
+   KERNEL: Linux 4.18.0-348.23.1.el8_5.x86_64 x86_64
+   MEMORY: 33Gi/125Gi
+
+  Calculating preset nesting...
+[H[2J[3J
+  % Total    % Received % Xferd  Average Speed   Time    Time     Time  Current
+                                 Dload  Upload   Total   Spent    Left  Speed
+  0     0    0     0    0     0      0      0 --:--:-- --:--:-- --:--:--     0100    14  100    14    0     0    253      0 --:--:-- --:--:-- --:--:--   254
+   IP ADDR: 198.202.100.14
+   USER: zuy121
+   DATE: Thu Oct  6 06:05:21 PDT 2022
+   UPTIME: up 5 weeks, 2 days, 15 hours, 57 minutes
+   HOSTNAME: login02.expanse.sdsc.edu
+   KERNEL: Linux 4.18.0-348.23.1.el8_5.x86_64 x86_64
+   MEMORY: 33Gi/125Gi
+
+  Running ObsProc...
+[H[2J[3J
+  % Total    % Received % Xferd  Average Speed   Time    Time     Time  Current
+                                 Dload  Upload   Total   Spent    Left  Speed
+  0     0    0     0    0     0      0      0 --:--:-- --:--:-- --:--:--     0100    14  100    14    0     0    247      0 --:--:-- --:--:-- --:--:--   250
+   IP ADDR: 198.202.100.14
+   USER: zuy121
+   DATE: Thu Oct  6 06:05:41 PDT 2022
+   UPTIME: up 5 weeks, 2 days, 15 hours, 57 minutes
+   HOSTNAME: login02.expanse.sdsc.edu
+   KERNEL: Linux 4.18.0-348.23.1.el8_5.x86_64 x86_64
+   MEMORY: 33Gi/125Gi
+
+[H[2J[3J
+  % Total    % Received % Xferd  Average Speed   Time    Time     Time  Current
+                                 Dload  Upload   Total   Spent    Left  Speed
+  0     0    0     0    0     0      0      0 --:--:-- --:--:-- --:--:--     0100    14  100    14    0     0    234      0 --:--:-- --:--:-- --:--:--   237
+   IP ADDR: 198.202.100.14
+   USER: zuy121
+   DATE: Thu Oct  6 06:05:57 PDT 2022
+   UPTIME: up 5 weeks, 2 days, 15 hours, 58 minutes
+   HOSTNAME: login02.expanse.sdsc.edu
+   KERNEL: Linux 4.18.0-348.23.1.el8_5.x86_64 x86_64
+   MEMORY: 33Gi/125Gi
+
+[H[2J[3J
+  % Total    % Received % Xferd  Average Speed   Time    Time     Time  Current
+                                 Dload  Upload   Total   Spent    Left  Speed
+  0     0    0     0    0     0      0      0 --:--:-- --:--:-- --:--:--     0100    14  100    14    0     0    248      0 --:--:-- --:--:-- --:--:--   250
+   IP ADDR: 198.202.100.14
+   USER: zuy121
+   DATE: Thu Oct  6 06:06:14 PDT 2022
+   UPTIME: up 5 weeks, 2 days, 15 hours, 58 minutes
+   HOSTNAME: login02.expanse.sdsc.edu
+   KERNEL: Linux 4.18.0-348.23.1.el8_5.x86_64 x86_64
+   MEMORY: 33Gi/125Gi
+
+Thu Oct  6 06:06:30 PDT 2022
+cat: run/201708230500/run/201708230500/enkf/stat: No such file or directory
+cat: run/201708230500/run/201708230500/icbc/stat: No such file or directory
+cat: run/201708230500/run/201708230500/obsproc/stat: No such file or directory
+cat: run/201708230500/run/201708230500/update_bc/stat: No such file or directory
+cat: run/201708230500/run/201708230500/wrf_ens/stat: No such file or directory
+(standard_in) 2: syntax error
+----------------------------------------------------------------------
+CURRENT CYCLE: 2017-08-23_06:00:00 => 2017-08-23_07:00:00
+cat: 'run/201708230600/*/stat': No such file or directory
+./HARVEY_IR.sh: line 111: run/201708230600/*/stat: No such file or directory
+[H[2J[3J
+  % Total    % Received % Xferd  Average Speed   Time    Time     Time  Current
+                                 Dload  Upload   Total   Spent    Left  Speed
+  0     0    0     0    0     0      0      0 --:--:-- --:--:-- --:--:--     0100    14  100    14    0     0    258      0 --:--:-- --:--:-- --:--:--   259
+   IP ADDR: 198.202.100.14
+   USER: zuy121
+   DATE: Thu Oct  6 06:06:31 PDT 2022
+   UPTIME: up 5 weeks, 2 days, 15 hours, 58 minutes
+   HOSTNAME: login02.expanse.sdsc.edu
+   KERNEL: Linux 4.18.0-348.23.1.el8_5.x86_64 x86_64
+   MEMORY: 33Gi/125Gi
+
+  Calculating preset nesting...
+Timeout waiting for /expanse/lustre/scratch/zuy121/temp_project/Pro2_PSU_MW/HARVEY/newWRF_IR_only/run/201708230600/icbc//expanse/lustre/scratch/zuy121/temp_project/Pro2_PSU_MW/HARVEY/newWRF_IR_only/fc/201708230500/wrfinput_d02_2017-08-23_06:00:00_001. Abort.
+[H[2J[3J
+  % Total    % Received % Xferd  Average Speed   Time    Time     Time  Current
+                                 Dload  Upload   Total   Spent    Left  Speed
+  0     0    0     0    0     0      0      0 --:--:-- --:--:-- --:--:--     0100    14  100    14    0     0    251      0 --:--:-- --:--:-- --:--:--   254
+   IP ADDR: 198.202.100.14
+   USER: zuy121
+   DATE: Thu Oct  6 06:08:48 PDT 2022
+   UPTIME: up 5 weeks, 2 days, 16 hours
+   HOSTNAME: login02.expanse.sdsc.edu
+   KERNEL: Linux 4.18.0-348.23.1.el8_5.x86_64 x86_64
+   MEMORY: 33Gi/125Gi
+
+  Running ObsProc...
+[H[2J[3J
+  % Total    % Received % Xferd  Average Speed   Time    Time     Time  Current
+                                 Dload  Upload   Total   Spent    Left  Speed
+  0     0    0     0    0     0      0      0 --:--:-- --:--:-- --:--:--     0100    14  100    14    0     0    255      0 --:--:-- --:--:-- --:--:--   259
+   IP ADDR: 198.202.100.14
+   USER: zuy121
+   DATE: Thu Oct  6 06:09:08 PDT 2022
+   UPTIME: up 5 weeks, 2 days, 16 hours, 1 minute
+   HOSTNAME: login02.expanse.sdsc.edu
+   KERNEL: Linux 4.18.0-348.23.1.el8_5.x86_64 x86_64
+   MEMORY: 33Gi/125Gi
+
+[H[2J[3J
+  % Total    % Received % Xferd  Average Speed   Time    Time     Time  Current
+                                 Dload  Upload   Total   Spent    Left  Speed
+  0     0    0     0    0     0      0      0 --:--:-- --:--:-- --:--:--     0100    14  100    14    0     0    243      0 --:--:-- --:--:-- --:--:--   245
+   IP ADDR: 198.202.100.14
+   USER: zuy121
+   DATE: Thu Oct  6 06:09:25 PDT 2022
+   UPTIME: up 5 weeks, 2 days, 16 hours, 1 minute
+   HOSTNAME: login02.expanse.sdsc.edu
+   KERNEL: Linux 4.18.0-348.23.1.el8_5.x86_64 x86_64
+   MEMORY: 33Gi/125Gi
+
+[H[2J[3J
+  % Total    % Received % Xferd  Average Speed   Time    Time     Time  Current
+                                 Dload  Upload   Total   Spent    Left  Speed
+  0     0    0     0    0     0      0      0 --:--:-- --:--:-- --:--:--     0100    14  100    14    0     0    246      0 --:--:-- --:--:-- --:--:--   250
+   IP ADDR: 198.202.100.14
+   USER: zuy121
+   DATE: Thu Oct  6 06:09:41 PDT 2022
+   UPTIME: up 5 weeks, 2 days, 16 hours, 1 minute
+   HOSTNAME: login02.expanse.sdsc.edu
+   KERNEL: Linux 4.18.0-348.23.1.el8_5.x86_64 x86_64
+   MEMORY: 33Gi/125Gi
+
+Thu Oct  6 06:09:57 PDT 2022
+cat: run/201708230600/run/201708230600/enkf/stat: No such file or directory
+cat: run/201708230600/run/201708230600/icbc/stat: No such file or directory
+cat: run/201708230600/run/201708230600/obsproc/stat: No such file or directory
+cat: run/201708230600/run/201708230600/perturb_ic/stat: No such file or directory
+cat: run/201708230600/run/201708230600/update_bc/stat: No such file or directory
+cat: run/201708230600/run/201708230600/wrf_ens/stat: No such file or directory
+(standard_in) 2: syntax error
+----------------------------------------------------------------------
+CURRENT CYCLE: 2017-08-23_07:00:00 => 2017-08-23_08:00:00
+cat: 'run/201708230700/*/stat': No such file or directory
+./HARVEY_IR.sh: line 111: run/201708230700/*/stat: No such file or directory
+[H[2J[3J
+  % Total    % Received % Xferd  Average Speed   Time    Time     Time  Current
+                                 Dload  Upload   Total   Spent    Left  Speed
+  0     0    0     0    0     0      0      0 --:--:-- --:--:-- --:--:--     0  0     0    0     0    0     0      0      0 --:--:-- --:--:-- --:--:--     0100    14  100    14    0     0    128      0 --:--:-- --:--:-- --:--:--   128
+   IP ADDR: 198.202.100.14
+   USER: zuy121
+   DATE: Thu Oct  6 06:09:58 PDT 2022
+   UPTIME: up 5 weeks, 2 days, 16 hours, 2 minutes
+   HOSTNAME: login02.expanse.sdsc.edu
+   KERNEL: Linux 4.18.0-348.23.1.el8_5.x86_64 x86_64
+   MEMORY: 33Gi/125Gi
+
+  Calculating preset nesting...
+Timeout waiting for /expanse/lustre/scratch/zuy121/temp_project/Pro2_PSU_MW/HARVEY/newWRF_IR_only/run/201708230700/icbc//expanse/lustre/scratch/zuy121/temp_project/Pro2_PSU_MW/HARVEY/newWRF_IR_only/fc/201708230600/wrfinput_d02_2017-08-23_07:00:00_001. Abort.
+[H[2J[3J
+  % Total    % Received % Xferd  Average Speed   Time    Time     Time  Current
+                                 Dload  Upload   Total   Spent    Left  Speed
+  0     0    0     0    0     0      0      0 --:--:-- --:--:-- --:--:--     0100    14  100    14    0     0    146      0 --:--:-- --:--:-- --:--:--   147
+   IP ADDR: 198.202.100.14
+   USER: zuy121
+   DATE: Thu Oct  6 06:12:00 PDT 2022
+   UPTIME: up 5 weeks, 2 days, 16 hours, 4 minutes
+   HOSTNAME: login02.expanse.sdsc.edu
+   KERNEL: Linux 4.18.0-348.23.1.el8_5.x86_64 x86_64
+   MEMORY: 33Gi/125Gi
+
+  Running ObsProc...
+[H[2J[3J
+  % Total    % Received % Xferd  Average Speed   Time    Time     Time  Current
+                                 Dload  Upload   Total   Spent    Left  Speed
+  0     0    0     0    0     0      0      0 --:--:-- --:--:-- --:--:--     0100    14  100    14    0     0    248      0 --:--:-- --:--:-- --:--:--   250
+   IP ADDR: 198.202.100.14
+   USER: zuy121
+   DATE: Thu Oct  6 06:12:10 PDT 2022
+   UPTIME: up 5 weeks, 2 days, 16 hours, 4 minutes
+   HOSTNAME: login02.expanse.sdsc.edu
+   KERNEL: Linux 4.18.0-348.23.1.el8_5.x86_64 x86_64
+   MEMORY: 33Gi/125Gi
+
+[H[2J[3J
+  % Total    % Received % Xferd  Average Speed   Time    Time     Time  Current
+                                 Dload  Upload   Total   Spent    Left  Speed
+  0     0    0     0    0     0      0      0 --:--:-- --:--:-- --:--:--     0100    14  100    14    0     0    250      0 --:--:-- --:--:-- --:--:--   250100    14  100    14    0     0    248      0 --:--:-- --:--:-- --:--:--   245
+   IP ADDR: 198.202.100.14
+   USER: zuy121
+   DATE: Thu Oct  6 06:12:26 PDT 2022
+   UPTIME: up 5 weeks, 2 days, 16 hours, 4 minutes
+   HOSTNAME: login02.expanse.sdsc.edu
+   KERNEL: Linux 4.18.0-348.23.1.el8_5.x86_64 x86_64
+   MEMORY: 33Gi/125Gi
+
+[H[2J[3J
+  % Total    % Received % Xferd  Average Speed   Time    Time     Time  Current
+                                 Dload  Upload   Total   Spent    Left  Speed
+  0     0    0     0    0     0      0      0 --:--:-- --:--:-- --:--:--     0100    14  100    14    0     0    234      0 --:--:-- --:--:-- --:--:--   237
+   IP ADDR: 198.202.100.14
+   USER: zuy121
+   DATE: Thu Oct  6 06:12:42 PDT 2022
+   UPTIME: up 5 weeks, 2 days, 16 hours, 4 minutes
+   HOSTNAME: login02.expanse.sdsc.edu
+   KERNEL: Linux 4.18.0-348.23.1.el8_5.x86_64 x86_64
+   MEMORY: 33Gi/125Gi
+
+Thu Oct  6 06:12:58 PDT 2022
+cat: run/201708230700/run/201708230700/enkf/stat: No such file or directory
+cat: run/201708230700/run/201708230700/icbc/stat: No such file or directory
+cat: run/201708230700/run/201708230700/obsproc/stat: No such file or directory
+cat: run/201708230700/run/201708230700/update_bc/stat: No such file or directory
+cat: run/201708230700/run/201708230700/wrf_ens/stat: No such file or directory
+(standard_in) 2: syntax error
+----------------------------------------------------------------------
+CURRENT CYCLE: 2017-08-23_08:00:00 => 2017-08-23_09:00:00
+cat: 'run/201708230800/*/stat': No such file or directory
+./HARVEY_IR.sh: line 111: run/201708230800/*/stat: No such file or directory
+[H[2J[3J
+  % Total    % Received % Xferd  Average Speed   Time    Time     Time  Current
+                                 Dload  Upload   Total   Spent    Left  Speed
+  0     0    0     0    0     0      0      0 --:--:-- --:--:-- --:--:--     0100    14  100    14    0     0    244      0 --:--:-- --:--:-- --:--:--   245
+   IP ADDR: 198.202.100.14
+   USER: zuy121
+   DATE: Thu Oct  6 06:12:59 PDT 2022
+   UPTIME: up 5 weeks, 2 days, 16 hours, 5 minutes
+   HOSTNAME: login02.expanse.sdsc.edu
+   KERNEL: Linux 4.18.0-348.23.1.el8_5.x86_64 x86_64
+   MEMORY: 33Gi/125Gi
+
+  Calculating preset nesting...
+Timeout waiting for /expanse/lustre/scratch/zuy121/temp_project/Pro2_PSU_MW/HARVEY/newWRF_IR_only/run/201708230800/icbc//expanse/lustre/scratch/zuy121/temp_project/Pro2_PSU_MW/HARVEY/newWRF_IR_only/fc/201708230700/wrfinput_d02_2017-08-23_08:00:00_001. Abort.
+[H[2J[3J
+  % Total    % Received % Xferd  Average Speed   Time    Time     Time  Current
+                                 Dload  Upload   Total   Spent    Left  Speed
+  0     0    0     0    0     0      0      0 --:--:-- --:--:-- --:--:--     0100    14  100    14    0     0    116      0 --:--:-- --:--:-- --:--:--   117
+   IP ADDR: 198.202.100.14
+   USER: zuy121
+   DATE: Thu Oct  6 06:15:01 PDT 2022
+   UPTIME: up 5 weeks, 2 days, 16 hours, 7 minutes
+   HOSTNAME: login02.expanse.sdsc.edu
+   KERNEL: Linux 4.18.0-348.23.1.el8_5.x86_64 x86_64
+   MEMORY: 33Gi/125Gi
+
+  Running ObsProc...
+[H[2J[3J
+  % Total    % Received % Xferd  Average Speed   Time    Time     Time  Current
+                                 Dload  Upload   Total   Spent    Left  Speed
+  0     0    0     0    0     0      0      0 --:--:-- --:--:-- --:--:--     0100    14  100    14    0     0    245      0 --:--:-- --:--:-- --:--:--   250
+   IP ADDR: 198.202.100.14
+   USER: zuy121
+   DATE: Thu Oct  6 06:15:16 PDT 2022
+   UPTIME: up 5 weeks, 2 days, 16 hours, 7 minutes
+   HOSTNAME: login02.expanse.sdsc.edu
+   KERNEL: Linux 4.18.0-348.23.1.el8_5.x86_64 x86_64
+   MEMORY: 33Gi/125Gi
+
+[H[2J[3J
+  % Total    % Received % Xferd  Average Speed   Time    Time     Time  Current
+                                 Dload  Upload   Total   Spent    Left  Speed
+  0     0    0     0    0     0      0      0 --:--:-- --:--:-- --:--:--     0100    14  100    14    0     0    253      0 --:--:-- --:--:-- --:--:--   254
+   IP ADDR: 198.202.100.14
+   USER: zuy121
+   DATE: Thu Oct  6 06:15:32 PDT 2022
+   UPTIME: up 5 weeks, 2 days, 16 hours, 7 minutes
+   HOSTNAME: login02.expanse.sdsc.edu
+   KERNEL: Linux 4.18.0-348.23.1.el8_5.x86_64 x86_64
+   MEMORY: 33Gi/125Gi
+
+[H[2J[3J
+  % Total    % Received % Xferd  Average Speed   Time    Time     Time  Current
+                                 Dload  Upload   Total   Spent    Left  Speed
+  0     0    0     0    0     0      0      0 --:--:-- --:--:-- --:--:--     0100    14  100    14    0     0    241      0 --:--:-- --:--:-- --:--:--   245
+   IP ADDR: 198.202.100.14
+   USER: zuy121
+   DATE: Thu Oct  6 06:15:49 PDT 2022
+   UPTIME: up 5 weeks, 2 days, 16 hours, 7 minutes
+   HOSTNAME: login02.expanse.sdsc.edu
+   KERNEL: Linux 4.18.0-348.23.1.el8_5.x86_64 x86_64
+   MEMORY: 33Gi/125Gi
+
+Thu Oct  6 06:16:04 PDT 2022
+cat: run/201708230800/run/201708230800/enkf/stat: No such file or directory
+cat: run/201708230800/run/201708230800/icbc/stat: No such file or directory
+cat: run/201708230800/run/201708230800/obsproc/stat: No such file or directory
+cat: run/201708230800/run/201708230800/update_bc/stat: No such file or directory
+cat: run/201708230800/run/201708230800/wrf_ens/stat: No such file or directory
+(standard_in) 2: syntax error
+----------------------------------------------------------------------
+CURRENT CYCLE: 2017-08-23_09:00:00 => 2017-08-23_10:00:00
+cat: 'run/201708230900/*/stat': No such file or directory
+./HARVEY_IR.sh: line 111: run/201708230900/*/stat: No such file or directory
+[H[2J[3J
+  % Total    % Received % Xferd  Average Speed   Time    Time     Time  Current
+                                 Dload  Upload   Total   Spent    Left  Speed
+  0     0    0     0    0     0      0      0 --:--:-- --:--:-- --:--:--     0100    14  100    14    0     0    245      0 --:--:-- --:--:-- --:--:--   245
+   IP ADDR: 198.202.100.14
+   USER: zuy121
+   DATE: Thu Oct  6 06:16:05 PDT 2022
+   UPTIME: up 5 weeks, 2 days, 16 hours, 8 minutes
+   HOSTNAME: login02.expanse.sdsc.edu
+   KERNEL: Linux 4.18.0-348.23.1.el8_5.x86_64 x86_64
+   MEMORY: 33Gi/125Gi
+
+  Calculating preset nesting...
+Timeout waiting for /expanse/lustre/scratch/zuy121/temp_project/Pro2_PSU_MW/HARVEY/newWRF_IR_only/run/201708230900/icbc//expanse/lustre/scratch/zuy121/temp_project/Pro2_PSU_MW/HARVEY/newWRF_IR_only/fc/201708230800/wrfinput_d02_2017-08-23_09:00:00_001. Abort.
+[H[2J[3J
+  % Total    % Received % Xferd  Average Speed   Time    Time     Time  Current
+                                 Dload  Upload   Total   Spent    Left  Speed
+  0     0    0     0    0     0      0      0 --:--:-- --:--:-- --:--:--     0100    14  100    14    0     0    251      0 --:--:-- --:--:-- --:--:--   254
+   IP ADDR: 198.202.100.14
+   USER: zuy121
+   DATE: Thu Oct  6 06:18:07 PDT 2022
+   UPTIME: up 5 weeks, 2 days, 16 hours, 10 minutes
+   HOSTNAME: login02.expanse.sdsc.edu
+   KERNEL: Linux 4.18.0-348.23.1.el8_5.x86_64 x86_64
+   MEMORY: 33Gi/125Gi
+
+  Running ObsProc...
+[H[2J[3J
+  % Total    % Received % Xferd  Average Speed   Time    Time     Time  Current
+                                 Dload  Upload   Total   Spent    Left  Speed
+  0     0    0     0    0     0      0      0 --:--:-- --:--:-- --:--:--     0100    14  100    14    0     0    251      0 --:--:-- --:--:-- --:--:--   254
+   IP ADDR: 198.202.100.14
+   USER: zuy121
+   DATE: Thu Oct  6 06:18:24 PDT 2022
+   UPTIME: up 5 weeks, 2 days, 16 hours, 10 minutes
+   HOSTNAME: login02.expanse.sdsc.edu
+   KERNEL: Linux 4.18.0-348.23.1.el8_5.x86_64 x86_64
+   MEMORY: 33Gi/125Gi
+
+[H[2J[3J
+  % Total    % Received % Xferd  Average Speed   Time    Time     Time  Current
+                                 Dload  Upload   Total   Spent    Left  Speed
+  0     0    0     0    0     0      0      0 --:--:-- --:--:-- --:--:--     0100    14  100    14    0     0    244      0 --:--:-- --:--:-- --:--:--   245
+   IP ADDR: 198.202.100.14
+   USER: zuy121
+   DATE: Thu Oct  6 06:18:40 PDT 2022
+   UPTIME: up 5 weeks, 2 days, 16 hours, 10 minutes
+   HOSTNAME: login02.expanse.sdsc.edu
+   KERNEL: Linux 4.18.0-348.23.1.el8_5.x86_64 x86_64
+   MEMORY: 33Gi/125Gi
+
+[H[2J[3J
+  % Total    % Received % Xferd  Average Speed   Time    Time     Time  Current
+                                 Dload  Upload   Total   Spent    Left  Speed
+  0     0    0     0    0     0      0      0 --:--:-- --:--:-- --:--:--     0100    14  100    14    0     0    227      0 --:--:-- --:--:-- --:--:--   229
+   IP ADDR: 198.202.100.14
+   USER: zuy121
+   DATE: Thu Oct  6 06:18:57 PDT 2022
+   UPTIME: up 5 weeks, 2 days, 16 hours, 11 minutes
+   HOSTNAME: login02.expanse.sdsc.edu
+   KERNEL: Linux 4.18.0-348.23.1.el8_5.x86_64 x86_64
+   MEMORY: 33Gi/125Gi
+
+Thu Oct  6 06:19:13 PDT 2022
+cat: run/201708230900/run/201708230900/enkf/stat: No such file or directory
+cat: run/201708230900/run/201708230900/icbc/stat: No such file or directory
+cat: run/201708230900/run/201708230900/obsproc/stat: No such file or directory
+cat: run/201708230900/run/201708230900/update_bc/stat: No such file or directory
+cat: run/201708230900/run/201708230900/wrf_ens/stat: No such file or directory
+(standard_in) 2: syntax error
+----------------------------------------------------------------------
+CURRENT CYCLE: 2017-08-23_10:00:00 => 2017-08-23_11:00:00
+cat: 'run/201708231000/*/stat': No such file or directory
+./HARVEY_IR.sh: line 111: run/201708231000/*/stat: No such file or directory
+[H[2J[3J
+  % Total    % Received % Xferd  Average Speed   Time    Time     Time  Current
+                                 Dload  Upload   Total   Spent    Left  Speed
+  0     0    0     0    0     0      0      0 --:--:-- --:--:-- --:--:--     0100    14  100    14    0     0    255      0 --:--:-- --:--:-- --:--:--   259
+   IP ADDR: 198.202.100.14
+   USER: zuy121
+   DATE: Thu Oct  6 06:19:14 PDT 2022
+   UPTIME: up 5 weeks, 2 days, 16 hours, 11 minutes
+   HOSTNAME: login02.expanse.sdsc.edu
+   KERNEL: Linux 4.18.0-348.23.1.el8_5.x86_64 x86_64
+   MEMORY: 33Gi/125Gi
+
+  Calculating preset nesting...
+Timeout waiting for /expanse/lustre/scratch/zuy121/temp_project/Pro2_PSU_MW/HARVEY/newWRF_IR_only/run/201708231000/icbc//expanse/lustre/scratch/zuy121/temp_project/Pro2_PSU_MW/HARVEY/newWRF_IR_only/fc/201708230900/wrfinput_d02_2017-08-23_10:00:00_001. Abort.
+[H[2J[3J
+  % Total    % Received % Xferd  Average Speed   Time    Time     Time  Current
+                                 Dload  Upload   Total   Spent    Left  Speed
+  0     0    0     0    0     0      0      0 --:--:-- --:--:-- --:--:--     0100    14  100    14    0     0    141      0 --:--:-- --:--:-- --:--:--   142
+   IP ADDR: 198.202.100.14
+   USER: zuy121
+   DATE: Thu Oct  6 06:21:15 PDT 2022
+   UPTIME: up 5 weeks, 2 days, 16 hours, 13 minutes
+   HOSTNAME: login02.expanse.sdsc.edu
+   KERNEL: Linux 4.18.0-348.23.1.el8_5.x86_64 x86_64
+   MEMORY: 33Gi/125Gi
+
+  Running ObsProc...
+[H[2J[3J
+  % Total    % Received % Xferd  Average Speed   Time    Time     Time  Current
+                                 Dload  Upload   Total   Spent    Left  Speed
+  0     0    0     0    0     0      0      0 --:--:-- --:--:-- --:--:--     0100    14  100    14    0     0    125      0 --:--:-- --:--:-- --:--:--   126
+   IP ADDR: 198.202.100.14
+   USER: zuy121
+   DATE: Thu Oct  6 07:19:31 PDT 2022
+   UPTIME: up 5 weeks, 2 days, 17 hours, 11 minutes
+   HOSTNAME: login02.expanse.sdsc.edu
+   KERNEL: Linux 4.18.0-348.23.1.el8_5.x86_64 x86_64
+   MEMORY: 33Gi/125Gi
+
+[H[2J[3J
+  % Total    % Received % Xferd  Average Speed   Time    Time     Time  Current
+                                 Dload  Upload   Total   Spent    Left  Speed
+  0     0    0     0    0     0      0      0 --:--:-- --:--:-- --:--:--     0100    14  100    14    0     0    253      0 --:--:-- --:--:-- --:--:--   254
+   IP ADDR: 198.202.100.14
+   USER: zuy121
+   DATE: Thu Oct  6 07:20:08 PDT 2022
+   UPTIME: up 5 weeks, 2 days, 17 hours, 12 minutes
+   HOSTNAME: login02.expanse.sdsc.edu
+   KERNEL: Linux 4.18.0-348.23.1.el8_5.x86_64 x86_64
+   MEMORY: 33Gi/125Gi
+
+[H[2J[3J
+  % Total    % Received % Xferd  Average Speed   Time    Time     Time  Current
+                                 Dload  Upload   Total   Spent    Left  Speed
+  0     0    0     0    0     0      0      0 --:--:-- --:--:-- --:--:--     0100    14  100    14    0     0    243      0 --:--:-- --:--:-- --:--:--   245
+   IP ADDR: 198.202.100.14
+   USER: zuy121
+   DATE: Thu Oct  6 07:20:24 PDT 2022
+   UPTIME: up 5 weeks, 2 days, 17 hours, 12 minutes
+   HOSTNAME: login02.expanse.sdsc.edu
+   KERNEL: Linux 4.18.0-348.23.1.el8_5.x86_64 x86_64
+   MEMORY: 33Gi/125Gi
+
+Thu Oct  6 07:20:40 PDT 2022
+cat: run/201708231000/run/201708231000/enkf/stat: No such file or directory
+cat: run/201708231000/run/201708231000/icbc/stat: No such file or directory
+cat: run/201708231000/run/201708231000/obsproc/stat: No such file or directory
+cat: run/201708231000/run/201708231000/update_bc/stat: No such file or directory
+cat: run/201708231000/run/201708231000/wrf_ens/stat: No such file or directory
+(standard_in) 2: syntax error
+----------------------------------------------------------------------
+CURRENT CYCLE: 2017-08-23_11:00:00 => 2017-08-23_12:00:00
+cat: 'run/201708231100/*/stat': No such file or directory
+./HARVEY_IR.sh: line 111: run/201708231100/*/stat: No such file or directory
+[H[2J[3J
+  % Total    % Received % Xferd  Average Speed   Time    Time     Time  Current
+                                 Dload  Upload   Total   Spent    Left  Speed
+  0     0    0     0    0     0      0      0 --:--:-- --:--:-- --:--:--     0100    14  100    14    0     0    254      0 --:--:-- --:--:-- --:--:--   259
+   IP ADDR: 198.202.100.14
+   USER: zuy121
+   DATE: Thu Oct  6 07:20:41 PDT 2022
+   UPTIME: up 5 weeks, 2 days, 17 hours, 12 minutes
+   HOSTNAME: login02.expanse.sdsc.edu
+   KERNEL: Linux 4.18.0-348.23.1.el8_5.x86_64 x86_64
+   MEMORY: 33Gi/125Gi
+
+  Calculating preset nesting...
+Timeout waiting for /expanse/lustre/scratch/zuy121/temp_project/Pro2_PSU_MW/HARVEY/newWRF_IR_only/run/201708231100/icbc//expanse/lustre/scratch/zuy121/temp_project/Pro2_PSU_MW/HARVEY/newWRF_IR_only/fc/201708231000/wrfinput_d02_2017-08-23_11:00:00_001. Abort.
+[H[2J[3J
+  % Total    % Received % Xferd  Average Speed   Time    Time     Time  Current
+                                 Dload  Upload   Total   Spent    Left  Speed
+  0     0    0     0    0     0      0      0 --:--:-- --:--:-- --:--:--     0100    14  100    14    0     0    249      0 --:--:-- --:--:-- --:--:--   254
+   IP ADDR: 198.202.100.14
+   USER: zuy121
+   DATE: Thu Oct  6 07:22:43 PDT 2022
+   UPTIME: up 5 weeks, 2 days, 17 hours, 14 minutes
+   HOSTNAME: login02.expanse.sdsc.edu
+   KERNEL: Linux 4.18.0-348.23.1.el8_5.x86_64 x86_64
+   MEMORY: 34Gi/125Gi
+
+  Running ObsProc...

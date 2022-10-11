@@ -1,0 +1,99 @@
+nohup: ignoring input
+[H[2J[3J
+  % Total    % Received % Xferd  Average Speed   Time    Time     Time  Current
+                                 Dload  Upload   Total   Spent    Left  Speed
+  0     0    0     0    0     0      0      0 --:--:-- --:--:-- --:--:--     0100    14  100    14    0     0    137      0 --:--:-- --:--:-- --:--:--   135100    14  100    14    0     0    137      0 --:--:-- --:--:-- --:--:--   135
+   IP ADDR: 198.202.100.13
+   USER: zuy121
+   DATE: Tue Sep 20 07:04:17 PDT 2022
+   UPTIME: up 3 weeks, 16 hours, 56 minutes
+   HOSTNAME: login01.expanse.sdsc.edu
+   KERNEL: Linux 4.18.0-348.23.1.el8_5.x86_64 x86_64
+   MEMORY: 26Gi/125Gi
+
+Restoring modules from user's intel
+(standard_in) 2: syntax error
+----------------------------------------------------------------------
+CURRENT CYCLE: 2017-08-22_00:00:00 => 2017-08-22_12:00:00
+[H[2J[3J
+  % Total    % Received % Xferd  Average Speed   Time    Time     Time  Current
+                                 Dload  Upload   Total   Spent    Left  Speed
+  0     0    0     0    0     0      0      0 --:--:-- --:--:-- --:--:--     0100    14  100    14    0     0    254      0 --:--:-- --:--:-- --:--:--   259
+   IP ADDR: 198.202.100.13
+   USER: zuy121
+   DATE: Tue Sep 20 07:04:25 PDT 2022
+   UPTIME: up 3 weeks, 16 hours, 56 minutes
+   HOSTNAME: login01.expanse.sdsc.edu
+   KERNEL: Linux 4.18.0-348.23.1.el8_5.x86_64 x86_64
+   MEMORY: 26Gi/125Gi
+
+[H[2J[3J
+  % Total    % Received % Xferd  Average Speed   Time    Time     Time  Current
+                                 Dload  Upload   Total   Spent    Left  Speed
+  0     0    0     0    0     0      0      0 --:--:-- --:--:-- --:--:--     0100    14  100    14    0     0    256      0 --:--:-- --:--:-- --:--:--   259
+   IP ADDR: 198.202.100.13
+   USER: zuy121
+   DATE: Tue Sep 20 07:04:26 PDT 2022
+   UPTIME: up 3 weeks, 16 hours, 56 minutes
+   HOSTNAME: login01.expanse.sdsc.edu
+   KERNEL: Linux 4.18.0-348.23.1.el8_5.x86_64 x86_64
+   MEMORY: 26Gi/125Gi
+
+[H[2J[3J
+  % Total    % Received % Xferd  Average Speed   Time    Time     Time  Current
+                                 Dload  Upload   Total   Spent    Left  Speed
+  0     0    0     0    0     0      0      0 --:--:-- --:--:-- --:--:--     0100    14  100    14    0     0    241      0 --:--:-- --:--:-- --:--:--   245
+   IP ADDR: 198.202.100.13
+   USER: zuy121
+   DATE: Tue Sep 20 07:04:27 PDT 2022
+   UPTIME: up 3 weeks, 16 hours, 56 minutes
+   HOSTNAME: login01.expanse.sdsc.edu
+   KERNEL: Linux 4.18.0-348.23.1.el8_5.x86_64 x86_64
+   MEMORY: 26Gi/125Gi
+
+Tue Sep 20 07:04:27 PDT 2022
+cat: run/201708220000/run/201708220000/icbc/stat: No such file or directory
+cat: run/201708220000/run/201708220000/perturb_ic/stat: No such file or directory
+cat: run/201708220000/run/201708220000/update_bc/stat: No such file or directory
+cat: run/201708220000/run/201708220000/wrf_ens/stat: No such file or directory
+(standard_in) 2: syntax error
+----------------------------------------------------------------------
+CURRENT CYCLE: 2017-08-22_12:00:00 => 2017-08-22_13:00:00
+cat: 'run/201708221200/*/stat': No such file or directory
+./HARVEY_IR.sh: line 111: run/201708221200/*/stat: No such file or directory
+[H[2J[3J
+  % Total    % Received % Xferd  Average Speed   Time    Time     Time  Current
+                                 Dload  Upload   Total   Spent    Left  Speed
+  0     0    0     0    0     0      0      0 --:--:-- --:--:-- --:--:--     0100    14  100    14    0     0    245      0 --:--:-- --:--:-- --:--:--   250
+   IP ADDR: 198.202.100.13
+   USER: zuy121
+   DATE: Tue Sep 20 07:04:29 PDT 2022
+   UPTIME: up 3 weeks, 16 hours, 56 minutes
+   HOSTNAME: login01.expanse.sdsc.edu
+   KERNEL: Linux 4.18.0-348.23.1.el8_5.x86_64 x86_64
+   MEMORY: 26Gi/125Gi
+
+  Calculating preset nesting...
+  Running ungrib.exe...
+201708221200
+/expanse/lustre/projects/pen116/zuy121/Pro2_PSU_MW/Obs_input_EnKF/HARVEY/GFS/gfs.0p25.2017082212.f000.grib2
+/expanse/lustre/projects/pen116/zuy121/Pro2_PSU_MW/Obs_input_EnKF/HARVEY/GFS/gfs.0p25.2017082212.f006.grib2
+/expanse/lustre/projects/pen116/zuy121/Pro2_PSU_MW/Obs_input_EnKF/HARVEY/GFS/gfs.0p25.2017082212.f012.grib2
+/expanse/lustre/projects/pen116/zuy121/Pro2_PSU_MW/Obs_input_EnKF/HARVEY/GFS/gfs.0p25.2017082212.f018.grib2
+/expanse/lustre/projects/pen116/zuy121/Pro2_PSU_MW/Obs_input_EnKF/HARVEY/GFS/gfs.0p25.2017082212.f024.grib2
+/expanse/lustre/projects/pen116/zuy121/Pro2_PSU_MW/Obs_input_EnKF/HARVEY/GFS/gfs.0p25.2017082212.f030.grib2
+/expanse/lustre/projects/pen116/zuy121/Pro2_PSU_MW/Obs_input_EnKF/HARVEY/GFS/gfs.0p25.2017082212.f036.grib2
+/expanse/lustre/projects/pen116/zuy121/Pro2_PSU_MW/Obs_input_EnKF/HARVEY/GFS/gfs.0p25.2017082212.f042.grib2
+/expanse/lustre/projects/pen116/zuy121/Pro2_PSU_MW/Obs_input_EnKF/HARVEY/GFS/gfs.0p25.2017082212.f048.grib2
+/expanse/lustre/projects/pen116/zuy121/Pro2_PSU_MW/Obs_input_EnKF/HARVEY/GFS/gfs.0p25.2017082212.f054.grib2
+/expanse/lustre/projects/pen116/zuy121/Pro2_PSU_MW/Obs_input_EnKF/HARVEY/GFS/gfs.0p25.2017082212.f060.grib2
+/expanse/lustre/projects/pen116/zuy121/Pro2_PSU_MW/Obs_input_EnKF/HARVEY/GFS/gfs.0p25.2017082212.f066.grib2
+/expanse/lustre/projects/pen116/zuy121/Pro2_PSU_MW/Obs_input_EnKF/HARVEY/GFS/gfs.0p25.2017082212.f072.grib2
+/expanse/lustre/projects/pen116/zuy121/Pro2_PSU_MW/Obs_input_EnKF/HARVEY/GFS/gfs.0p25.2017082212.f078.grib2
+/expanse/lustre/projects/pen116/zuy121/Pro2_PSU_MW/Obs_input_EnKF/HARVEY/GFS/gfs.0p25.2017082212.f084.grib2
+/expanse/lustre/projects/pen116/zuy121/Pro2_PSU_MW/Obs_input_EnKF/HARVEY/GFS/gfs.0p25.2017082212.f090.grib2
+/expanse/lustre/projects/pen116/zuy121/Pro2_PSU_MW/Obs_input_EnKF/HARVEY/GFS/gfs.0p25.2017082212.f096.grib2
+/expanse/lustre/projects/pen116/zuy121/Pro2_PSU_MW/Obs_input_EnKF/HARVEY/GFS/gfs.0p25.2017082212.f102.grib2
+/expanse/lustre/projects/pen116/zuy121/Pro2_PSU_MW/Obs_input_EnKF/HARVEY/GFS/gfs.0p25.2017082212.f108.grib2
+/expanse/lustre/projects/pen116/zuy121/Pro2_PSU_MW/Obs_input_EnKF/HARVEY/GFS/gfs.0p25.2017082212.f000.grib2 /expanse/lustre/projects/pen116/zuy121/Pro2_PSU_MW/Obs_input_EnKF/HARVEY/GFS/gfs.0p25.2017082212.f006.grib2 /expanse/lustre/projects/pen116/zuy121/Pro2_PSU_MW/Obs_input_EnKF/HARVEY/GFS/gfs.0p25.2017082212.f012.grib2 /expanse/lustre/projects/pen116/zuy121/Pro2_PSU_MW/Obs_input_EnKF/HARVEY/GFS/gfs.0p25.2017082212.f018.grib2 /expanse/lustre/projects/pen116/zuy121/Pro2_PSU_MW/Obs_input_EnKF/HARVEY/GFS/gfs.0p25.2017082212.f024.grib2 /expanse/lustre/projects/pen116/zuy121/Pro2_PSU_MW/Obs_input_EnKF/HARVEY/GFS/gfs.0p25.2017082212.f030.grib2 /expanse/lustre/projects/pen116/zuy121/Pro2_PSU_MW/Obs_input_EnKF/HARVEY/GFS/gfs.0p25.2017082212.f036.grib2 /expanse/lustre/projects/pen116/zuy121/Pro2_PSU_MW/Obs_input_EnKF/HARVEY/GFS/gfs.0p25.2017082212.f042.grib2 /expanse/lustre/projects/pen116/zuy121/Pro2_PSU_MW/Obs_input_EnKF/HARVEY/GFS/gfs.0p25.2017082212.f048.grib2 /expanse/lustre/projects/pen116/zuy121/Pro2_PSU_MW/Obs_input_EnKF/HARVEY/GFS/gfs.0p25.2017082212.f054.grib2 /expanse/lustre/projects/pen116/zuy121/Pro2_PSU_MW/Obs_input_EnKF/HARVEY/GFS/gfs.0p25.2017082212.f060.grib2 /expanse/lustre/projects/pen116/zuy121/Pro2_PSU_MW/Obs_input_EnKF/HARVEY/GFS/gfs.0p25.2017082212.f066.grib2 /expanse/lustre/projects/pen116/zuy121/Pro2_PSU_MW/Obs_input_EnKF/HARVEY/GFS/gfs.0p25.2017082212.f072.grib2 /expanse/lustre/projects/pen116/zuy121/Pro2_PSU_MW/Obs_input_EnKF/HARVEY/GFS/gfs.0p25.2017082212.f078.grib2 /expanse/lustre/projects/pen116/zuy121/Pro2_PSU_MW/Obs_input_EnKF/HARVEY/GFS/gfs.0p25.2017082212.f084.grib2 /expanse/lustre/projects/pen116/zuy121/Pro2_PSU_MW/Obs_input_EnKF/HARVEY/GFS/gfs.0p25.2017082212.f090.grib2 /expanse/lustre/projects/pen116/zuy121/Pro2_PSU_MW/Obs_input_EnKF/HARVEY/GFS/gfs.0p25.2017082212.f096.grib2 /expanse/lustre/projects/pen116/zuy121/Pro2_PSU_MW/Obs_input_EnKF/HARVEY/GFS/gfs.0p25.2017082212.f102.grib2 /expanse/lustre/projects/pen116/zuy121/Pro2_PSU_MW/Obs_input_EnKF/HARVEY/GFS/gfs.0p25.2017082212.f108.grib2
+  Running geogrid.exe, metgrid.exe, and real.exe...

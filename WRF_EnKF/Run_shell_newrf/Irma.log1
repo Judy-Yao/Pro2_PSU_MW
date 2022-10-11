@@ -1,48 +1,0 @@
-nohup: ignoring input
-[H[J
-  % Total    % Received % Xferd  Average Speed   Time    Time     Time  Current
-                                 Dload  Upload   Total   Spent    Left  Speed
-  0     0    0     0    0     0      0      0 --:--:-- --:--:-- --:--:--     0100    14  100    14    0     0    136      0 --:--:-- --:--:-- --:--:--   137
-   IP ADDR: 198.202.100.13
-   USER: zuy121
-   DATE: Fri Aug 26 06:45:57 PDT 2022
-   UPTIME: up 6 weeks, 2 days, 13 hours, 8 minutes
-   HOSTNAME: login01.expanse.sdsc.edu
-   KERNEL: Linux 4.18.0-348.23.1.el8_5.x86_64 x86_64
-   MEMORY: 41Gi/125Gi
-
-Agent pid 1655584
-Identity added: Pro2_PSU_MW_source.id_ed25519 (yao.zhu.91@gmail.com)
-Restoring modules from user's intel
-Lmod Warning: The system MODULEPATH has changed: please rebuild your saved
-collection.
-
-
-
-(standard_in) 2: syntax error
-----------------------------------------------------------------------
-CURRENT CYCLE: 2017-09-02_18:00:00 => 2017-09-03_06:00:00
-cat: 'run/201709021800/*/stat': No such file or directory
-./run_MW.sh: line 111: run/201709021800/*/stat: No such file or directory
-[H[J
-  % Total    % Received % Xferd  Average Speed   Time    Time     Time  Current
-                                 Dload  Upload   Total   Spent    Left  Speed
-  0     0    0     0    0     0      0      0 --:--:-- --:--:-- --:--:--     0100    14  100    14    0     0    242      0 --:--:-- --:--:-- --:--:--   241100    14  100    14    0     0    240      0 --:--:-- --:--:-- --:--:--   237
-   IP ADDR: 198.202.100.13
-   USER: zuy121
-   DATE: Fri Aug 26 06:46:01 PDT 2022
-   UPTIME: up 6 weeks, 2 days, 13 hours, 8 minutes
-   HOSTNAME: login01.expanse.sdsc.edu
-   KERNEL: Linux 4.18.0-348.23.1.el8_5.x86_64 x86_64
-   MEMORY: 41Gi/125Gi
-
-Agent pid 1656243
-Identity added: Pro2_PSU_MW_source.id_ed25519 (yao.zhu.91@gmail.com)
-  Calculating preset nesting...
-  Running ungrib.exe...
-201709021800
-/expanse/lustre/projects/pen116/zuy121/Pro2_PSU_MW/Obs_input_EnKF/IRMA/GFS/gfs.0p25.2017090218.f000.grib2
-/expanse/lustre/projects/pen116/zuy121/Pro2_PSU_MW/Obs_input_EnKF/IRMA/GFS/gfs.0p25.2017090218.f006.grib2
-/expanse/lustre/projects/pen116/zuy121/Pro2_PSU_MW/Obs_input_EnKF/IRMA/GFS/gfs.0p25.2017090218.f012.grib2
-/expanse/lustre/projects/pen116/zuy121/Pro2_PSU_MW/Obs_input_EnKF/IRMA/GFS/gfs.0p25.2017090218.f000.grib2 /expanse/lustre/projects/pen116/zuy121/Pro2_PSU_MW/Obs_input_EnKF/IRMA/GFS/gfs.0p25.2017090218.f006.grib2 /expanse/lustre/projects/pen116/zuy121/Pro2_PSU_MW/Obs_input_EnKF/IRMA/GFS/gfs.0p25.2017090218.f012.grib2
-  Running geogrid.exe, metgrid.exe, and real.exe...

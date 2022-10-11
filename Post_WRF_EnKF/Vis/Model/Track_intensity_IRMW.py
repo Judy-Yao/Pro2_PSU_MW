@@ -232,8 +232,8 @@ def plot_hpi(Storm, Exper_name, wrf_dir, read_HPI_wrfout, domain_range, output_d
     ax2 = fig.add_subplot( gs[0,2] )
 
     # Plot HPI from post-storm analysis
-    Btk_start = '201709030600'#'201708221200' #'201709030600'
-    Btk_end = '201709090000'#'201708270000'#'201709090000'
+    Btk_start = '201709030600'
+    Btk_end = '201709090000'
     best_track = btk_in_duration(Storm, Btk_start, Btk_end)
     plot_one ( ax0, ax1, ax2, best_track,  'k-', 'Best track', step=step )
 
@@ -241,7 +241,7 @@ def plot_hpi(Storm, Exper_name, wrf_dir, read_HPI_wrfout, domain_range, output_d
     DF_model_end  = '201709090000' #''201708270000'
     DF_init_times = sorted(os.listdir(  wrf_dir+'/'+Storm+'/'+Exper_name+'/wrf_df/' ))
 
-    color_model = [ '#b8d5cd', '#8abaae', '#5ca08e', '#2e856e', '#006a4e']
+    color_model = [ '#3D59AB', '#458B74', '#F08080']
 
     if read_HPI_wrfout == True:
         i = 0
@@ -267,8 +267,6 @@ def plot_hpi(Storm, Exper_name, wrf_dir, read_HPI_wrfout, domain_range, output_d
     gl.xlabel_style = {'size': 6}
     gl.ylabel_style = {'size': 6}  
     
-    #ax1.set_xlim([datetime(2017, 8, 22, 12, 0, 0), datetime(2017, 8, 27)])
-    #ax2.set_xlim([datetime(2017, 8, 22, 12, 0, 0), datetime(2017, 8, 27)])
     ax1.set_xlim([datetime(2017, 9, 3, 6, 0, 0), datetime(2017, 9, 9)])
     ax2.set_xlim([datetime(2017, 9, 3, 6, 0, 0), datetime(2017, 9, 9)])
     ax1.tick_params(axis='x', labelrotation=45)
@@ -280,7 +278,7 @@ def plot_hpi(Storm, Exper_name, wrf_dir, read_HPI_wrfout, domain_range, output_d
     ax2.set_title( 'Vmax' )
     
     if output_dir is not None:                             
-        plt.savefig('/work2/06191/tg854905/stampede2/Pro2_PSU_MW/'+Storm+'/newWRF_MW_THO/Vis_analyze/Model/'+Storm+'_IRMW.png')
+        plt.savefig('/work2/06191/tg854905/stampede2/Pro2_PSU_MW/'+Storm+'/newWRF_MW_THO/Vis_analyze/Model/'+Storm+'.png')
         #plt.savefig('%s/hpi_fcst_%s_%s.png' % (output_dir, '201708240000', '201708270000') )                                                
     else:
         plt.show()
@@ -294,10 +292,10 @@ if __name__ == '__main__':
 
     read_HPI_wrfout = False
 
-    lon_min = -85#-101#-85
-    lon_max = -45#-86#-45
-    lat_min = 12#16#12
-    lat_max = 30#31#30
+    lon_min = -85
+    lon_max = -45
+    lat_min = 12
+    lat_max = 30
     domain_range = [lon_min, lon_max, lat_min, lat_max]
 
     plot_hpi( Storm, Exper_name, wrf_dir, read_HPI_wrfout, domain_range, output_dir = './out')

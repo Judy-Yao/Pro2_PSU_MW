@@ -1,0 +1,2852 @@
+nohup: ignoring input
+[H[2J[3J
+  % Total    % Received % Xferd  Average Speed   Time    Time     Time  Current
+                                 Dload  Upload   Total   Spent    Left  Speed
+  0     0    0     0    0     0      0      0 --:--:-- --:--:-- --:--:--     0100    14  100    14    0     0    129      0 --:--:-- --:--:-- --:--:--   130
+   IP ADDR: 198.202.100.13
+   USER: zuy121
+   DATE: Fri Sep 16 09:50:41 PDT 2022
+   UPTIME: up 2 weeks, 3 days, 19 hours, 42 minutes
+   HOSTNAME: login01.expanse.sdsc.edu
+   KERNEL: Linux 4.18.0-348.23.1.el8_5.x86_64 x86_64
+   MEMORY: 22Gi/125Gi
+
+Restoring modules from user's intel
+(standard_in) 2: syntax error
+----------------------------------------------------------------------
+CURRENT CYCLE: 2017-09-16_06:00:00 => 2017-09-16_18:00:00
+cat: run/201709160600/config_IR_MW.MARIA/stat: Not a directory
+./MARIA_IRMW.sh: line 111: run/201709160600/config_IR_MW.MARIA/stat: Not a directory
+[H[2J[3J
+  % Total    % Received % Xferd  Average Speed   Time    Time     Time  Current
+                                 Dload  Upload   Total   Spent    Left  Speed
+  0     0    0     0    0     0      0      0 --:--:-- --:--:-- --:--:--     0100    14  100    14    0     0    248      0 --:--:-- --:--:-- --:--:--   250
+   IP ADDR: 198.202.100.13
+   USER: zuy121
+   DATE: Fri Sep 16 09:50:50 PDT 2022
+   UPTIME: up 2 weeks, 3 days, 19 hours, 43 minutes
+   HOSTNAME: login01.expanse.sdsc.edu
+   KERNEL: Linux 4.18.0-348.23.1.el8_5.x86_64 x86_64
+   MEMORY: 22Gi/125Gi
+
+[H[2J[3J
+  % Total    % Received % Xferd  Average Speed   Time    Time     Time  Current
+                                 Dload  Upload   Total   Spent    Left  Speed
+  0     0    0     0    0     0      0      0 --:--:-- --:--:-- --:--:--     0100    14  100    14    0     0    244      0 --:--:-- --:--:-- --:--:--   245
+   IP ADDR: 198.202.100.13
+   USER: zuy121
+   DATE: Fri Sep 16 09:50:51 PDT 2022
+   UPTIME: up 2 weeks, 3 days, 19 hours, 43 minutes
+   HOSTNAME: login01.expanse.sdsc.edu
+   KERNEL: Linux 4.18.0-348.23.1.el8_5.x86_64 x86_64
+   MEMORY: 22Gi/125Gi
+
+[H[2J[3J
+  % Total    % Received % Xferd  Average Speed   Time    Time     Time  Current
+                                 Dload  Upload   Total   Spent    Left  Speed
+  0     0    0     0    0     0      0      0 --:--:-- --:--:-- --:--:--     0100    14  100    14    0     0    251      0 --:--:-- --:--:-- --:--:--   254
+   IP ADDR: 198.202.100.13
+   USER: zuy121
+   DATE: Fri Sep 16 09:50:52 PDT 2022
+   UPTIME: up 2 weeks, 3 days, 19 hours, 43 minutes
+   HOSTNAME: login01.expanse.sdsc.edu
+   KERNEL: Linux 4.18.0-348.23.1.el8_5.x86_64 x86_64
+   MEMORY: 22Gi/125Gi
+
+Fri Sep 16 09:50:52 PDT 2022
+cat: run/201709160600/run/201709160600/config_IR_MW.MARIA/stat: No such file or directory
+cat: run/201709160600/run/201709160600/icbc/stat: No such file or directory
+cat: run/201709160600/run/201709160600/perturb_ic/stat: No such file or directory
+cat: run/201709160600/run/201709160600/update_bc/stat: No such file or directory
+cat: run/201709160600/run/201709160600/wrf_ens/stat: No such file or directory
+(standard_in) 2: syntax error
+----------------------------------------------------------------------
+CURRENT CYCLE: 2017-09-16_18:00:00 => 2017-09-16_19:00:00
+cat: run/201709161800/config_IR_MW.MARIA/stat: Not a directory
+./MARIA_IRMW.sh: line 111: run/201709161800/config_IR_MW.MARIA/stat: Not a directory
+[H[2J[3J
+  % Total    % Received % Xferd  Average Speed   Time    Time     Time  Current
+                                 Dload  Upload   Total   Spent    Left  Speed
+  0     0    0     0    0     0      0      0 --:--:-- --:--:-- --:--:--     0100    14  100    14    0     0    247      0 --:--:-- --:--:-- --:--:--   250
+   IP ADDR: 198.202.100.13
+   USER: zuy121
+   DATE: Fri Sep 16 09:50:54 PDT 2022
+   UPTIME: up 2 weeks, 3 days, 19 hours, 43 minutes
+   HOSTNAME: login01.expanse.sdsc.edu
+   KERNEL: Linux 4.18.0-348.23.1.el8_5.x86_64 x86_64
+   MEMORY: 22Gi/125Gi
+
+[H[2J[3J
+  % Total    % Received % Xferd  Average Speed   Time    Time     Time  Current
+                                 Dload  Upload   Total   Spent    Left  Speed
+  0     0    0     0    0     0      0      0 --:--:-- --:--:-- --:--:--     0100    14  100    14    0     0    246      0 --:--:-- --:--:-- --:--:--   250
+   IP ADDR: 198.202.100.13
+   USER: zuy121
+   DATE: Fri Sep 16 09:50:55 PDT 2022
+   UPTIME: up 2 weeks, 3 days, 19 hours, 43 minutes
+   HOSTNAME: login01.expanse.sdsc.edu
+   KERNEL: Linux 4.18.0-348.23.1.el8_5.x86_64 x86_64
+   MEMORY: 22Gi/125Gi
+
+[H[2J[3J
+  % Total    % Received % Xferd  Average Speed   Time    Time     Time  Current
+                                 Dload  Upload   Total   Spent    Left  Speed
+  0     0    0     0    0     0      0      0 --:--:-- --:--:-- --:--:--     0100    14  100    14    0     0    247      0 --:--:-- --:--:-- --:--:--   250
+   IP ADDR: 198.202.100.13
+   USER: zuy121
+   DATE: Fri Sep 16 09:50:56 PDT 2022
+   UPTIME: up 2 weeks, 3 days, 19 hours, 43 minutes
+   HOSTNAME: login01.expanse.sdsc.edu
+   KERNEL: Linux 4.18.0-348.23.1.el8_5.x86_64 x86_64
+   MEMORY: 22Gi/125Gi
+
+[H[2J[3J
+  % Total    % Received % Xferd  Average Speed   Time    Time     Time  Current
+                                 Dload  Upload   Total   Spent    Left  Speed
+  0     0    0     0    0     0      0      0 --:--:-- --:--:-- --:--:--     0100    14  100    14    0     0    249      0 --:--:-- --:--:-- --:--:--   250
+   IP ADDR: 198.202.100.13
+   USER: zuy121
+   DATE: Fri Sep 16 09:50:57 PDT 2022
+   UPTIME: up 2 weeks, 3 days, 19 hours, 43 minutes
+   HOSTNAME: login01.expanse.sdsc.edu
+   KERNEL: Linux 4.18.0-348.23.1.el8_5.x86_64 x86_64
+   MEMORY: 22Gi/125Gi
+
+[H[2J[3J
+  % Total    % Received % Xferd  Average Speed   Time    Time     Time  Current
+                                 Dload  Upload   Total   Spent    Left  Speed
+  0     0    0     0    0     0      0      0 --:--:-- --:--:-- --:--:--     0100    14  100    14    0     0    252      0 --:--:-- --:--:-- --:--:--   254
+   IP ADDR: 198.202.100.13
+   USER: zuy121
+   DATE: Fri Sep 16 09:50:58 PDT 2022
+   UPTIME: up 2 weeks, 3 days, 19 hours, 43 minutes
+   HOSTNAME: login01.expanse.sdsc.edu
+   KERNEL: Linux 4.18.0-348.23.1.el8_5.x86_64 x86_64
+   MEMORY: 22Gi/125Gi
+
+Fri Sep 16 09:50:59 PDT 2022
+cat: run/201709161800/run/201709161800/config_IR_MW.MARIA/stat: No such file or directory
+cat: run/201709161800/run/201709161800/enkf/stat: No such file or directory
+cat: run/201709161800/run/201709161800/icbc/stat: No such file or directory
+cat: run/201709161800/run/201709161800/obsproc/stat: No such file or directory
+cat: run/201709161800/run/201709161800/perturb_ic/stat: No such file or directory
+cat: run/201709161800/run/201709161800/update_bc/stat: No such file or directory
+cat: run/201709161800/run/201709161800/wrf_ens/stat: No such file or directory
+(standard_in) 2: syntax error
+----------------------------------------------------------------------
+CURRENT CYCLE: 2017-09-16_19:00:00 => 2017-09-16_20:00:00
+cat: run/201709161900/config_IR_MW.MARIA/stat: Not a directory
+./MARIA_IRMW.sh: line 111: run/201709161900/config_IR_MW.MARIA/stat: Not a directory
+[H[2J[3J
+  % Total    % Received % Xferd  Average Speed   Time    Time     Time  Current
+                                 Dload  Upload   Total   Spent    Left  Speed
+  0     0    0     0    0     0      0      0 --:--:-- --:--:-- --:--:--     0100    14  100    14    0     0    245      0 --:--:-- --:--:-- --:--:--   250
+   IP ADDR: 198.202.100.13
+   USER: zuy121
+   DATE: Fri Sep 16 09:51:00 PDT 2022
+   UPTIME: up 2 weeks, 3 days, 19 hours, 43 minutes
+   HOSTNAME: login01.expanse.sdsc.edu
+   KERNEL: Linux 4.18.0-348.23.1.el8_5.x86_64 x86_64
+   MEMORY: 22Gi/125Gi
+
+[H[2J[3J
+  % Total    % Received % Xferd  Average Speed   Time    Time     Time  Current
+                                 Dload  Upload   Total   Spent    Left  Speed
+  0     0    0     0    0     0      0      0 --:--:-- --:--:-- --:--:--     0100    14  100    14    0     0    247      0 --:--:-- --:--:-- --:--:--   250
+   IP ADDR: 198.202.100.13
+   USER: zuy121
+   DATE: Fri Sep 16 09:51:01 PDT 2022
+   UPTIME: up 2 weeks, 3 days, 19 hours, 43 minutes
+   HOSTNAME: login01.expanse.sdsc.edu
+   KERNEL: Linux 4.18.0-348.23.1.el8_5.x86_64 x86_64
+   MEMORY: 22Gi/125Gi
+
+[H[2J[3J
+  % Total    % Received % Xferd  Average Speed   Time    Time     Time  Current
+                                 Dload  Upload   Total   Spent    Left  Speed
+  0     0    0     0    0     0      0      0 --:--:-- --:--:-- --:--:--     0100    14  100    14    0     0    235      0 --:--:-- --:--:-- --:--:--   237
+   IP ADDR: 198.202.100.13
+   USER: zuy121
+   DATE: Fri Sep 16 09:51:02 PDT 2022
+   UPTIME: up 2 weeks, 3 days, 19 hours, 43 minutes
+   HOSTNAME: login01.expanse.sdsc.edu
+   KERNEL: Linux 4.18.0-348.23.1.el8_5.x86_64 x86_64
+   MEMORY: 22Gi/125Gi
+
+[H[2J[3J
+  % Total    % Received % Xferd  Average Speed   Time    Time     Time  Current
+                                 Dload  Upload   Total   Spent    Left  Speed
+  0     0    0     0    0     0      0      0 --:--:-- --:--:-- --:--:--     0100    14  100    14    0     0    231      0 --:--:-- --:--:-- --:--:--   233
+   IP ADDR: 198.202.100.13
+   USER: zuy121
+   DATE: Fri Sep 16 09:51:03 PDT 2022
+   UPTIME: up 2 weeks, 3 days, 19 hours, 43 minutes
+   HOSTNAME: login01.expanse.sdsc.edu
+   KERNEL: Linux 4.18.0-348.23.1.el8_5.x86_64 x86_64
+   MEMORY: 22Gi/125Gi
+
+[H[2J[3J
+  % Total    % Received % Xferd  Average Speed   Time    Time     Time  Current
+                                 Dload  Upload   Total   Spent    Left  Speed
+  0     0    0     0    0     0      0      0 --:--:-- --:--:-- --:--:--     0100    14  100    14    0     0    247      0 --:--:-- --:--:-- --:--:--   250
+   IP ADDR: 198.202.100.13
+   USER: zuy121
+   DATE: Fri Sep 16 09:51:04 PDT 2022
+   UPTIME: up 2 weeks, 3 days, 19 hours, 43 minutes
+   HOSTNAME: login01.expanse.sdsc.edu
+   KERNEL: Linux 4.18.0-348.23.1.el8_5.x86_64 x86_64
+   MEMORY: 22Gi/125Gi
+
+Fri Sep 16 09:51:05 PDT 2022
+cat: run/201709161900/run/201709161900/config_IR_MW.MARIA/stat: No such file or directory
+cat: run/201709161900/run/201709161900/enkf/stat: No such file or directory
+cat: run/201709161900/run/201709161900/icbc/stat: No such file or directory
+cat: run/201709161900/run/201709161900/obsproc/stat: No such file or directory
+cat: run/201709161900/run/201709161900/update_bc/stat: No such file or directory
+cat: run/201709161900/run/201709161900/wrf_ens/stat: No such file or directory
+(standard_in) 2: syntax error
+----------------------------------------------------------------------
+CURRENT CYCLE: 2017-09-16_20:00:00 => 2017-09-16_21:00:00
+cat: run/201709162000/config_IR_MW.MARIA/stat: Not a directory
+./MARIA_IRMW.sh: line 111: run/201709162000/config_IR_MW.MARIA/stat: Not a directory
+[H[2J[3J
+  % Total    % Received % Xferd  Average Speed   Time    Time     Time  Current
+                                 Dload  Upload   Total   Spent    Left  Speed
+  0     0    0     0    0     0      0      0 --:--:-- --:--:-- --:--:--     0100    14  100    14    0     0    252      0 --:--:-- --:--:-- --:--:--   254
+   IP ADDR: 198.202.100.13
+   USER: zuy121
+   DATE: Fri Sep 16 09:51:06 PDT 2022
+   UPTIME: up 2 weeks, 3 days, 19 hours, 43 minutes
+   HOSTNAME: login01.expanse.sdsc.edu
+   KERNEL: Linux 4.18.0-348.23.1.el8_5.x86_64 x86_64
+   MEMORY: 22Gi/125Gi
+
+[H[2J[3J
+  % Total    % Received % Xferd  Average Speed   Time    Time     Time  Current
+                                 Dload  Upload   Total   Spent    Left  Speed
+  0     0    0     0    0     0      0      0 --:--:-- --:--:-- --:--:--     0100    14  100    14    0     0    242      0 --:--:-- --:--:-- --:--:--   245
+   IP ADDR: 198.202.100.13
+   USER: zuy121
+   DATE: Fri Sep 16 09:51:07 PDT 2022
+   UPTIME: up 2 weeks, 3 days, 19 hours, 43 minutes
+   HOSTNAME: login01.expanse.sdsc.edu
+   KERNEL: Linux 4.18.0-348.23.1.el8_5.x86_64 x86_64
+   MEMORY: 22Gi/125Gi
+
+[H[2J[3J
+  % Total    % Received % Xferd  Average Speed   Time    Time     Time  Current
+                                 Dload  Upload   Total   Spent    Left  Speed
+  0     0    0     0    0     0      0      0 --:--:-- --:--:-- --:--:--     0100    14  100    14    0     0    243      0 --:--:-- --:--:-- --:--:--   245
+   IP ADDR: 198.202.100.13
+   USER: zuy121
+   DATE: Fri Sep 16 09:51:08 PDT 2022
+   UPTIME: up 2 weeks, 3 days, 19 hours, 43 minutes
+   HOSTNAME: login01.expanse.sdsc.edu
+   KERNEL: Linux 4.18.0-348.23.1.el8_5.x86_64 x86_64
+   MEMORY: 23Gi/125Gi
+
+[H[2J[3J
+  % Total    % Received % Xferd  Average Speed   Time    Time     Time  Current
+                                 Dload  Upload   Total   Spent    Left  Speed
+  0     0    0     0    0     0      0      0 --:--:-- --:--:-- --:--:--     0100    14  100    14    0     0    247      0 --:--:-- --:--:-- --:--:--   250
+   IP ADDR: 198.202.100.13
+   USER: zuy121
+   DATE: Fri Sep 16 09:51:09 PDT 2022
+   UPTIME: up 2 weeks, 3 days, 19 hours, 43 minutes
+   HOSTNAME: login01.expanse.sdsc.edu
+   KERNEL: Linux 4.18.0-348.23.1.el8_5.x86_64 x86_64
+   MEMORY: 23Gi/125Gi
+
+[H[2J[3J
+  % Total    % Received % Xferd  Average Speed   Time    Time     Time  Current
+                                 Dload  Upload   Total   Spent    Left  Speed
+  0     0    0     0    0     0      0      0 --:--:-- --:--:-- --:--:--     0100    14  100    14    0     0    242      0 --:--:-- --:--:-- --:--:--   245
+   IP ADDR: 198.202.100.13
+   USER: zuy121
+   DATE: Fri Sep 16 09:51:10 PDT 2022
+   UPTIME: up 2 weeks, 3 days, 19 hours, 43 minutes
+   HOSTNAME: login01.expanse.sdsc.edu
+   KERNEL: Linux 4.18.0-348.23.1.el8_5.x86_64 x86_64
+   MEMORY: 23Gi/125Gi
+
+Fri Sep 16 09:51:11 PDT 2022
+cat: run/201709162000/run/201709162000/config_IR_MW.MARIA/stat: No such file or directory
+cat: run/201709162000/run/201709162000/enkf/stat: No such file or directory
+cat: run/201709162000/run/201709162000/icbc/stat: No such file or directory
+cat: run/201709162000/run/201709162000/obsproc/stat: No such file or directory
+cat: run/201709162000/run/201709162000/update_bc/stat: No such file or directory
+cat: run/201709162000/run/201709162000/wrf_ens/stat: No such file or directory
+(standard_in) 2: syntax error
+----------------------------------------------------------------------
+CURRENT CYCLE: 2017-09-16_21:00:00 => 2017-09-16_22:00:00
+cat: run/201709162100/config_IR_MW.MARIA/stat: Not a directory
+./MARIA_IRMW.sh: line 111: run/201709162100/config_IR_MW.MARIA/stat: Not a directory
+[H[2J[3J
+  % Total    % Received % Xferd  Average Speed   Time    Time     Time  Current
+                                 Dload  Upload   Total   Spent    Left  Speed
+  0     0    0     0    0     0      0      0 --:--:-- --:--:-- --:--:--     0100    14  100    14    0     0    247      0 --:--:-- --:--:-- --:--:--   250
+   IP ADDR: 198.202.100.13
+   USER: zuy121
+   DATE: Fri Sep 16 09:51:12 PDT 2022
+   UPTIME: up 2 weeks, 3 days, 19 hours, 43 minutes
+   HOSTNAME: login01.expanse.sdsc.edu
+   KERNEL: Linux 4.18.0-348.23.1.el8_5.x86_64 x86_64
+   MEMORY: 23Gi/125Gi
+
+[H[2J[3J
+  % Total    % Received % Xferd  Average Speed   Time    Time     Time  Current
+                                 Dload  Upload   Total   Spent    Left  Speed
+  0     0    0     0    0     0      0      0 --:--:-- --:--:-- --:--:--     0100    14  100    14    0     0    246      0 --:--:-- --:--:-- --:--:--   250
+   IP ADDR: 198.202.100.13
+   USER: zuy121
+   DATE: Fri Sep 16 09:51:13 PDT 2022
+   UPTIME: up 2 weeks, 3 days, 19 hours, 43 minutes
+   HOSTNAME: login01.expanse.sdsc.edu
+   KERNEL: Linux 4.18.0-348.23.1.el8_5.x86_64 x86_64
+   MEMORY: 23Gi/125Gi
+
+[H[2J[3J
+  % Total    % Received % Xferd  Average Speed   Time    Time     Time  Current
+                                 Dload  Upload   Total   Spent    Left  Speed
+  0     0    0     0    0     0      0      0 --:--:-- --:--:-- --:--:--     0100    14  100    14    0     0    247      0 --:--:-- --:--:-- --:--:--   250
+   IP ADDR: 198.202.100.13
+   USER: zuy121
+   DATE: Fri Sep 16 09:51:14 PDT 2022
+   UPTIME: up 2 weeks, 3 days, 19 hours, 43 minutes
+   HOSTNAME: login01.expanse.sdsc.edu
+   KERNEL: Linux 4.18.0-348.23.1.el8_5.x86_64 x86_64
+   MEMORY: 22Gi/125Gi
+
+[H[2J[3J
+  % Total    % Received % Xferd  Average Speed   Time    Time     Time  Current
+                                 Dload  Upload   Total   Spent    Left  Speed
+  0     0    0     0    0     0      0      0 --:--:-- --:--:-- --:--:--     0100    14  100    14    0     0    248      0 --:--:-- --:--:-- --:--:--   250
+   IP ADDR: 198.202.100.13
+   USER: zuy121
+   DATE: Fri Sep 16 09:51:15 PDT 2022
+   UPTIME: up 2 weeks, 3 days, 19 hours, 43 minutes
+   HOSTNAME: login01.expanse.sdsc.edu
+   KERNEL: Linux 4.18.0-348.23.1.el8_5.x86_64 x86_64
+   MEMORY: 22Gi/125Gi
+
+[H[2J[3J
+  % Total    % Received % Xferd  Average Speed   Time    Time     Time  Current
+                                 Dload  Upload   Total   Spent    Left  Speed
+  0     0    0     0    0     0      0      0 --:--:-- --:--:-- --:--:--     0100    14  100    14    0     0    230      0 --:--:-- --:--:-- --:--:--   233
+   IP ADDR: 198.202.100.13
+   USER: zuy121
+   DATE: Fri Sep 16 09:51:16 PDT 2022
+   UPTIME: up 2 weeks, 3 days, 19 hours, 43 minutes
+   HOSTNAME: login01.expanse.sdsc.edu
+   KERNEL: Linux 4.18.0-348.23.1.el8_5.x86_64 x86_64
+   MEMORY: 22Gi/125Gi
+
+Fri Sep 16 09:51:17 PDT 2022
+cat: run/201709162100/run/201709162100/config_IR_MW.MARIA/stat: No such file or directory
+cat: run/201709162100/run/201709162100/enkf/stat: No such file or directory
+cat: run/201709162100/run/201709162100/icbc/stat: No such file or directory
+cat: run/201709162100/run/201709162100/obsproc/stat: No such file or directory
+cat: run/201709162100/run/201709162100/update_bc/stat: No such file or directory
+cat: run/201709162100/run/201709162100/wrf_ens/stat: No such file or directory
+(standard_in) 2: syntax error
+----------------------------------------------------------------------
+CURRENT CYCLE: 2017-09-16_22:00:00 => 2017-09-16_23:00:00
+cat: run/201709162200/config_IR_MW.MARIA/stat: Not a directory
+./MARIA_IRMW.sh: line 111: run/201709162200/config_IR_MW.MARIA/stat: Not a directory
+[H[2J[3J
+  % Total    % Received % Xferd  Average Speed   Time    Time     Time  Current
+                                 Dload  Upload   Total   Spent    Left  Speed
+  0     0    0     0    0     0      0      0 --:--:-- --:--:-- --:--:--     0100    14  100    14    0     0    249      0 --:--:-- --:--:-- --:--:--   250
+   IP ADDR: 198.202.100.13
+   USER: zuy121
+   DATE: Fri Sep 16 09:51:18 PDT 2022
+   UPTIME: up 2 weeks, 3 days, 19 hours, 43 minutes
+   HOSTNAME: login01.expanse.sdsc.edu
+   KERNEL: Linux 4.18.0-348.23.1.el8_5.x86_64 x86_64
+   MEMORY: 23Gi/125Gi
+
+[H[2J[3J
+  % Total    % Received % Xferd  Average Speed   Time    Time     Time  Current
+                                 Dload  Upload   Total   Spent    Left  Speed
+  0     0    0     0    0     0      0      0 --:--:-- --:--:-- --:--:--     0100    14  100    14    0     0    235      0 --:--:-- --:--:-- --:--:--   237
+   IP ADDR: 198.202.100.13
+   USER: zuy121
+   DATE: Fri Sep 16 09:51:19 PDT 2022
+   UPTIME: up 2 weeks, 3 days, 19 hours, 43 minutes
+   HOSTNAME: login01.expanse.sdsc.edu
+   KERNEL: Linux 4.18.0-348.23.1.el8_5.x86_64 x86_64
+   MEMORY: 23Gi/125Gi
+
+[H[2J[3J
+  % Total    % Received % Xferd  Average Speed   Time    Time     Time  Current
+                                 Dload  Upload   Total   Spent    Left  Speed
+  0     0    0     0    0     0      0      0 --:--:-- --:--:-- --:--:--     0100    14  100    14    0     0    242      0 --:--:-- --:--:-- --:--:--   245
+   IP ADDR: 198.202.100.13
+   USER: zuy121
+   DATE: Fri Sep 16 09:51:20 PDT 2022
+   UPTIME: up 2 weeks, 3 days, 19 hours, 43 minutes
+   HOSTNAME: login01.expanse.sdsc.edu
+   KERNEL: Linux 4.18.0-348.23.1.el8_5.x86_64 x86_64
+   MEMORY: 23Gi/125Gi
+
+[H[2J[3J
+  % Total    % Received % Xferd  Average Speed   Time    Time     Time  Current
+                                 Dload  Upload   Total   Spent    Left  Speed
+  0     0    0     0    0     0      0      0 --:--:-- --:--:-- --:--:--     0100    14  100    14    0     0    161      0 --:--:-- --:--:-- --:--:--   162
+   IP ADDR: 198.202.100.13
+   USER: zuy121
+   DATE: Fri Sep 16 09:51:22 PDT 2022
+   UPTIME: up 2 weeks, 3 days, 19 hours, 43 minutes
+   HOSTNAME: login01.expanse.sdsc.edu
+   KERNEL: Linux 4.18.0-348.23.1.el8_5.x86_64 x86_64
+   MEMORY: 23Gi/125Gi
+
+[H[2J[3J
+  % Total    % Received % Xferd  Average Speed   Time    Time     Time  Current
+                                 Dload  Upload   Total   Spent    Left  Speed
+  0     0    0     0    0     0      0      0 --:--:-- --:--:-- --:--:--     0100    14  100    14    0     0    238      0 --:--:-- --:--:-- --:--:--   241
+   IP ADDR: 198.202.100.13
+   USER: zuy121
+   DATE: Fri Sep 16 09:51:23 PDT 2022
+   UPTIME: up 2 weeks, 3 days, 19 hours, 43 minutes
+   HOSTNAME: login01.expanse.sdsc.edu
+   KERNEL: Linux 4.18.0-348.23.1.el8_5.x86_64 x86_64
+   MEMORY: 23Gi/125Gi
+
+Fri Sep 16 09:51:24 PDT 2022
+cat: run/201709162200/run/201709162200/config_IR_MW.MARIA/stat: No such file or directory
+cat: run/201709162200/run/201709162200/enkf/stat: No such file or directory
+cat: run/201709162200/run/201709162200/icbc/stat: No such file or directory
+cat: run/201709162200/run/201709162200/obsproc/stat: No such file or directory
+cat: run/201709162200/run/201709162200/update_bc/stat: No such file or directory
+cat: run/201709162200/run/201709162200/wrf_ens/stat: No such file or directory
+(standard_in) 2: syntax error
+----------------------------------------------------------------------
+CURRENT CYCLE: 2017-09-16_23:00:00 => 2017-09-17_00:00:00
+cat: run/201709162300/config_IR_MW.MARIA/stat: Not a directory
+./MARIA_IRMW.sh: line 111: run/201709162300/config_IR_MW.MARIA/stat: Not a directory
+[H[2J[3J
+  % Total    % Received % Xferd  Average Speed   Time    Time     Time  Current
+                                 Dload  Upload   Total   Spent    Left  Speed
+  0     0    0     0    0     0      0      0 --:--:-- --:--:-- --:--:--     0100    14  100    14    0     0    247      0 --:--:-- --:--:-- --:--:--   250
+   IP ADDR: 198.202.100.13
+   USER: zuy121
+   DATE: Fri Sep 16 09:51:26 PDT 2022
+   UPTIME: up 2 weeks, 3 days, 19 hours, 43 minutes
+   HOSTNAME: login01.expanse.sdsc.edu
+   KERNEL: Linux 4.18.0-348.23.1.el8_5.x86_64 x86_64
+   MEMORY: 23Gi/125Gi
+
+[H[2J[3J
+  % Total    % Received % Xferd  Average Speed   Time    Time     Time  Current
+                                 Dload  Upload   Total   Spent    Left  Speed
+  0     0    0     0    0     0      0      0 --:--:-- --:--:-- --:--:--     0100    14  100    14    0     0    253      0 --:--:-- --:--:-- --:--:--   254
+   IP ADDR: 198.202.100.13
+   USER: zuy121
+   DATE: Fri Sep 16 09:51:27 PDT 2022
+   UPTIME: up 2 weeks, 3 days, 19 hours, 43 minutes
+   HOSTNAME: login01.expanse.sdsc.edu
+   KERNEL: Linux 4.18.0-348.23.1.el8_5.x86_64 x86_64
+   MEMORY: 23Gi/125Gi
+
+[H[2J[3J
+  % Total    % Received % Xferd  Average Speed   Time    Time     Time  Current
+                                 Dload  Upload   Total   Spent    Left  Speed
+  0     0    0     0    0     0      0      0 --:--:-- --:--:-- --:--:--     0100    14  100    14    0     0    239      0 --:--:-- --:--:-- --:--:--   241
+   IP ADDR: 198.202.100.13
+   USER: zuy121
+   DATE: Fri Sep 16 09:51:28 PDT 2022
+   UPTIME: up 2 weeks, 3 days, 19 hours, 43 minutes
+   HOSTNAME: login01.expanse.sdsc.edu
+   KERNEL: Linux 4.18.0-348.23.1.el8_5.x86_64 x86_64
+   MEMORY: 23Gi/125Gi
+
+[H[2J[3J
+  % Total    % Received % Xferd  Average Speed   Time    Time     Time  Current
+                                 Dload  Upload   Total   Spent    Left  Speed
+  0     0    0     0    0     0      0      0 --:--:-- --:--:-- --:--:--     0100    14  100    14    0     0    244      0 --:--:-- --:--:-- --:--:--   245
+   IP ADDR: 198.202.100.13
+   USER: zuy121
+   DATE: Fri Sep 16 09:51:30 PDT 2022
+   UPTIME: up 2 weeks, 3 days, 19 hours, 43 minutes
+   HOSTNAME: login01.expanse.sdsc.edu
+   KERNEL: Linux 4.18.0-348.23.1.el8_5.x86_64 x86_64
+   MEMORY: 23Gi/125Gi
+
+[H[2J[3J
+  % Total    % Received % Xferd  Average Speed   Time    Time     Time  Current
+                                 Dload  Upload   Total   Spent    Left  Speed
+  0     0    0     0    0     0      0      0 --:--:-- --:--:-- --:--:--     0100    14  100    14    0     0    251      0 --:--:-- --:--:-- --:--:--   254
+   IP ADDR: 198.202.100.13
+   USER: zuy121
+   DATE: Fri Sep 16 09:51:31 PDT 2022
+   UPTIME: up 2 weeks, 3 days, 19 hours, 43 minutes
+   HOSTNAME: login01.expanse.sdsc.edu
+   KERNEL: Linux 4.18.0-348.23.1.el8_5.x86_64 x86_64
+   MEMORY: 23Gi/125Gi
+
+Fri Sep 16 09:51:31 PDT 2022
+cat: run/201709162300/run/201709162300/config_IR_MW.MARIA/stat: No such file or directory
+cat: run/201709162300/run/201709162300/enkf/stat: No such file or directory
+cat: run/201709162300/run/201709162300/icbc/stat: No such file or directory
+cat: run/201709162300/run/201709162300/obsproc/stat: No such file or directory
+cat: run/201709162300/run/201709162300/update_bc/stat: No such file or directory
+cat: run/201709162300/run/201709162300/wrf_ens/stat: No such file or directory
+(standard_in) 2: syntax error
+----------------------------------------------------------------------
+CURRENT CYCLE: 2017-09-17_00:00:00 => 2017-09-17_01:00:00
+cat: run/201709170000/config_IR_MW.MARIA/stat: Not a directory
+./MARIA_IRMW.sh: line 111: run/201709170000/config_IR_MW.MARIA/stat: Not a directory
+[H[2J[3J
+  % Total    % Received % Xferd  Average Speed   Time    Time     Time  Current
+                                 Dload  Upload   Total   Spent    Left  Speed
+  0     0    0     0    0     0      0      0 --:--:-- --:--:-- --:--:--     0100    14  100    14    0     0    227      0 --:--:-- --:--:-- --:--:--   229
+   IP ADDR: 198.202.100.13
+   USER: zuy121
+   DATE: Fri Sep 16 09:51:32 PDT 2022
+   UPTIME: up 2 weeks, 3 days, 19 hours, 43 minutes
+   HOSTNAME: login01.expanse.sdsc.edu
+   KERNEL: Linux 4.18.0-348.23.1.el8_5.x86_64 x86_64
+   MEMORY: 23Gi/125Gi
+
+[H[2J[3J
+  % Total    % Received % Xferd  Average Speed   Time    Time     Time  Current
+                                 Dload  Upload   Total   Spent    Left  Speed
+  0     0    0     0    0     0      0      0 --:--:-- --:--:-- --:--:--     0100    14  100    14    0     0    243      0 --:--:-- --:--:-- --:--:--   245
+   IP ADDR: 198.202.100.13
+   USER: zuy121
+   DATE: Fri Sep 16 09:51:33 PDT 2022
+   UPTIME: up 2 weeks, 3 days, 19 hours, 43 minutes
+   HOSTNAME: login01.expanse.sdsc.edu
+   KERNEL: Linux 4.18.0-348.23.1.el8_5.x86_64 x86_64
+   MEMORY: 23Gi/125Gi
+
+[H[2J[3J
+  % Total    % Received % Xferd  Average Speed   Time    Time     Time  Current
+                                 Dload  Upload   Total   Spent    Left  Speed
+  0     0    0     0    0     0      0      0 --:--:-- --:--:-- --:--:--     0100    14  100    14    0     0    249      0 --:--:-- --:--:-- --:--:--   250
+   IP ADDR: 198.202.100.13
+   USER: zuy121
+   DATE: Fri Sep 16 09:51:34 PDT 2022
+   UPTIME: up 2 weeks, 3 days, 19 hours, 43 minutes
+   HOSTNAME: login01.expanse.sdsc.edu
+   KERNEL: Linux 4.18.0-348.23.1.el8_5.x86_64 x86_64
+   MEMORY: 23Gi/125Gi
+
+[H[2J[3J
+  % Total    % Received % Xferd  Average Speed   Time    Time     Time  Current
+                                 Dload  Upload   Total   Spent    Left  Speed
+  0     0    0     0    0     0      0      0 --:--:-- --:--:-- --:--:--     0100    14  100    14    0     0    230      0 --:--:-- --:--:-- --:--:--   233
+   IP ADDR: 198.202.100.13
+   USER: zuy121
+   DATE: Fri Sep 16 09:51:36 PDT 2022
+   UPTIME: up 2 weeks, 3 days, 19 hours, 43 minutes
+   HOSTNAME: login01.expanse.sdsc.edu
+   KERNEL: Linux 4.18.0-348.23.1.el8_5.x86_64 x86_64
+   MEMORY: 23Gi/125Gi
+
+[H[2J[3J
+  % Total    % Received % Xferd  Average Speed   Time    Time     Time  Current
+                                 Dload  Upload   Total   Spent    Left  Speed
+  0     0    0     0    0     0      0      0 --:--:-- --:--:-- --:--:--     0100    14  100    14    0     0    244      0 --:--:-- --:--:-- --:--:--   245
+   IP ADDR: 198.202.100.13
+   USER: zuy121
+   DATE: Fri Sep 16 09:51:37 PDT 2022
+   UPTIME: up 2 weeks, 3 days, 19 hours, 43 minutes
+   HOSTNAME: login01.expanse.sdsc.edu
+   KERNEL: Linux 4.18.0-348.23.1.el8_5.x86_64 x86_64
+   MEMORY: 23Gi/125Gi
+
+Fri Sep 16 09:51:37 PDT 2022
+cat: run/201709170000/run/201709170000/config_IR_MW.MARIA/stat: No such file or directory
+cat: run/201709170000/run/201709170000/enkf/stat: No such file or directory
+cat: run/201709170000/run/201709170000/icbc/stat: No such file or directory
+cat: run/201709170000/run/201709170000/obsproc/stat: No such file or directory
+cat: run/201709170000/run/201709170000/perturb_ic/stat: No such file or directory
+cat: run/201709170000/run/201709170000/update_bc/stat: No such file or directory
+cat: run/201709170000/run/201709170000/wrf_ens/stat: No such file or directory
+(standard_in) 2: syntax error
+----------------------------------------------------------------------
+CURRENT CYCLE: 2017-09-17_01:00:00 => 2017-09-17_02:00:00
+cat: run/201709170100/config_IR_MW.MARIA/stat: Not a directory
+./MARIA_IRMW.sh: line 111: run/201709170100/config_IR_MW.MARIA/stat: Not a directory
+[H[2J[3J
+  % Total    % Received % Xferd  Average Speed   Time    Time     Time  Current
+                                 Dload  Upload   Total   Spent    Left  Speed
+  0     0    0     0    0     0      0      0 --:--:-- --:--:-- --:--:--     0100    14  100    14    0     0    246      0 --:--:-- --:--:-- --:--:--   250
+   IP ADDR: 198.202.100.13
+   USER: zuy121
+   DATE: Fri Sep 16 09:51:39 PDT 2022
+   UPTIME: up 2 weeks, 3 days, 19 hours, 43 minutes
+   HOSTNAME: login01.expanse.sdsc.edu
+   KERNEL: Linux 4.18.0-348.23.1.el8_5.x86_64 x86_64
+   MEMORY: 23Gi/125Gi
+
+[H[2J[3J
+  % Total    % Received % Xferd  Average Speed   Time    Time     Time  Current
+                                 Dload  Upload   Total   Spent    Left  Speed
+  0     0    0     0    0     0      0      0 --:--:-- --:--:-- --:--:--     0100    14  100    14    0     0    250      0 --:--:-- --:--:-- --:--:--   254
+   IP ADDR: 198.202.100.13
+   USER: zuy121
+   DATE: Fri Sep 16 09:51:40 PDT 2022
+   UPTIME: up 2 weeks, 3 days, 19 hours, 43 minutes
+   HOSTNAME: login01.expanse.sdsc.edu
+   KERNEL: Linux 4.18.0-348.23.1.el8_5.x86_64 x86_64
+   MEMORY: 23Gi/125Gi
+
+[H[2J[3J
+  % Total    % Received % Xferd  Average Speed   Time    Time     Time  Current
+                                 Dload  Upload   Total   Spent    Left  Speed
+  0     0    0     0    0     0      0      0 --:--:-- --:--:-- --:--:--     0100    14  100    14    0     0    249      0 --:--:-- --:--:-- --:--:--   250
+   IP ADDR: 198.202.100.13
+   USER: zuy121
+   DATE: Fri Sep 16 09:51:41 PDT 2022
+   UPTIME: up 2 weeks, 3 days, 19 hours, 43 minutes
+   HOSTNAME: login01.expanse.sdsc.edu
+   KERNEL: Linux 4.18.0-348.23.1.el8_5.x86_64 x86_64
+   MEMORY: 23Gi/125Gi
+
+[H[2J[3J
+  % Total    % Received % Xferd  Average Speed   Time    Time     Time  Current
+                                 Dload  Upload   Total   Spent    Left  Speed
+  0     0    0     0    0     0      0      0 --:--:-- --:--:-- --:--:--     0100    14  100    14    0     0    237      0 --:--:-- --:--:-- --:--:--   241
+   IP ADDR: 198.202.100.13
+   USER: zuy121
+   DATE: Fri Sep 16 09:51:42 PDT 2022
+   UPTIME: up 2 weeks, 3 days, 19 hours, 43 minutes
+   HOSTNAME: login01.expanse.sdsc.edu
+   KERNEL: Linux 4.18.0-348.23.1.el8_5.x86_64 x86_64
+   MEMORY: 23Gi/125Gi
+
+[H[2J[3J
+  % Total    % Received % Xferd  Average Speed   Time    Time     Time  Current
+                                 Dload  Upload   Total   Spent    Left  Speed
+  0     0    0     0    0     0      0      0 --:--:-- --:--:-- --:--:--     0100    14  100    14    0     0    249      0 --:--:-- --:--:-- --:--:--   250
+   IP ADDR: 198.202.100.13
+   USER: zuy121
+   DATE: Fri Sep 16 09:51:43 PDT 2022
+   UPTIME: up 2 weeks, 3 days, 19 hours, 43 minutes
+   HOSTNAME: login01.expanse.sdsc.edu
+   KERNEL: Linux 4.18.0-348.23.1.el8_5.x86_64 x86_64
+   MEMORY: 23Gi/125Gi
+
+Fri Sep 16 09:51:44 PDT 2022
+cat: run/201709170100/run/201709170100/config_IR_MW.MARIA/stat: No such file or directory
+cat: run/201709170100/run/201709170100/enkf/stat: No such file or directory
+cat: run/201709170100/run/201709170100/icbc/stat: No such file or directory
+cat: run/201709170100/run/201709170100/obsproc/stat: No such file or directory
+cat: run/201709170100/run/201709170100/update_bc/stat: No such file or directory
+cat: run/201709170100/run/201709170100/wrf_ens/stat: No such file or directory
+(standard_in) 2: syntax error
+----------------------------------------------------------------------
+CURRENT CYCLE: 2017-09-17_02:00:00 => 2017-09-17_03:00:00
+cat: run/201709170200/config_IR_MW.MARIA/stat: Not a directory
+./MARIA_IRMW.sh: line 111: run/201709170200/config_IR_MW.MARIA/stat: Not a directory
+[H[2J[3J
+  % Total    % Received % Xferd  Average Speed   Time    Time     Time  Current
+                                 Dload  Upload   Total   Spent    Left  Speed
+  0     0    0     0    0     0      0      0 --:--:-- --:--:-- --:--:--     0100    14  100    14    0     0    250      0 --:--:-- --:--:-- --:--:--   254
+   IP ADDR: 198.202.100.13
+   USER: zuy121
+   DATE: Fri Sep 16 09:51:45 PDT 2022
+   UPTIME: up 2 weeks, 3 days, 19 hours, 43 minutes
+   HOSTNAME: login01.expanse.sdsc.edu
+   KERNEL: Linux 4.18.0-348.23.1.el8_5.x86_64 x86_64
+   MEMORY: 23Gi/125Gi
+
+[H[2J[3J
+  % Total    % Received % Xferd  Average Speed   Time    Time     Time  Current
+                                 Dload  Upload   Total   Spent    Left  Speed
+  0     0    0     0    0     0      0      0 --:--:-- --:--:-- --:--:--     0100    14  100    14    0     0    249      0 --:--:-- --:--:-- --:--:--   254
+   IP ADDR: 198.202.100.13
+   USER: zuy121
+   DATE: Fri Sep 16 09:51:46 PDT 2022
+   UPTIME: up 2 weeks, 3 days, 19 hours, 43 minutes
+   HOSTNAME: login01.expanse.sdsc.edu
+   KERNEL: Linux 4.18.0-348.23.1.el8_5.x86_64 x86_64
+   MEMORY: 23Gi/125Gi
+
+[H[2J[3J
+  % Total    % Received % Xferd  Average Speed   Time    Time     Time  Current
+                                 Dload  Upload   Total   Spent    Left  Speed
+  0     0    0     0    0     0      0      0 --:--:-- --:--:-- --:--:--     0100    14  100    14    0     0    245      0 --:--:-- --:--:-- --:--:--   250
+   IP ADDR: 198.202.100.13
+   USER: zuy121
+   DATE: Fri Sep 16 09:51:47 PDT 2022
+   UPTIME: up 2 weeks, 3 days, 19 hours, 43 minutes
+   HOSTNAME: login01.expanse.sdsc.edu
+   KERNEL: Linux 4.18.0-348.23.1.el8_5.x86_64 x86_64
+   MEMORY: 23Gi/125Gi
+
+[H[2J[3J
+  % Total    % Received % Xferd  Average Speed   Time    Time     Time  Current
+                                 Dload  Upload   Total   Spent    Left  Speed
+  0     0    0     0    0     0      0      0 --:--:-- --:--:-- --:--:--     0100    14  100    14    0     0    228      0 --:--:-- --:--:-- --:--:--   229
+   IP ADDR: 198.202.100.13
+   USER: zuy121
+   DATE: Fri Sep 16 09:51:48 PDT 2022
+   UPTIME: up 2 weeks, 3 days, 19 hours, 43 minutes
+   HOSTNAME: login01.expanse.sdsc.edu
+   KERNEL: Linux 4.18.0-348.23.1.el8_5.x86_64 x86_64
+   MEMORY: 23Gi/125Gi
+
+[H[2J[3J
+  % Total    % Received % Xferd  Average Speed   Time    Time     Time  Current
+                                 Dload  Upload   Total   Spent    Left  Speed
+  0     0    0     0    0     0      0      0 --:--:-- --:--:-- --:--:--     0100    14  100    14    0     0    248      0 --:--:-- --:--:-- --:--:--   250
+   IP ADDR: 198.202.100.13
+   USER: zuy121
+   DATE: Fri Sep 16 09:51:49 PDT 2022
+   UPTIME: up 2 weeks, 3 days, 19 hours, 44 minutes
+   HOSTNAME: login01.expanse.sdsc.edu
+   KERNEL: Linux 4.18.0-348.23.1.el8_5.x86_64 x86_64
+   MEMORY: 23Gi/125Gi
+
+Fri Sep 16 09:51:50 PDT 2022
+cat: run/201709170200/run/201709170200/config_IR_MW.MARIA/stat: No such file or directory
+cat: run/201709170200/run/201709170200/enkf/stat: No such file or directory
+cat: run/201709170200/run/201709170200/icbc/stat: No such file or directory
+cat: run/201709170200/run/201709170200/obsproc/stat: No such file or directory
+cat: run/201709170200/run/201709170200/update_bc/stat: No such file or directory
+cat: run/201709170200/run/201709170200/wrf_ens/stat: No such file or directory
+(standard_in) 2: syntax error
+----------------------------------------------------------------------
+CURRENT CYCLE: 2017-09-17_03:00:00 => 2017-09-17_04:00:00
+cat: run/201709170300/config_IR_MW.MARIA/stat: Not a directory
+./MARIA_IRMW.sh: line 111: run/201709170300/config_IR_MW.MARIA/stat: Not a directory
+[H[2J[3J
+  % Total    % Received % Xferd  Average Speed   Time    Time     Time  Current
+                                 Dload  Upload   Total   Spent    Left  Speed
+  0     0    0     0    0     0      0      0 --:--:-- --:--:-- --:--:--     0100    14  100    14    0     0    251      0 --:--:-- --:--:-- --:--:--   250100    14  100    14    0     0    248      0 --:--:-- --:--:-- --:--:--   245
+   IP ADDR: 198.202.100.13
+   USER: zuy121
+   DATE: Fri Sep 16 09:51:51 PDT 2022
+   UPTIME: up 2 weeks, 3 days, 19 hours, 44 minutes
+   HOSTNAME: login01.expanse.sdsc.edu
+   KERNEL: Linux 4.18.0-348.23.1.el8_5.x86_64 x86_64
+   MEMORY: 22Gi/125Gi
+
+[H[2J[3J
+  % Total    % Received % Xferd  Average Speed   Time    Time     Time  Current
+                                 Dload  Upload   Total   Spent    Left  Speed
+  0     0    0     0    0     0      0      0 --:--:-- --:--:-- --:--:--     0100    14  100    14    0     0    239      0 --:--:-- --:--:-- --:--:--   241
+   IP ADDR: 198.202.100.13
+   USER: zuy121
+   DATE: Fri Sep 16 09:51:52 PDT 2022
+   UPTIME: up 2 weeks, 3 days, 19 hours, 44 minutes
+   HOSTNAME: login01.expanse.sdsc.edu
+   KERNEL: Linux 4.18.0-348.23.1.el8_5.x86_64 x86_64
+   MEMORY: 22Gi/125Gi
+
+[H[2J[3J
+  % Total    % Received % Xferd  Average Speed   Time    Time     Time  Current
+                                 Dload  Upload   Total   Spent    Left  Speed
+  0     0    0     0    0     0      0      0 --:--:-- --:--:-- --:--:--     0100    14  100    14    0     0    235      0 --:--:-- --:--:-- --:--:--   237
+   IP ADDR: 198.202.100.13
+   USER: zuy121
+   DATE: Fri Sep 16 09:51:53 PDT 2022
+   UPTIME: up 2 weeks, 3 days, 19 hours, 44 minutes
+   HOSTNAME: login01.expanse.sdsc.edu
+   KERNEL: Linux 4.18.0-348.23.1.el8_5.x86_64 x86_64
+   MEMORY: 22Gi/125Gi
+
+[H[2J[3J
+  % Total    % Received % Xferd  Average Speed   Time    Time     Time  Current
+                                 Dload  Upload   Total   Spent    Left  Speed
+  0     0    0     0    0     0      0      0 --:--:-- --:--:-- --:--:--     0100    14  100    14    0     0    248      0 --:--:-- --:--:-- --:--:--   250
+   IP ADDR: 198.202.100.13
+   USER: zuy121
+   DATE: Fri Sep 16 09:51:54 PDT 2022
+   UPTIME: up 2 weeks, 3 days, 19 hours, 44 minutes
+   HOSTNAME: login01.expanse.sdsc.edu
+   KERNEL: Linux 4.18.0-348.23.1.el8_5.x86_64 x86_64
+   MEMORY: 22Gi/125Gi
+
+[H[2J[3J
+  % Total    % Received % Xferd  Average Speed   Time    Time     Time  Current
+                                 Dload  Upload   Total   Spent    Left  Speed
+  0     0    0     0    0     0      0      0 --:--:-- --:--:-- --:--:--     0100    14  100    14    0     0    242      0 --:--:-- --:--:-- --:--:--   245
+   IP ADDR: 198.202.100.13
+   USER: zuy121
+   DATE: Fri Sep 16 09:51:55 PDT 2022
+   UPTIME: up 2 weeks, 3 days, 19 hours, 44 minutes
+   HOSTNAME: login01.expanse.sdsc.edu
+   KERNEL: Linux 4.18.0-348.23.1.el8_5.x86_64 x86_64
+   MEMORY: 22Gi/125Gi
+
+Fri Sep 16 09:51:56 PDT 2022
+cat: run/201709170300/run/201709170300/config_IR_MW.MARIA/stat: No such file or directory
+cat: run/201709170300/run/201709170300/enkf/stat: No such file or directory
+cat: run/201709170300/run/201709170300/icbc/stat: No such file or directory
+cat: run/201709170300/run/201709170300/obsproc/stat: No such file or directory
+cat: run/201709170300/run/201709170300/update_bc/stat: No such file or directory
+cat: run/201709170300/run/201709170300/wrf_ens/stat: No such file or directory
+(standard_in) 2: syntax error
+----------------------------------------------------------------------
+CURRENT CYCLE: 2017-09-17_04:00:00 => 2017-09-17_05:00:00
+cat: run/201709170400/config_IR_MW.MARIA/stat: Not a directory
+./MARIA_IRMW.sh: line 111: run/201709170400/config_IR_MW.MARIA/stat: Not a directory
+[H[2J[3J
+  % Total    % Received % Xferd  Average Speed   Time    Time     Time  Current
+                                 Dload  Upload   Total   Spent    Left  Speed
+  0     0    0     0    0     0      0      0 --:--:-- --:--:-- --:--:--     0100    14  100    14    0     0    249      0 --:--:-- --:--:-- --:--:--   254
+   IP ADDR: 198.202.100.13
+   USER: zuy121
+   DATE: Fri Sep 16 09:51:57 PDT 2022
+   UPTIME: up 2 weeks, 3 days, 19 hours, 44 minutes
+   HOSTNAME: login01.expanse.sdsc.edu
+   KERNEL: Linux 4.18.0-348.23.1.el8_5.x86_64 x86_64
+   MEMORY: 22Gi/125Gi
+
+[H[2J[3J
+  % Total    % Received % Xferd  Average Speed   Time    Time     Time  Current
+                                 Dload  Upload   Total   Spent    Left  Speed
+  0     0    0     0    0     0      0      0 --:--:-- --:--:-- --:--:--     0100    14  100    14    0     0    250      0 --:--:-- --:--:-- --:--:--   254
+   IP ADDR: 198.202.100.13
+   USER: zuy121
+   DATE: Fri Sep 16 09:51:58 PDT 2022
+   UPTIME: up 2 weeks, 3 days, 19 hours, 44 minutes
+   HOSTNAME: login01.expanse.sdsc.edu
+   KERNEL: Linux 4.18.0-348.23.1.el8_5.x86_64 x86_64
+   MEMORY: 22Gi/125Gi
+
+[H[2J[3J
+  % Total    % Received % Xferd  Average Speed   Time    Time     Time  Current
+                                 Dload  Upload   Total   Spent    Left  Speed
+  0     0    0     0    0     0      0      0 --:--:-- --:--:-- --:--:--     0100    14  100    14    0     0    140      0 --:--:-- --:--:-- --:--:--   141
+   IP ADDR: 198.202.100.13
+   USER: zuy121
+   DATE: Fri Sep 16 09:51:59 PDT 2022
+   UPTIME: up 2 weeks, 3 days, 19 hours, 44 minutes
+   HOSTNAME: login01.expanse.sdsc.edu
+   KERNEL: Linux 4.18.0-348.23.1.el8_5.x86_64 x86_64
+   MEMORY: 22Gi/125Gi
+
+[H[2J[3J
+  % Total    % Received % Xferd  Average Speed   Time    Time     Time  Current
+                                 Dload  Upload   Total   Spent    Left  Speed
+  0     0    0     0    0     0      0      0 --:--:-- --:--:-- --:--:--     0100    14  100    14    0     0    245      0 --:--:-- --:--:-- --:--:--   250
+   IP ADDR: 198.202.100.13
+   USER: zuy121
+   DATE: Fri Sep 16 09:52:01 PDT 2022
+   UPTIME: up 2 weeks, 3 days, 19 hours, 44 minutes
+   HOSTNAME: login01.expanse.sdsc.edu
+   KERNEL: Linux 4.18.0-348.23.1.el8_5.x86_64 x86_64
+   MEMORY: 23Gi/125Gi
+
+[H[2J[3J
+  % Total    % Received % Xferd  Average Speed   Time    Time     Time  Current
+                                 Dload  Upload   Total   Spent    Left  Speed
+  0     0    0     0    0     0      0      0 --:--:-- --:--:-- --:--:--     0100    14  100    14    0     0    245      0 --:--:-- --:--:-- --:--:--   250
+   IP ADDR: 198.202.100.13
+   USER: zuy121
+   DATE: Fri Sep 16 09:52:02 PDT 2022
+   UPTIME: up 2 weeks, 3 days, 19 hours, 44 minutes
+   HOSTNAME: login01.expanse.sdsc.edu
+   KERNEL: Linux 4.18.0-348.23.1.el8_5.x86_64 x86_64
+   MEMORY: 23Gi/125Gi
+
+Fri Sep 16 09:52:03 PDT 2022
+cat: run/201709170400/run/201709170400/config_IR_MW.MARIA/stat: No such file or directory
+cat: run/201709170400/run/201709170400/enkf/stat: No such file or directory
+cat: run/201709170400/run/201709170400/icbc/stat: No such file or directory
+cat: run/201709170400/run/201709170400/obsproc/stat: No such file or directory
+cat: run/201709170400/run/201709170400/update_bc/stat: No such file or directory
+cat: run/201709170400/run/201709170400/wrf_ens/stat: No such file or directory
+(standard_in) 2: syntax error
+----------------------------------------------------------------------
+CURRENT CYCLE: 2017-09-17_05:00:00 => 2017-09-17_06:00:00
+cat: run/201709170500/config_IR_MW.MARIA/stat: Not a directory
+./MARIA_IRMW.sh: line 111: run/201709170500/config_IR_MW.MARIA/stat: Not a directory
+[H[2J[3J
+  % Total    % Received % Xferd  Average Speed   Time    Time     Time  Current
+                                 Dload  Upload   Total   Spent    Left  Speed
+  0     0    0     0    0     0      0      0 --:--:-- --:--:-- --:--:--     0100    14  100    14    0     0    208      0 --:--:-- --:--:-- --:--:--   208
+   IP ADDR: 198.202.100.13
+   USER: zuy121
+   DATE: Fri Sep 16 09:52:04 PDT 2022
+   UPTIME: up 2 weeks, 3 days, 19 hours, 44 minutes
+   HOSTNAME: login01.expanse.sdsc.edu
+   KERNEL: Linux 4.18.0-348.23.1.el8_5.x86_64 x86_64
+   MEMORY: 23Gi/125Gi
+
+[H[2J[3J
+  % Total    % Received % Xferd  Average Speed   Time    Time     Time  Current
+                                 Dload  Upload   Total   Spent    Left  Speed
+  0     0    0     0    0     0      0      0 --:--:-- --:--:-- --:--:--     0100    14  100    14    0     0    251      0 --:--:-- --:--:-- --:--:--   254
+   IP ADDR: 198.202.100.13
+   USER: zuy121
+   DATE: Fri Sep 16 09:52:05 PDT 2022
+   UPTIME: up 2 weeks, 3 days, 19 hours, 44 minutes
+   HOSTNAME: login01.expanse.sdsc.edu
+   KERNEL: Linux 4.18.0-348.23.1.el8_5.x86_64 x86_64
+   MEMORY: 23Gi/125Gi
+
+[H[2J[3J
+  % Total    % Received % Xferd  Average Speed   Time    Time     Time  Current
+                                 Dload  Upload   Total   Spent    Left  Speed
+  0     0    0     0    0     0      0      0 --:--:-- --:--:-- --:--:--     0100    14  100    14    0     0    251      0 --:--:-- --:--:-- --:--:--   254
+   IP ADDR: 198.202.100.13
+   USER: zuy121
+   DATE: Fri Sep 16 09:52:06 PDT 2022
+   UPTIME: up 2 weeks, 3 days, 19 hours, 44 minutes
+   HOSTNAME: login01.expanse.sdsc.edu
+   KERNEL: Linux 4.18.0-348.23.1.el8_5.x86_64 x86_64
+   MEMORY: 23Gi/125Gi
+
+[H[2J[3J
+  % Total    % Received % Xferd  Average Speed   Time    Time     Time  Current
+                                 Dload  Upload   Total   Spent    Left  Speed
+  0     0    0     0    0     0      0      0 --:--:-- --:--:-- --:--:--     0100    14  100    14    0     0    246      0 --:--:-- --:--:-- --:--:--   250
+   IP ADDR: 198.202.100.13
+   USER: zuy121
+   DATE: Fri Sep 16 09:52:07 PDT 2022
+   UPTIME: up 2 weeks, 3 days, 19 hours, 44 minutes
+   HOSTNAME: login01.expanse.sdsc.edu
+   KERNEL: Linux 4.18.0-348.23.1.el8_5.x86_64 x86_64
+   MEMORY: 23Gi/125Gi
+
+[H[2J[3J
+  % Total    % Received % Xferd  Average Speed   Time    Time     Time  Current
+                                 Dload  Upload   Total   Spent    Left  Speed
+  0     0    0     0    0     0      0      0 --:--:-- --:--:-- --:--:--     0100    14  100    14    0     0    248      0 --:--:-- --:--:-- --:--:--   250
+   IP ADDR: 198.202.100.13
+   USER: zuy121
+   DATE: Fri Sep 16 09:52:08 PDT 2022
+   UPTIME: up 2 weeks, 3 days, 19 hours, 44 minutes
+   HOSTNAME: login01.expanse.sdsc.edu
+   KERNEL: Linux 4.18.0-348.23.1.el8_5.x86_64 x86_64
+   MEMORY: 23Gi/125Gi
+
+Fri Sep 16 09:52:09 PDT 2022
+cat: run/201709170500/run/201709170500/config_IR_MW.MARIA/stat: No such file or directory
+cat: run/201709170500/run/201709170500/enkf/stat: No such file or directory
+cat: run/201709170500/run/201709170500/icbc/stat: No such file or directory
+cat: run/201709170500/run/201709170500/obsproc/stat: No such file or directory
+cat: run/201709170500/run/201709170500/update_bc/stat: No such file or directory
+cat: run/201709170500/run/201709170500/wrf_ens/stat: No such file or directory
+(standard_in) 2: syntax error
+----------------------------------------------------------------------
+CURRENT CYCLE: 2017-09-17_06:00:00 => 2017-09-17_07:00:00
+[H[2J[3J
+  % Total    % Received % Xferd  Average Speed   Time    Time     Time  Current
+                                 Dload  Upload   Total   Spent    Left  Speed
+  0     0    0     0    0     0      0      0 --:--:-- --:--:-- --:--:--     0100    14  100    14    0     0    248      0 --:--:-- --:--:-- --:--:--   250
+   IP ADDR: 198.202.100.13
+   USER: zuy121
+   DATE: Fri Sep 16 09:52:10 PDT 2022
+   UPTIME: up 2 weeks, 3 days, 19 hours, 44 minutes
+   HOSTNAME: login01.expanse.sdsc.edu
+   KERNEL: Linux 4.18.0-348.23.1.el8_5.x86_64 x86_64
+   MEMORY: 23Gi/125Gi
+
+  Calculating preset nesting...
+  Running geogrid.exe, metgrid.exe, and real.exe...
+  Running PerturbIC...
+    Generating perturbations using WRF 3DVar
+/expanse/lustre/scratch/zuy121/temp_project/Pro2_PSU_MW/MARIA/newWRF_MW_THO/run/201709170600/perturb_ic
+/expanse/lustre/scratch/zuy121/temp_project/Pro2_PSU_MW/MARIA/newWRF_MW_THO/run/201709170600/perturb_ic
+/expanse/lustre/scratch/zuy121/temp_project/Pro2_PSU_MW/MARIA/newWRF_MW_THO/run/201709170600/perturb_ic
+/expanse/lustre/scratch/zuy121/temp_project/Pro2_PSU_MW/MARIA/newWRF_MW_THO/run/201709170600/perturb_ic
+/expanse/lustre/scratch/zuy121/temp_project/Pro2_PSU_MW/MARIA/newWRF_MW_THO/run/201709170600/perturb_ic
+/expanse/lustre/scratch/zuy121/temp_project/Pro2_PSU_MW/MARIA/newWRF_MW_THO/run/201709170600/perturb_ic
+/expanse/lustre/scratch/zuy121/temp_project/Pro2_PSU_MW/MARIA/newWRF_MW_THO/run/201709170600/perturb_ic
+/expanse/lustre/scratch/zuy121/temp_project/Pro2_PSU_MW/MARIA/newWRF_MW_THO/run/201709170600/perturb_ic
+/expanse/lustre/scratch/zuy121/temp_project/Pro2_PSU_MW/MARIA/newWRF_MW_THO/run/201709170600/perturb_ic
+/expanse/lustre/scratch/zuy121/temp_project/Pro2_PSU_MW/MARIA/newWRF_MW_THO/run/201709170600/perturb_ic
+/expanse/lustre/scratch/zuy121/temp_project/Pro2_PSU_MW/MARIA/newWRF_MW_THO/run/201709170600/perturb_ic
+/expanse/lustre/scratch/zuy121/temp_project/Pro2_PSU_MW/MARIA/newWRF_MW_THO/run/201709170600/perturb_ic
+/expanse/lustre/scratch/zuy121/temp_project/Pro2_PSU_MW/MARIA/newWRF_MW_THO/run/201709170600/perturb_ic
+/expanse/lustre/scratch/zuy121/temp_project/Pro2_PSU_MW/MARIA/newWRF_MW_THO/run/201709170600/perturb_ic
+/expanse/lustre/scratch/zuy121/temp_project/Pro2_PSU_MW/MARIA/newWRF_MW_THO/run/201709170600/perturb_ic
+/expanse/lustre/scratch/zuy121/temp_project/Pro2_PSU_MW/MARIA/newWRF_MW_THO/run/201709170600/perturb_ic
+/expanse/lustre/scratch/zuy121/temp_project/Pro2_PSU_MW/MARIA/newWRF_MW_THO/run/201709170600/perturb_ic
+/expanse/lustre/scratch/zuy121/temp_project/Pro2_PSU_MW/MARIA/newWRF_MW_THO/run/201709170600/perturb_ic
+/expanse/lustre/scratch/zuy121/temp_project/Pro2_PSU_MW/MARIA/newWRF_MW_THO/run/201709170600/perturb_ic
+/expanse/lustre/scratch/zuy121/temp_project/Pro2_PSU_MW/MARIA/newWRF_MW_THO/run/201709170600/perturb_ic
+/expanse/lustre/scratch/zuy121/temp_project/Pro2_PSU_MW/MARIA/newWRF_MW_THO/run/201709170600/perturb_ic
+/expanse/lustre/scratch/zuy121/temp_project/Pro2_PSU_MW/MARIA/newWRF_MW_THO/run/201709170600/perturb_ic
+/expanse/lustre/scratch/zuy121/temp_project/Pro2_PSU_MW/MARIA/newWRF_MW_THO/run/201709170600/perturb_ic
+/expanse/lustre/scratch/zuy121/temp_project/Pro2_PSU_MW/MARIA/newWRF_MW_THO/run/201709170600/perturb_ic
+/expanse/lustre/scratch/zuy121/temp_project/Pro2_PSU_MW/MARIA/newWRF_MW_THO/run/201709170600/perturb_ic
+/expanse/lustre/scratch/zuy121/temp_project/Pro2_PSU_MW/MARIA/newWRF_MW_THO/run/201709170600/perturb_ic
+/expanse/lustre/scratch/zuy121/temp_project/Pro2_PSU_MW/MARIA/newWRF_MW_THO/run/201709170600/perturb_ic
+/expanse/lustre/scratch/zuy121/temp_project/Pro2_PSU_MW/MARIA/newWRF_MW_THO/run/201709170600/perturb_ic
+/expanse/lustre/scratch/zuy121/temp_project/Pro2_PSU_MW/MARIA/newWRF_MW_THO/run/201709170600/perturb_ic
+/expanse/lustre/scratch/zuy121/temp_project/Pro2_PSU_MW/MARIA/newWRF_MW_THO/run/201709170600/perturb_ic
+/expanse/lustre/scratch/zuy121/temp_project/Pro2_PSU_MW/MARIA/newWRF_MW_THO/run/201709170600/perturb_ic
+/expanse/lustre/scratch/zuy121/temp_project/Pro2_PSU_MW/MARIA/newWRF_MW_THO/run/201709170600/perturb_ic
+/expanse/lustre/scratch/zuy121/temp_project/Pro2_PSU_MW/MARIA/newWRF_MW_THO/run/201709170600/perturb_ic
+/expanse/lustre/scratch/zuy121/temp_project/Pro2_PSU_MW/MARIA/newWRF_MW_THO/run/201709170600/perturb_ic
+/expanse/lustre/scratch/zuy121/temp_project/Pro2_PSU_MW/MARIA/newWRF_MW_THO/run/201709170600/perturb_ic
+/expanse/lustre/scratch/zuy121/temp_project/Pro2_PSU_MW/MARIA/newWRF_MW_THO/run/201709170600/perturb_ic
+/expanse/lustre/scratch/zuy121/temp_project/Pro2_PSU_MW/MARIA/newWRF_MW_THO/run/201709170600/perturb_ic
+/expanse/lustre/scratch/zuy121/temp_project/Pro2_PSU_MW/MARIA/newWRF_MW_THO/run/201709170600/perturb_ic
+/expanse/lustre/scratch/zuy121/temp_project/Pro2_PSU_MW/MARIA/newWRF_MW_THO/run/201709170600/perturb_ic
+/expanse/lustre/scratch/zuy121/temp_project/Pro2_PSU_MW/MARIA/newWRF_MW_THO/run/201709170600/perturb_ic
+/expanse/lustre/scratch/zuy121/temp_project/Pro2_PSU_MW/MARIA/newWRF_MW_THO/run/201709170600/perturb_ic
+/expanse/lustre/scratch/zuy121/temp_project/Pro2_PSU_MW/MARIA/newWRF_MW_THO/run/201709170600/perturb_ic
+/expanse/lustre/scratch/zuy121/temp_project/Pro2_PSU_MW/MARIA/newWRF_MW_THO/run/201709170600/perturb_ic
+/expanse/lustre/scratch/zuy121/temp_project/Pro2_PSU_MW/MARIA/newWRF_MW_THO/run/201709170600/perturb_ic
+/expanse/lustre/scratch/zuy121/temp_project/Pro2_PSU_MW/MARIA/newWRF_MW_THO/run/201709170600/perturb_ic
+/expanse/lustre/scratch/zuy121/temp_project/Pro2_PSU_MW/MARIA/newWRF_MW_THO/run/201709170600/perturb_ic
+/expanse/lustre/scratch/zuy121/temp_project/Pro2_PSU_MW/MARIA/newWRF_MW_THO/run/201709170600/perturb_ic
+/expanse/lustre/scratch/zuy121/temp_project/Pro2_PSU_MW/MARIA/newWRF_MW_THO/run/201709170600/perturb_ic
+/expanse/lustre/scratch/zuy121/temp_project/Pro2_PSU_MW/MARIA/newWRF_MW_THO/run/201709170600/perturb_ic
+/expanse/lustre/scratch/zuy121/temp_project/Pro2_PSU_MW/MARIA/newWRF_MW_THO/run/201709170600/perturb_ic
+/expanse/lustre/scratch/zuy121/temp_project/Pro2_PSU_MW/MARIA/newWRF_MW_THO/run/201709170600/perturb_ic
+/expanse/lustre/scratch/zuy121/temp_project/Pro2_PSU_MW/MARIA/newWRF_MW_THO/run/201709170600/perturb_ic
+/expanse/lustre/scratch/zuy121/temp_project/Pro2_PSU_MW/MARIA/newWRF_MW_THO/run/201709170600/perturb_ic
+/expanse/lustre/scratch/zuy121/temp_project/Pro2_PSU_MW/MARIA/newWRF_MW_THO/run/201709170600/perturb_ic
+/expanse/lustre/scratch/zuy121/temp_project/Pro2_PSU_MW/MARIA/newWRF_MW_THO/run/201709170600/perturb_ic
+/expanse/lustre/scratch/zuy121/temp_project/Pro2_PSU_MW/MARIA/newWRF_MW_THO/run/201709170600/perturb_ic
+/expanse/lustre/scratch/zuy121/temp_project/Pro2_PSU_MW/MARIA/newWRF_MW_THO/run/201709170600/perturb_ic
+/expanse/lustre/scratch/zuy121/temp_project/Pro2_PSU_MW/MARIA/newWRF_MW_THO/run/201709170600/perturb_ic
+/expanse/lustre/scratch/zuy121/temp_project/Pro2_PSU_MW/MARIA/newWRF_MW_THO/run/201709170600/perturb_ic
+/expanse/lustre/scratch/zuy121/temp_project/Pro2_PSU_MW/MARIA/newWRF_MW_THO/run/201709170600/perturb_ic
+    Nestdown perturbation for inner domains...
+begin nest down for d02
+  any need to work on member  001
+/expanse/lustre/scratch/zuy121/temp_project/Pro2_PSU_MW/MARIA/newWRF_MW_THO/run/201709170600/perturb_ic/001/d02/rsl.error.0000
+  yes
+  any need to work on member  002
+/expanse/lustre/scratch/zuy121/temp_project/Pro2_PSU_MW/MARIA/newWRF_MW_THO/run/201709170600/perturb_ic/002/d02/rsl.error.0000
+  yes
+  any need to work on member  003
+/expanse/lustre/scratch/zuy121/temp_project/Pro2_PSU_MW/MARIA/newWRF_MW_THO/run/201709170600/perturb_ic/003/d02/rsl.error.0000
+  yes
+  any need to work on member  004
+/expanse/lustre/scratch/zuy121/temp_project/Pro2_PSU_MW/MARIA/newWRF_MW_THO/run/201709170600/perturb_ic/004/d02/rsl.error.0000
+  yes
+  any need to work on member  005
+/expanse/lustre/scratch/zuy121/temp_project/Pro2_PSU_MW/MARIA/newWRF_MW_THO/run/201709170600/perturb_ic/005/d02/rsl.error.0000
+  yes
+  any need to work on member  006
+/expanse/lustre/scratch/zuy121/temp_project/Pro2_PSU_MW/MARIA/newWRF_MW_THO/run/201709170600/perturb_ic/006/d02/rsl.error.0000
+  yes
+  any need to work on member  007
+/expanse/lustre/scratch/zuy121/temp_project/Pro2_PSU_MW/MARIA/newWRF_MW_THO/run/201709170600/perturb_ic/007/d02/rsl.error.0000
+  yes
+  any need to work on member  008
+/expanse/lustre/scratch/zuy121/temp_project/Pro2_PSU_MW/MARIA/newWRF_MW_THO/run/201709170600/perturb_ic/008/d02/rsl.error.0000
+  yes
+  any need to work on member  009
+/expanse/lustre/scratch/zuy121/temp_project/Pro2_PSU_MW/MARIA/newWRF_MW_THO/run/201709170600/perturb_ic/009/d02/rsl.error.0000
+  yes
+  any need to work on member  010
+/expanse/lustre/scratch/zuy121/temp_project/Pro2_PSU_MW/MARIA/newWRF_MW_THO/run/201709170600/perturb_ic/010/d02/rsl.error.0000
+  yes
+  any need to work on member  011
+/expanse/lustre/scratch/zuy121/temp_project/Pro2_PSU_MW/MARIA/newWRF_MW_THO/run/201709170600/perturb_ic/011/d02/rsl.error.0000
+  yes
+  any need to work on member  012
+/expanse/lustre/scratch/zuy121/temp_project/Pro2_PSU_MW/MARIA/newWRF_MW_THO/run/201709170600/perturb_ic/012/d02/rsl.error.0000
+  yes
+  any need to work on member  013
+/expanse/lustre/scratch/zuy121/temp_project/Pro2_PSU_MW/MARIA/newWRF_MW_THO/run/201709170600/perturb_ic/013/d02/rsl.error.0000
+  yes
+  any need to work on member  014
+/expanse/lustre/scratch/zuy121/temp_project/Pro2_PSU_MW/MARIA/newWRF_MW_THO/run/201709170600/perturb_ic/014/d02/rsl.error.0000
+  yes
+  any need to work on member  015
+/expanse/lustre/scratch/zuy121/temp_project/Pro2_PSU_MW/MARIA/newWRF_MW_THO/run/201709170600/perturb_ic/015/d02/rsl.error.0000
+  yes
+  any need to work on member  016
+/expanse/lustre/scratch/zuy121/temp_project/Pro2_PSU_MW/MARIA/newWRF_MW_THO/run/201709170600/perturb_ic/016/d02/rsl.error.0000
+  yes
+  any need to work on member  017
+/expanse/lustre/scratch/zuy121/temp_project/Pro2_PSU_MW/MARIA/newWRF_MW_THO/run/201709170600/perturb_ic/017/d02/rsl.error.0000
+  yes
+  any need to work on member  018
+/expanse/lustre/scratch/zuy121/temp_project/Pro2_PSU_MW/MARIA/newWRF_MW_THO/run/201709170600/perturb_ic/018/d02/rsl.error.0000
+  yes
+  any need to work on member  019
+/expanse/lustre/scratch/zuy121/temp_project/Pro2_PSU_MW/MARIA/newWRF_MW_THO/run/201709170600/perturb_ic/019/d02/rsl.error.0000
+  yes
+  any need to work on member  020
+/expanse/lustre/scratch/zuy121/temp_project/Pro2_PSU_MW/MARIA/newWRF_MW_THO/run/201709170600/perturb_ic/020/d02/rsl.error.0000
+  yes
+  any need to work on member  021
+/expanse/lustre/scratch/zuy121/temp_project/Pro2_PSU_MW/MARIA/newWRF_MW_THO/run/201709170600/perturb_ic/021/d02/rsl.error.0000
+  yes
+  any need to work on member  022
+/expanse/lustre/scratch/zuy121/temp_project/Pro2_PSU_MW/MARIA/newWRF_MW_THO/run/201709170600/perturb_ic/022/d02/rsl.error.0000
+  yes
+  any need to work on member  023
+/expanse/lustre/scratch/zuy121/temp_project/Pro2_PSU_MW/MARIA/newWRF_MW_THO/run/201709170600/perturb_ic/023/d02/rsl.error.0000
+  yes
+  any need to work on member  024
+/expanse/lustre/scratch/zuy121/temp_project/Pro2_PSU_MW/MARIA/newWRF_MW_THO/run/201709170600/perturb_ic/024/d02/rsl.error.0000
+  yes
+  any need to work on member  025
+/expanse/lustre/scratch/zuy121/temp_project/Pro2_PSU_MW/MARIA/newWRF_MW_THO/run/201709170600/perturb_ic/025/d02/rsl.error.0000
+  yes
+  any need to work on member  026
+/expanse/lustre/scratch/zuy121/temp_project/Pro2_PSU_MW/MARIA/newWRF_MW_THO/run/201709170600/perturb_ic/026/d02/rsl.error.0000
+  yes
+  any need to work on member  027
+/expanse/lustre/scratch/zuy121/temp_project/Pro2_PSU_MW/MARIA/newWRF_MW_THO/run/201709170600/perturb_ic/027/d02/rsl.error.0000
+  yes
+  any need to work on member  028
+/expanse/lustre/scratch/zuy121/temp_project/Pro2_PSU_MW/MARIA/newWRF_MW_THO/run/201709170600/perturb_ic/028/d02/rsl.error.0000
+  yes
+  any need to work on member  029
+/expanse/lustre/scratch/zuy121/temp_project/Pro2_PSU_MW/MARIA/newWRF_MW_THO/run/201709170600/perturb_ic/029/d02/rsl.error.0000
+  yes
+  any need to work on member  030
+/expanse/lustre/scratch/zuy121/temp_project/Pro2_PSU_MW/MARIA/newWRF_MW_THO/run/201709170600/perturb_ic/030/d02/rsl.error.0000
+  yes
+  any need to work on member  031
+/expanse/lustre/scratch/zuy121/temp_project/Pro2_PSU_MW/MARIA/newWRF_MW_THO/run/201709170600/perturb_ic/031/d02/rsl.error.0000
+  yes
+  any need to work on member  032
+/expanse/lustre/scratch/zuy121/temp_project/Pro2_PSU_MW/MARIA/newWRF_MW_THO/run/201709170600/perturb_ic/032/d02/rsl.error.0000
+  yes
+  any need to work on member  033
+/expanse/lustre/scratch/zuy121/temp_project/Pro2_PSU_MW/MARIA/newWRF_MW_THO/run/201709170600/perturb_ic/033/d02/rsl.error.0000
+  yes
+  any need to work on member  034
+/expanse/lustre/scratch/zuy121/temp_project/Pro2_PSU_MW/MARIA/newWRF_MW_THO/run/201709170600/perturb_ic/034/d02/rsl.error.0000
+  yes
+  any need to work on member  035
+/expanse/lustre/scratch/zuy121/temp_project/Pro2_PSU_MW/MARIA/newWRF_MW_THO/run/201709170600/perturb_ic/035/d02/rsl.error.0000
+  yes
+  any need to work on member  036
+/expanse/lustre/scratch/zuy121/temp_project/Pro2_PSU_MW/MARIA/newWRF_MW_THO/run/201709170600/perturb_ic/036/d02/rsl.error.0000
+  yes
+  any need to work on member  037
+/expanse/lustre/scratch/zuy121/temp_project/Pro2_PSU_MW/MARIA/newWRF_MW_THO/run/201709170600/perturb_ic/037/d02/rsl.error.0000
+  yes
+  any need to work on member  038
+/expanse/lustre/scratch/zuy121/temp_project/Pro2_PSU_MW/MARIA/newWRF_MW_THO/run/201709170600/perturb_ic/038/d02/rsl.error.0000
+  yes
+  any need to work on member  039
+/expanse/lustre/scratch/zuy121/temp_project/Pro2_PSU_MW/MARIA/newWRF_MW_THO/run/201709170600/perturb_ic/039/d02/rsl.error.0000
+  yes
+  any need to work on member  040
+/expanse/lustre/scratch/zuy121/temp_project/Pro2_PSU_MW/MARIA/newWRF_MW_THO/run/201709170600/perturb_ic/040/d02/rsl.error.0000
+  yes
+  any need to work on member  041
+/expanse/lustre/scratch/zuy121/temp_project/Pro2_PSU_MW/MARIA/newWRF_MW_THO/run/201709170600/perturb_ic/041/d02/rsl.error.0000
+  yes
+  any need to work on member  042
+/expanse/lustre/scratch/zuy121/temp_project/Pro2_PSU_MW/MARIA/newWRF_MW_THO/run/201709170600/perturb_ic/042/d02/rsl.error.0000
+  yes
+  any need to work on member  043
+/expanse/lustre/scratch/zuy121/temp_project/Pro2_PSU_MW/MARIA/newWRF_MW_THO/run/201709170600/perturb_ic/043/d02/rsl.error.0000
+  yes
+  any need to work on member  044
+/expanse/lustre/scratch/zuy121/temp_project/Pro2_PSU_MW/MARIA/newWRF_MW_THO/run/201709170600/perturb_ic/044/d02/rsl.error.0000
+  yes
+  any need to work on member  045
+/expanse/lustre/scratch/zuy121/temp_project/Pro2_PSU_MW/MARIA/newWRF_MW_THO/run/201709170600/perturb_ic/045/d02/rsl.error.0000
+  yes
+  any need to work on member  046
+/expanse/lustre/scratch/zuy121/temp_project/Pro2_PSU_MW/MARIA/newWRF_MW_THO/run/201709170600/perturb_ic/046/d02/rsl.error.0000
+  yes
+  any need to work on member  047
+/expanse/lustre/scratch/zuy121/temp_project/Pro2_PSU_MW/MARIA/newWRF_MW_THO/run/201709170600/perturb_ic/047/d02/rsl.error.0000
+  yes
+  any need to work on member  048
+/expanse/lustre/scratch/zuy121/temp_project/Pro2_PSU_MW/MARIA/newWRF_MW_THO/run/201709170600/perturb_ic/048/d02/rsl.error.0000
+  yes
+  any need to work on member  049
+/expanse/lustre/scratch/zuy121/temp_project/Pro2_PSU_MW/MARIA/newWRF_MW_THO/run/201709170600/perturb_ic/049/d02/rsl.error.0000
+  yes
+  any need to work on member  050
+/expanse/lustre/scratch/zuy121/temp_project/Pro2_PSU_MW/MARIA/newWRF_MW_THO/run/201709170600/perturb_ic/050/d02/rsl.error.0000
+  yes
+  any need to work on member  051
+/expanse/lustre/scratch/zuy121/temp_project/Pro2_PSU_MW/MARIA/newWRF_MW_THO/run/201709170600/perturb_ic/051/d02/rsl.error.0000
+  yes
+  any need to work on member  052
+/expanse/lustre/scratch/zuy121/temp_project/Pro2_PSU_MW/MARIA/newWRF_MW_THO/run/201709170600/perturb_ic/052/d02/rsl.error.0000
+  yes
+  any need to work on member  053
+/expanse/lustre/scratch/zuy121/temp_project/Pro2_PSU_MW/MARIA/newWRF_MW_THO/run/201709170600/perturb_ic/053/d02/rsl.error.0000
+  yes
+  any need to work on member  054
+/expanse/lustre/scratch/zuy121/temp_project/Pro2_PSU_MW/MARIA/newWRF_MW_THO/run/201709170600/perturb_ic/054/d02/rsl.error.0000
+  yes
+  any need to work on member  055
+/expanse/lustre/scratch/zuy121/temp_project/Pro2_PSU_MW/MARIA/newWRF_MW_THO/run/201709170600/perturb_ic/055/d02/rsl.error.0000
+  yes
+  any need to work on member  056
+/expanse/lustre/scratch/zuy121/temp_project/Pro2_PSU_MW/MARIA/newWRF_MW_THO/run/201709170600/perturb_ic/056/d02/rsl.error.0000
+  yes
+  any need to work on member  057
+/expanse/lustre/scratch/zuy121/temp_project/Pro2_PSU_MW/MARIA/newWRF_MW_THO/run/201709170600/perturb_ic/057/d02/rsl.error.0000
+  yes
+  any need to work on member  058
+/expanse/lustre/scratch/zuy121/temp_project/Pro2_PSU_MW/MARIA/newWRF_MW_THO/run/201709170600/perturb_ic/058/d02/rsl.error.0000
+  yes
+  any need to work on member  059
+/expanse/lustre/scratch/zuy121/temp_project/Pro2_PSU_MW/MARIA/newWRF_MW_THO/run/201709170600/perturb_ic/059/d02/rsl.error.0000
+  yes
+  any need to work on member  060
+/expanse/lustre/scratch/zuy121/temp_project/Pro2_PSU_MW/MARIA/newWRF_MW_THO/run/201709170600/perturb_ic/060/d02/rsl.error.0000
+  yes
+begin nest down for d03
+  any need to work on member  001
+/expanse/lustre/scratch/zuy121/temp_project/Pro2_PSU_MW/MARIA/newWRF_MW_THO/run/201709170600/perturb_ic/001/d03/rsl.error.0000
+  yes
+  any need to work on member  002
+/expanse/lustre/scratch/zuy121/temp_project/Pro2_PSU_MW/MARIA/newWRF_MW_THO/run/201709170600/perturb_ic/002/d03/rsl.error.0000
+  yes
+  any need to work on member  003
+/expanse/lustre/scratch/zuy121/temp_project/Pro2_PSU_MW/MARIA/newWRF_MW_THO/run/201709170600/perturb_ic/003/d03/rsl.error.0000
+  yes
+  any need to work on member  004
+/expanse/lustre/scratch/zuy121/temp_project/Pro2_PSU_MW/MARIA/newWRF_MW_THO/run/201709170600/perturb_ic/004/d03/rsl.error.0000
+  yes
+  any need to work on member  005
+/expanse/lustre/scratch/zuy121/temp_project/Pro2_PSU_MW/MARIA/newWRF_MW_THO/run/201709170600/perturb_ic/005/d03/rsl.error.0000
+  yes
+  any need to work on member  006
+/expanse/lustre/scratch/zuy121/temp_project/Pro2_PSU_MW/MARIA/newWRF_MW_THO/run/201709170600/perturb_ic/006/d03/rsl.error.0000
+  yes
+  any need to work on member  007
+/expanse/lustre/scratch/zuy121/temp_project/Pro2_PSU_MW/MARIA/newWRF_MW_THO/run/201709170600/perturb_ic/007/d03/rsl.error.0000
+  yes
+  any need to work on member  008
+/expanse/lustre/scratch/zuy121/temp_project/Pro2_PSU_MW/MARIA/newWRF_MW_THO/run/201709170600/perturb_ic/008/d03/rsl.error.0000
+  yes
+  any need to work on member  009
+/expanse/lustre/scratch/zuy121/temp_project/Pro2_PSU_MW/MARIA/newWRF_MW_THO/run/201709170600/perturb_ic/009/d03/rsl.error.0000
+  yes
+  any need to work on member  010
+/expanse/lustre/scratch/zuy121/temp_project/Pro2_PSU_MW/MARIA/newWRF_MW_THO/run/201709170600/perturb_ic/010/d03/rsl.error.0000
+  yes
+  any need to work on member  011
+/expanse/lustre/scratch/zuy121/temp_project/Pro2_PSU_MW/MARIA/newWRF_MW_THO/run/201709170600/perturb_ic/011/d03/rsl.error.0000
+  yes
+  any need to work on member  012
+/expanse/lustre/scratch/zuy121/temp_project/Pro2_PSU_MW/MARIA/newWRF_MW_THO/run/201709170600/perturb_ic/012/d03/rsl.error.0000
+  yes
+  any need to work on member  013
+/expanse/lustre/scratch/zuy121/temp_project/Pro2_PSU_MW/MARIA/newWRF_MW_THO/run/201709170600/perturb_ic/013/d03/rsl.error.0000
+  yes
+  any need to work on member  014
+/expanse/lustre/scratch/zuy121/temp_project/Pro2_PSU_MW/MARIA/newWRF_MW_THO/run/201709170600/perturb_ic/014/d03/rsl.error.0000
+  yes
+  any need to work on member  015
+/expanse/lustre/scratch/zuy121/temp_project/Pro2_PSU_MW/MARIA/newWRF_MW_THO/run/201709170600/perturb_ic/015/d03/rsl.error.0000
+  yes
+  any need to work on member  016
+/expanse/lustre/scratch/zuy121/temp_project/Pro2_PSU_MW/MARIA/newWRF_MW_THO/run/201709170600/perturb_ic/016/d03/rsl.error.0000
+  yes
+  any need to work on member  017
+/expanse/lustre/scratch/zuy121/temp_project/Pro2_PSU_MW/MARIA/newWRF_MW_THO/run/201709170600/perturb_ic/017/d03/rsl.error.0000
+  yes
+  any need to work on member  018
+/expanse/lustre/scratch/zuy121/temp_project/Pro2_PSU_MW/MARIA/newWRF_MW_THO/run/201709170600/perturb_ic/018/d03/rsl.error.0000
+  yes
+  any need to work on member  019
+/expanse/lustre/scratch/zuy121/temp_project/Pro2_PSU_MW/MARIA/newWRF_MW_THO/run/201709170600/perturb_ic/019/d03/rsl.error.0000
+  yes
+  any need to work on member  020
+/expanse/lustre/scratch/zuy121/temp_project/Pro2_PSU_MW/MARIA/newWRF_MW_THO/run/201709170600/perturb_ic/020/d03/rsl.error.0000
+  yes
+  any need to work on member  021
+/expanse/lustre/scratch/zuy121/temp_project/Pro2_PSU_MW/MARIA/newWRF_MW_THO/run/201709170600/perturb_ic/021/d03/rsl.error.0000
+  yes
+  any need to work on member  022
+/expanse/lustre/scratch/zuy121/temp_project/Pro2_PSU_MW/MARIA/newWRF_MW_THO/run/201709170600/perturb_ic/022/d03/rsl.error.0000
+  yes
+  any need to work on member  023
+/expanse/lustre/scratch/zuy121/temp_project/Pro2_PSU_MW/MARIA/newWRF_MW_THO/run/201709170600/perturb_ic/023/d03/rsl.error.0000
+  yes
+  any need to work on member  024
+/expanse/lustre/scratch/zuy121/temp_project/Pro2_PSU_MW/MARIA/newWRF_MW_THO/run/201709170600/perturb_ic/024/d03/rsl.error.0000
+  yes
+  any need to work on member  025
+/expanse/lustre/scratch/zuy121/temp_project/Pro2_PSU_MW/MARIA/newWRF_MW_THO/run/201709170600/perturb_ic/025/d03/rsl.error.0000
+  yes
+  any need to work on member  026
+/expanse/lustre/scratch/zuy121/temp_project/Pro2_PSU_MW/MARIA/newWRF_MW_THO/run/201709170600/perturb_ic/026/d03/rsl.error.0000
+  yes
+  any need to work on member  027
+/expanse/lustre/scratch/zuy121/temp_project/Pro2_PSU_MW/MARIA/newWRF_MW_THO/run/201709170600/perturb_ic/027/d03/rsl.error.0000
+  yes
+  any need to work on member  028
+/expanse/lustre/scratch/zuy121/temp_project/Pro2_PSU_MW/MARIA/newWRF_MW_THO/run/201709170600/perturb_ic/028/d03/rsl.error.0000
+  yes
+  any need to work on member  029
+/expanse/lustre/scratch/zuy121/temp_project/Pro2_PSU_MW/MARIA/newWRF_MW_THO/run/201709170600/perturb_ic/029/d03/rsl.error.0000
+  yes
+  any need to work on member  030
+/expanse/lustre/scratch/zuy121/temp_project/Pro2_PSU_MW/MARIA/newWRF_MW_THO/run/201709170600/perturb_ic/030/d03/rsl.error.0000
+  yes
+  any need to work on member  031
+/expanse/lustre/scratch/zuy121/temp_project/Pro2_PSU_MW/MARIA/newWRF_MW_THO/run/201709170600/perturb_ic/031/d03/rsl.error.0000
+  yes
+  any need to work on member  032
+/expanse/lustre/scratch/zuy121/temp_project/Pro2_PSU_MW/MARIA/newWRF_MW_THO/run/201709170600/perturb_ic/032/d03/rsl.error.0000
+  yes
+  any need to work on member  033
+/expanse/lustre/scratch/zuy121/temp_project/Pro2_PSU_MW/MARIA/newWRF_MW_THO/run/201709170600/perturb_ic/033/d03/rsl.error.0000
+  yes
+  any need to work on member  034
+/expanse/lustre/scratch/zuy121/temp_project/Pro2_PSU_MW/MARIA/newWRF_MW_THO/run/201709170600/perturb_ic/034/d03/rsl.error.0000
+  yes
+  any need to work on member  035
+/expanse/lustre/scratch/zuy121/temp_project/Pro2_PSU_MW/MARIA/newWRF_MW_THO/run/201709170600/perturb_ic/035/d03/rsl.error.0000
+  yes
+  any need to work on member  036
+/expanse/lustre/scratch/zuy121/temp_project/Pro2_PSU_MW/MARIA/newWRF_MW_THO/run/201709170600/perturb_ic/036/d03/rsl.error.0000
+  yes
+  any need to work on member  037
+/expanse/lustre/scratch/zuy121/temp_project/Pro2_PSU_MW/MARIA/newWRF_MW_THO/run/201709170600/perturb_ic/037/d03/rsl.error.0000
+  yes
+  any need to work on member  038
+/expanse/lustre/scratch/zuy121/temp_project/Pro2_PSU_MW/MARIA/newWRF_MW_THO/run/201709170600/perturb_ic/038/d03/rsl.error.0000
+  yes
+  any need to work on member  039
+/expanse/lustre/scratch/zuy121/temp_project/Pro2_PSU_MW/MARIA/newWRF_MW_THO/run/201709170600/perturb_ic/039/d03/rsl.error.0000
+  yes
+  any need to work on member  040
+/expanse/lustre/scratch/zuy121/temp_project/Pro2_PSU_MW/MARIA/newWRF_MW_THO/run/201709170600/perturb_ic/040/d03/rsl.error.0000
+  yes
+  any need to work on member  041
+/expanse/lustre/scratch/zuy121/temp_project/Pro2_PSU_MW/MARIA/newWRF_MW_THO/run/201709170600/perturb_ic/041/d03/rsl.error.0000
+  yes
+  any need to work on member  042
+/expanse/lustre/scratch/zuy121/temp_project/Pro2_PSU_MW/MARIA/newWRF_MW_THO/run/201709170600/perturb_ic/042/d03/rsl.error.0000
+  yes
+  any need to work on member  043
+/expanse/lustre/scratch/zuy121/temp_project/Pro2_PSU_MW/MARIA/newWRF_MW_THO/run/201709170600/perturb_ic/043/d03/rsl.error.0000
+  yes
+  any need to work on member  044
+/expanse/lustre/scratch/zuy121/temp_project/Pro2_PSU_MW/MARIA/newWRF_MW_THO/run/201709170600/perturb_ic/044/d03/rsl.error.0000
+  yes
+  any need to work on member  045
+/expanse/lustre/scratch/zuy121/temp_project/Pro2_PSU_MW/MARIA/newWRF_MW_THO/run/201709170600/perturb_ic/045/d03/rsl.error.0000
+  yes
+  any need to work on member  046
+/expanse/lustre/scratch/zuy121/temp_project/Pro2_PSU_MW/MARIA/newWRF_MW_THO/run/201709170600/perturb_ic/046/d03/rsl.error.0000
+  yes
+  any need to work on member  047
+/expanse/lustre/scratch/zuy121/temp_project/Pro2_PSU_MW/MARIA/newWRF_MW_THO/run/201709170600/perturb_ic/047/d03/rsl.error.0000
+  yes
+  any need to work on member  048
+/expanse/lustre/scratch/zuy121/temp_project/Pro2_PSU_MW/MARIA/newWRF_MW_THO/run/201709170600/perturb_ic/048/d03/rsl.error.0000
+  yes
+  any need to work on member  049
+/expanse/lustre/scratch/zuy121/temp_project/Pro2_PSU_MW/MARIA/newWRF_MW_THO/run/201709170600/perturb_ic/049/d03/rsl.error.0000
+  yes
+  any need to work on member  050
+/expanse/lustre/scratch/zuy121/temp_project/Pro2_PSU_MW/MARIA/newWRF_MW_THO/run/201709170600/perturb_ic/050/d03/rsl.error.0000
+  yes
+  any need to work on member  051
+/expanse/lustre/scratch/zuy121/temp_project/Pro2_PSU_MW/MARIA/newWRF_MW_THO/run/201709170600/perturb_ic/051/d03/rsl.error.0000
+  yes
+  any need to work on member  052
+/expanse/lustre/scratch/zuy121/temp_project/Pro2_PSU_MW/MARIA/newWRF_MW_THO/run/201709170600/perturb_ic/052/d03/rsl.error.0000
+  yes
+  any need to work on member  053
+/expanse/lustre/scratch/zuy121/temp_project/Pro2_PSU_MW/MARIA/newWRF_MW_THO/run/201709170600/perturb_ic/053/d03/rsl.error.0000
+  yes
+  any need to work on member  054
+/expanse/lustre/scratch/zuy121/temp_project/Pro2_PSU_MW/MARIA/newWRF_MW_THO/run/201709170600/perturb_ic/054/d03/rsl.error.0000
+  yes
+  any need to work on member  055
+/expanse/lustre/scratch/zuy121/temp_project/Pro2_PSU_MW/MARIA/newWRF_MW_THO/run/201709170600/perturb_ic/055/d03/rsl.error.0000
+  yes
+  any need to work on member  056
+/expanse/lustre/scratch/zuy121/temp_project/Pro2_PSU_MW/MARIA/newWRF_MW_THO/run/201709170600/perturb_ic/056/d03/rsl.error.0000
+  yes
+  any need to work on member  057
+/expanse/lustre/scratch/zuy121/temp_project/Pro2_PSU_MW/MARIA/newWRF_MW_THO/run/201709170600/perturb_ic/057/d03/rsl.error.0000
+  yes
+  any need to work on member  058
+/expanse/lustre/scratch/zuy121/temp_project/Pro2_PSU_MW/MARIA/newWRF_MW_THO/run/201709170600/perturb_ic/058/d03/rsl.error.0000
+  yes
+  any need to work on member  059
+/expanse/lustre/scratch/zuy121/temp_project/Pro2_PSU_MW/MARIA/newWRF_MW_THO/run/201709170600/perturb_ic/059/d03/rsl.error.0000
+  yes
+  any need to work on member  060
+/expanse/lustre/scratch/zuy121/temp_project/Pro2_PSU_MW/MARIA/newWRF_MW_THO/run/201709170600/perturb_ic/060/d03/rsl.error.0000
+  yes
+[H[2J[3J
+  % Total    % Received % Xferd  Average Speed   Time    Time     Time  Current
+                                 Dload  Upload   Total   Spent    Left  Speed
+  0     0    0     0    0     0      0      0 --:--:-- --:--:-- --:--:--     0100    14  100    14    0     0    107      0 --:--:-- --:--:-- --:--:--   107
+   IP ADDR: 198.202.100.13
+   USER: zuy121
+   DATE: Fri Sep 16 10:34:08 PDT 2022
+   UPTIME: up 2 weeks, 3 days, 20 hours, 26 minutes
+   HOSTNAME: login01.expanse.sdsc.edu
+   KERNEL: Linux 4.18.0-348.23.1.el8_5.x86_64 x86_64
+   MEMORY: 23Gi/125Gi
+
+  Running ObsProc...
+[H[2J[3J
+  % Total    % Received % Xferd  Average Speed   Time    Time     Time  Current
+                                 Dload  Upload   Total   Spent    Left  Speed
+  0     0    0     0    0     0      0      0 --:--:-- --:--:-- --:--:--     0100    14  100    14    0     0    249      0 --:--:-- --:--:-- --:--:--   250
+   IP ADDR: 198.202.100.13
+   USER: zuy121
+   DATE: Fri Sep 16 10:35:15 PDT 2022
+   UPTIME: up 2 weeks, 3 days, 20 hours, 27 minutes
+   HOSTNAME: login01.expanse.sdsc.edu
+   KERNEL: Linux 4.18.0-348.23.1.el8_5.x86_64 x86_64
+   MEMORY: 23Gi/125Gi
+
+  Running EnKF...
+    Linking files for domain d01
+/expanse/lustre/scratch/zuy121/temp_project/Pro2_PSU_MW/MARIA/newWRF_MW_THO/run/201709170600/enkf/d01/crtm_out_
+    Linking files for domain d02
+/expanse/lustre/scratch/zuy121/temp_project/Pro2_PSU_MW/MARIA/newWRF_MW_THO/run/201709170600/enkf/d02/crtm_out_
+    Linking files for domain d03
+/expanse/lustre/scratch/zuy121/temp_project/Pro2_PSU_MW/MARIA/newWRF_MW_THO/run/201709170600/enkf/d03/crtm_out_
+    Running enkf.mpi
+  Replacing environment with GFS for domain d01
+  Replacing environment with GFS for domain d02
+  Replacing environment with GFS for domain d03
+[H[2J[3J
+  % Total    % Received % Xferd  Average Speed   Time    Time     Time  Current
+                                 Dload  Upload   Total   Spent    Left  Speed
+  0     0    0     0    0     0      0      0 --:--:-- --:--:-- --:--:--     0100    14  100    14    0     0    243      0 --:--:-- --:--:-- --:--:--   241100    14  100    14    0     0    242      0 --:--:-- --:--:-- --:--:--   241
+   IP ADDR: 198.202.100.13
+   USER: zuy121
+   DATE: Fri Sep 16 10:52:52 PDT 2022
+   UPTIME: up 2 weeks, 3 days, 20 hours, 45 minutes
+   HOSTNAME: login01.expanse.sdsc.edu
+   KERNEL: Linux 4.18.0-348.23.1.el8_5.x86_64 x86_64
+   MEMORY: 24Gi/125Gi
+
+  Running UpdateBC...
+[H[2J[3J
+  % Total    % Received % Xferd  Average Speed   Time    Time     Time  Current
+                                 Dload  Upload   Total   Spent    Left  Speed
+  0     0    0     0    0     0      0      0 --:--:-- --:--:-- --:--:--     0100    14  100    14    0     0    239      0 --:--:-- --:--:-- --:--:--   241
+   IP ADDR: 198.202.100.13
+   USER: zuy121
+   DATE: Fri Sep 16 10:54:30 PDT 2022
+   UPTIME: up 2 weeks, 3 days, 20 hours, 46 minutes
+   HOSTNAME: login01.expanse.sdsc.edu
+   KERNEL: Linux 4.18.0-348.23.1.el8_5.x86_64 x86_64
+   MEMORY: 23Gi/125Gi
+
+  Running WRF ensemble...
+Fri Sep 16 14:28:58 PDT 2022
+cat: run/201709170600/run/201709170600/enkf/stat: No such file or directory
+cat: run/201709170600/run/201709170600/icbc/stat: No such file or directory
+cat: run/201709170600/run/201709170600/obsproc/stat: No such file or directory
+cat: run/201709170600/run/201709170600/perturb_ic/stat: No such file or directory
+cat: run/201709170600/run/201709170600/update_bc/stat: No such file or directory
+cat: run/201709170600/run/201709170600/wrf_ens/stat: No such file or directory
+(standard_in) 2: syntax error
+----------------------------------------------------------------------
+CURRENT CYCLE: 2017-09-17_07:00:00 => 2017-09-17_08:00:00
+cat: 'run/201709170700/*/stat': No such file or directory
+./MARIA_IRMW.sh: line 111: run/201709170700/*/stat: No such file or directory
+[H[2J[3J
+  % Total    % Received % Xferd  Average Speed   Time    Time     Time  Current
+                                 Dload  Upload   Total   Spent    Left  Speed
+  0     0    0     0    0     0      0      0 --:--:-- --:--:-- --:--:--     0100    14  100    14    0     0    125      0 --:--:-- --:--:-- --:--:--   125100    14  100    14    0     0    125      0 --:--:-- --:--:-- --:--:--   125
+   IP ADDR: 198.202.100.13
+   USER: zuy121
+   DATE: Fri Sep 16 14:29:00 PDT 2022
+   UPTIME: up 2 weeks, 4 days, 21 minutes
+   HOSTNAME: login01.expanse.sdsc.edu
+   KERNEL: Linux 4.18.0-348.23.1.el8_5.x86_64 x86_64
+   MEMORY: 27Gi/125Gi
+
+  Calculating preset nesting...
+[H[2J[3J
+  % Total    % Received % Xferd  Average Speed   Time    Time     Time  Current
+                                 Dload  Upload   Total   Spent    Left  Speed
+  0     0    0     0    0     0      0      0 --:--:-- --:--:-- --:--:--     0100    14  100    14    0     0    239      0 --:--:-- --:--:-- --:--:--   241
+   IP ADDR: 198.202.100.13
+   USER: zuy121
+   DATE: Fri Sep 16 14:29:11 PDT 2022
+   UPTIME: up 2 weeks, 4 days, 21 minutes
+   HOSTNAME: login01.expanse.sdsc.edu
+   KERNEL: Linux 4.18.0-348.23.1.el8_5.x86_64 x86_64
+   MEMORY: 27Gi/125Gi
+
+  Running ObsProc...
+[H[2J[3J
+  % Total    % Received % Xferd  Average Speed   Time    Time     Time  Current
+                                 Dload  Upload   Total   Spent    Left  Speed
+  0     0    0     0    0     0      0      0 --:--:-- --:--:-- --:--:--     0100    14  100    14    0     0    246      0 --:--:-- --:--:-- --:--:--   250
+   IP ADDR: 198.202.100.13
+   USER: zuy121
+   DATE: Fri Sep 16 14:30:00 PDT 2022
+   UPTIME: up 2 weeks, 4 days, 22 minutes
+   HOSTNAME: login01.expanse.sdsc.edu
+   KERNEL: Linux 4.18.0-348.23.1.el8_5.x86_64 x86_64
+   MEMORY: 27Gi/125Gi
+
+  Running EnKF...
+    Linking files for domain d01
+/expanse/lustre/scratch/zuy121/temp_project/Pro2_PSU_MW/MARIA/newWRF_MW_THO/run/201709170700/enkf/d01/crtm_out_
+    Linking files for domain d02
+/expanse/lustre/scratch/zuy121/temp_project/Pro2_PSU_MW/MARIA/newWRF_MW_THO/run/201709170700/enkf/d02/crtm_out_
+    Linking files for domain d03
+fort.80011
+entered read_WRF
+9.063217
+3.0
+/expanse/lustre/scratch/zuy121/temp_project/Pro2_PSU_MW/MARIA/newWRF_MW_THO/run/201709170700/enkf/d03/crtm_out_
+    Running enkf.mpi
+[H[2J[3J
+  % Total    % Received % Xferd  Average Speed   Time    Time     Time  Current
+                                 Dload  Upload   Total   Spent    Left  Speed
+  0     0    0     0    0     0      0      0 --:--:-- --:--:-- --:--:--     0100    14  100    14    0     0    117      0 --:--:-- --:--:-- --:--:--   117
+   IP ADDR: 198.202.100.13
+   USER: zuy121
+   DATE: Fri Sep 16 14:45:08 PDT 2022
+   UPTIME: up 2 weeks, 4 days, 37 minutes
+   HOSTNAME: login01.expanse.sdsc.edu
+   KERNEL: Linux 4.18.0-348.23.1.el8_5.x86_64 x86_64
+   MEMORY: 28Gi/125Gi
+
+  Running UpdateBC...
+[H[2J[3J
+  % Total    % Received % Xferd  Average Speed   Time    Time     Time  Current
+                                 Dload  Upload   Total   Spent    Left  Speed
+  0     0    0     0    0     0      0      0 --:--:-- --:--:-- --:--:--     0100    14  100    14    0     0    247      0 --:--:-- --:--:-- --:--:--   250
+   IP ADDR: 198.202.100.13
+   USER: zuy121
+   DATE: Fri Sep 16 14:47:02 PDT 2022
+   UPTIME: up 2 weeks, 4 days, 39 minutes
+   HOSTNAME: login01.expanse.sdsc.edu
+   KERNEL: Linux 4.18.0-348.23.1.el8_5.x86_64 x86_64
+   MEMORY: 28Gi/125Gi
+
+  Running WRF ensemble...
+Fri Sep 16 18:20:18 PDT 2022
+cat: run/201709170700/run/201709170700/enkf/stat: No such file or directory
+cat: run/201709170700/run/201709170700/icbc/stat: No such file or directory
+cat: run/201709170700/run/201709170700/obsproc/stat: No such file or directory
+cat: run/201709170700/run/201709170700/update_bc/stat: No such file or directory
+cat: run/201709170700/run/201709170700/wrf_ens/stat: No such file or directory
+(standard_in) 2: syntax error
+----------------------------------------------------------------------
+CURRENT CYCLE: 2017-09-17_08:00:00 => 2017-09-17_09:00:00
+cat: 'run/201709170800/*/stat': No such file or directory
+./MARIA_IRMW.sh: line 111: run/201709170800/*/stat: No such file or directory
+[H[2J[3J
+  % Total    % Received % Xferd  Average Speed   Time    Time     Time  Current
+                                 Dload  Upload   Total   Spent    Left  Speed
+  0     0    0     0    0     0      0      0 --:--:-- --:--:-- --:--:--     0100    14  100    14    0     0    247      0 --:--:-- --:--:-- --:--:--   245100    14  100    14    0     0    246      0 --:--:-- --:--:-- --:--:--   245
+   IP ADDR: 198.202.100.13
+   USER: zuy121
+   DATE: Fri Sep 16 18:20:19 PDT 2022
+   UPTIME: up 2 weeks, 4 days, 4 hours, 12 minutes
+   HOSTNAME: login01.expanse.sdsc.edu
+   KERNEL: Linux 4.18.0-348.23.1.el8_5.x86_64 x86_64
+   MEMORY: 28Gi/125Gi
+
+  Calculating preset nesting...
+[H[2J[3J
+  % Total    % Received % Xferd  Average Speed   Time    Time     Time  Current
+                                 Dload  Upload   Total   Spent    Left  Speed
+  0     0    0     0    0     0      0      0 --:--:-- --:--:-- --:--:--     0100    14  100    14    0     0    130      0 --:--:-- --:--:-- --:--:--   132
+   IP ADDR: 198.202.100.13
+   USER: zuy121
+   DATE: Fri Sep 16 18:20:24 PDT 2022
+   UPTIME: up 2 weeks, 4 days, 4 hours, 12 minutes
+   HOSTNAME: login01.expanse.sdsc.edu
+   KERNEL: Linux 4.18.0-348.23.1.el8_5.x86_64 x86_64
+   MEMORY: 28Gi/125Gi
+
+  Running ObsProc...
+[H[2J[3J
+  % Total    % Received % Xferd  Average Speed   Time    Time     Time  Current
+                                 Dload  Upload   Total   Spent    Left  Speed
+  0     0    0     0    0     0      0      0 --:--:-- --:--:-- --:--:--     0100    14  100    14    0     0    249      0 --:--:-- --:--:-- --:--:--   254
+   IP ADDR: 198.202.100.13
+   USER: zuy121
+   DATE: Fri Sep 16 18:21:52 PDT 2022
+   UPTIME: up 2 weeks, 4 days, 4 hours, 14 minutes
+   HOSTNAME: login01.expanse.sdsc.edu
+   KERNEL: Linux 4.18.0-348.23.1.el8_5.x86_64 x86_64
+   MEMORY: 29Gi/125Gi
+
+  Running EnKF...
+    Linking files for domain d01
+/expanse/lustre/scratch/zuy121/temp_project/Pro2_PSU_MW/MARIA/newWRF_MW_THO/run/201709170800/enkf/d01/crtm_out_
+    Linking files for domain d02
+/expanse/lustre/scratch/zuy121/temp_project/Pro2_PSU_MW/MARIA/newWRF_MW_THO/run/201709170800/enkf/d02/crtm_out_
+    Linking files for domain d03
+/expanse/lustre/scratch/zuy121/temp_project/Pro2_PSU_MW/MARIA/newWRF_MW_THO/run/201709170800/enkf/d03/crtm_out_
+    Running enkf.mpi
+[H[2J[3J
+  % Total    % Received % Xferd  Average Speed   Time    Time     Time  Current
+                                 Dload  Upload   Total   Spent    Left  Speed
+  0     0    0     0    0     0      0      0 --:--:-- --:--:-- --:--:--     0100    14  100    14    0     0    117      0 --:--:-- --:--:-- --:--:--   117
+   IP ADDR: 198.202.100.13
+   USER: zuy121
+   DATE: Fri Sep 16 18:33:52 PDT 2022
+   UPTIME: up 2 weeks, 4 days, 4 hours, 26 minutes
+   HOSTNAME: login01.expanse.sdsc.edu
+   KERNEL: Linux 4.18.0-348.23.1.el8_5.x86_64 x86_64
+   MEMORY: 28Gi/125Gi
+
+  Running UpdateBC...
+[H[2J[3J
+  % Total    % Received % Xferd  Average Speed   Time    Time     Time  Current
+                                 Dload  Upload   Total   Spent    Left  Speed
+  0     0    0     0    0     0      0      0 --:--:-- --:--:-- --:--:--     0100    14  100    14    0     0    241      0 --:--:-- --:--:-- --:--:--   241100    14  100    14    0     0    240      0 --:--:-- --:--:-- --:--:--   237
+   IP ADDR: 198.202.100.13
+   USER: zuy121
+   DATE: Fri Sep 16 18:36:09 PDT 2022
+   UPTIME: up 2 weeks, 4 days, 4 hours, 28 minutes
+   HOSTNAME: login01.expanse.sdsc.edu
+   KERNEL: Linux 4.18.0-348.23.1.el8_5.x86_64 x86_64
+   MEMORY: 28Gi/125Gi
+
+  Running WRF ensemble...
+Fri Sep 16 21:58:23 PDT 2022
+cat: run/201709170800/run/201709170800/enkf/stat: No such file or directory
+cat: run/201709170800/run/201709170800/icbc/stat: No such file or directory
+cat: run/201709170800/run/201709170800/obsproc/stat: No such file or directory
+cat: run/201709170800/run/201709170800/update_bc/stat: No such file or directory
+cat: run/201709170800/run/201709170800/wrf_ens/stat: No such file or directory
+(standard_in) 2: syntax error
+----------------------------------------------------------------------
+CURRENT CYCLE: 2017-09-17_09:00:00 => 2017-09-17_10:00:00
+cat: 'run/201709170900/*/stat': No such file or directory
+./MARIA_IRMW.sh: line 111: run/201709170900/*/stat: No such file or directory
+[H[2J[3J
+  % Total    % Received % Xferd  Average Speed   Time    Time     Time  Current
+                                 Dload  Upload   Total   Spent    Left  Speed
+  0     0    0     0    0     0      0      0 --:--:-- --:--:-- --:--:--     0100    14  100    14    0     0    126      0 --:--:-- --:--:-- --:--:--   127
+   IP ADDR: 198.202.100.13
+   USER: zuy121
+   DATE: Fri Sep 16 21:58:25 PDT 2022
+   UPTIME: up 2 weeks, 4 days, 7 hours, 50 minutes
+   HOSTNAME: login01.expanse.sdsc.edu
+   KERNEL: Linux 4.18.0-348.23.1.el8_5.x86_64 x86_64
+   MEMORY: 25Gi/125Gi
+
+  Calculating preset nesting...
+[H[2J[3J
+  % Total    % Received % Xferd  Average Speed   Time    Time     Time  Current
+                                 Dload  Upload   Total   Spent    Left  Speed
+  0     0    0     0    0     0      0      0 --:--:-- --:--:-- --:--:--     0100    14  100    14    0     0    248      0 --:--:-- --:--:-- --:--:--   250
+   IP ADDR: 198.202.100.13
+   USER: zuy121
+   DATE: Fri Sep 16 21:58:41 PDT 2022
+   UPTIME: up 2 weeks, 4 days, 7 hours, 50 minutes
+   HOSTNAME: login01.expanse.sdsc.edu
+   KERNEL: Linux 4.18.0-348.23.1.el8_5.x86_64 x86_64
+   MEMORY: 24Gi/125Gi
+
+  Running ObsProc...
+[H[2J[3J
+  % Total    % Received % Xferd  Average Speed   Time    Time     Time  Current
+                                 Dload  Upload   Total   Spent    Left  Speed
+  0     0    0     0    0     0      0      0 --:--:-- --:--:-- --:--:--     0100    14  100    14    0     0    236      0 --:--:-- --:--:-- --:--:--   237
+   IP ADDR: 198.202.100.13
+   USER: zuy121
+   DATE: Fri Sep 16 22:00:13 PDT 2022
+   UPTIME: up 2 weeks, 4 days, 7 hours, 52 minutes
+   HOSTNAME: login01.expanse.sdsc.edu
+   KERNEL: Linux 4.18.0-348.23.1.el8_5.x86_64 x86_64
+   MEMORY: 24Gi/125Gi
+
+  Running EnKF...
+    Linking files for domain d01
+/expanse/lustre/scratch/zuy121/temp_project/Pro2_PSU_MW/MARIA/newWRF_MW_THO/run/201709170900/enkf/d01/crtm_out_
+    Linking files for domain d02
+/expanse/lustre/scratch/zuy121/temp_project/Pro2_PSU_MW/MARIA/newWRF_MW_THO/run/201709170900/enkf/d02/crtm_out_
+    Linking files for domain d03
+fort.80011
+entered read_WRF
+9.24778
+3.0
+/expanse/lustre/scratch/zuy121/temp_project/Pro2_PSU_MW/MARIA/newWRF_MW_THO/run/201709170900/enkf/d03/crtm_out_
+    Running enkf.mpi
+[H[2J[3J
+  % Total    % Received % Xferd  Average Speed   Time    Time     Time  Current
+                                 Dload  Upload   Total   Spent    Left  Speed
+  0     0    0     0    0     0      0      0 --:--:-- --:--:-- --:--:--     0100    14  100    14    0     0    137      0 --:--:-- --:--:-- --:--:--   137
+   IP ADDR: 198.202.100.13
+   USER: zuy121
+   DATE: Fri Sep 16 22:32:15 PDT 2022
+   UPTIME: up 2 weeks, 4 days, 8 hours, 24 minutes
+   HOSTNAME: login01.expanse.sdsc.edu
+   KERNEL: Linux 4.18.0-348.23.1.el8_5.x86_64 x86_64
+   MEMORY: 23Gi/125Gi
+
+  Running UpdateBC...
+[H[2J[3J
+  % Total    % Received % Xferd  Average Speed   Time    Time     Time  Current
+                                 Dload  Upload   Total   Spent    Left  Speed
+  0     0    0     0    0     0      0      0 --:--:-- --:--:-- --:--:--     0100    14  100    14    0     0    245      0 --:--:-- --:--:-- --:--:--   250
+   IP ADDR: 198.202.100.13
+   USER: zuy121
+   DATE: Fri Sep 16 22:34:28 PDT 2022
+   UPTIME: up 2 weeks, 4 days, 8 hours, 26 minutes
+   HOSTNAME: login01.expanse.sdsc.edu
+   KERNEL: Linux 4.18.0-348.23.1.el8_5.x86_64 x86_64
+   MEMORY: 23Gi/125Gi
+
+  Running WRF ensemble...
+Sat Sep 17 02:15:56 PDT 2022
+cat: run/201709170900/run/201709170900/enkf/stat: No such file or directory
+cat: run/201709170900/run/201709170900/icbc/stat: No such file or directory
+cat: run/201709170900/run/201709170900/obsproc/stat: No such file or directory
+cat: run/201709170900/run/201709170900/update_bc/stat: No such file or directory
+cat: run/201709170900/run/201709170900/wrf_ens/stat: No such file or directory
+(standard_in) 2: syntax error
+----------------------------------------------------------------------
+CURRENT CYCLE: 2017-09-17_10:00:00 => 2017-09-17_11:00:00
+cat: 'run/201709171000/*/stat': No such file or directory
+./MARIA_IRMW.sh: line 111: run/201709171000/*/stat: No such file or directory
+[H[2J[3J
+  % Total    % Received % Xferd  Average Speed   Time    Time     Time  Current
+                                 Dload  Upload   Total   Spent    Left  Speed
+  0     0    0     0    0     0      0      0 --:--:-- --:--:-- --:--:--     0100    14  100    14    0     0    126      0 --:--:-- --:--:-- --:--:--   127
+   IP ADDR: 198.202.100.13
+   USER: zuy121
+   DATE: Sat Sep 17 02:15:58 PDT 2022
+   UPTIME: up 2 weeks, 4 days, 12 hours, 8 minutes
+   HOSTNAME: login01.expanse.sdsc.edu
+   KERNEL: Linux 4.18.0-348.23.1.el8_5.x86_64 x86_64
+   MEMORY: 24Gi/125Gi
+
+  Calculating preset nesting...
+[H[2J[3J
+  % Total    % Received % Xferd  Average Speed   Time    Time     Time  Current
+                                 Dload  Upload   Total   Spent    Left  Speed
+  0     0    0     0    0     0      0      0 --:--:-- --:--:-- --:--:--     0100    14  100    14    0     0    245      0 --:--:-- --:--:-- --:--:--   245100    14  100    14    0     0    242      0 --:--:-- --:--:-- --:--:--   241
+   IP ADDR: 198.202.100.13
+   USER: zuy121
+   DATE: Sat Sep 17 02:16:06 PDT 2022
+   UPTIME: up 2 weeks, 4 days, 12 hours, 8 minutes
+   HOSTNAME: login01.expanse.sdsc.edu
+   KERNEL: Linux 4.18.0-348.23.1.el8_5.x86_64 x86_64
+   MEMORY: 24Gi/125Gi
+
+  Running ObsProc...
+[H[2J[3J
+  % Total    % Received % Xferd  Average Speed   Time    Time     Time  Current
+                                 Dload  Upload   Total   Spent    Left  Speed
+  0     0    0     0    0     0      0      0 --:--:-- --:--:-- --:--:--     0100    14  100    14    0     0    234      0 --:--:-- --:--:-- --:--:--   237
+   IP ADDR: 198.202.100.13
+   USER: zuy121
+   DATE: Sat Sep 17 02:17:46 PDT 2022
+   UPTIME: up 2 weeks, 4 days, 12 hours, 9 minutes
+   HOSTNAME: login01.expanse.sdsc.edu
+   KERNEL: Linux 4.18.0-348.23.1.el8_5.x86_64 x86_64
+   MEMORY: 25Gi/125Gi
+
+  Running EnKF...
+    Linking files for domain d01
+/expanse/lustre/scratch/zuy121/temp_project/Pro2_PSU_MW/MARIA/newWRF_MW_THO/run/201709171000/enkf/d01/crtm_out_
+    Linking files for domain d02
+/expanse/lustre/scratch/zuy121/temp_project/Pro2_PSU_MW/MARIA/newWRF_MW_THO/run/201709171000/enkf/d02/crtm_out_
+    Linking files for domain d03
+fort.80011
+entered read_WRF
+9.3400345
+3.0
+/expanse/lustre/scratch/zuy121/temp_project/Pro2_PSU_MW/MARIA/newWRF_MW_THO/run/201709171000/enkf/d03/crtm_out_
+    Running enkf.mpi
+[H[2J[3J
+  % Total    % Received % Xferd  Average Speed   Time    Time     Time  Current
+                                 Dload  Upload   Total   Spent    Left  Speed
+  0     0    0     0    0     0      0      0 --:--:-- --:--:-- --:--:--     0100    14  100    14    0     0    101      0 --:--:-- --:--:-- --:--:--   102
+   IP ADDR: 198.202.100.13
+   USER: zuy121
+   DATE: Sat Sep 17 02:32:01 PDT 2022
+   UPTIME: up 2 weeks, 4 days, 12 hours, 24 minutes
+   HOSTNAME: login01.expanse.sdsc.edu
+   KERNEL: Linux 4.18.0-348.23.1.el8_5.x86_64 x86_64
+   MEMORY: 23Gi/125Gi
+
+  Running UpdateBC...
+[H[2J[3J
+  % Total    % Received % Xferd  Average Speed   Time    Time     Time  Current
+                                 Dload  Upload   Total   Spent    Left  Speed
+  0     0    0     0    0     0      0      0 --:--:-- --:--:-- --:--:--     0100    14  100    14    0     0    250      0 --:--:-- --:--:-- --:--:--   254
+   IP ADDR: 198.202.100.13
+   USER: zuy121
+   DATE: Sat Sep 17 02:33:50 PDT 2022
+   UPTIME: up 2 weeks, 4 days, 12 hours, 26 minutes
+   HOSTNAME: login01.expanse.sdsc.edu
+   KERNEL: Linux 4.18.0-348.23.1.el8_5.x86_64 x86_64
+   MEMORY: 23Gi/125Gi
+
+  Running WRF ensemble...
+Sat Sep 17 06:03:28 PDT 2022
+cat: run/201709171000/run/201709171000/enkf/stat: No such file or directory
+cat: run/201709171000/run/201709171000/icbc/stat: No such file or directory
+cat: run/201709171000/run/201709171000/obsproc/stat: No such file or directory
+cat: run/201709171000/run/201709171000/update_bc/stat: No such file or directory
+cat: run/201709171000/run/201709171000/wrf_ens/stat: No such file or directory
+(standard_in) 2: syntax error
+----------------------------------------------------------------------
+CURRENT CYCLE: 2017-09-17_11:00:00 => 2017-09-17_12:00:00
+cat: 'run/201709171100/*/stat': No such file or directory
+./MARIA_IRMW.sh: line 111: run/201709171100/*/stat: No such file or directory
+[H[2J[3J
+  % Total    % Received % Xferd  Average Speed   Time    Time     Time  Current
+                                 Dload  Upload   Total   Spent    Left  Speed
+  0     0    0     0    0     0      0      0 --:--:-- --:--:-- --:--:--     0100    14  100    14    0     0    132      0 --:--:-- --:--:-- --:--:--   133
+   IP ADDR: 198.202.100.13
+   USER: zuy121
+   DATE: Sat Sep 17 06:03:29 PDT 2022
+   UPTIME: up 2 weeks, 4 days, 15 hours, 55 minutes
+   HOSTNAME: login01.expanse.sdsc.edu
+   KERNEL: Linux 4.18.0-348.23.1.el8_5.x86_64 x86_64
+   MEMORY: 22Gi/125Gi
+
+  Calculating preset nesting...
+[H[2J[3J
+  % Total    % Received % Xferd  Average Speed   Time    Time     Time  Current
+                                 Dload  Upload   Total   Spent    Left  Speed
+  0     0    0     0    0     0      0      0 --:--:-- --:--:-- --:--:--     0100    14  100    14    0     0    249      0 --:--:-- --:--:-- --:--:--   250
+   IP ADDR: 198.202.100.13
+   USER: zuy121
+   DATE: Sat Sep 17 06:03:37 PDT 2022
+   UPTIME: up 2 weeks, 4 days, 15 hours, 55 minutes
+   HOSTNAME: login01.expanse.sdsc.edu
+   KERNEL: Linux 4.18.0-348.23.1.el8_5.x86_64 x86_64
+   MEMORY: 22Gi/125Gi
+
+  Running ObsProc...
+[H[2J[3J
+  % Total    % Received % Xferd  Average Speed   Time    Time     Time  Current
+                                 Dload  Upload   Total   Spent    Left  Speed
+  0     0    0     0    0     0      0      0 --:--:-- --:--:-- --:--:--     0100    14  100    14    0     0    242      0 --:--:-- --:--:-- --:--:--   245
+   IP ADDR: 198.202.100.13
+   USER: zuy121
+   DATE: Sat Sep 17 06:04:22 PDT 2022
+   UPTIME: up 2 weeks, 4 days, 15 hours, 56 minutes
+   HOSTNAME: login01.expanse.sdsc.edu
+   KERNEL: Linux 4.18.0-348.23.1.el8_5.x86_64 x86_64
+   MEMORY: 22Gi/125Gi
+
+  Running EnKF...
+    Linking files for domain d01
+/expanse/lustre/scratch/zuy121/temp_project/Pro2_PSU_MW/MARIA/newWRF_MW_THO/run/201709171100/enkf/d01/crtm_out_
+    Linking files for domain d02
+/expanse/lustre/scratch/zuy121/temp_project/Pro2_PSU_MW/MARIA/newWRF_MW_THO/run/201709171100/enkf/d02/crtm_out_
+    Linking files for domain d03
+fort.80011
+entered read_WRF
+9.432259
+3.0
+/expanse/lustre/scratch/zuy121/temp_project/Pro2_PSU_MW/MARIA/newWRF_MW_THO/run/201709171100/enkf/d03/crtm_out_
+    Running enkf.mpi
+[H[2J[3J
+  % Total    % Received % Xferd  Average Speed   Time    Time     Time  Current
+                                 Dload  Upload   Total   Spent    Left  Speed
+  0     0    0     0    0     0      0      0 --:--:-- --:--:-- --:--:--     0100    14  100    14    0     0    124      0 --:--:-- --:--:-- --:--:--   125
+   IP ADDR: 198.202.100.13
+   USER: zuy121
+   DATE: Sat Sep 17 06:18:44 PDT 2022
+   UPTIME: up 2 weeks, 4 days, 16 hours, 10 minutes
+   HOSTNAME: login01.expanse.sdsc.edu
+   KERNEL: Linux 4.18.0-348.23.1.el8_5.x86_64 x86_64
+   MEMORY: 22Gi/125Gi
+
+  Running UpdateBC...
+[H[2J[3J
+  % Total    % Received % Xferd  Average Speed   Time    Time     Time  Current
+                                 Dload  Upload   Total   Spent    Left  Speed
+  0     0    0     0    0     0      0      0 --:--:-- --:--:-- --:--:--     0100    14  100    14    0     0     93      0 --:--:-- --:--:-- --:--:--    93
+   IP ADDR: 198.202.100.13
+   USER: zuy121
+   DATE: Sat Sep 17 06:20:23 PDT 2022
+   UPTIME: up 2 weeks, 4 days, 16 hours, 12 minutes
+   HOSTNAME: login01.expanse.sdsc.edu
+   KERNEL: Linux 4.18.0-348.23.1.el8_5.x86_64 x86_64
+   MEMORY: 23Gi/125Gi
+
+  Running WRF ensemble...
+Sat Sep 17 09:39:48 PDT 2022
+cat: run/201709171100/run/201709171100/enkf/stat: No such file or directory
+cat: run/201709171100/run/201709171100/icbc/stat: No such file or directory
+cat: run/201709171100/run/201709171100/obsproc/stat: No such file or directory
+cat: run/201709171100/run/201709171100/update_bc/stat: No such file or directory
+cat: run/201709171100/run/201709171100/wrf_ens/stat: No such file or directory
+(standard_in) 2: syntax error
+----------------------------------------------------------------------
+CURRENT CYCLE: 2017-09-17_12:00:00 => 2017-09-17_13:00:00
+cat: 'run/201709171200/*/stat': No such file or directory
+./MARIA_IRMW.sh: line 111: run/201709171200/*/stat: No such file or directory
+[H[2J[3J
+  % Total    % Received % Xferd  Average Speed   Time    Time     Time  Current
+                                 Dload  Upload   Total   Spent    Left  Speed
+  0     0    0     0    0     0      0      0 --:--:-- --:--:-- --:--:--     0100    14  100    14    0     0    132      0 --:--:-- --:--:-- --:--:--   133
+   IP ADDR: 198.202.100.13
+   USER: zuy121
+   DATE: Sat Sep 17 09:39:50 PDT 2022
+   UPTIME: up 2 weeks, 4 days, 19 hours, 32 minutes
+   HOSTNAME: login01.expanse.sdsc.edu
+   KERNEL: Linux 4.18.0-348.23.1.el8_5.x86_64 x86_64
+   MEMORY: 24Gi/125Gi
+
+  Calculating preset nesting...
+  Running ungrib.exe...
+201709171200
+/expanse/lustre/projects/pen116/zuy121/Pro2_PSU_MW/Obs_input_EnKF/MARIA/GFS/gfs.0p25.2017091712.f000.grib2
+/expanse/lustre/projects/pen116/zuy121/Pro2_PSU_MW/Obs_input_EnKF/MARIA/GFS/gfs.0p25.2017091712.f006.grib2
+/expanse/lustre/projects/pen116/zuy121/Pro2_PSU_MW/Obs_input_EnKF/MARIA/GFS/gfs.0p25.2017091712.f012.grib2
+/expanse/lustre/projects/pen116/zuy121/Pro2_PSU_MW/Obs_input_EnKF/MARIA/GFS/gfs.0p25.2017091712.f018.grib2
+/expanse/lustre/projects/pen116/zuy121/Pro2_PSU_MW/Obs_input_EnKF/MARIA/GFS/gfs.0p25.2017091712.f024.grib2
+/expanse/lustre/projects/pen116/zuy121/Pro2_PSU_MW/Obs_input_EnKF/MARIA/GFS/gfs.0p25.2017091712.f030.grib2
+/expanse/lustre/projects/pen116/zuy121/Pro2_PSU_MW/Obs_input_EnKF/MARIA/GFS/gfs.0p25.2017091712.f036.grib2
+/expanse/lustre/projects/pen116/zuy121/Pro2_PSU_MW/Obs_input_EnKF/MARIA/GFS/gfs.0p25.2017091712.f042.grib2
+/expanse/lustre/projects/pen116/zuy121/Pro2_PSU_MW/Obs_input_EnKF/MARIA/GFS/gfs.0p25.2017091712.f048.grib2
+/expanse/lustre/projects/pen116/zuy121/Pro2_PSU_MW/Obs_input_EnKF/MARIA/GFS/gfs.0p25.2017091712.f054.grib2
+/expanse/lustre/projects/pen116/zuy121/Pro2_PSU_MW/Obs_input_EnKF/MARIA/GFS/gfs.0p25.2017091712.f060.grib2
+/expanse/lustre/projects/pen116/zuy121/Pro2_PSU_MW/Obs_input_EnKF/MARIA/GFS/gfs.0p25.2017091712.f066.grib2
+/expanse/lustre/projects/pen116/zuy121/Pro2_PSU_MW/Obs_input_EnKF/MARIA/GFS/gfs.0p25.2017091712.f072.grib2
+/expanse/lustre/projects/pen116/zuy121/Pro2_PSU_MW/Obs_input_EnKF/MARIA/GFS/gfs.0p25.2017091712.f078.grib2
+/expanse/lustre/projects/pen116/zuy121/Pro2_PSU_MW/Obs_input_EnKF/MARIA/GFS/gfs.0p25.2017091712.f084.grib2
+/expanse/lustre/projects/pen116/zuy121/Pro2_PSU_MW/Obs_input_EnKF/MARIA/GFS/gfs.0p25.2017091712.f090.grib2
+/expanse/lustre/projects/pen116/zuy121/Pro2_PSU_MW/Obs_input_EnKF/MARIA/GFS/gfs.0p25.2017091712.f096.grib2
+/expanse/lustre/projects/pen116/zuy121/Pro2_PSU_MW/Obs_input_EnKF/MARIA/GFS/gfs.0p25.2017091712.f102.grib2
+/expanse/lustre/projects/pen116/zuy121/Pro2_PSU_MW/Obs_input_EnKF/MARIA/GFS/gfs.0p25.2017091712.f108.grib2
+/expanse/lustre/projects/pen116/zuy121/Pro2_PSU_MW/Obs_input_EnKF/MARIA/GFS/gfs.0p25.2017091712.f000.grib2 /expanse/lustre/projects/pen116/zuy121/Pro2_PSU_MW/Obs_input_EnKF/MARIA/GFS/gfs.0p25.2017091712.f006.grib2 /expanse/lustre/projects/pen116/zuy121/Pro2_PSU_MW/Obs_input_EnKF/MARIA/GFS/gfs.0p25.2017091712.f012.grib2 /expanse/lustre/projects/pen116/zuy121/Pro2_PSU_MW/Obs_input_EnKF/MARIA/GFS/gfs.0p25.2017091712.f018.grib2 /expanse/lustre/projects/pen116/zuy121/Pro2_PSU_MW/Obs_input_EnKF/MARIA/GFS/gfs.0p25.2017091712.f024.grib2 /expanse/lustre/projects/pen116/zuy121/Pro2_PSU_MW/Obs_input_EnKF/MARIA/GFS/gfs.0p25.2017091712.f030.grib2 /expanse/lustre/projects/pen116/zuy121/Pro2_PSU_MW/Obs_input_EnKF/MARIA/GFS/gfs.0p25.2017091712.f036.grib2 /expanse/lustre/projects/pen116/zuy121/Pro2_PSU_MW/Obs_input_EnKF/MARIA/GFS/gfs.0p25.2017091712.f042.grib2 /expanse/lustre/projects/pen116/zuy121/Pro2_PSU_MW/Obs_input_EnKF/MARIA/GFS/gfs.0p25.2017091712.f048.grib2 /expanse/lustre/projects/pen116/zuy121/Pro2_PSU_MW/Obs_input_EnKF/MARIA/GFS/gfs.0p25.2017091712.f054.grib2 /expanse/lustre/projects/pen116/zuy121/Pro2_PSU_MW/Obs_input_EnKF/MARIA/GFS/gfs.0p25.2017091712.f060.grib2 /expanse/lustre/projects/pen116/zuy121/Pro2_PSU_MW/Obs_input_EnKF/MARIA/GFS/gfs.0p25.2017091712.f066.grib2 /expanse/lustre/projects/pen116/zuy121/Pro2_PSU_MW/Obs_input_EnKF/MARIA/GFS/gfs.0p25.2017091712.f072.grib2 /expanse/lustre/projects/pen116/zuy121/Pro2_PSU_MW/Obs_input_EnKF/MARIA/GFS/gfs.0p25.2017091712.f078.grib2 /expanse/lustre/projects/pen116/zuy121/Pro2_PSU_MW/Obs_input_EnKF/MARIA/GFS/gfs.0p25.2017091712.f084.grib2 /expanse/lustre/projects/pen116/zuy121/Pro2_PSU_MW/Obs_input_EnKF/MARIA/GFS/gfs.0p25.2017091712.f090.grib2 /expanse/lustre/projects/pen116/zuy121/Pro2_PSU_MW/Obs_input_EnKF/MARIA/GFS/gfs.0p25.2017091712.f096.grib2 /expanse/lustre/projects/pen116/zuy121/Pro2_PSU_MW/Obs_input_EnKF/MARIA/GFS/gfs.0p25.2017091712.f102.grib2 /expanse/lustre/projects/pen116/zuy121/Pro2_PSU_MW/Obs_input_EnKF/MARIA/GFS/gfs.0p25.2017091712.f108.grib2
+  Running geogrid.exe, metgrid.exe, and real.exe...
+  Running PerturbIC...
+    Generating perturbations using WRF 3DVar
+/expanse/lustre/scratch/zuy121/temp_project/Pro2_PSU_MW/MARIA/newWRF_MW_THO/run/201709171200/perturb_ic
+/expanse/lustre/scratch/zuy121/temp_project/Pro2_PSU_MW/MARIA/newWRF_MW_THO/run/201709171200/perturb_ic
+/expanse/lustre/scratch/zuy121/temp_project/Pro2_PSU_MW/MARIA/newWRF_MW_THO/run/201709171200/perturb_ic
+/expanse/lustre/scratch/zuy121/temp_project/Pro2_PSU_MW/MARIA/newWRF_MW_THO/run/201709171200/perturb_ic
+/expanse/lustre/scratch/zuy121/temp_project/Pro2_PSU_MW/MARIA/newWRF_MW_THO/run/201709171200/perturb_ic
+/expanse/lustre/scratch/zuy121/temp_project/Pro2_PSU_MW/MARIA/newWRF_MW_THO/run/201709171200/perturb_ic
+/expanse/lustre/scratch/zuy121/temp_project/Pro2_PSU_MW/MARIA/newWRF_MW_THO/run/201709171200/perturb_ic
+/expanse/lustre/scratch/zuy121/temp_project/Pro2_PSU_MW/MARIA/newWRF_MW_THO/run/201709171200/perturb_ic
+/expanse/lustre/scratch/zuy121/temp_project/Pro2_PSU_MW/MARIA/newWRF_MW_THO/run/201709171200/perturb_ic
+/expanse/lustre/scratch/zuy121/temp_project/Pro2_PSU_MW/MARIA/newWRF_MW_THO/run/201709171200/perturb_ic
+/expanse/lustre/scratch/zuy121/temp_project/Pro2_PSU_MW/MARIA/newWRF_MW_THO/run/201709171200/perturb_ic
+/expanse/lustre/scratch/zuy121/temp_project/Pro2_PSU_MW/MARIA/newWRF_MW_THO/run/201709171200/perturb_ic
+/expanse/lustre/scratch/zuy121/temp_project/Pro2_PSU_MW/MARIA/newWRF_MW_THO/run/201709171200/perturb_ic
+/expanse/lustre/scratch/zuy121/temp_project/Pro2_PSU_MW/MARIA/newWRF_MW_THO/run/201709171200/perturb_ic
+/expanse/lustre/scratch/zuy121/temp_project/Pro2_PSU_MW/MARIA/newWRF_MW_THO/run/201709171200/perturb_ic
+/expanse/lustre/scratch/zuy121/temp_project/Pro2_PSU_MW/MARIA/newWRF_MW_THO/run/201709171200/perturb_ic
+/expanse/lustre/scratch/zuy121/temp_project/Pro2_PSU_MW/MARIA/newWRF_MW_THO/run/201709171200/perturb_ic
+/expanse/lustre/scratch/zuy121/temp_project/Pro2_PSU_MW/MARIA/newWRF_MW_THO/run/201709171200/perturb_ic
+/expanse/lustre/scratch/zuy121/temp_project/Pro2_PSU_MW/MARIA/newWRF_MW_THO/run/201709171200/perturb_ic
+/expanse/lustre/scratch/zuy121/temp_project/Pro2_PSU_MW/MARIA/newWRF_MW_THO/run/201709171200/perturb_ic
+/expanse/lustre/scratch/zuy121/temp_project/Pro2_PSU_MW/MARIA/newWRF_MW_THO/run/201709171200/perturb_ic
+/expanse/lustre/scratch/zuy121/temp_project/Pro2_PSU_MW/MARIA/newWRF_MW_THO/run/201709171200/perturb_ic
+/expanse/lustre/scratch/zuy121/temp_project/Pro2_PSU_MW/MARIA/newWRF_MW_THO/run/201709171200/perturb_ic
+/expanse/lustre/scratch/zuy121/temp_project/Pro2_PSU_MW/MARIA/newWRF_MW_THO/run/201709171200/perturb_ic
+/expanse/lustre/scratch/zuy121/temp_project/Pro2_PSU_MW/MARIA/newWRF_MW_THO/run/201709171200/perturb_ic
+/expanse/lustre/scratch/zuy121/temp_project/Pro2_PSU_MW/MARIA/newWRF_MW_THO/run/201709171200/perturb_ic
+/expanse/lustre/scratch/zuy121/temp_project/Pro2_PSU_MW/MARIA/newWRF_MW_THO/run/201709171200/perturb_ic
+/expanse/lustre/scratch/zuy121/temp_project/Pro2_PSU_MW/MARIA/newWRF_MW_THO/run/201709171200/perturb_ic
+/expanse/lustre/scratch/zuy121/temp_project/Pro2_PSU_MW/MARIA/newWRF_MW_THO/run/201709171200/perturb_ic
+/expanse/lustre/scratch/zuy121/temp_project/Pro2_PSU_MW/MARIA/newWRF_MW_THO/run/201709171200/perturb_ic
+/expanse/lustre/scratch/zuy121/temp_project/Pro2_PSU_MW/MARIA/newWRF_MW_THO/run/201709171200/perturb_ic
+/expanse/lustre/scratch/zuy121/temp_project/Pro2_PSU_MW/MARIA/newWRF_MW_THO/run/201709171200/perturb_ic
+/expanse/lustre/scratch/zuy121/temp_project/Pro2_PSU_MW/MARIA/newWRF_MW_THO/run/201709171200/perturb_ic
+/expanse/lustre/scratch/zuy121/temp_project/Pro2_PSU_MW/MARIA/newWRF_MW_THO/run/201709171200/perturb_ic
+/expanse/lustre/scratch/zuy121/temp_project/Pro2_PSU_MW/MARIA/newWRF_MW_THO/run/201709171200/perturb_ic
+/expanse/lustre/scratch/zuy121/temp_project/Pro2_PSU_MW/MARIA/newWRF_MW_THO/run/201709171200/perturb_ic
+/expanse/lustre/scratch/zuy121/temp_project/Pro2_PSU_MW/MARIA/newWRF_MW_THO/run/201709171200/perturb_ic
+/expanse/lustre/scratch/zuy121/temp_project/Pro2_PSU_MW/MARIA/newWRF_MW_THO/run/201709171200/perturb_ic
+/expanse/lustre/scratch/zuy121/temp_project/Pro2_PSU_MW/MARIA/newWRF_MW_THO/run/201709171200/perturb_ic
+/expanse/lustre/scratch/zuy121/temp_project/Pro2_PSU_MW/MARIA/newWRF_MW_THO/run/201709171200/perturb_ic
+/expanse/lustre/scratch/zuy121/temp_project/Pro2_PSU_MW/MARIA/newWRF_MW_THO/run/201709171200/perturb_ic
+/expanse/lustre/scratch/zuy121/temp_project/Pro2_PSU_MW/MARIA/newWRF_MW_THO/run/201709171200/perturb_ic
+/expanse/lustre/scratch/zuy121/temp_project/Pro2_PSU_MW/MARIA/newWRF_MW_THO/run/201709171200/perturb_ic
+/expanse/lustre/scratch/zuy121/temp_project/Pro2_PSU_MW/MARIA/newWRF_MW_THO/run/201709171200/perturb_ic
+/expanse/lustre/scratch/zuy121/temp_project/Pro2_PSU_MW/MARIA/newWRF_MW_THO/run/201709171200/perturb_ic
+/expanse/lustre/scratch/zuy121/temp_project/Pro2_PSU_MW/MARIA/newWRF_MW_THO/run/201709171200/perturb_ic
+/expanse/lustre/scratch/zuy121/temp_project/Pro2_PSU_MW/MARIA/newWRF_MW_THO/run/201709171200/perturb_ic
+/expanse/lustre/scratch/zuy121/temp_project/Pro2_PSU_MW/MARIA/newWRF_MW_THO/run/201709171200/perturb_ic
+/expanse/lustre/scratch/zuy121/temp_project/Pro2_PSU_MW/MARIA/newWRF_MW_THO/run/201709171200/perturb_ic
+/expanse/lustre/scratch/zuy121/temp_project/Pro2_PSU_MW/MARIA/newWRF_MW_THO/run/201709171200/perturb_ic
+/expanse/lustre/scratch/zuy121/temp_project/Pro2_PSU_MW/MARIA/newWRF_MW_THO/run/201709171200/perturb_ic
+/expanse/lustre/scratch/zuy121/temp_project/Pro2_PSU_MW/MARIA/newWRF_MW_THO/run/201709171200/perturb_ic
+/expanse/lustre/scratch/zuy121/temp_project/Pro2_PSU_MW/MARIA/newWRF_MW_THO/run/201709171200/perturb_ic
+/expanse/lustre/scratch/zuy121/temp_project/Pro2_PSU_MW/MARIA/newWRF_MW_THO/run/201709171200/perturb_ic
+/expanse/lustre/scratch/zuy121/temp_project/Pro2_PSU_MW/MARIA/newWRF_MW_THO/run/201709171200/perturb_ic
+/expanse/lustre/scratch/zuy121/temp_project/Pro2_PSU_MW/MARIA/newWRF_MW_THO/run/201709171200/perturb_ic
+/expanse/lustre/scratch/zuy121/temp_project/Pro2_PSU_MW/MARIA/newWRF_MW_THO/run/201709171200/perturb_ic
+/expanse/lustre/scratch/zuy121/temp_project/Pro2_PSU_MW/MARIA/newWRF_MW_THO/run/201709171200/perturb_ic
+/expanse/lustre/scratch/zuy121/temp_project/Pro2_PSU_MW/MARIA/newWRF_MW_THO/run/201709171200/perturb_ic
+/expanse/lustre/scratch/zuy121/temp_project/Pro2_PSU_MW/MARIA/newWRF_MW_THO/run/201709171200/perturb_ic
+    Nestdown perturbation for inner domains...
+begin nest down for d02
+  any need to work on member  001
+/expanse/lustre/scratch/zuy121/temp_project/Pro2_PSU_MW/MARIA/newWRF_MW_THO/run/201709171200/perturb_ic/001/d02/rsl.error.0000
+  yes
+  any need to work on member  002
+/expanse/lustre/scratch/zuy121/temp_project/Pro2_PSU_MW/MARIA/newWRF_MW_THO/run/201709171200/perturb_ic/002/d02/rsl.error.0000
+  yes
+  any need to work on member  003
+/expanse/lustre/scratch/zuy121/temp_project/Pro2_PSU_MW/MARIA/newWRF_MW_THO/run/201709171200/perturb_ic/003/d02/rsl.error.0000
+  yes
+  any need to work on member  004
+/expanse/lustre/scratch/zuy121/temp_project/Pro2_PSU_MW/MARIA/newWRF_MW_THO/run/201709171200/perturb_ic/004/d02/rsl.error.0000
+  yes
+  any need to work on member  005
+/expanse/lustre/scratch/zuy121/temp_project/Pro2_PSU_MW/MARIA/newWRF_MW_THO/run/201709171200/perturb_ic/005/d02/rsl.error.0000
+  yes
+  any need to work on member  006
+/expanse/lustre/scratch/zuy121/temp_project/Pro2_PSU_MW/MARIA/newWRF_MW_THO/run/201709171200/perturb_ic/006/d02/rsl.error.0000
+  yes
+  any need to work on member  007
+/expanse/lustre/scratch/zuy121/temp_project/Pro2_PSU_MW/MARIA/newWRF_MW_THO/run/201709171200/perturb_ic/007/d02/rsl.error.0000
+  yes
+  any need to work on member  008
+/expanse/lustre/scratch/zuy121/temp_project/Pro2_PSU_MW/MARIA/newWRF_MW_THO/run/201709171200/perturb_ic/008/d02/rsl.error.0000
+  yes
+  any need to work on member  009
+/expanse/lustre/scratch/zuy121/temp_project/Pro2_PSU_MW/MARIA/newWRF_MW_THO/run/201709171200/perturb_ic/009/d02/rsl.error.0000
+  yes
+  any need to work on member  010
+/expanse/lustre/scratch/zuy121/temp_project/Pro2_PSU_MW/MARIA/newWRF_MW_THO/run/201709171200/perturb_ic/010/d02/rsl.error.0000
+  yes
+  any need to work on member  011
+/expanse/lustre/scratch/zuy121/temp_project/Pro2_PSU_MW/MARIA/newWRF_MW_THO/run/201709171200/perturb_ic/011/d02/rsl.error.0000
+  yes
+  any need to work on member  012
+/expanse/lustre/scratch/zuy121/temp_project/Pro2_PSU_MW/MARIA/newWRF_MW_THO/run/201709171200/perturb_ic/012/d02/rsl.error.0000
+  yes
+  any need to work on member  013
+/expanse/lustre/scratch/zuy121/temp_project/Pro2_PSU_MW/MARIA/newWRF_MW_THO/run/201709171200/perturb_ic/013/d02/rsl.error.0000
+  yes
+  any need to work on member  014
+/expanse/lustre/scratch/zuy121/temp_project/Pro2_PSU_MW/MARIA/newWRF_MW_THO/run/201709171200/perturb_ic/014/d02/rsl.error.0000
+  yes
+  any need to work on member  015
+/expanse/lustre/scratch/zuy121/temp_project/Pro2_PSU_MW/MARIA/newWRF_MW_THO/run/201709171200/perturb_ic/015/d02/rsl.error.0000
+  yes
+  any need to work on member  016
+/expanse/lustre/scratch/zuy121/temp_project/Pro2_PSU_MW/MARIA/newWRF_MW_THO/run/201709171200/perturb_ic/016/d02/rsl.error.0000
+  yes
+  any need to work on member  017
+/expanse/lustre/scratch/zuy121/temp_project/Pro2_PSU_MW/MARIA/newWRF_MW_THO/run/201709171200/perturb_ic/017/d02/rsl.error.0000
+  yes
+  any need to work on member  018
+/expanse/lustre/scratch/zuy121/temp_project/Pro2_PSU_MW/MARIA/newWRF_MW_THO/run/201709171200/perturb_ic/018/d02/rsl.error.0000
+  yes
+  any need to work on member  019
+/expanse/lustre/scratch/zuy121/temp_project/Pro2_PSU_MW/MARIA/newWRF_MW_THO/run/201709171200/perturb_ic/019/d02/rsl.error.0000
+  yes
+  any need to work on member  020
+/expanse/lustre/scratch/zuy121/temp_project/Pro2_PSU_MW/MARIA/newWRF_MW_THO/run/201709171200/perturb_ic/020/d02/rsl.error.0000
+  yes
+  any need to work on member  021
+/expanse/lustre/scratch/zuy121/temp_project/Pro2_PSU_MW/MARIA/newWRF_MW_THO/run/201709171200/perturb_ic/021/d02/rsl.error.0000
+  yes
+  any need to work on member  022
+/expanse/lustre/scratch/zuy121/temp_project/Pro2_PSU_MW/MARIA/newWRF_MW_THO/run/201709171200/perturb_ic/022/d02/rsl.error.0000
+  yes
+  any need to work on member  023
+/expanse/lustre/scratch/zuy121/temp_project/Pro2_PSU_MW/MARIA/newWRF_MW_THO/run/201709171200/perturb_ic/023/d02/rsl.error.0000
+  yes
+  any need to work on member  024
+/expanse/lustre/scratch/zuy121/temp_project/Pro2_PSU_MW/MARIA/newWRF_MW_THO/run/201709171200/perturb_ic/024/d02/rsl.error.0000
+  yes
+  any need to work on member  025
+/expanse/lustre/scratch/zuy121/temp_project/Pro2_PSU_MW/MARIA/newWRF_MW_THO/run/201709171200/perturb_ic/025/d02/rsl.error.0000
+  yes
+  any need to work on member  026
+/expanse/lustre/scratch/zuy121/temp_project/Pro2_PSU_MW/MARIA/newWRF_MW_THO/run/201709171200/perturb_ic/026/d02/rsl.error.0000
+  yes
+  any need to work on member  027
+/expanse/lustre/scratch/zuy121/temp_project/Pro2_PSU_MW/MARIA/newWRF_MW_THO/run/201709171200/perturb_ic/027/d02/rsl.error.0000
+  yes
+  any need to work on member  028
+/expanse/lustre/scratch/zuy121/temp_project/Pro2_PSU_MW/MARIA/newWRF_MW_THO/run/201709171200/perturb_ic/028/d02/rsl.error.0000
+  yes
+  any need to work on member  029
+/expanse/lustre/scratch/zuy121/temp_project/Pro2_PSU_MW/MARIA/newWRF_MW_THO/run/201709171200/perturb_ic/029/d02/rsl.error.0000
+  yes
+  any need to work on member  030
+/expanse/lustre/scratch/zuy121/temp_project/Pro2_PSU_MW/MARIA/newWRF_MW_THO/run/201709171200/perturb_ic/030/d02/rsl.error.0000
+  yes
+  any need to work on member  031
+/expanse/lustre/scratch/zuy121/temp_project/Pro2_PSU_MW/MARIA/newWRF_MW_THO/run/201709171200/perturb_ic/031/d02/rsl.error.0000
+  yes
+  any need to work on member  032
+/expanse/lustre/scratch/zuy121/temp_project/Pro2_PSU_MW/MARIA/newWRF_MW_THO/run/201709171200/perturb_ic/032/d02/rsl.error.0000
+  yes
+  any need to work on member  033
+/expanse/lustre/scratch/zuy121/temp_project/Pro2_PSU_MW/MARIA/newWRF_MW_THO/run/201709171200/perturb_ic/033/d02/rsl.error.0000
+  yes
+  any need to work on member  034
+/expanse/lustre/scratch/zuy121/temp_project/Pro2_PSU_MW/MARIA/newWRF_MW_THO/run/201709171200/perturb_ic/034/d02/rsl.error.0000
+  yes
+  any need to work on member  035
+/expanse/lustre/scratch/zuy121/temp_project/Pro2_PSU_MW/MARIA/newWRF_MW_THO/run/201709171200/perturb_ic/035/d02/rsl.error.0000
+  yes
+  any need to work on member  036
+/expanse/lustre/scratch/zuy121/temp_project/Pro2_PSU_MW/MARIA/newWRF_MW_THO/run/201709171200/perturb_ic/036/d02/rsl.error.0000
+  yes
+  any need to work on member  037
+/expanse/lustre/scratch/zuy121/temp_project/Pro2_PSU_MW/MARIA/newWRF_MW_THO/run/201709171200/perturb_ic/037/d02/rsl.error.0000
+  yes
+  any need to work on member  038
+/expanse/lustre/scratch/zuy121/temp_project/Pro2_PSU_MW/MARIA/newWRF_MW_THO/run/201709171200/perturb_ic/038/d02/rsl.error.0000
+  yes
+  any need to work on member  039
+/expanse/lustre/scratch/zuy121/temp_project/Pro2_PSU_MW/MARIA/newWRF_MW_THO/run/201709171200/perturb_ic/039/d02/rsl.error.0000
+  yes
+  any need to work on member  040
+/expanse/lustre/scratch/zuy121/temp_project/Pro2_PSU_MW/MARIA/newWRF_MW_THO/run/201709171200/perturb_ic/040/d02/rsl.error.0000
+  yes
+  any need to work on member  041
+/expanse/lustre/scratch/zuy121/temp_project/Pro2_PSU_MW/MARIA/newWRF_MW_THO/run/201709171200/perturb_ic/041/d02/rsl.error.0000
+  yes
+  any need to work on member  042
+/expanse/lustre/scratch/zuy121/temp_project/Pro2_PSU_MW/MARIA/newWRF_MW_THO/run/201709171200/perturb_ic/042/d02/rsl.error.0000
+  yes
+  any need to work on member  043
+/expanse/lustre/scratch/zuy121/temp_project/Pro2_PSU_MW/MARIA/newWRF_MW_THO/run/201709171200/perturb_ic/043/d02/rsl.error.0000
+  yes
+  any need to work on member  044
+/expanse/lustre/scratch/zuy121/temp_project/Pro2_PSU_MW/MARIA/newWRF_MW_THO/run/201709171200/perturb_ic/044/d02/rsl.error.0000
+  yes
+  any need to work on member  045
+/expanse/lustre/scratch/zuy121/temp_project/Pro2_PSU_MW/MARIA/newWRF_MW_THO/run/201709171200/perturb_ic/045/d02/rsl.error.0000
+  yes
+  any need to work on member  046
+/expanse/lustre/scratch/zuy121/temp_project/Pro2_PSU_MW/MARIA/newWRF_MW_THO/run/201709171200/perturb_ic/046/d02/rsl.error.0000
+  yes
+  any need to work on member  047
+/expanse/lustre/scratch/zuy121/temp_project/Pro2_PSU_MW/MARIA/newWRF_MW_THO/run/201709171200/perturb_ic/047/d02/rsl.error.0000
+  yes
+  any need to work on member  048
+/expanse/lustre/scratch/zuy121/temp_project/Pro2_PSU_MW/MARIA/newWRF_MW_THO/run/201709171200/perturb_ic/048/d02/rsl.error.0000
+  yes
+  any need to work on member  049
+/expanse/lustre/scratch/zuy121/temp_project/Pro2_PSU_MW/MARIA/newWRF_MW_THO/run/201709171200/perturb_ic/049/d02/rsl.error.0000
+  yes
+  any need to work on member  050
+/expanse/lustre/scratch/zuy121/temp_project/Pro2_PSU_MW/MARIA/newWRF_MW_THO/run/201709171200/perturb_ic/050/d02/rsl.error.0000
+  yes
+  any need to work on member  051
+/expanse/lustre/scratch/zuy121/temp_project/Pro2_PSU_MW/MARIA/newWRF_MW_THO/run/201709171200/perturb_ic/051/d02/rsl.error.0000
+  yes
+  any need to work on member  052
+/expanse/lustre/scratch/zuy121/temp_project/Pro2_PSU_MW/MARIA/newWRF_MW_THO/run/201709171200/perturb_ic/052/d02/rsl.error.0000
+  yes
+  any need to work on member  053
+/expanse/lustre/scratch/zuy121/temp_project/Pro2_PSU_MW/MARIA/newWRF_MW_THO/run/201709171200/perturb_ic/053/d02/rsl.error.0000
+  yes
+  any need to work on member  054
+/expanse/lustre/scratch/zuy121/temp_project/Pro2_PSU_MW/MARIA/newWRF_MW_THO/run/201709171200/perturb_ic/054/d02/rsl.error.0000
+  yes
+  any need to work on member  055
+/expanse/lustre/scratch/zuy121/temp_project/Pro2_PSU_MW/MARIA/newWRF_MW_THO/run/201709171200/perturb_ic/055/d02/rsl.error.0000
+  yes
+  any need to work on member  056
+/expanse/lustre/scratch/zuy121/temp_project/Pro2_PSU_MW/MARIA/newWRF_MW_THO/run/201709171200/perturb_ic/056/d02/rsl.error.0000
+  yes
+  any need to work on member  057
+/expanse/lustre/scratch/zuy121/temp_project/Pro2_PSU_MW/MARIA/newWRF_MW_THO/run/201709171200/perturb_ic/057/d02/rsl.error.0000
+  yes
+  any need to work on member  058
+/expanse/lustre/scratch/zuy121/temp_project/Pro2_PSU_MW/MARIA/newWRF_MW_THO/run/201709171200/perturb_ic/058/d02/rsl.error.0000
+  yes
+  any need to work on member  059
+/expanse/lustre/scratch/zuy121/temp_project/Pro2_PSU_MW/MARIA/newWRF_MW_THO/run/201709171200/perturb_ic/059/d02/rsl.error.0000
+  yes
+  any need to work on member  060
+/expanse/lustre/scratch/zuy121/temp_project/Pro2_PSU_MW/MARIA/newWRF_MW_THO/run/201709171200/perturb_ic/060/d02/rsl.error.0000
+  yes
+begin nest down for d03
+  any need to work on member  001
+/expanse/lustre/scratch/zuy121/temp_project/Pro2_PSU_MW/MARIA/newWRF_MW_THO/run/201709171200/perturb_ic/001/d03/rsl.error.0000
+  yes
+  any need to work on member  002
+/expanse/lustre/scratch/zuy121/temp_project/Pro2_PSU_MW/MARIA/newWRF_MW_THO/run/201709171200/perturb_ic/002/d03/rsl.error.0000
+  yes
+  any need to work on member  003
+/expanse/lustre/scratch/zuy121/temp_project/Pro2_PSU_MW/MARIA/newWRF_MW_THO/run/201709171200/perturb_ic/003/d03/rsl.error.0000
+  yes
+  any need to work on member  004
+/expanse/lustre/scratch/zuy121/temp_project/Pro2_PSU_MW/MARIA/newWRF_MW_THO/run/201709171200/perturb_ic/004/d03/rsl.error.0000
+  yes
+  any need to work on member  005
+/expanse/lustre/scratch/zuy121/temp_project/Pro2_PSU_MW/MARIA/newWRF_MW_THO/run/201709171200/perturb_ic/005/d03/rsl.error.0000
+  yes
+  any need to work on member  006
+/expanse/lustre/scratch/zuy121/temp_project/Pro2_PSU_MW/MARIA/newWRF_MW_THO/run/201709171200/perturb_ic/006/d03/rsl.error.0000
+  yes
+  any need to work on member  007
+/expanse/lustre/scratch/zuy121/temp_project/Pro2_PSU_MW/MARIA/newWRF_MW_THO/run/201709171200/perturb_ic/007/d03/rsl.error.0000
+  yes
+  any need to work on member  008
+/expanse/lustre/scratch/zuy121/temp_project/Pro2_PSU_MW/MARIA/newWRF_MW_THO/run/201709171200/perturb_ic/008/d03/rsl.error.0000
+  yes
+  any need to work on member  009
+/expanse/lustre/scratch/zuy121/temp_project/Pro2_PSU_MW/MARIA/newWRF_MW_THO/run/201709171200/perturb_ic/009/d03/rsl.error.0000
+  yes
+  any need to work on member  010
+/expanse/lustre/scratch/zuy121/temp_project/Pro2_PSU_MW/MARIA/newWRF_MW_THO/run/201709171200/perturb_ic/010/d03/rsl.error.0000
+  yes
+  any need to work on member  011
+/expanse/lustre/scratch/zuy121/temp_project/Pro2_PSU_MW/MARIA/newWRF_MW_THO/run/201709171200/perturb_ic/011/d03/rsl.error.0000
+  yes
+  any need to work on member  012
+/expanse/lustre/scratch/zuy121/temp_project/Pro2_PSU_MW/MARIA/newWRF_MW_THO/run/201709171200/perturb_ic/012/d03/rsl.error.0000
+  yes
+  any need to work on member  013
+/expanse/lustre/scratch/zuy121/temp_project/Pro2_PSU_MW/MARIA/newWRF_MW_THO/run/201709171200/perturb_ic/013/d03/rsl.error.0000
+  yes
+  any need to work on member  014
+/expanse/lustre/scratch/zuy121/temp_project/Pro2_PSU_MW/MARIA/newWRF_MW_THO/run/201709171200/perturb_ic/014/d03/rsl.error.0000
+  yes
+  any need to work on member  015
+/expanse/lustre/scratch/zuy121/temp_project/Pro2_PSU_MW/MARIA/newWRF_MW_THO/run/201709171200/perturb_ic/015/d03/rsl.error.0000
+  yes
+  any need to work on member  016
+/expanse/lustre/scratch/zuy121/temp_project/Pro2_PSU_MW/MARIA/newWRF_MW_THO/run/201709171200/perturb_ic/016/d03/rsl.error.0000
+  yes
+  any need to work on member  017
+/expanse/lustre/scratch/zuy121/temp_project/Pro2_PSU_MW/MARIA/newWRF_MW_THO/run/201709171200/perturb_ic/017/d03/rsl.error.0000
+  yes
+  any need to work on member  018
+/expanse/lustre/scratch/zuy121/temp_project/Pro2_PSU_MW/MARIA/newWRF_MW_THO/run/201709171200/perturb_ic/018/d03/rsl.error.0000
+  yes
+  any need to work on member  019
+/expanse/lustre/scratch/zuy121/temp_project/Pro2_PSU_MW/MARIA/newWRF_MW_THO/run/201709171200/perturb_ic/019/d03/rsl.error.0000
+  yes
+  any need to work on member  020
+/expanse/lustre/scratch/zuy121/temp_project/Pro2_PSU_MW/MARIA/newWRF_MW_THO/run/201709171200/perturb_ic/020/d03/rsl.error.0000
+  yes
+  any need to work on member  021
+/expanse/lustre/scratch/zuy121/temp_project/Pro2_PSU_MW/MARIA/newWRF_MW_THO/run/201709171200/perturb_ic/021/d03/rsl.error.0000
+  yes
+  any need to work on member  022
+/expanse/lustre/scratch/zuy121/temp_project/Pro2_PSU_MW/MARIA/newWRF_MW_THO/run/201709171200/perturb_ic/022/d03/rsl.error.0000
+  yes
+  any need to work on member  023
+/expanse/lustre/scratch/zuy121/temp_project/Pro2_PSU_MW/MARIA/newWRF_MW_THO/run/201709171200/perturb_ic/023/d03/rsl.error.0000
+  yes
+  any need to work on member  024
+/expanse/lustre/scratch/zuy121/temp_project/Pro2_PSU_MW/MARIA/newWRF_MW_THO/run/201709171200/perturb_ic/024/d03/rsl.error.0000
+  yes
+  any need to work on member  025
+/expanse/lustre/scratch/zuy121/temp_project/Pro2_PSU_MW/MARIA/newWRF_MW_THO/run/201709171200/perturb_ic/025/d03/rsl.error.0000
+  yes
+  any need to work on member  026
+/expanse/lustre/scratch/zuy121/temp_project/Pro2_PSU_MW/MARIA/newWRF_MW_THO/run/201709171200/perturb_ic/026/d03/rsl.error.0000
+  yes
+  any need to work on member  027
+/expanse/lustre/scratch/zuy121/temp_project/Pro2_PSU_MW/MARIA/newWRF_MW_THO/run/201709171200/perturb_ic/027/d03/rsl.error.0000
+  yes
+  any need to work on member  028
+/expanse/lustre/scratch/zuy121/temp_project/Pro2_PSU_MW/MARIA/newWRF_MW_THO/run/201709171200/perturb_ic/028/d03/rsl.error.0000
+  yes
+  any need to work on member  029
+/expanse/lustre/scratch/zuy121/temp_project/Pro2_PSU_MW/MARIA/newWRF_MW_THO/run/201709171200/perturb_ic/029/d03/rsl.error.0000
+  yes
+  any need to work on member  030
+/expanse/lustre/scratch/zuy121/temp_project/Pro2_PSU_MW/MARIA/newWRF_MW_THO/run/201709171200/perturb_ic/030/d03/rsl.error.0000
+  yes
+  any need to work on member  031
+/expanse/lustre/scratch/zuy121/temp_project/Pro2_PSU_MW/MARIA/newWRF_MW_THO/run/201709171200/perturb_ic/031/d03/rsl.error.0000
+  yes
+  any need to work on member  032
+/expanse/lustre/scratch/zuy121/temp_project/Pro2_PSU_MW/MARIA/newWRF_MW_THO/run/201709171200/perturb_ic/032/d03/rsl.error.0000
+  yes
+  any need to work on member  033
+/expanse/lustre/scratch/zuy121/temp_project/Pro2_PSU_MW/MARIA/newWRF_MW_THO/run/201709171200/perturb_ic/033/d03/rsl.error.0000
+  yes
+  any need to work on member  034
+/expanse/lustre/scratch/zuy121/temp_project/Pro2_PSU_MW/MARIA/newWRF_MW_THO/run/201709171200/perturb_ic/034/d03/rsl.error.0000
+  yes
+  any need to work on member  035
+/expanse/lustre/scratch/zuy121/temp_project/Pro2_PSU_MW/MARIA/newWRF_MW_THO/run/201709171200/perturb_ic/035/d03/rsl.error.0000
+  yes
+  any need to work on member  036
+/expanse/lustre/scratch/zuy121/temp_project/Pro2_PSU_MW/MARIA/newWRF_MW_THO/run/201709171200/perturb_ic/036/d03/rsl.error.0000
+  yes
+  any need to work on member  037
+/expanse/lustre/scratch/zuy121/temp_project/Pro2_PSU_MW/MARIA/newWRF_MW_THO/run/201709171200/perturb_ic/037/d03/rsl.error.0000
+  yes
+  any need to work on member  038
+/expanse/lustre/scratch/zuy121/temp_project/Pro2_PSU_MW/MARIA/newWRF_MW_THO/run/201709171200/perturb_ic/038/d03/rsl.error.0000
+  yes
+  any need to work on member  039
+/expanse/lustre/scratch/zuy121/temp_project/Pro2_PSU_MW/MARIA/newWRF_MW_THO/run/201709171200/perturb_ic/039/d03/rsl.error.0000
+  yes
+  any need to work on member  040
+/expanse/lustre/scratch/zuy121/temp_project/Pro2_PSU_MW/MARIA/newWRF_MW_THO/run/201709171200/perturb_ic/040/d03/rsl.error.0000
+  yes
+  any need to work on member  041
+/expanse/lustre/scratch/zuy121/temp_project/Pro2_PSU_MW/MARIA/newWRF_MW_THO/run/201709171200/perturb_ic/041/d03/rsl.error.0000
+  yes
+  any need to work on member  042
+/expanse/lustre/scratch/zuy121/temp_project/Pro2_PSU_MW/MARIA/newWRF_MW_THO/run/201709171200/perturb_ic/042/d03/rsl.error.0000
+  yes
+  any need to work on member  043
+/expanse/lustre/scratch/zuy121/temp_project/Pro2_PSU_MW/MARIA/newWRF_MW_THO/run/201709171200/perturb_ic/043/d03/rsl.error.0000
+  yes
+  any need to work on member  044
+/expanse/lustre/scratch/zuy121/temp_project/Pro2_PSU_MW/MARIA/newWRF_MW_THO/run/201709171200/perturb_ic/044/d03/rsl.error.0000
+  yes
+  any need to work on member  045
+/expanse/lustre/scratch/zuy121/temp_project/Pro2_PSU_MW/MARIA/newWRF_MW_THO/run/201709171200/perturb_ic/045/d03/rsl.error.0000
+  yes
+  any need to work on member  046
+/expanse/lustre/scratch/zuy121/temp_project/Pro2_PSU_MW/MARIA/newWRF_MW_THO/run/201709171200/perturb_ic/046/d03/rsl.error.0000
+  yes
+  any need to work on member  047
+/expanse/lustre/scratch/zuy121/temp_project/Pro2_PSU_MW/MARIA/newWRF_MW_THO/run/201709171200/perturb_ic/047/d03/rsl.error.0000
+  yes
+  any need to work on member  048
+/expanse/lustre/scratch/zuy121/temp_project/Pro2_PSU_MW/MARIA/newWRF_MW_THO/run/201709171200/perturb_ic/048/d03/rsl.error.0000
+  yes
+  any need to work on member  049
+/expanse/lustre/scratch/zuy121/temp_project/Pro2_PSU_MW/MARIA/newWRF_MW_THO/run/201709171200/perturb_ic/049/d03/rsl.error.0000
+  yes
+  any need to work on member  050
+/expanse/lustre/scratch/zuy121/temp_project/Pro2_PSU_MW/MARIA/newWRF_MW_THO/run/201709171200/perturb_ic/050/d03/rsl.error.0000
+  yes
+  any need to work on member  051
+/expanse/lustre/scratch/zuy121/temp_project/Pro2_PSU_MW/MARIA/newWRF_MW_THO/run/201709171200/perturb_ic/051/d03/rsl.error.0000
+  yes
+  any need to work on member  052
+/expanse/lustre/scratch/zuy121/temp_project/Pro2_PSU_MW/MARIA/newWRF_MW_THO/run/201709171200/perturb_ic/052/d03/rsl.error.0000
+  yes
+  any need to work on member  053
+/expanse/lustre/scratch/zuy121/temp_project/Pro2_PSU_MW/MARIA/newWRF_MW_THO/run/201709171200/perturb_ic/053/d03/rsl.error.0000
+  yes
+  any need to work on member  054
+/expanse/lustre/scratch/zuy121/temp_project/Pro2_PSU_MW/MARIA/newWRF_MW_THO/run/201709171200/perturb_ic/054/d03/rsl.error.0000
+  yes
+  any need to work on member  055
+/expanse/lustre/scratch/zuy121/temp_project/Pro2_PSU_MW/MARIA/newWRF_MW_THO/run/201709171200/perturb_ic/055/d03/rsl.error.0000
+  yes
+  any need to work on member  056
+/expanse/lustre/scratch/zuy121/temp_project/Pro2_PSU_MW/MARIA/newWRF_MW_THO/run/201709171200/perturb_ic/056/d03/rsl.error.0000
+  yes
+  any need to work on member  057
+/expanse/lustre/scratch/zuy121/temp_project/Pro2_PSU_MW/MARIA/newWRF_MW_THO/run/201709171200/perturb_ic/057/d03/rsl.error.0000
+  yes
+  any need to work on member  058
+/expanse/lustre/scratch/zuy121/temp_project/Pro2_PSU_MW/MARIA/newWRF_MW_THO/run/201709171200/perturb_ic/058/d03/rsl.error.0000
+  yes
+  any need to work on member  059
+/expanse/lustre/scratch/zuy121/temp_project/Pro2_PSU_MW/MARIA/newWRF_MW_THO/run/201709171200/perturb_ic/059/d03/rsl.error.0000
+  yes
+  any need to work on member  060
+/expanse/lustre/scratch/zuy121/temp_project/Pro2_PSU_MW/MARIA/newWRF_MW_THO/run/201709171200/perturb_ic/060/d03/rsl.error.0000
+  yes
+[H[2J[3J
+  % Total    % Received % Xferd  Average Speed   Time    Time     Time  Current
+                                 Dload  Upload   Total   Spent    Left  Speed
+  0     0    0     0    0     0      0      0 --:--:-- --:--:-- --:--:--     0100    14  100    14    0     0    124      0 --:--:-- --:--:-- --:--:--   125
+   IP ADDR: 198.202.100.13
+   USER: zuy121
+   DATE: Sat Sep 17 10:15:51 PDT 2022
+   UPTIME: up 2 weeks, 4 days, 20 hours, 8 minutes
+   HOSTNAME: login01.expanse.sdsc.edu
+   KERNEL: Linux 4.18.0-348.23.1.el8_5.x86_64 x86_64
+   MEMORY: 23Gi/125Gi
+
+  Running ObsProc...
+[H[2J[3J
+  % Total    % Received % Xferd  Average Speed   Time    Time     Time  Current
+                                 Dload  Upload   Total   Spent    Left  Speed
+  0     0    0     0    0     0      0      0 --:--:-- --:--:-- --:--:--     0100    14  100    14    0     0    237      0 --:--:-- --:--:-- --:--:--   241
+   IP ADDR: 198.202.100.13
+   USER: zuy121
+   DATE: Sat Sep 17 10:17:07 PDT 2022
+   UPTIME: up 2 weeks, 4 days, 20 hours, 9 minutes
+   HOSTNAME: login01.expanse.sdsc.edu
+   KERNEL: Linux 4.18.0-348.23.1.el8_5.x86_64 x86_64
+   MEMORY: 24Gi/125Gi
+
+  Running EnKF...
+    Linking files for domain d01
+/expanse/lustre/scratch/zuy121/temp_project/Pro2_PSU_MW/MARIA/newWRF_MW_THO/run/201709171200/enkf/d01/crtm_out_
+    Linking files for domain d02
+/expanse/lustre/scratch/zuy121/temp_project/Pro2_PSU_MW/MARIA/newWRF_MW_THO/run/201709171200/enkf/d02/crtm_out_
+    Linking files for domain d03
+/expanse/lustre/scratch/zuy121/temp_project/Pro2_PSU_MW/MARIA/newWRF_MW_THO/run/201709171200/enkf/d03/crtm_out_
+    Running enkf.mpi
+  Replacing environment with GFS for domain d01
+  Replacing environment with GFS for domain d02
+  Replacing environment with GFS for domain d03
+[H[2J[3J
+  % Total    % Received % Xferd  Average Speed   Time    Time     Time  Current
+                                 Dload  Upload   Total   Spent    Left  Speed
+  0     0    0     0    0     0      0      0 --:--:-- --:--:-- --:--:--     0100    14  100    14    0     0    131      0 --:--:-- --:--:-- --:--:--   132
+   IP ADDR: 198.202.100.13
+   USER: zuy121
+   DATE: Sat Sep 17 10:32:52 PDT 2022
+   UPTIME: up 2 weeks, 4 days, 20 hours, 25 minutes
+   HOSTNAME: login01.expanse.sdsc.edu
+   KERNEL: Linux 4.18.0-348.23.1.el8_5.x86_64 x86_64
+   MEMORY: 23Gi/125Gi
+
+  Running UpdateBC...
+[H[2J[3J
+  % Total    % Received % Xferd  Average Speed   Time    Time     Time  Current
+                                 Dload  Upload   Total   Spent    Left  Speed
+  0     0    0     0    0     0      0      0 --:--:-- --:--:-- --:--:--     0100    14  100    14    0     0    234      0 --:--:-- --:--:-- --:--:--   237
+   IP ADDR: 198.202.100.13
+   USER: zuy121
+   DATE: Sat Sep 17 10:34:29 PDT 2022
+   UPTIME: up 2 weeks, 4 days, 20 hours, 26 minutes
+   HOSTNAME: login01.expanse.sdsc.edu
+   KERNEL: Linux 4.18.0-348.23.1.el8_5.x86_64 x86_64
+   MEMORY: 22Gi/125Gi
+
+  Running WRF ensemble...
+grep: /expanse/lustre/scratch/zuy121/temp_project/Pro2_PSU_MW/MARIA/newWRF_MW_THO/run/201709171200/wrf_ens/034/rsl.error.0000: Input/output error
+/expanse/lustre/scratch/zuy121/temp_project/Pro2_PSU_MW/MARIA/newWRF_MW_THO/run/201709171200/wrf_ens/036/rsl.error.0000 stagnant for 5 minutes! Abort.
+Sat Sep 17 16:28:53 PDT 2022
+cat: run/201709171200/run/201709171200/enkf/stat: No such file or directory
+cat: run/201709171200/run/201709171200/icbc/stat: No such file or directory
+cat: run/201709171200/run/201709171200/obsproc/stat: No such file or directory
+cat: run/201709171200/run/201709171200/perturb_ic/stat: No such file or directory
+cat: run/201709171200/run/201709171200/update_bc/stat: No such file or directory
+cat: run/201709171200/run/201709171200/wrf_ens/stat: No such file or directory
+(standard_in) 2: syntax error
+----------------------------------------------------------------------
+CURRENT CYCLE: 2017-09-17_13:00:00 => 2017-09-17_14:00:00
+cat: 'run/201709171300/*/stat': No such file or directory
+./MARIA_IRMW.sh: line 111: run/201709171300/*/stat: No such file or directory
+[H[2J[3J
+  % Total    % Received % Xferd  Average Speed   Time    Time     Time  Current
+                                 Dload  Upload   Total   Spent    Left  Speed
+  0     0    0     0    0     0      0      0 --:--:-- --:--:-- --:--:--     0  0     0    0     0    0     0      0      0 --:--:-- --:--:-- --:--:--     0100    14  100    14    0     0    117      0 --:--:-- --:--:-- --:--:--   117
+   IP ADDR: 198.202.100.13
+   USER: zuy121
+   DATE: Sat Sep 17 16:28:55 PDT 2022
+   UPTIME: up 2 weeks, 5 days, 2 hours, 21 minutes
+   HOSTNAME: login01.expanse.sdsc.edu
+   KERNEL: Linux 4.18.0-348.23.1.el8_5.x86_64 x86_64
+   MEMORY: 21Gi/125Gi
+
+  Calculating preset nesting...
+[H[2J[3J
+  % Total    % Received % Xferd  Average Speed   Time    Time     Time  Current
+                                 Dload  Upload   Total   Spent    Left  Speed
+  0     0    0     0    0     0      0      0 --:--:-- --:--:-- --:--:--     0100    14  100    14    0     0    233      0 --:--:-- --:--:-- --:--:--   237
+   IP ADDR: 198.202.100.13
+   USER: zuy121
+   DATE: Sat Sep 17 16:29:10 PDT 2022
+   UPTIME: up 2 weeks, 5 days, 2 hours, 21 minutes
+   HOSTNAME: login01.expanse.sdsc.edu
+   KERNEL: Linux 4.18.0-348.23.1.el8_5.x86_64 x86_64
+   MEMORY: 21Gi/125Gi
+
+  Running ObsProc...
+[H[2J[3J
+  % Total    % Received % Xferd  Average Speed   Time    Time     Time  Current
+                                 Dload  Upload   Total   Spent    Left  Speed
+  0     0    0     0    0     0      0      0 --:--:-- --:--:-- --:--:--     0100    14  100    14    0     0    241      0 --:--:-- --:--:-- --:--:--   245
+   IP ADDR: 198.202.100.13
+   USER: zuy121
+   DATE: Sat Sep 17 16:30:11 PDT 2022
+   UPTIME: up 2 weeks, 5 days, 2 hours, 22 minutes
+   HOSTNAME: login01.expanse.sdsc.edu
+   KERNEL: Linux 4.18.0-348.23.1.el8_5.x86_64 x86_64
+   MEMORY: 21Gi/125Gi
+
+[H[2J[3J
+  % Total    % Received % Xferd  Average Speed   Time    Time     Time  Current
+                                 Dload  Upload   Total   Spent    Left  Speed
+  0     0    0     0    0     0      0      0 --:--:-- --:--:-- --:--:--     0100    14  100    14    0     0    245      0 --:--:-- --:--:-- --:--:--   245
+   IP ADDR: 198.202.100.13
+   USER: zuy121
+   DATE: Sat Sep 17 16:30:27 PDT 2022
+   UPTIME: up 2 weeks, 5 days, 2 hours, 22 minutes
+   HOSTNAME: login01.expanse.sdsc.edu
+   KERNEL: Linux 4.18.0-348.23.1.el8_5.x86_64 x86_64
+   MEMORY: 21Gi/125Gi
+
+[H[2J[3J
+  % Total    % Received % Xferd  Average Speed   Time    Time     Time  Current
+                                 Dload  Upload   Total   Spent    Left  Speed
+  0     0    0     0    0     0      0      0 --:--:-- --:--:-- --:--:--     0100    14  100    14    0     0    238      0 --:--:-- --:--:-- --:--:--   241
+   IP ADDR: 198.202.100.13
+   USER: zuy121
+   DATE: Sat Sep 17 16:30:44 PDT 2022
+   UPTIME: up 2 weeks, 5 days, 2 hours, 22 minutes
+   HOSTNAME: login01.expanse.sdsc.edu
+   KERNEL: Linux 4.18.0-348.23.1.el8_5.x86_64 x86_64
+   MEMORY: 21Gi/125Gi
+
+Sat Sep 17 16:30:59 PDT 2022
+cat: run/201709171300/run/201709171300/enkf/stat: No such file or directory
+cat: run/201709171300/run/201709171300/icbc/stat: No such file or directory
+cat: run/201709171300/run/201709171300/obsproc/stat: No such file or directory
+cat: run/201709171300/run/201709171300/update_bc/stat: No such file or directory
+cat: run/201709171300/run/201709171300/wrf_ens/stat: No such file or directory
+(standard_in) 2: syntax error
+----------------------------------------------------------------------
+CURRENT CYCLE: 2017-09-17_14:00:00 => 2017-09-17_15:00:00
+cat: 'run/201709171400/*/stat': No such file or directory
+./MARIA_IRMW.sh: line 111: run/201709171400/*/stat: No such file or directory
+[H[2J[3J
+  % Total    % Received % Xferd  Average Speed   Time    Time     Time  Current
+                                 Dload  Upload   Total   Spent    Left  Speed
+  0     0    0     0    0     0      0      0 --:--:-- --:--:-- --:--:--     0100    14  100    14    0     0    249      0 --:--:-- --:--:-- --:--:--   250
+   IP ADDR: 198.202.100.13
+   USER: zuy121
+   DATE: Sat Sep 17 16:31:00 PDT 2022
+   UPTIME: up 2 weeks, 5 days, 2 hours, 23 minutes
+   HOSTNAME: login01.expanse.sdsc.edu
+   KERNEL: Linux 4.18.0-348.23.1.el8_5.x86_64 x86_64
+   MEMORY: 21Gi/125Gi
+
+  Calculating preset nesting...
+Timeout waiting for /expanse/lustre/scratch/zuy121/temp_project/Pro2_PSU_MW/MARIA/newWRF_MW_THO/run/201709171400/icbc//expanse/lustre/scratch/zuy121/temp_project/Pro2_PSU_MW/MARIA/newWRF_MW_THO/fc/201709171300/wrfinput_d02_2017-09-17_14:00:00_001. Abort.
+[H[2J[3J
+  % Total    % Received % Xferd  Average Speed   Time    Time     Time  Current
+                                 Dload  Upload   Total   Spent    Left  Speed
+  0     0    0     0    0     0      0      0 --:--:-- --:--:-- --:--:--     0100    14  100    14    0     0    248      0 --:--:-- --:--:-- --:--:--   250
+   IP ADDR: 198.202.100.13
+   USER: zuy121
+   DATE: Sat Sep 17 16:33:02 PDT 2022
+   UPTIME: up 2 weeks, 5 days, 2 hours, 25 minutes
+   HOSTNAME: login01.expanse.sdsc.edu
+   KERNEL: Linux 4.18.0-348.23.1.el8_5.x86_64 x86_64
+   MEMORY: 21Gi/125Gi
+
+  Running ObsProc...
+[H[2J[3J
+  % Total    % Received % Xferd  Average Speed   Time    Time     Time  Current
+                                 Dload  Upload   Total   Spent    Left  Speed
+  0     0    0     0    0     0      0      0 --:--:-- --:--:-- --:--:--     0100    14  100    14    0     0    139      0 --:--:-- --:--:-- --:--:--   140
+   IP ADDR: 198.202.100.13
+   USER: zuy121
+   DATE: Sat Sep 17 16:34:51 PDT 2022
+   UPTIME: up 2 weeks, 5 days, 2 hours, 27 minutes
+   HOSTNAME: login01.expanse.sdsc.edu
+   KERNEL: Linux 4.18.0-348.23.1.el8_5.x86_64 x86_64
+   MEMORY: 20Gi/125Gi
+
+[H[2J[3J
+  % Total    % Received % Xferd  Average Speed   Time    Time     Time  Current
+                                 Dload  Upload   Total   Spent    Left  Speed
+  0     0    0     0    0     0      0      0 --:--:-- --:--:-- --:--:--     0100    14  100    14    0     0    244      0 --:--:-- --:--:-- --:--:--   245
+   IP ADDR: 198.202.100.13
+   USER: zuy121
+   DATE: Sat Sep 17 16:35:08 PDT 2022
+   UPTIME: up 2 weeks, 5 days, 2 hours, 27 minutes
+   HOSTNAME: login01.expanse.sdsc.edu
+   KERNEL: Linux 4.18.0-348.23.1.el8_5.x86_64 x86_64
+   MEMORY: 20Gi/125Gi
+
+[H[2J[3J
+  % Total    % Received % Xferd  Average Speed   Time    Time     Time  Current
+                                 Dload  Upload   Total   Spent    Left  Speed
+  0     0    0     0    0     0      0      0 --:--:-- --:--:-- --:--:--     0100    14  100    14    0     0    250      0 --:--:-- --:--:-- --:--:--   254
+   IP ADDR: 198.202.100.13
+   USER: zuy121
+   DATE: Sat Sep 17 16:35:24 PDT 2022
+   UPTIME: up 2 weeks, 5 days, 2 hours, 27 minutes
+   HOSTNAME: login01.expanse.sdsc.edu
+   KERNEL: Linux 4.18.0-348.23.1.el8_5.x86_64 x86_64
+   MEMORY: 20Gi/125Gi
+
+Sat Sep 17 16:35:39 PDT 2022
+cat: run/201709171400/run/201709171400/enkf/stat: No such file or directory
+cat: run/201709171400/run/201709171400/icbc/stat: No such file or directory
+cat: run/201709171400/run/201709171400/obsproc/stat: No such file or directory
+cat: run/201709171400/run/201709171400/update_bc/stat: No such file or directory
+cat: run/201709171400/run/201709171400/wrf_ens/stat: No such file or directory
+(standard_in) 2: syntax error
+----------------------------------------------------------------------
+CURRENT CYCLE: 2017-09-17_15:00:00 => 2017-09-17_16:00:00
+cat: 'run/201709171500/*/stat': No such file or directory
+./MARIA_IRMW.sh: line 111: run/201709171500/*/stat: No such file or directory
+[H[2J[3J
+  % Total    % Received % Xferd  Average Speed   Time    Time     Time  Current
+                                 Dload  Upload   Total   Spent    Left  Speed
+  0     0    0     0    0     0      0      0 --:--:-- --:--:-- --:--:--     0100    14  100    14    0     0    252      0 --:--:-- --:--:-- --:--:--   254
+   IP ADDR: 198.202.100.13
+   USER: zuy121
+   DATE: Sat Sep 17 16:35:40 PDT 2022
+   UPTIME: up 2 weeks, 5 days, 2 hours, 27 minutes
+   HOSTNAME: login01.expanse.sdsc.edu
+   KERNEL: Linux 4.18.0-348.23.1.el8_5.x86_64 x86_64
+   MEMORY: 20Gi/125Gi
+
+  Calculating preset nesting...
+Timeout waiting for /expanse/lustre/scratch/zuy121/temp_project/Pro2_PSU_MW/MARIA/newWRF_MW_THO/run/201709171500/icbc//expanse/lustre/scratch/zuy121/temp_project/Pro2_PSU_MW/MARIA/newWRF_MW_THO/fc/201709171400/wrfinput_d02_2017-09-17_15:00:00_001. Abort.
+[H[2J[3J
+  % Total    % Received % Xferd  Average Speed   Time    Time     Time  Current
+                                 Dload  Upload   Total   Spent    Left  Speed
+  0     0    0     0    0     0      0      0 --:--:-- --:--:-- --:--:--     0100    14  100    14    0     0    241      0 --:--:-- --:--:-- --:--:--   245
+   IP ADDR: 198.202.100.13
+   USER: zuy121
+   DATE: Sat Sep 17 16:37:42 PDT 2022
+   UPTIME: up 2 weeks, 5 days, 2 hours, 29 minutes
+   HOSTNAME: login01.expanse.sdsc.edu
+   KERNEL: Linux 4.18.0-348.23.1.el8_5.x86_64 x86_64
+   MEMORY: 20Gi/125Gi
+
+  Running ObsProc...
+[H[2J[3J
+  % Total    % Received % Xferd  Average Speed   Time    Time     Time  Current
+                                 Dload  Upload   Total   Spent    Left  Speed
+  0     0    0     0    0     0      0      0 --:--:-- --:--:-- --:--:--     0100    14  100    14    0     0    250      0 --:--:-- --:--:-- --:--:--   254
+   IP ADDR: 198.202.100.13
+   USER: zuy121
+   DATE: Sat Sep 17 16:39:31 PDT 2022
+   UPTIME: up 2 weeks, 5 days, 2 hours, 31 minutes
+   HOSTNAME: login01.expanse.sdsc.edu
+   KERNEL: Linux 4.18.0-348.23.1.el8_5.x86_64 x86_64
+   MEMORY: 21Gi/125Gi
+
+[H[2J[3J
+  % Total    % Received % Xferd  Average Speed   Time    Time     Time  Current
+                                 Dload  Upload   Total   Spent    Left  Speed
+  0     0    0     0    0     0      0      0 --:--:-- --:--:-- --:--:--     0100    14  100    14    0     0    249      0 --:--:-- --:--:-- --:--:--   250
+   IP ADDR: 198.202.100.13
+   USER: zuy121
+   DATE: Sat Sep 17 16:39:47 PDT 2022
+   UPTIME: up 2 weeks, 5 days, 2 hours, 31 minutes
+   HOSTNAME: login01.expanse.sdsc.edu
+   KERNEL: Linux 4.18.0-348.23.1.el8_5.x86_64 x86_64
+   MEMORY: 21Gi/125Gi
+
+[H[2J[3J
+  % Total    % Received % Xferd  Average Speed   Time    Time     Time  Current
+                                 Dload  Upload   Total   Spent    Left  Speed
+  0     0    0     0    0     0      0      0 --:--:-- --:--:-- --:--:--     0100    14  100    14    0     0    130      0 --:--:-- --:--:-- --:--:--   130
+   IP ADDR: 198.202.100.13
+   USER: zuy121
+   DATE: Sat Sep 17 16:40:04 PDT 2022
+   UPTIME: up 2 weeks, 5 days, 2 hours, 32 minutes
+   HOSTNAME: login01.expanse.sdsc.edu
+   KERNEL: Linux 4.18.0-348.23.1.el8_5.x86_64 x86_64
+   MEMORY: 21Gi/125Gi
+
+Sat Sep 17 16:40:19 PDT 2022
+cat: run/201709171500/run/201709171500/enkf/stat: No such file or directory
+cat: run/201709171500/run/201709171500/icbc/stat: No such file or directory
+cat: run/201709171500/run/201709171500/obsproc/stat: No such file or directory
+cat: run/201709171500/run/201709171500/update_bc/stat: No such file or directory
+cat: run/201709171500/run/201709171500/wrf_ens/stat: No such file or directory
+(standard_in) 2: syntax error
+----------------------------------------------------------------------
+CURRENT CYCLE: 2017-09-17_16:00:00 => 2017-09-17_17:00:00
+cat: 'run/201709171600/*/stat': No such file or directory
+./MARIA_IRMW.sh: line 111: run/201709171600/*/stat: No such file or directory
+[H[2J[3J
+  % Total    % Received % Xferd  Average Speed   Time    Time     Time  Current
+                                 Dload  Upload   Total   Spent    Left  Speed
+  0     0    0     0    0     0      0      0 --:--:-- --:--:-- --:--:--     0100    14  100    14    0     0    251      0 --:--:-- --:--:-- --:--:--   254
+   IP ADDR: 198.202.100.13
+   USER: zuy121
+   DATE: Sat Sep 17 16:40:20 PDT 2022
+   UPTIME: up 2 weeks, 5 days, 2 hours, 32 minutes
+   HOSTNAME: login01.expanse.sdsc.edu
+   KERNEL: Linux 4.18.0-348.23.1.el8_5.x86_64 x86_64
+   MEMORY: 21Gi/125Gi
+
+  Calculating preset nesting...
+Timeout waiting for /expanse/lustre/scratch/zuy121/temp_project/Pro2_PSU_MW/MARIA/newWRF_MW_THO/run/201709171600/icbc//expanse/lustre/scratch/zuy121/temp_project/Pro2_PSU_MW/MARIA/newWRF_MW_THO/fc/201709171500/wrfinput_d02_2017-09-17_16:00:00_001. Abort.
+[H[2J[3J
+  % Total    % Received % Xferd  Average Speed   Time    Time     Time  Current
+                                 Dload  Upload   Total   Spent    Left  Speed
+  0     0    0     0    0     0      0      0 --:--:-- --:--:-- --:--:--     0100    14  100    14    0     0    242      0 --:--:-- --:--:-- --:--:--   245
+   IP ADDR: 198.202.100.13
+   USER: zuy121
+   DATE: Sat Sep 17 16:42:21 PDT 2022
+   UPTIME: up 2 weeks, 5 days, 2 hours, 34 minutes
+   HOSTNAME: login01.expanse.sdsc.edu
+   KERNEL: Linux 4.18.0-348.23.1.el8_5.x86_64 x86_64
+   MEMORY: 21Gi/125Gi
+
+  Running ObsProc...
+[H[2J[3J
+  % Total    % Received % Xferd  Average Speed   Time    Time     Time  Current
+                                 Dload  Upload   Total   Spent    Left  Speed
+  0     0    0     0    0     0      0      0 --:--:-- --:--:-- --:--:--     0100    14  100    14    0     0    243      0 --:--:-- --:--:-- --:--:--   245
+   IP ADDR: 198.202.100.13
+   USER: zuy121
+   DATE: Sat Sep 17 16:43:53 PDT 2022
+   UPTIME: up 2 weeks, 5 days, 2 hours, 36 minutes
+   HOSTNAME: login01.expanse.sdsc.edu
+   KERNEL: Linux 4.18.0-348.23.1.el8_5.x86_64 x86_64
+   MEMORY: 21Gi/125Gi
+
+[H[2J[3J
+  % Total    % Received % Xferd  Average Speed   Time    Time     Time  Current
+                                 Dload  Upload   Total   Spent    Left  Speed
+  0     0    0     0    0     0      0      0 --:--:-- --:--:-- --:--:--     0100    14  100    14    0     0    250      0 --:--:-- --:--:-- --:--:--   254
+   IP ADDR: 198.202.100.13
+   USER: zuy121
+   DATE: Sat Sep 17 16:44:10 PDT 2022
+   UPTIME: up 2 weeks, 5 days, 2 hours, 36 minutes
+   HOSTNAME: login01.expanse.sdsc.edu
+   KERNEL: Linux 4.18.0-348.23.1.el8_5.x86_64 x86_64
+   MEMORY: 21Gi/125Gi
+
+[H[2J[3J
+  % Total    % Received % Xferd  Average Speed   Time    Time     Time  Current
+                                 Dload  Upload   Total   Spent    Left  Speed
+  0     0    0     0    0     0      0      0 --:--:-- --:--:-- --:--:--     0100    14  100    14    0     0    244      0 --:--:-- --:--:-- --:--:--   245
+   IP ADDR: 198.202.100.13
+   USER: zuy121
+   DATE: Sat Sep 17 16:44:26 PDT 2022
+   UPTIME: up 2 weeks, 5 days, 2 hours, 36 minutes
+   HOSTNAME: login01.expanse.sdsc.edu
+   KERNEL: Linux 4.18.0-348.23.1.el8_5.x86_64 x86_64
+   MEMORY: 20Gi/125Gi
+
+Sat Sep 17 16:44:42 PDT 2022
+cat: run/201709171600/run/201709171600/enkf/stat: No such file or directory
+cat: run/201709171600/run/201709171600/icbc/stat: No such file or directory
+cat: run/201709171600/run/201709171600/obsproc/stat: No such file or directory
+cat: run/201709171600/run/201709171600/update_bc/stat: No such file or directory
+cat: run/201709171600/run/201709171600/wrf_ens/stat: No such file or directory
+(standard_in) 2: syntax error
+----------------------------------------------------------------------
+CURRENT CYCLE: 2017-09-17_17:00:00 => 2017-09-17_18:00:00
+cat: 'run/201709171700/*/stat': No such file or directory
+./MARIA_IRMW.sh: line 111: run/201709171700/*/stat: No such file or directory
+[H[2J[3J
+  % Total    % Received % Xferd  Average Speed   Time    Time     Time  Current
+                                 Dload  Upload   Total   Spent    Left  Speed
+  0     0    0     0    0     0      0      0 --:--:-- --:--:-- --:--:--     0100    14  100    14    0     0    246      0 --:--:-- --:--:-- --:--:--   250
+   IP ADDR: 198.202.100.13
+   USER: zuy121
+   DATE: Sat Sep 17 16:44:43 PDT 2022
+   UPTIME: up 2 weeks, 5 days, 2 hours, 36 minutes
+   HOSTNAME: login01.expanse.sdsc.edu
+   KERNEL: Linux 4.18.0-348.23.1.el8_5.x86_64 x86_64
+   MEMORY: 20Gi/125Gi
+
+  Calculating preset nesting...
+Timeout waiting for /expanse/lustre/scratch/zuy121/temp_project/Pro2_PSU_MW/MARIA/newWRF_MW_THO/run/201709171700/icbc//expanse/lustre/scratch/zuy121/temp_project/Pro2_PSU_MW/MARIA/newWRF_MW_THO/fc/201709171600/wrfinput_d02_2017-09-17_17:00:00_001. Abort.
+[H[2J[3J
+  % Total    % Received % Xferd  Average Speed   Time    Time     Time  Current
+                                 Dload  Upload   Total   Spent    Left  Speed
+  0     0    0     0    0     0      0      0 --:--:-- --:--:-- --:--:--     0  0     0    0     0    0     0      0      0 --:--:-- --:--:-- --:--:--     0100    14  100    14    0     0    125      0 --:--:-- --:--:-- --:--:--   125
+   IP ADDR: 198.202.100.13
+   USER: zuy121
+   DATE: Sat Sep 17 16:46:44 PDT 2022
+   UPTIME: up 2 weeks, 5 days, 2 hours, 38 minutes
+   HOSTNAME: login01.expanse.sdsc.edu
+   KERNEL: Linux 4.18.0-348.23.1.el8_5.x86_64 x86_64
+   MEMORY: 20Gi/125Gi
+
+  Running ObsProc...
+[H[2J[3J
+  % Total    % Received % Xferd  Average Speed   Time    Time     Time  Current
+                                 Dload  Upload   Total   Spent    Left  Speed
+  0     0    0     0    0     0      0      0 --:--:-- --:--:-- --:--:--     0100    14  100    14    0     0    239      0 --:--:-- --:--:-- --:--:--   237100    14  100    14    0     0    238      0 --:--:-- --:--:-- --:--:--   237
+   IP ADDR: 198.202.100.13
+   USER: zuy121
+   DATE: Sat Sep 17 16:48:12 PDT 2022
+   UPTIME: up 2 weeks, 5 days, 2 hours, 40 minutes
+   HOSTNAME: login01.expanse.sdsc.edu
+   KERNEL: Linux 4.18.0-348.23.1.el8_5.x86_64 x86_64
+   MEMORY: 21Gi/125Gi
+
+[H[2J[3J
+  % Total    % Received % Xferd  Average Speed   Time    Time     Time  Current
+                                 Dload  Upload   Total   Spent    Left  Speed
+  0     0    0     0    0     0      0      0 --:--:-- --:--:-- --:--:--     0100    14  100    14    0     0    202      0 --:--:-- --:--:-- --:--:--   205
+   IP ADDR: 198.202.100.13
+   USER: zuy121
+   DATE: Sat Sep 17 16:48:29 PDT 2022
+   UPTIME: up 2 weeks, 5 days, 2 hours, 40 minutes
+   HOSTNAME: login01.expanse.sdsc.edu
+   KERNEL: Linux 4.18.0-348.23.1.el8_5.x86_64 x86_64
+   MEMORY: 20Gi/125Gi
+
+[H[2J[3J
+  % Total    % Received % Xferd  Average Speed   Time    Time     Time  Current
+                                 Dload  Upload   Total   Spent    Left  Speed
+  0     0    0     0    0     0      0      0 --:--:-- --:--:-- --:--:--     0100    14  100    14    0     0    241      0 --:--:-- --:--:-- --:--:--   245
+   IP ADDR: 198.202.100.13
+   USER: zuy121
+   DATE: Sat Sep 17 16:48:45 PDT 2022
+   UPTIME: up 2 weeks, 5 days, 2 hours, 40 minutes
+   HOSTNAME: login01.expanse.sdsc.edu
+   KERNEL: Linux 4.18.0-348.23.1.el8_5.x86_64 x86_64
+   MEMORY: 20Gi/125Gi
+
+Sat Sep 17 16:49:01 PDT 2022
+cat: run/201709171700/run/201709171700/enkf/stat: No such file or directory
+cat: run/201709171700/run/201709171700/icbc/stat: No such file or directory
+cat: run/201709171700/run/201709171700/obsproc/stat: No such file or directory
+cat: run/201709171700/run/201709171700/update_bc/stat: No such file or directory
+cat: run/201709171700/run/201709171700/wrf_ens/stat: No such file or directory
+(standard_in) 2: syntax error
+----------------------------------------------------------------------
+CURRENT CYCLE: 2017-09-17_18:00:00 => 2017-09-17_19:00:00
+cat: 'run/201709171800/*/stat': No such file or directory
+./MARIA_IRMW.sh: line 111: run/201709171800/*/stat: No such file or directory
+[H[2J[3J
+  % Total    % Received % Xferd  Average Speed   Time    Time     Time  Current
+                                 Dload  Upload   Total   Spent    Left  Speed
+  0     0    0     0    0     0      0      0 --:--:-- --:--:-- --:--:--     0100    14  100    14    0     0    250      0 --:--:-- --:--:-- --:--:--   254
+   IP ADDR: 198.202.100.13
+   USER: zuy121
+   DATE: Sat Sep 17 16:49:02 PDT 2022
+   UPTIME: up 2 weeks, 5 days, 2 hours, 41 minutes
+   HOSTNAME: login01.expanse.sdsc.edu
+   KERNEL: Linux 4.18.0-348.23.1.el8_5.x86_64 x86_64
+   MEMORY: 20Gi/125Gi
+
+  Calculating preset nesting...
+Timeout waiting for /expanse/lustre/scratch/zuy121/temp_project/Pro2_PSU_MW/MARIA/newWRF_MW_THO/run/201709171800/icbc//expanse/lustre/scratch/zuy121/temp_project/Pro2_PSU_MW/MARIA/newWRF_MW_THO/fc/201709171700/wrfinput_d02_2017-09-17_18:00:00_001. Abort.
+[H[2J[3J
+  % Total    % Received % Xferd  Average Speed   Time    Time     Time  Current
+                                 Dload  Upload   Total   Spent    Left  Speed
+  0     0    0     0    0     0      0      0 --:--:-- --:--:-- --:--:--     0100    14  100    14    0     0    251      0 --:--:-- --:--:-- --:--:--   254
+   IP ADDR: 198.202.100.13
+   USER: zuy121
+   DATE: Sat Sep 17 16:51:18 PDT 2022
+   UPTIME: up 2 weeks, 5 days, 2 hours, 43 minutes
+   HOSTNAME: login01.expanse.sdsc.edu
+   KERNEL: Linux 4.18.0-348.23.1.el8_5.x86_64 x86_64
+   MEMORY: 20Gi/125Gi
+
+  Running ObsProc...
+[H[2J[3J
+  % Total    % Received % Xferd  Average Speed   Time    Time     Time  Current
+                                 Dload  Upload   Total   Spent    Left  Speed
+  0     0    0     0    0     0      0      0 --:--:-- --:--:-- --:--:--     0100    14  100    14    0     0    139      0 --:--:-- --:--:-- --:--:--   140
+   IP ADDR: 198.202.100.13
+   USER: zuy121
+   DATE: Sat Sep 17 16:52:28 PDT 2022
+   UPTIME: up 2 weeks, 5 days, 2 hours, 44 minutes
+   HOSTNAME: login01.expanse.sdsc.edu
+   KERNEL: Linux 4.18.0-348.23.1.el8_5.x86_64 x86_64
+   MEMORY: 20Gi/125Gi
+
+[H[2J[3J
+  % Total    % Received % Xferd  Average Speed   Time    Time     Time  Current
+                                 Dload  Upload   Total   Spent    Left  Speed
+  0     0    0     0    0     0      0      0 --:--:-- --:--:-- --:--:--     0100    14  100    14    0     0    245      0 --:--:-- --:--:-- --:--:--   245
+   IP ADDR: 198.202.100.13
+   USER: zuy121
+   DATE: Sat Sep 17 16:52:44 PDT 2022
+   UPTIME: up 2 weeks, 5 days, 2 hours, 44 minutes
+   HOSTNAME: login01.expanse.sdsc.edu
+   KERNEL: Linux 4.18.0-348.23.1.el8_5.x86_64 x86_64
+   MEMORY: 20Gi/125Gi
+
+[H[2J[3J
+  % Total    % Received % Xferd  Average Speed   Time    Time     Time  Current
+                                 Dload  Upload   Total   Spent    Left  Speed
+  0     0    0     0    0     0      0      0 --:--:-- --:--:-- --:--:--     0100    14  100    14    0     0    248      0 --:--:-- --:--:-- --:--:--   250
+   IP ADDR: 198.202.100.13
+   USER: zuy121
+   DATE: Sat Sep 17 16:53:00 PDT 2022
+   UPTIME: up 2 weeks, 5 days, 2 hours, 45 minutes
+   HOSTNAME: login01.expanse.sdsc.edu
+   KERNEL: Linux 4.18.0-348.23.1.el8_5.x86_64 x86_64
+   MEMORY: 20Gi/125Gi
+
+Sat Sep 17 16:53:16 PDT 2022
+cat: run/201709171800/run/201709171800/enkf/stat: No such file or directory
+cat: run/201709171800/run/201709171800/icbc/stat: No such file or directory
+cat: run/201709171800/run/201709171800/obsproc/stat: No such file or directory
+cat: run/201709171800/run/201709171800/perturb_ic/stat: No such file or directory
+cat: run/201709171800/run/201709171800/update_bc/stat: No such file or directory
+cat: run/201709171800/run/201709171800/wrf_ens/stat: No such file or directory
+CYCLING COMPLETE
+bottom /usr/share/modulefiles
