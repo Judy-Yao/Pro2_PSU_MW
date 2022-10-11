@@ -2365,3 +2365,382 @@ cat: 'run/201708231800/*/stat': No such file or directory
 /expanse/lustre/scratch/zuy121/temp_project/Pro2_PSU_MW/HARVEY/newWRF_MW_THO/run/201708231800/perturb_ic
 /expanse/lustre/scratch/zuy121/temp_project/Pro2_PSU_MW/HARVEY/newWRF_MW_THO/run/201708231800/perturb_ic
 /expanse/lustre/scratch/zuy121/temp_project/Pro2_PSU_MW/HARVEY/newWRF_MW_THO/run/201708231800/perturb_ic
+/expanse/lustre/scratch/zuy121/temp_project/Pro2_PSU_MW/HARVEY/newWRF_MW_THO/run/201708231800/perturb_ic
+/expanse/lustre/scratch/zuy121/temp_project/Pro2_PSU_MW/HARVEY/newWRF_MW_THO/run/201708231800/perturb_ic
+/expanse/lustre/scratch/zuy121/temp_project/Pro2_PSU_MW/HARVEY/newWRF_MW_THO/run/201708231800/perturb_ic
+/expanse/lustre/scratch/zuy121/temp_project/Pro2_PSU_MW/HARVEY/newWRF_MW_THO/run/201708231800/perturb_ic
+/expanse/lustre/scratch/zuy121/temp_project/Pro2_PSU_MW/HARVEY/newWRF_MW_THO/run/201708231800/perturb_ic
+/expanse/lustre/scratch/zuy121/temp_project/Pro2_PSU_MW/HARVEY/newWRF_MW_THO/run/201708231800/perturb_ic
+/expanse/lustre/scratch/zuy121/temp_project/Pro2_PSU_MW/HARVEY/newWRF_MW_THO/run/201708231800/perturb_ic
+/expanse/lustre/scratch/zuy121/temp_project/Pro2_PSU_MW/HARVEY/newWRF_MW_THO/run/201708231800/perturb_ic
+/expanse/lustre/scratch/zuy121/temp_project/Pro2_PSU_MW/HARVEY/newWRF_MW_THO/run/201708231800/perturb_ic
+/expanse/lustre/scratch/zuy121/temp_project/Pro2_PSU_MW/HARVEY/newWRF_MW_THO/run/201708231800/perturb_ic
+/expanse/lustre/scratch/zuy121/temp_project/Pro2_PSU_MW/HARVEY/newWRF_MW_THO/run/201708231800/perturb_ic
+/expanse/lustre/scratch/zuy121/temp_project/Pro2_PSU_MW/HARVEY/newWRF_MW_THO/run/201708231800/perturb_ic
+/expanse/lustre/scratch/zuy121/temp_project/Pro2_PSU_MW/HARVEY/newWRF_MW_THO/run/201708231800/perturb_ic
+/expanse/lustre/scratch/zuy121/temp_project/Pro2_PSU_MW/HARVEY/newWRF_MW_THO/run/201708231800/perturb_ic
+/expanse/lustre/scratch/zuy121/temp_project/Pro2_PSU_MW/HARVEY/newWRF_MW_THO/run/201708231800/perturb_ic
+/expanse/lustre/scratch/zuy121/temp_project/Pro2_PSU_MW/HARVEY/newWRF_MW_THO/run/201708231800/perturb_ic
+    Nestdown perturbation for inner domains...
+begin nest down for d02
+  any need to work on member  001
+/expanse/lustre/scratch/zuy121/temp_project/Pro2_PSU_MW/HARVEY/newWRF_MW_THO/run/201708231800/perturb_ic/001/d02/rsl.error.0000
+  yes
+  any need to work on member  002
+/expanse/lustre/scratch/zuy121/temp_project/Pro2_PSU_MW/HARVEY/newWRF_MW_THO/run/201708231800/perturb_ic/002/d02/rsl.error.0000
+  yes
+  any need to work on member  003
+/expanse/lustre/scratch/zuy121/temp_project/Pro2_PSU_MW/HARVEY/newWRF_MW_THO/run/201708231800/perturb_ic/003/d02/rsl.error.0000
+  yes
+  any need to work on member  004
+/expanse/lustre/scratch/zuy121/temp_project/Pro2_PSU_MW/HARVEY/newWRF_MW_THO/run/201708231800/perturb_ic/004/d02/rsl.error.0000
+  yes
+  any need to work on member  005
+/expanse/lustre/scratch/zuy121/temp_project/Pro2_PSU_MW/HARVEY/newWRF_MW_THO/run/201708231800/perturb_ic/005/d02/rsl.error.0000
+  yes
+  any need to work on member  006
+/expanse/lustre/scratch/zuy121/temp_project/Pro2_PSU_MW/HARVEY/newWRF_MW_THO/run/201708231800/perturb_ic/006/d02/rsl.error.0000
+  yes
+  any need to work on member  007
+/expanse/lustre/scratch/zuy121/temp_project/Pro2_PSU_MW/HARVEY/newWRF_MW_THO/run/201708231800/perturb_ic/007/d02/rsl.error.0000
+  yes
+  any need to work on member  008
+/expanse/lustre/scratch/zuy121/temp_project/Pro2_PSU_MW/HARVEY/newWRF_MW_THO/run/201708231800/perturb_ic/008/d02/rsl.error.0000
+  yes
+  any need to work on member  009
+/expanse/lustre/scratch/zuy121/temp_project/Pro2_PSU_MW/HARVEY/newWRF_MW_THO/run/201708231800/perturb_ic/009/d02/rsl.error.0000
+  yes
+  any need to work on member  010
+/expanse/lustre/scratch/zuy121/temp_project/Pro2_PSU_MW/HARVEY/newWRF_MW_THO/run/201708231800/perturb_ic/010/d02/rsl.error.0000
+  yes
+  any need to work on member  011
+/expanse/lustre/scratch/zuy121/temp_project/Pro2_PSU_MW/HARVEY/newWRF_MW_THO/run/201708231800/perturb_ic/011/d02/rsl.error.0000
+  yes
+  any need to work on member  012
+/expanse/lustre/scratch/zuy121/temp_project/Pro2_PSU_MW/HARVEY/newWRF_MW_THO/run/201708231800/perturb_ic/012/d02/rsl.error.0000
+  yes
+  any need to work on member  013
+/expanse/lustre/scratch/zuy121/temp_project/Pro2_PSU_MW/HARVEY/newWRF_MW_THO/run/201708231800/perturb_ic/013/d02/rsl.error.0000
+  yes
+  any need to work on member  014
+/expanse/lustre/scratch/zuy121/temp_project/Pro2_PSU_MW/HARVEY/newWRF_MW_THO/run/201708231800/perturb_ic/014/d02/rsl.error.0000
+  yes
+  any need to work on member  015
+/expanse/lustre/scratch/zuy121/temp_project/Pro2_PSU_MW/HARVEY/newWRF_MW_THO/run/201708231800/perturb_ic/015/d02/rsl.error.0000
+  yes
+  any need to work on member  016
+/expanse/lustre/scratch/zuy121/temp_project/Pro2_PSU_MW/HARVEY/newWRF_MW_THO/run/201708231800/perturb_ic/016/d02/rsl.error.0000
+  yes
+  any need to work on member  017
+/expanse/lustre/scratch/zuy121/temp_project/Pro2_PSU_MW/HARVEY/newWRF_MW_THO/run/201708231800/perturb_ic/017/d02/rsl.error.0000
+  yes
+  any need to work on member  018
+/expanse/lustre/scratch/zuy121/temp_project/Pro2_PSU_MW/HARVEY/newWRF_MW_THO/run/201708231800/perturb_ic/018/d02/rsl.error.0000
+  yes
+  any need to work on member  019
+/expanse/lustre/scratch/zuy121/temp_project/Pro2_PSU_MW/HARVEY/newWRF_MW_THO/run/201708231800/perturb_ic/019/d02/rsl.error.0000
+  yes
+  any need to work on member  020
+/expanse/lustre/scratch/zuy121/temp_project/Pro2_PSU_MW/HARVEY/newWRF_MW_THO/run/201708231800/perturb_ic/020/d02/rsl.error.0000
+  yes
+  any need to work on member  021
+/expanse/lustre/scratch/zuy121/temp_project/Pro2_PSU_MW/HARVEY/newWRF_MW_THO/run/201708231800/perturb_ic/021/d02/rsl.error.0000
+  yes
+  any need to work on member  022
+/expanse/lustre/scratch/zuy121/temp_project/Pro2_PSU_MW/HARVEY/newWRF_MW_THO/run/201708231800/perturb_ic/022/d02/rsl.error.0000
+  yes
+  any need to work on member  023
+/expanse/lustre/scratch/zuy121/temp_project/Pro2_PSU_MW/HARVEY/newWRF_MW_THO/run/201708231800/perturb_ic/023/d02/rsl.error.0000
+  yes
+  any need to work on member  024
+/expanse/lustre/scratch/zuy121/temp_project/Pro2_PSU_MW/HARVEY/newWRF_MW_THO/run/201708231800/perturb_ic/024/d02/rsl.error.0000
+  yes
+  any need to work on member  025
+/expanse/lustre/scratch/zuy121/temp_project/Pro2_PSU_MW/HARVEY/newWRF_MW_THO/run/201708231800/perturb_ic/025/d02/rsl.error.0000
+  yes
+  any need to work on member  026
+/expanse/lustre/scratch/zuy121/temp_project/Pro2_PSU_MW/HARVEY/newWRF_MW_THO/run/201708231800/perturb_ic/026/d02/rsl.error.0000
+  yes
+  any need to work on member  027
+/expanse/lustre/scratch/zuy121/temp_project/Pro2_PSU_MW/HARVEY/newWRF_MW_THO/run/201708231800/perturb_ic/027/d02/rsl.error.0000
+  yes
+  any need to work on member  028
+/expanse/lustre/scratch/zuy121/temp_project/Pro2_PSU_MW/HARVEY/newWRF_MW_THO/run/201708231800/perturb_ic/028/d02/rsl.error.0000
+  yes
+  any need to work on member  029
+/expanse/lustre/scratch/zuy121/temp_project/Pro2_PSU_MW/HARVEY/newWRF_MW_THO/run/201708231800/perturb_ic/029/d02/rsl.error.0000
+  yes
+  any need to work on member  030
+/expanse/lustre/scratch/zuy121/temp_project/Pro2_PSU_MW/HARVEY/newWRF_MW_THO/run/201708231800/perturb_ic/030/d02/rsl.error.0000
+  yes
+  any need to work on member  031
+/expanse/lustre/scratch/zuy121/temp_project/Pro2_PSU_MW/HARVEY/newWRF_MW_THO/run/201708231800/perturb_ic/031/d02/rsl.error.0000
+  yes
+  any need to work on member  032
+/expanse/lustre/scratch/zuy121/temp_project/Pro2_PSU_MW/HARVEY/newWRF_MW_THO/run/201708231800/perturb_ic/032/d02/rsl.error.0000
+  yes
+  any need to work on member  033
+/expanse/lustre/scratch/zuy121/temp_project/Pro2_PSU_MW/HARVEY/newWRF_MW_THO/run/201708231800/perturb_ic/033/d02/rsl.error.0000
+  yes
+  any need to work on member  034
+/expanse/lustre/scratch/zuy121/temp_project/Pro2_PSU_MW/HARVEY/newWRF_MW_THO/run/201708231800/perturb_ic/034/d02/rsl.error.0000
+  yes
+  any need to work on member  035
+/expanse/lustre/scratch/zuy121/temp_project/Pro2_PSU_MW/HARVEY/newWRF_MW_THO/run/201708231800/perturb_ic/035/d02/rsl.error.0000
+  yes
+  any need to work on member  036
+/expanse/lustre/scratch/zuy121/temp_project/Pro2_PSU_MW/HARVEY/newWRF_MW_THO/run/201708231800/perturb_ic/036/d02/rsl.error.0000
+  yes
+  any need to work on member  037
+/expanse/lustre/scratch/zuy121/temp_project/Pro2_PSU_MW/HARVEY/newWRF_MW_THO/run/201708231800/perturb_ic/037/d02/rsl.error.0000
+  yes
+  any need to work on member  038
+/expanse/lustre/scratch/zuy121/temp_project/Pro2_PSU_MW/HARVEY/newWRF_MW_THO/run/201708231800/perturb_ic/038/d02/rsl.error.0000
+  yes
+  any need to work on member  039
+/expanse/lustre/scratch/zuy121/temp_project/Pro2_PSU_MW/HARVEY/newWRF_MW_THO/run/201708231800/perturb_ic/039/d02/rsl.error.0000
+  yes
+  any need to work on member  040
+/expanse/lustre/scratch/zuy121/temp_project/Pro2_PSU_MW/HARVEY/newWRF_MW_THO/run/201708231800/perturb_ic/040/d02/rsl.error.0000
+  yes
+  any need to work on member  041
+/expanse/lustre/scratch/zuy121/temp_project/Pro2_PSU_MW/HARVEY/newWRF_MW_THO/run/201708231800/perturb_ic/041/d02/rsl.error.0000
+  yes
+  any need to work on member  042
+/expanse/lustre/scratch/zuy121/temp_project/Pro2_PSU_MW/HARVEY/newWRF_MW_THO/run/201708231800/perturb_ic/042/d02/rsl.error.0000
+  yes
+  any need to work on member  043
+/expanse/lustre/scratch/zuy121/temp_project/Pro2_PSU_MW/HARVEY/newWRF_MW_THO/run/201708231800/perturb_ic/043/d02/rsl.error.0000
+  yes
+  any need to work on member  044
+/expanse/lustre/scratch/zuy121/temp_project/Pro2_PSU_MW/HARVEY/newWRF_MW_THO/run/201708231800/perturb_ic/044/d02/rsl.error.0000
+  yes
+  any need to work on member  045
+/expanse/lustre/scratch/zuy121/temp_project/Pro2_PSU_MW/HARVEY/newWRF_MW_THO/run/201708231800/perturb_ic/045/d02/rsl.error.0000
+  yes
+  any need to work on member  046
+/expanse/lustre/scratch/zuy121/temp_project/Pro2_PSU_MW/HARVEY/newWRF_MW_THO/run/201708231800/perturb_ic/046/d02/rsl.error.0000
+  yes
+  any need to work on member  047
+/expanse/lustre/scratch/zuy121/temp_project/Pro2_PSU_MW/HARVEY/newWRF_MW_THO/run/201708231800/perturb_ic/047/d02/rsl.error.0000
+  yes
+  any need to work on member  048
+/expanse/lustre/scratch/zuy121/temp_project/Pro2_PSU_MW/HARVEY/newWRF_MW_THO/run/201708231800/perturb_ic/048/d02/rsl.error.0000
+  yes
+  any need to work on member  049
+/expanse/lustre/scratch/zuy121/temp_project/Pro2_PSU_MW/HARVEY/newWRF_MW_THO/run/201708231800/perturb_ic/049/d02/rsl.error.0000
+  yes
+  any need to work on member  050
+/expanse/lustre/scratch/zuy121/temp_project/Pro2_PSU_MW/HARVEY/newWRF_MW_THO/run/201708231800/perturb_ic/050/d02/rsl.error.0000
+  yes
+  any need to work on member  051
+/expanse/lustre/scratch/zuy121/temp_project/Pro2_PSU_MW/HARVEY/newWRF_MW_THO/run/201708231800/perturb_ic/051/d02/rsl.error.0000
+  yes
+  any need to work on member  052
+/expanse/lustre/scratch/zuy121/temp_project/Pro2_PSU_MW/HARVEY/newWRF_MW_THO/run/201708231800/perturb_ic/052/d02/rsl.error.0000
+  yes
+  any need to work on member  053
+/expanse/lustre/scratch/zuy121/temp_project/Pro2_PSU_MW/HARVEY/newWRF_MW_THO/run/201708231800/perturb_ic/053/d02/rsl.error.0000
+  yes
+  any need to work on member  054
+/expanse/lustre/scratch/zuy121/temp_project/Pro2_PSU_MW/HARVEY/newWRF_MW_THO/run/201708231800/perturb_ic/054/d02/rsl.error.0000
+  yes
+  any need to work on member  055
+/expanse/lustre/scratch/zuy121/temp_project/Pro2_PSU_MW/HARVEY/newWRF_MW_THO/run/201708231800/perturb_ic/055/d02/rsl.error.0000
+  yes
+  any need to work on member  056
+/expanse/lustre/scratch/zuy121/temp_project/Pro2_PSU_MW/HARVEY/newWRF_MW_THO/run/201708231800/perturb_ic/056/d02/rsl.error.0000
+  yes
+  any need to work on member  057
+/expanse/lustre/scratch/zuy121/temp_project/Pro2_PSU_MW/HARVEY/newWRF_MW_THO/run/201708231800/perturb_ic/057/d02/rsl.error.0000
+  yes
+  any need to work on member  058
+/expanse/lustre/scratch/zuy121/temp_project/Pro2_PSU_MW/HARVEY/newWRF_MW_THO/run/201708231800/perturb_ic/058/d02/rsl.error.0000
+  yes
+  any need to work on member  059
+/expanse/lustre/scratch/zuy121/temp_project/Pro2_PSU_MW/HARVEY/newWRF_MW_THO/run/201708231800/perturb_ic/059/d02/rsl.error.0000
+  yes
+  any need to work on member  060
+/expanse/lustre/scratch/zuy121/temp_project/Pro2_PSU_MW/HARVEY/newWRF_MW_THO/run/201708231800/perturb_ic/060/d02/rsl.error.0000
+  yes
+begin nest down for d03
+  any need to work on member  001
+/expanse/lustre/scratch/zuy121/temp_project/Pro2_PSU_MW/HARVEY/newWRF_MW_THO/run/201708231800/perturb_ic/001/d03/rsl.error.0000
+  yes
+  any need to work on member  002
+/expanse/lustre/scratch/zuy121/temp_project/Pro2_PSU_MW/HARVEY/newWRF_MW_THO/run/201708231800/perturb_ic/002/d03/rsl.error.0000
+  yes
+  any need to work on member  003
+/expanse/lustre/scratch/zuy121/temp_project/Pro2_PSU_MW/HARVEY/newWRF_MW_THO/run/201708231800/perturb_ic/003/d03/rsl.error.0000
+  yes
+  any need to work on member  004
+/expanse/lustre/scratch/zuy121/temp_project/Pro2_PSU_MW/HARVEY/newWRF_MW_THO/run/201708231800/perturb_ic/004/d03/rsl.error.0000
+  yes
+  any need to work on member  005
+/expanse/lustre/scratch/zuy121/temp_project/Pro2_PSU_MW/HARVEY/newWRF_MW_THO/run/201708231800/perturb_ic/005/d03/rsl.error.0000
+  yes
+  any need to work on member  006
+/expanse/lustre/scratch/zuy121/temp_project/Pro2_PSU_MW/HARVEY/newWRF_MW_THO/run/201708231800/perturb_ic/006/d03/rsl.error.0000
+  yes
+  any need to work on member  007
+/expanse/lustre/scratch/zuy121/temp_project/Pro2_PSU_MW/HARVEY/newWRF_MW_THO/run/201708231800/perturb_ic/007/d03/rsl.error.0000
+  yes
+  any need to work on member  008
+/expanse/lustre/scratch/zuy121/temp_project/Pro2_PSU_MW/HARVEY/newWRF_MW_THO/run/201708231800/perturb_ic/008/d03/rsl.error.0000
+  yes
+  any need to work on member  009
+/expanse/lustre/scratch/zuy121/temp_project/Pro2_PSU_MW/HARVEY/newWRF_MW_THO/run/201708231800/perturb_ic/009/d03/rsl.error.0000
+  yes
+  any need to work on member  010
+/expanse/lustre/scratch/zuy121/temp_project/Pro2_PSU_MW/HARVEY/newWRF_MW_THO/run/201708231800/perturb_ic/010/d03/rsl.error.0000
+  yes
+  any need to work on member  011
+/expanse/lustre/scratch/zuy121/temp_project/Pro2_PSU_MW/HARVEY/newWRF_MW_THO/run/201708231800/perturb_ic/011/d03/rsl.error.0000
+  yes
+  any need to work on member  012
+/expanse/lustre/scratch/zuy121/temp_project/Pro2_PSU_MW/HARVEY/newWRF_MW_THO/run/201708231800/perturb_ic/012/d03/rsl.error.0000
+  yes
+  any need to work on member  013
+/expanse/lustre/scratch/zuy121/temp_project/Pro2_PSU_MW/HARVEY/newWRF_MW_THO/run/201708231800/perturb_ic/013/d03/rsl.error.0000
+  yes
+  any need to work on member  014
+/expanse/lustre/scratch/zuy121/temp_project/Pro2_PSU_MW/HARVEY/newWRF_MW_THO/run/201708231800/perturb_ic/014/d03/rsl.error.0000
+  yes
+  any need to work on member  015
+/expanse/lustre/scratch/zuy121/temp_project/Pro2_PSU_MW/HARVEY/newWRF_MW_THO/run/201708231800/perturb_ic/015/d03/rsl.error.0000
+  yes
+  any need to work on member  016
+/expanse/lustre/scratch/zuy121/temp_project/Pro2_PSU_MW/HARVEY/newWRF_MW_THO/run/201708231800/perturb_ic/016/d03/rsl.error.0000
+  yes
+  any need to work on member  017
+/expanse/lustre/scratch/zuy121/temp_project/Pro2_PSU_MW/HARVEY/newWRF_MW_THO/run/201708231800/perturb_ic/017/d03/rsl.error.0000
+  yes
+  any need to work on member  018
+/expanse/lustre/scratch/zuy121/temp_project/Pro2_PSU_MW/HARVEY/newWRF_MW_THO/run/201708231800/perturb_ic/018/d03/rsl.error.0000
+  yes
+  any need to work on member  019
+/expanse/lustre/scratch/zuy121/temp_project/Pro2_PSU_MW/HARVEY/newWRF_MW_THO/run/201708231800/perturb_ic/019/d03/rsl.error.0000
+  yes
+  any need to work on member  020
+/expanse/lustre/scratch/zuy121/temp_project/Pro2_PSU_MW/HARVEY/newWRF_MW_THO/run/201708231800/perturb_ic/020/d03/rsl.error.0000
+  yes
+  any need to work on member  021
+/expanse/lustre/scratch/zuy121/temp_project/Pro2_PSU_MW/HARVEY/newWRF_MW_THO/run/201708231800/perturb_ic/021/d03/rsl.error.0000
+  yes
+  any need to work on member  022
+/expanse/lustre/scratch/zuy121/temp_project/Pro2_PSU_MW/HARVEY/newWRF_MW_THO/run/201708231800/perturb_ic/022/d03/rsl.error.0000
+  yes
+  any need to work on member  023
+/expanse/lustre/scratch/zuy121/temp_project/Pro2_PSU_MW/HARVEY/newWRF_MW_THO/run/201708231800/perturb_ic/023/d03/rsl.error.0000
+  yes
+  any need to work on member  024
+/expanse/lustre/scratch/zuy121/temp_project/Pro2_PSU_MW/HARVEY/newWRF_MW_THO/run/201708231800/perturb_ic/024/d03/rsl.error.0000
+  yes
+  any need to work on member  025
+/expanse/lustre/scratch/zuy121/temp_project/Pro2_PSU_MW/HARVEY/newWRF_MW_THO/run/201708231800/perturb_ic/025/d03/rsl.error.0000
+  yes
+  any need to work on member  026
+/expanse/lustre/scratch/zuy121/temp_project/Pro2_PSU_MW/HARVEY/newWRF_MW_THO/run/201708231800/perturb_ic/026/d03/rsl.error.0000
+  yes
+  any need to work on member  027
+/expanse/lustre/scratch/zuy121/temp_project/Pro2_PSU_MW/HARVEY/newWRF_MW_THO/run/201708231800/perturb_ic/027/d03/rsl.error.0000
+  yes
+  any need to work on member  028
+/expanse/lustre/scratch/zuy121/temp_project/Pro2_PSU_MW/HARVEY/newWRF_MW_THO/run/201708231800/perturb_ic/028/d03/rsl.error.0000
+  yes
+  any need to work on member  029
+/expanse/lustre/scratch/zuy121/temp_project/Pro2_PSU_MW/HARVEY/newWRF_MW_THO/run/201708231800/perturb_ic/029/d03/rsl.error.0000
+  yes
+  any need to work on member  030
+/expanse/lustre/scratch/zuy121/temp_project/Pro2_PSU_MW/HARVEY/newWRF_MW_THO/run/201708231800/perturb_ic/030/d03/rsl.error.0000
+  yes
+  any need to work on member  031
+/expanse/lustre/scratch/zuy121/temp_project/Pro2_PSU_MW/HARVEY/newWRF_MW_THO/run/201708231800/perturb_ic/031/d03/rsl.error.0000
+  yes
+  any need to work on member  032
+/expanse/lustre/scratch/zuy121/temp_project/Pro2_PSU_MW/HARVEY/newWRF_MW_THO/run/201708231800/perturb_ic/032/d03/rsl.error.0000
+  yes
+  any need to work on member  033
+/expanse/lustre/scratch/zuy121/temp_project/Pro2_PSU_MW/HARVEY/newWRF_MW_THO/run/201708231800/perturb_ic/033/d03/rsl.error.0000
+  yes
+  any need to work on member  034
+/expanse/lustre/scratch/zuy121/temp_project/Pro2_PSU_MW/HARVEY/newWRF_MW_THO/run/201708231800/perturb_ic/034/d03/rsl.error.0000
+  yes
+  any need to work on member  035
+/expanse/lustre/scratch/zuy121/temp_project/Pro2_PSU_MW/HARVEY/newWRF_MW_THO/run/201708231800/perturb_ic/035/d03/rsl.error.0000
+  yes
+  any need to work on member  036
+/expanse/lustre/scratch/zuy121/temp_project/Pro2_PSU_MW/HARVEY/newWRF_MW_THO/run/201708231800/perturb_ic/036/d03/rsl.error.0000
+  yes
+  any need to work on member  037
+/expanse/lustre/scratch/zuy121/temp_project/Pro2_PSU_MW/HARVEY/newWRF_MW_THO/run/201708231800/perturb_ic/037/d03/rsl.error.0000
+  yes
+  any need to work on member  038
+/expanse/lustre/scratch/zuy121/temp_project/Pro2_PSU_MW/HARVEY/newWRF_MW_THO/run/201708231800/perturb_ic/038/d03/rsl.error.0000
+  yes
+  any need to work on member  039
+/expanse/lustre/scratch/zuy121/temp_project/Pro2_PSU_MW/HARVEY/newWRF_MW_THO/run/201708231800/perturb_ic/039/d03/rsl.error.0000
+  yes
+  any need to work on member  040
+/expanse/lustre/scratch/zuy121/temp_project/Pro2_PSU_MW/HARVEY/newWRF_MW_THO/run/201708231800/perturb_ic/040/d03/rsl.error.0000
+  yes
+  any need to work on member  041
+/expanse/lustre/scratch/zuy121/temp_project/Pro2_PSU_MW/HARVEY/newWRF_MW_THO/run/201708231800/perturb_ic/041/d03/rsl.error.0000
+  yes
+  any need to work on member  042
+/expanse/lustre/scratch/zuy121/temp_project/Pro2_PSU_MW/HARVEY/newWRF_MW_THO/run/201708231800/perturb_ic/042/d03/rsl.error.0000
+  yes
+  any need to work on member  043
+/expanse/lustre/scratch/zuy121/temp_project/Pro2_PSU_MW/HARVEY/newWRF_MW_THO/run/201708231800/perturb_ic/043/d03/rsl.error.0000
+  yes
+  any need to work on member  044
+/expanse/lustre/scratch/zuy121/temp_project/Pro2_PSU_MW/HARVEY/newWRF_MW_THO/run/201708231800/perturb_ic/044/d03/rsl.error.0000
+  yes
+  any need to work on member  045
+/expanse/lustre/scratch/zuy121/temp_project/Pro2_PSU_MW/HARVEY/newWRF_MW_THO/run/201708231800/perturb_ic/045/d03/rsl.error.0000
+  yes
+  any need to work on member  046
+/expanse/lustre/scratch/zuy121/temp_project/Pro2_PSU_MW/HARVEY/newWRF_MW_THO/run/201708231800/perturb_ic/046/d03/rsl.error.0000
+  yes
+  any need to work on member  047
+/expanse/lustre/scratch/zuy121/temp_project/Pro2_PSU_MW/HARVEY/newWRF_MW_THO/run/201708231800/perturb_ic/047/d03/rsl.error.0000
+  yes
+  any need to work on member  048
+/expanse/lustre/scratch/zuy121/temp_project/Pro2_PSU_MW/HARVEY/newWRF_MW_THO/run/201708231800/perturb_ic/048/d03/rsl.error.0000
+  yes
+  any need to work on member  049
+/expanse/lustre/scratch/zuy121/temp_project/Pro2_PSU_MW/HARVEY/newWRF_MW_THO/run/201708231800/perturb_ic/049/d03/rsl.error.0000
+  yes
+  any need to work on member  050
+/expanse/lustre/scratch/zuy121/temp_project/Pro2_PSU_MW/HARVEY/newWRF_MW_THO/run/201708231800/perturb_ic/050/d03/rsl.error.0000
+  yes
+  any need to work on member  051
+/expanse/lustre/scratch/zuy121/temp_project/Pro2_PSU_MW/HARVEY/newWRF_MW_THO/run/201708231800/perturb_ic/051/d03/rsl.error.0000
+  yes
+  any need to work on member  052
+/expanse/lustre/scratch/zuy121/temp_project/Pro2_PSU_MW/HARVEY/newWRF_MW_THO/run/201708231800/perturb_ic/052/d03/rsl.error.0000
+  yes
+  any need to work on member  053
+/expanse/lustre/scratch/zuy121/temp_project/Pro2_PSU_MW/HARVEY/newWRF_MW_THO/run/201708231800/perturb_ic/053/d03/rsl.error.0000
+  yes
+  any need to work on member  054
+/expanse/lustre/scratch/zuy121/temp_project/Pro2_PSU_MW/HARVEY/newWRF_MW_THO/run/201708231800/perturb_ic/054/d03/rsl.error.0000
+  yes
+  any need to work on member  055
+/expanse/lustre/scratch/zuy121/temp_project/Pro2_PSU_MW/HARVEY/newWRF_MW_THO/run/201708231800/perturb_ic/055/d03/rsl.error.0000
+  yes
+  any need to work on member  056
+/expanse/lustre/scratch/zuy121/temp_project/Pro2_PSU_MW/HARVEY/newWRF_MW_THO/run/201708231800/perturb_ic/056/d03/rsl.error.0000
+  yes
+  any need to work on member  057
+/expanse/lustre/scratch/zuy121/temp_project/Pro2_PSU_MW/HARVEY/newWRF_MW_THO/run/201708231800/perturb_ic/057/d03/rsl.error.0000
+  yes
+  any need to work on member  058
+/expanse/lustre/scratch/zuy121/temp_project/Pro2_PSU_MW/HARVEY/newWRF_MW_THO/run/201708231800/perturb_ic/058/d03/rsl.error.0000
+  yes
+  any need to work on member  059
+/expanse/lustre/scratch/zuy121/temp_project/Pro2_PSU_MW/HARVEY/newWRF_MW_THO/run/201708231800/perturb_ic/059/d03/rsl.error.0000
+  yes
+  any need to work on member  060
+/expanse/lustre/scratch/zuy121/temp_project/Pro2_PSU_MW/HARVEY/newWRF_MW_THO/run/201708231800/perturb_ic/060/d03/rsl.error.0000
+  yes

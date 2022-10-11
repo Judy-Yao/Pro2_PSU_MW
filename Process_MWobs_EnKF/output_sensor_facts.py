@@ -4,7 +4,7 @@
 # Output necessary sensor parameters to a HDF5 file. 
 # ================================================================================================================================
 # The microwave-observation-preprocessing system (MOPS) requires a lookp table sort of thing for parameters related to sensors.
-# This process, unfortunately, is impossible to automate at this point (June, 2022). Thus, it is the responsibility of the user who 
+# This process, unfortunately, is impossible to automate at this point (June, 2022). Thus, it is the responsibility of the user who  
 # uses this system to eyeball the technical details of the sensor and revise this program before running the system.
 # ---------------------------------------------------------------------------------------------------------------------------------
 
