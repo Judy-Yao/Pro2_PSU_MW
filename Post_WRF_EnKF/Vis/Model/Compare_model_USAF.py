@@ -13,6 +13,7 @@ from wrf import getvar
 # 2. conda activate python=3.4 (use wrf-python in this python environment)
 import USAF
 import math
+from math import modf
 import matlab.engine
 import scipy as sp
 import scipy.ndimage
@@ -268,20 +269,102 @@ def UV10_slp_AF( Storm, Exper_name, big_dir, small_dir ):
         else:
             plot_d03( Storm, wrf_dir, plot_dir, USAF_per_day )
 
+# Interpolate model points to one obs location
+def ijk_obs(lon_x, lat_x, H_x, lon_f, lat_f, H_f ):
 
+    nx = 297
+    ny =297
+    nz = 42
+    
+    print('Geolocation of the obs is: ', lon_f, lat_f, H_f)
+    # find the four nearest horizontal model points around the obs location
+    if (lon_x[0,0] > lon_f) or (lon_x[0,-1] < lon_f) or (lat_x[0,0] > lat_f) or (lat_x[-1,0] < lat_f):
+        return None
+        print('The obs is outside the domain!')
 
+    for i in range( nx ):
+        if lon_x[0,i] > lon_f:
+            if i == 0:
+                print('The i+1 is on the left border!')
+                #i_PlusOne = i
+                #i_MinusOne = i 
+                #print('Find the i and i+1!', i_MinusOne, i_PlusOne )
+                return None
+            else:
+                i_PlusOne = i
+                i_MinusOne = i - 1
+                print('Find the i and i+1!', i_MinusOne, i_PlusOne )
+                break
 
+    for j in range( ny ):
+        if lat_x[j,0] > lat_f:
+            if j == 0:
+                print('The i+1 is on the bottom border!')
+                #j_PlusOne = j
+                #j_MinusOne = j
+                #print('Find the j and j+1!', j_MinusOne, j_PlusOne )
+                return None
+            else:
+                j_PlusOne = j
+                j_MinusOne = j  - 1
+                print('Find the j and j+1!', j_MinusOne, j_PlusOne )
+                break
+
+    # convert the location of the obs in the geo coordinate to the ijk coordinate in the horizontal plane
+    i_prime = (lon_f - lon_x[0,i_MinusOne])/(lon_x[0,i_PlusOne]-lon_x[0,i_MinusOne])*(i_PlusOne-i_MinusOne)+i_MinusOne
+    j_prime = (lat_f - lat_x[j_MinusOne,0])/(lat_x[j_PlusOne,0]-lat_x[j_MinusOne,0])*(j_PlusOne-j_MinusOne)+j_MinusOne
+    #print('The location of the obs in the ith direction is: ', i_prime)
+    #print('The location of the obs in the jth direction is: ', j_prime)
+
+    # --- interpolate the height profile of model points to the obs location ---
+    H_left_bot = H_x[:,j_PlusOne,i_MinusOne]
+    H_left_up = H_x[:,j_PlusOne,i_MinusOne]
+    H_right_bot = H_x[:,j_PlusOne,i_PlusOne]
+    H_right_up = H_x[:,j_PlusOne,i_PlusOne]
+    
+    # perform the bilinear interpolation over an unit area
+    area = (i_PlusOne-i_MinusOne)*(j_PlusOne-j_MinusOne)
+    if area != 1:
+        raise Exception('The area is not a unit square!') # raise an error and stop the program
+    
+    fra_i_prime = modf(i_prime)[1]
+    fra_j_prime = modf(j_prime)[1]
+    H_ij_prime = H_left_bot*(1-fra_i_prime)*(1-fra_j_prime) + H_right_bot*fra_i_prime*(1-fra_j_prime) + H_left_up*fra_j_prime*(1.0-fra_i_prime) + H_right_up*fra_i_prime*fra_j_prime
+    
+    # find the two nearest vertical model points around the obs location
+    if (H_ij_prime[0] > H_f) or (H_ij_prime[-1] < H_f):
+        return None
+        print('The obs is outside the domain!')
+    for z in range( nz ):
+        if H_ij_prime[z] > H_f:
+            if z == 0:
+                print('The z+1 is on the bottom border!')
+                #z_PlusOne = z
+                #z_MinusOne = z
+                #print('Find the z and z+1!', z_MinusOne, z_PlusOne )
+                return None
+            else:
+                z_PlusOne = z
+                z_MinusOne = z_PlusOne - 1
+                print('Find the z and z+1!', z_MinusOne, z_PlusOne )
+                break
+
+    # convert the location of the obs in the geo coordinate to the ijk coordinate in the vertical plane
+    z_prime = (H_f - H_ij_prime[z_MinusOne])/(H_ij_prime[z_PlusOne]-H_ij_prime[z_MinusOne])*(z_PlusOne-z_MinusOne)+z_MinusOne
+
+    print('The location of the obs in the ijk coordinate is: ', i_prime, j_prime, z_prime)
+    return [i_prime, j_prime, z_prime]
 
 # Plot hourly flight track + variable values of model output at XX UTC to the flight level points (lon,lat,height) within XX UTC +/- 10 minutes
 def Plot_compare_track_wind_td( Storm, small_dir, df_dir, plot_dir ):
 
     # List the USFA files to investigate
-    USAF_list = sorted(glob.glob( small_dir + Storm + '/USAF/20170918*.txt' ))
+    USAF_list = sorted(glob.glob( small_dir + Storm + '/USAF/201708*' ))
     # Define attributes of interest to read
     attrs_itt = ['GMT','GPSA','LAT','LON','WSpd','TD'] # GMT time / GPS Altimeter (height of the air plane)/ latitude / longitude/ wind speed / dew point temperature
     
     # List all of wrf files and extract their times
-    wrfout_list = sorted(glob.glob( df_dir+'/wrfout_d03_2017-09-18_12:00:00' ))  
+    wrfout_list = sorted(glob.glob( df_dir+'/wrfout_d03_2017*' ))  
     wrfout_all_time_str = []
     for wrfout in wrfout_list:
         wrfout_head_tail_all =  os.path.split( wrfout ) 
@@ -304,11 +387,11 @@ def Plot_compare_track_wind_td( Storm, small_dir, df_dir, plot_dir ):
         for it_str in uni_hhdd:
             print('Dealing with time: ', it_str) 
             bool_idx = [it == it_str for it in wrfout_all_time_str ]
-            if np.all( bool_idx ) == False:
+            if np.any( bool_idx ) == True:
+                idx_wrf = int(np.where(bool_idx)[0]) # identify the location of the wrfout
+            else:
                 print('No wrfout is available at this time!')
                 continue
-            else: 
-                idx_wrf = int(np.where(bool_idx)[0]) # identify the location of the wrfout
            
             # Get flight-level track 
             it_dt = datetime.strptime(it_str,"%Y%m%d%H")
@@ -318,7 +401,6 @@ def Plot_compare_track_wind_td( Storm, small_dir, df_dir, plot_dir ):
                 print('No AF obs is available at this time span!')
                 continue
            
-            print(dict_AF_hour['TD'])
             # Find the best-track position
             bool_match = [it_dt == it for it in btk_dt]
             if True in bool_match:
@@ -330,56 +412,104 @@ def Plot_compare_track_wind_td( Storm, small_dir, df_dir, plot_dir ):
             # Read the wrf variables
             print('Check model data......')
             ncdir = nc.Dataset( wrfout_list[idx_wrf] )
-            lat_x = ncdir.variables['XLAT'][0,:,:][::10,::10]
-            lon_x = ncdir.variables['XLONG'][0,:,:][::10,::10]
+            lat_x = ncdir.variables['XLAT'][0,:,:]#[::10,::10]
+            lon_x = ncdir.variables['XLONG'][0,:,:]#[::10,::10]
 
             u = ncdir.variables['U'][0,:,:,:]
             u_mass = (u[:,:,0:-1:1] + u[:,:,1::1])/2 # interpolate staggered point to the mass grid 
             v = ncdir.variables['V'][0,:,:,:]
             v_mass = (v[:,0:-1:1,:] + v[:,1::1,:])/2 # interpolate staggered point to the mass grid 
-            ws_x =  ((u_mass ** 2 + v_mass ** 2) ** 0.5)[::4,::10,::10]
+            ws_x =  ((u_mass ** 2 + v_mass ** 2) ** 0.5)#[::4,::10,::10]
 
             PHB = ncdir.variables['PHB'][0,:,:,:]
             PH = ncdir.variables['PH'][0,:,:,:]
             GP = PHB+PH
             GP_mass = (GP[0:-1:1,:,:] + GP[1::1,:,:])/2 # interpolate staggered point to the mass grid 
-            Height_mass_x = (GP_mass/9.8)[::4,::10,::10] # Convert the geopotential to height
+            Height_mass_x = (GP_mass/9.8)#[::4,::10,::10] # Convert the geopotential to height
             
-            td_x = getvar(ncdir, 'td', units='degC')[::4,::10,::10].values
-            print('min_ws: ', np.amin(ws_x),'max_ws: ', np.amax(ws_x))
-            print('min_height: ', np.amin(Height_mass_x),'max_height: ', np.amax(Height_mass_x))
-            print('min_td: ', np.amin(td_x),'max_td: ', np.amax(td_x))
-
-            # Get interpolated model output to the flight level obs
+            td_x = getvar(ncdir, 'td', units='degC').values #[::4,::10,::10].values
+           
+            print('min_lon_x: ', np.amin(lon_x),'max_lon_x: ', np.amax(lon_x))
+            print('min_lat_x: ', np.amin(lat_x),'max_lat_x: ', np.amax(lat_x)) 
+            print('min_ws_x: ', np.amin(ws_x),'max_ws_x: ', np.amax(ws_x))
+            print('min_height_x: ', np.amin(Height_mass_x),'max_height_x: ', np.amax(Height_mass_x))
+            print('min_td_x: ', np.amin(td_x),'max_td_x: ', np.amax(td_x))
+ 
+            # Interpolate the model values in the space that is centered around the flight-level obs
             lon_f = dict_AF_hour['LON']
             lat_f = dict_AF_hour['LAT']
             gpsa_f = dict_AF_hour['GPSA']
-            #print(np.shape(lon_x), np.shape(lat_x), np.shape(Height_mass_x), np.shape(ws_x),np.shape(lon_f),np.shape(lat_f),np.shape(gpsa_f))
+
+            print('min_lon_f: ', np.amin(lon_f),'max_lon_f: ', np.amax(lon_f))
+            print('min_lat_f: ', np.amin(lat_f),'max_lat_f: ', np.amax(lat_f))
+            print('min_height_f: ', np.amin(gpsa_f),'max_height_f: ', np.amax(gpsa_f))
+
+            # Roughly check if obs is within the model domain
+            if (np.amax(lon_f) < np.amin(lon_x)) or (np.amin(lon_f) > np.amax(lon_x)):
+                print('The flight obs is not within the model domain!')
+                continue
+            if (np.amax(lat_f) < np.amin(lat_x)) or (np.amin(lat_f) > np.amax(lat_x)):
+                print('The flight obs is not within the model domain!')
+                continue
+
+            idx_itp = []
+            ws_AFspace = []
+            td_AFspace = []
+            for iobs in range( len(dict_AF_hour['LON']) ):
+                print('------------------------------------------------')
+                print('GMT: ', dict_AF_hour['GMT'][iobs])
+                # get the ijk of obs
+                list_ijk_obs = ijk_obs( lon_x, lat_x, Height_mass_x, lon_f[iobs], lat_f[iobs], gpsa_f[iobs] )
+                if list_ijk_obs is None:
+                    continue           
+
+                # collect the ijk coordinates of the 8 points  
+                i_PlusOne = np.ceil( list_ijk_obs[0] )
+                i_MinusOne = np.floor( list_ijk_obs[0] )
+                j_PlusOne = np.ceil( list_ijk_obs[1] )
+                j_MinusOne = np.floor( list_ijk_obs[1] )
+                k_PlusOne = np.ceil( list_ijk_obs[2] )
+                k_MinusOne = np.floor( list_ijk_obs[2] )
+                i_8_points = [i_MinusOne,i_PlusOne,i_PlusOne,i_MinusOne,i_MinusOne,i_PlusOne,i_PlusOne,i_MinusOne] 
+                j_8_points = [j_MinusOne,j_MinusOne,j_PlusOne,j_PlusOne,j_MinusOne,j_MinusOne,j_PlusOne,j_PlusOne]
+                k_8_points = [k_MinusOne,k_MinusOne,k_MinusOne,k_MinusOne,k_PlusOne,k_PlusOne,k_PlusOne,k_PlusOne]
+                # griddata interpolate
+                ws_8_points = []
+                td_8_points = []
+                for it in range(len(i_8_points)):
+                    ws_8_points.append( ws_x[int(k_8_points[it]), int(j_8_points[it]), int(i_8_points[it])] )
+                    td_8_points.append( td_x[int(k_8_points[it]), int(j_8_points[it]), int(i_8_points[it])] )
+    
+                ws_ith_obs = eng.griddata( matlab.double(i_8_points), matlab.double(j_8_points),  matlab.double(k_8_points), matlab.double( ws_8_points), matlab.double( list_ijk_obs[0:1] ), matlab.double( list_ijk_obs[1:2] ), matlab.double( list_ijk_obs[2:3] ) )
+                print('interpolated wind:', np.array(ws_ith_obs) )
+                print('mean wind:', np.mean( ws_8_points ) )
+                td_ith_obs = eng.griddata( matlab.double(i_8_points), matlab.double(j_8_points),  matlab.double(k_8_points), matlab.double( td_8_points), matlab.double( list_ijk_obs[0:1] ), matlab.double( list_ijk_obs[1:2] ), matlab.double( list_ijk_obs[2:3] ) )
+                print('interpolated td:', np.array(td_ith_obs) )
+                print('mean td:', np.mean( td_8_points ) )
+
+                if np.array(ws_ith_obs).size > 0:
+                    idx_itp.append( iobs )
+                    ws_AFspace.append( np.array(ws_ith_obs).tolist() )
+                    td_AFspace.append( np.array(td_ith_obs).tolist() )
+                else:
+                    continue
+
            
-            len_z = np.shape( Height_mass_x )[0]
-            lon_x_3d =  np.broadcast_to( lon_x, (len_z,) + lon_x.shape )
-            lat_x_3d =  np.broadcast_to( lat_x, (len_z,) + lat_x.shape )
-            #print(np.shape(lon_x_3d), np.shape(lat_x_3d), np.shape(Height_mass_x), np.shape(ws_x),np.shape(lon_f),np.shape(lat_f),np.shape(gpsa_f))
-            mws_AFspace = eng.griddata( matlab.double( lon_x_3d.tolist() ), matlab.double( lat_x_3d.tolist() ), matlab.double( Height_mass_x[:].tolist() ), matlab.double(ws_x[:].tolist()), matlab.double( lon_f.tolist() ), matlab.double( lat_f.tolist() ), matlab.double( gpsa_f.tolist() ))
-            ws_AFspace = np.array(mws_AFspace._data)
             print('Check interpolated model date......')
-            print('min_ws: ', np.amin(ws_AFspace),'max_ws: ', np.amax(ws_AFspace))
-            #print(np.shape(lon_x_3d), np.shape(lat_x_3d), np.shape(Height_mass_x), np.shape(td_x),np.shape(lon_f),np.shape(lat_f),np.shape(gpsa_f))
-            mtd_AFspace = eng.griddata( matlab.double( lon_x_3d.tolist() ), matlab.double( lat_x_3d.tolist() ), matlab.double( Height_mass_x[:].tolist() ), matlab.double(td_x.tolist()), matlab.double( lon_f.tolist() ), matlab.double( lat_f.tolist() ), matlab.double( gpsa_f.tolist() ))
-            td_AFspace = np.array(mtd_AFspace._data)
-            print('min_td: ', np.amin(td_AFspace),'max_td: ', np.amax(td_AFspace)) 
+            print('min_ws: ', np.amin(ws_AFspace[:]),'max_ws: ', np.amax(ws_AFspace[:])) 
+            #print('min_td: ', np.amin(td_AFspace[:]),'max_td: ', np.amax(td_AFspace[:])) 
 
             #  --------- Plot --------------------
-            fig = plt.figure( figsize=(8,9), dpi=150 )
+            fig = plt.figure( figsize=(8,9.5), dpi=150 )
             gs = fig.add_gridspec(5,2)
             
             #  --------- Plot the flight level track  --------------------
             ax0 = fig.add_subplot( gs[0:3,:],  projection=ccrs.PlateCarree())
             
-            lon_min = -71#np.amin( dict_AF_mission['lon'] )
-            lon_max = -57#np.amax( dict_AF_mission['lon'] )
-            lat_min = 10#np.amin( dict_AF_mission['lat'] )
-            lat_max = 20#np.amax( dict_AF_mission['lat'] )
+            lon_min = -100#-71#np.amin( dict_AF_mission['lon'] )
+            lon_max = -85#-57#np.amax( dict_AF_mission['lon'] )
+            lat_min = 15#10#np.amin( dict_AF_mission['lat'] )
+            lat_max = 31#20#np.amax( dict_AF_mission['lat'] )
             gpsa_min = 0
             gpsa_max = np.amax( dict_AF_mission['GPSA'] )
 
@@ -421,11 +551,11 @@ def Plot_compare_track_wind_td( Storm, small_dir, df_dir, plot_dir ):
 
             ax1 = fig.add_subplot( gs[3,:] ) 
             ax1.plot_date( dict_AF_hour['GMT'], dict_AF_hour['WSpd']*0.51444,  color='black', linewidth=1, label='Flight' ) 
-            ax1.plot_date( dict_AF_hour['GMT'], ws_AFspace,  color='blue', linewidth=1, label='IR+MW')
+            ax1.plot_date( dict_AF_hour['GMT'][idx_itp], np.array( ws_AFspace ),  color='blue', linewidth=1, label='IR+MW')
 
             ax2 = fig.add_subplot( gs[4,:] )
             ax2.plot_date( dict_AF_hour['GMT'], dict_AF_hour['TD']+273.15,  color='black', linewidth=1, label='Flight' )
-            ax2.plot_date( dict_AF_hour['GMT'], td_AFspace+273.15, color='blue', linewidth=1, label='IR+MW')
+            ax2.plot_date( dict_AF_hour['GMT'][idx_itp], np.array( td_AFspace )+273.15, color='blue', linewidth=1, label='IR+MW')
 
             # Set labels
             ax1.tick_params(left = True, right = False , labelleft = True ,
@@ -436,21 +566,20 @@ def Plot_compare_track_wind_td( Storm, small_dir, df_dir, plot_dir ):
             ax2.set_title('Flight-level Dew Point (k)',fontweight="bold",fontsize='12')
 
             plt.savefig( plot_dir+it_str+'ws_td.png', dpi=300 )
-            print('Saving the figure: ',  plot_dir+it_str+'ws_td.png')
+            print('Saving the figure: ',  plot_dir+it_str+'_track_ws_td.png')
             plt.close()
 
-            eng.quit()
+
+    eng.quit()
 
 
 
 # For the wrfout in each deterministic forecast, plot the aircraft flight track and the comparison of the wind speed/dwt 
 def DF_compare_track_wind_dew( Storm, Exper_name, big_dir, small_dir ):
 
-    DFtimes = ['201709170600',]#,'201709171200','201709171800',]
-    DFend = '201709210000'
+    DFtimes = ['201708230000',]#,'201709171200','201709171800',]
+    DFend = '201708270000'
 
-    USAF_list = glob.glob( small_dir + Storm + '/USAF/*.txt' )
-    USAF_name_list = [ os.path.split(ifile)[1] for ifile in USAF_list ]
 
     for DF_start in DFtimes:
         print('The deterministic forecast begins at '+ DF_start)
@@ -479,8 +608,8 @@ class Info_USAF_clt:
 
 
 if __name__ == '__main__':
-    Storm = 'MARIA'
-    Exper_name = 'newWRF_MW_THO'
+    Storm = 'HARVEY'
+    Exper_name = 'newWRF_IR_only'
     big_dir = '/scratch/06191/tg854905/Pro2_PSU_MW/'
     small_dir = '/work2/06191/tg854905/stampede2/Pro2_PSU_MW/' 
 

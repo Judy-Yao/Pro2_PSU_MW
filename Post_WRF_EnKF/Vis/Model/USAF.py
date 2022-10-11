@@ -16,7 +16,7 @@ from cartopy.mpl.gridliner import LONGITUDE_FORMATTER, LATITUDE_FORMATTER
 from Track_intensity_all import read_bestrack
 
 
-USAF_idx_var = {'GMT':0,'GPSA':9,'LAT':12,'LON':13,'WSpd':30,'TD':31}
+USAF_idx_var = {'GMT':0,'GPSA':8,'LAT':12,'LON':13,'WSpd':30,'TD':31}
 
 
 class Info_USAF_clt:
@@ -268,12 +268,12 @@ def mask_time_of_t( dict_AF_all, uni_dt, Nminutes ):
 
 def Plot_hourly_track( Storm, dict_AF_mission, dict_btk, uni_hhdd, attrs_itt, plot_dir):
      
-    lon_min = -71#np.amin( dict_AF_mission['lon'] )
-    lon_max = -57#np.amax( dict_AF_mission['lon'] )
-    lat_min = 10#np.amin( dict_AF_mission['lat'] )
-    lat_max = 20#np.amax( dict_AF_mission['lat'] )
+    lon_min = -75#-100 #-71#np.amin( dict_AF_mission['lon'] )
+    lon_max = -51 #-85 #-57#np.amax( dict_AF_mission['lon'] )
+    lat_min = 11#15 #10#np.amin( dict_AF_mission['lat'] )
+    lat_max = 25#31 #20#np.amax( dict_AF_mission['lat'] )
     gpsa_min = 0
-    gpsa_max = np.amax( dict_AF_mission['gpsa'] )
+    gpsa_max = np.amax( dict_AF_mission['GPSA'] )
 
     btk_dt = [datetime.strptime(it_str,"%Y%m%d%H%M") for it_str in dict_btk['time']]
 
@@ -305,9 +305,9 @@ def Plot_hourly_track( Storm, dict_AF_mission, dict_btk, uni_hhdd, attrs_itt, pl
         #  Plot the track for the whole mission
         gpsa_min = 0
         gpsa_max = 10000
-        ax.scatter(dict_AF_mission['lon'], dict_AF_mission['lat'], 1, 'grey', cmap='jet', vmin=gpsa_min, vmax=gpsa_max,transform=ccrs.PlateCarree())
+        ax.scatter(dict_AF_mission['LON'], dict_AF_mission['LAT'], 1, 'grey', cmap='jet', vmin=gpsa_min, vmax=gpsa_max,transform=ccrs.PlateCarree())
         # Plot the hourly track
-        AF = ax.scatter(dict_AF_hour['lon'], dict_AF_hour['lat'], 2, dict_AF_hour['gpsa'], cmap='jet', vmin=gpsa_min, vmax=gpsa_max, transform=ccrs.PlateCarree())
+        AF = ax.scatter(dict_AF_hour['LON'], dict_AF_hour['LAT'], 2, dict_AF_hour['GPSA'], cmap='jet', vmin=gpsa_min, vmax=gpsa_max, transform=ccrs.PlateCarree())
         AF_bar = fig.colorbar(AF,fraction=0.046, pad=0.04) 
         AF_bar.ax.set_ylabel('Flight Height (m)') 
         AF_bar.ax.tick_params(labelsize=7)
@@ -337,7 +337,7 @@ def Plot_hourly_track( Storm, dict_AF_mission, dict_btk, uni_hhdd, attrs_itt, pl
 
 def track_height( Storm, big_dir, small_dir, plot_dir):
 
-    USAF_list = sorted(glob.glob( small_dir + Storm + '/USAF/20170918*.txt' ))
+    USAF_list = sorted(glob.glob( small_dir + Storm + '/USAF/2017090*.txt' ))
 
     # define attributes of interest to read
     attrs_itt = ['GMT','GPSA','LAT','LON'] # GMT time / GPS Altimeter (height of the air plane)
@@ -361,12 +361,12 @@ def track_height( Storm, big_dir, small_dir, plot_dir):
 
 if __name__ == '__main__':
 
-    Storm = 'MARIA'
+    Storm = 'IRMA'
     big_dir = '/scratch/06191/tg854905/Pro2_PSU_MW/'
     small_dir = '/work2/06191/tg854905/stampede2/Pro2_PSU_MW/'
     plot_dir = small_dir + Storm + '/USAF/Vis/'
 
-    
+    track_height( Storm, big_dir, small_dir, plot_dir) 
 
 
 
