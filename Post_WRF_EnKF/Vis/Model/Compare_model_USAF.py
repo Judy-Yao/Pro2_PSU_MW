@@ -577,7 +577,7 @@ def Plot_compare_track_wind_td( Storm, small_dir, df_dir, plot_dir ):
 # For the wrfout in each deterministic forecast, plot the aircraft flight track and the comparison of the wind speed/dwt 
 def DF_compare_track_wind_dew( Storm, Exper_name, big_dir, small_dir ):
 
-    DFtimes = ['201708230000',]#,'201709171200','201709171800',]
+    DFtimes = ['201708221200','201708221800','201708230000','201708230600', '201708231200']#,'201709171200','201709171800',]
     DFend = '201708270000'
 
 
