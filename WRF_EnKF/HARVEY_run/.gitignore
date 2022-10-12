@@ -1,5 +1,5 @@
 check*
 *.log
-log_*
+log*
 .*swp
 **/*.swp
