@@ -213,25 +213,40 @@ def plot_one( ax0, ax1, ax2,  state, color, label, step=1):
         times = state['time']
         lon = state['lon']
         lat = state['lat']
-    else:
-        times = state['time'][::6]
-        lon = state['lon'][::6]
-        lat = state['lat'][::6]
-  
-    ax0.plot(lon, lat, marker='o', markersize=2, color=color,linewidth=1, label=label, transform=ccrs.PlateCarree())
-    
-    idx = 0
-    for it in times:
-        print(it)
-        if it[8:10] == '00':
-            ax0.scatter( lon[idx], lat[idx],s=5, marker='o',edgecolor="white",transform=ccrs.PlateCarree())    
-            ax0.annotate(it[6:8], xy=(lon[idx], lat[idx]),  xycoords='data', transform=ccrs.PlateCarree())
-            #ax0.text((state['lon'][idx], state['lat'][idx],it[6:8], fontsize=4,transform=ccrs.PlateCarree())
-        idx = idx + 1
+        x_min_slp = state['min_slp']
+        x_max_ws = state['max_ws']
 
-    dates = [datetime.strptime(i,"%Y%m%d%H%M") for i in state['time']] 
-    ax1.plot_date(dates, state['min_slp'], color, label=label)
-    ax2.plot_date(dates, state['max_ws'], color, label=label)
+        print('times to plot:', times)
+        ax0.plot(lon, lat, marker='o', markersize=2, color=color,linewidth=1, label=label, transform=ccrs.PlateCarree())
+        dates = [datetime.strptime(i,"%Y%m%d%H%M") for i in times]
+        ax1.plot_date(dates, x_min_slp, color, label=label)
+        ax2.plot_date(dates, x_max_ws, color, label=label)
+        
+        dates = [datetime.strptime(i,"%Y%m%d%H%M") for i in times]
+        
+    else:
+        steps = 6 
+        times = state['time'][::steps]
+        lon = state['lon'][::steps]
+        lat = state['lat'][::steps]
+        x_min_slp = state['min_slp'][::steps]
+        x_max_ws = state['max_ws'][::steps]
+  
+        print('times to plot:', times)
+        ax0.plot(lon, lat, marker='o', markersize=2, color=color,linewidth=1, label=label, transform=ccrs.PlateCarree())
+    
+        idx = 0
+        for it in times:
+            #print(it)
+            if it[8:10] == '00':
+                ax0.scatter( lon[idx], lat[idx],s=5, marker='o',edgecolor="white",transform=ccrs.PlateCarree())    
+                ax0.annotate(it[6:8], xy=(lon[idx], lat[idx]),  xycoords='data', transform=ccrs.PlateCarree())
+                #ax0.text((state['lon'][idx], state['lat'][idx],it[6:8], fontsize=4,transform=ccrs.PlateCarree())
+            idx = idx + 1
+
+        dates = [datetime.strptime(i,"%Y%m%d%H%M") for i in times] 
+        ax1.plot_date(dates, x_min_slp, color, label=label)
+        ax2.plot_date(dates, x_max_ws, color, label=label)
 
 
 def plot_hpi(Storm, wrf_dir, read_HPI_wrfout, domain_range, output_dir=None):
