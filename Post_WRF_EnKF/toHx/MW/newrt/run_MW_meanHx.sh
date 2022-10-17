@@ -6,9 +6,9 @@
 # Author: Zhu (Judy) Yao. July 27 - 28, 2022
 
 #####header for stampede######
-#SBATCH -J crtm
-#SBATCH -N 4
-#SBATCH --ntasks-per-node 48
+#SBATCH -J MW
+#SBATCH -N 16
+#SBATCH --ntasks-per-node 64
 #SBATCH -p development
 #SBATCH -t 02:00:00
 #SBATCH -o out_mw
@@ -26,7 +26,7 @@ module load python3/3.7.0
 
 # Fill in the storm name and experiment name
 Storm=HARVEY
-Exper=newWRF_IR_only
+Exper=newWRF_MW_THO
 
 # Parent paths
 Big_dir=/scratch/06191/tg854905/Pro2_PSU_MW/
@@ -34,31 +34,36 @@ Small_dir=/work2/06191/tg854905/stampede2/Pro2_PSU_MW
 Code_dir=/home1/06191/tg854905/Pro2_PSU_MW/Post_WRF_EnKF/toHx/MW/newrt
 
 ############ User control parameters
-max_num_of_crtm=4   # Max number of CRTM.exe to run concurrently 
-                    # (make same as # of nodes requested)
-cores_per_crtm=48   # Number of cores given to each crtm.exe 
-                    # (make same as # of cores per node)
-date_st=201708221200        # Start date  
-date_ed=201708231600        # End date (24 forecast hrs can be done in < 2 hr w/4 nodes on skx queues)
-time_int=60         # Time interval btwn cycles in minutes
+date_st=201708222000        # Start date  
+date_ed=201708222100        # End date (24 forecast hrs can be done in < 2 hr w/4 nodes on skx queues
 nE=60               # Number of ens members
 dom=3                           # Domain you are running it on 
-state=("input" "output") # Input or output or both
-
-##### Initialize counting variable to keep track of number of active CRTM.exe
-num_crtm=0 
+#state=("input" "output") # Input or output or both
+state=output
 
 # ------ DA times where MW obs exists ---------------
-Obs_files_str=microwave_d03_201708221200_so
-#Obs_files_str=$(ls ${Small_dir}/${Storm}/Obs_y/MW/)
+#Obs_files_str=microwave_d03_201708221200_so
+Obs_files_str=$(ls ${Small_dir}/${Storm}/Obs_y/MW/)
 Obs_files_arr=($Obs_files_str) # String-to-array conversion gives you access to individual element
 DAtimes=()
 for obs_file in ${Obs_files_arr[@]}; do
-  DAtimes+=($(echo $obs_file | cut -c15-26))
+#  DAtimes+=($(echo $obs_file | cut -c15-26))
+  DAtimes+=($(echo $obs_file | cut -c11-22))
 done
 
 # Iterate thru DAtimes
 for DAtime in ${DAtimes[@]}; do
+  
+  echo $DAtime
+  #if ! ls -l nofolder; then
+  #  echo "Folder doesn't exist"
+  #  exit 1
+  #fi
+
+  # Determine if DAtime is of interest to this calculation
+  if [[ $DAtime -lt $date_st ]] || [[ $DAtime -gt $date_ed ]]; then
+    continue
+  fi
 
   # if the fc directory at DAtime does not exist, terminate the loop
   if [[ ! -d ${Big_dir}/${Storm}/${Exper}/fc/${DAtime} ]]; then
@@ -76,13 +81,6 @@ for DAtime in ${DAtimes[@]}; do
   Sensor_Info=${Big_dir}/${Storm}/${Exper}/Obs_Hx/MW/${DAtime}/${DAtime}_sensorCh 
 
 
-  # figure out the time for this ensemble
-  year=${DAtime:0:4}
-  month=${DAtime:4:2}
-  day=${DAtime:6:2}
-  hour=${DAtime:8:2} 
-  minute=${DAtime:10:2}
-
   cd ${Big_dir}/${Storm}/${Exper}/Obs_Hx/MW/$DAtime
   ln -sf ${Code_dir}/paper_scott_2020.mpi .
   ln -sf ${Code_dir}/getSensorInfo.py .
@@ -93,8 +91,10 @@ for DAtime in ${DAtimes[@]}; do
 
     # Iterate thru ens
     for mem in `seq -f "%03g" 1 $nE`; do
-      xfile=${Big_dir}/${Storm}/${Exper}/fc/${DAtime}/wrf_enkf_"$state"_d0"$dom"_$mem 
-      outfile=${outdir}/"$state"_mem"$mem"_d0"$dom"_"$year"-"$month"-"$day"_"$hour":"$minute"
+      xfile=${Big_dir}/${Storm}/${Exper}/fc/${DAtime}/wrf_enkf_"${istate}"_d0"$dom"_$mem 
+      #onlyfile=$(basename "$xfile") 
+      #outfile=${Big_dir}/${Storm}/${Exper}/Obs_Hx/MW/${DAtime}/${onlyfile} 
+      outfile=${outdir}/"${istate}"_mem"$mem"_d0"$dom"_${DAtime:0:10}
 
       #echo ${xfile}
       ln -sf ${xfile} wrffile
@@ -114,8 +114,8 @@ nml_l_include_land = T,
 nml_s_sensor_id = ${sensor_Chs[0]},
 nml_a_channels(:,1) = ${sensor_Chs[@]:1},
 nml_s_reff_method = 'mp_physics',
-nml_i_nicpu = 12,
-nml_i_njcpu = 12,
+nml_i_nicpu = 64,
+nml_i_njcpu = 16,
 nml_s_crtm_rainLUT='Thompson08_RainLUT_-109z-1.bin',
 nml_s_crtm_snowLUT='Thompson08_SnowLUT_-109z-1.bin',
 nml_s_crtm_graupelLUT='Thompson08_GraupelLUT_-109z-1.bin',
@@ -123,7 +123,7 @@ nml_s_crtm_graupelLUT='Thompson08_GraupelLUT_-109z-1.bin',
     
 \$rt_input
 nml_s_filename_input = '${xfile}'
-nml_s_filename_obs='${Small_dir}/${Storm}/Obs_y/MW/microwave_d03_${DAtime}_so' 
+nml_s_filename_obs='${Small_dir}/${Storm}/Obs_y/MW/microwave_${DAtime}_so' 
 / 
             
 \$rt_output
@@ -134,7 +134,7 @@ EOF
 
           # Run the CRTM
           if [[ ! -f ${outfile}.tb.${sensor_Chs[0]}.crtm.nc ]]; then
-            ibrun -n 144 ./paper_scott_2020.mpi test_crtm_wrf.nml
+            ibrun -n 1024 ./paper_scott_2020.mpi test_crtm_wrf.nml
           fi
 
       
@@ -144,6 +144,6 @@ EOF
 done # End looping over dates
             
 
-wait
+#wait
 
 

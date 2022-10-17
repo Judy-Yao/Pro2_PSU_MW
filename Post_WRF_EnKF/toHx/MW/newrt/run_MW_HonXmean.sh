@@ -23,7 +23,7 @@ module load libfabric/1.7.0
 module load python3/3.7.0 
 
 # Fill in the storm name and experiment name
-Storm=IRMA
+Storm=HARVEY
 Exper=newWRF_IR_only
 
 # Parent paths
@@ -32,7 +32,7 @@ Small_dir=/work2/06191/tg854905/stampede2/Pro2_PSU_MW
 Code_dir=/home1/06191/tg854905/Pro2_PSU_MW/Post_WRF_EnKF/toHx/MW/newrt
 
 # DA times 
-Obs_files_str=microwave_d03_201709030800_so
+Obs_files_str=microwave_d03_201708221200_so
 #Obs_files_str=$(ls ${Small_dir}/${Storm}/Obs_y/MW/)
 Obs_files_arr=($Obs_files_str) # String-to-array conversion gives you access to individual element
 DAtimes=()
@@ -43,14 +43,14 @@ done
 # Loop over each DA time
 for DAtime in ${DAtimes[@]}; do
   # At the DAtime, get sensor information based on microwave_SO (obs)
-  if [[ ! -f ${Big_dir}/${Storm}/${Exper}/fc/${DAtime}/${DAtime}_sensorCh ]]; then
+  if [[ ! -f ${Big_dir}/${Storm}/${Exper}/Obs_Hx/MW/${DAtime}/${DAtime}_sensorCh ]]; then
     $(python3 getSensorInfo.py ${Storm} ${Exper} ${DAtime})
   fi
   
-  Sensor_Info=${Big_dir}/${Storm}/${Exper}/fc/${DAtime}/${DAtime}_sensorCh 
+  Sensor_Info=${Big_dir}/${Storm}/${Exper}/Obs_Hx/MW/${DAtime}/${DAtime}_sensorCh 
 
   # Loop over each model file
-  for xfile in $(ls ${Big_dir}/${Storm}/${Exper}/fc/${DAtime}/wrf*); do
+  for xfile in $(ls ${Big_dir}/${Storm}/${Exper}/fc/${DAtime}/*mean); do
     
     cd ${Big_dir}/${Storm}/${Exper}/Obs_Hx/MW/
     if [[ ! -d ${DAtime} ]]; then mkdir -p ${DAtime}; fi

@@ -15,7 +15,7 @@
 
 # Fill in the storm name and experiment name
 Storm=HARVEY
-Exper=newWRF_IR_only
+Exper=newWRF_MW_THO
 
 # Parent paths
 Big_dir=/scratch/06191/tg854905/Pro2_PSU_MW/
@@ -32,6 +32,7 @@ date_ed=201708231600        # End date (24 forecast hrs can be done in < 2 hr w/
 time_int=60         # Time interval btwn cycles in minutes
 nE=60               # Number of ens members
 dom=3                           # Domain you are running it on 
+#state=("output")
 state=("input" "output") # Input or output or both
 
 
@@ -65,8 +66,8 @@ for istate in "${state[@]}"; do
 
     # Iterate thru ens
     for mem in `seq -f "%03g" 1 $nE`; do
-      wrffile=${Big_dir}/${Storm}/${Exper}/fc/${DAtime}/wrf_enkf_"$state"_d0"$dom"_$mem 
-      outfile=${outdir}/TB_GOES_CRTM_"$state"_mem"$mem"_d0"$dom"_"$year"-"$month"-"$day"_"$hour":"$minute".bin
+      wrffile=${Big_dir}/${Storm}/${Exper}/fc/${DAtime}/wrf_enkf_"$istate"_d0"$dom"_$mem 
+      outfile=${outdir}/TB_GOES_CRTM_"$istate"_mem"$mem"_d0"$dom"_"$year"-"$month"-"$day"_"$hour":"$minute".bin
 
       echo $wrffile $outfile
       

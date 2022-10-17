@@ -61,7 +61,7 @@ if __name__ == '__main__':
     Exper_name = sys.argv[2]
     MW_time = sys.argv[3]
 
-    MW_File = '/work2/06191/tg854905/stampede2/Pro2_PSU_MW/'+Storm+'/Obs_y/MW/microwave_d03_'+MW_time+'_so';
+    MW_File = '/work2/06191/tg854905/stampede2/Pro2_PSU_MW/'+Storm+'/Obs_y/MW/microwave_'+MW_time+'_so';
     List_SS_Ch = main(MW_File)
     with open('/scratch/06191/tg854905/Pro2_PSU_MW/'+Storm+'/'+Exper_name+'/Obs_Hx/MW/'+MW_time+'/'+MW_time+'_sensorCh','w') as f:
         for isCh in List_SS_Ch:

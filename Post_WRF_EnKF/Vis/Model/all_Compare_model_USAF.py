@@ -429,11 +429,11 @@ def Plot_compare_track_wind_td( Storm, small_dir, df_dir, plot_dir ):
             
             td_x = getvar(ncdir, 'td', units='degC').values #[::4,::10,::10].values
            
-            print('min_lon_x: ', np.amin(lon_x),'max_lon_x: ', np.amax(lon_x))
-            print('min_lat_x: ', np.amin(lat_x),'max_lat_x: ', np.amax(lat_x)) 
-            print('min_ws_x: ', np.amin(ws_x),'max_ws_x: ', np.amax(ws_x))
-            print('min_height_x: ', np.amin(Height_mass_x),'max_height_x: ', np.amax(Height_mass_x))
-            print('min_td_x: ', np.amin(td_x),'max_td_x: ', np.amax(td_x))
+            #print('min_lon_x: ', np.amin(lon_x),'max_lon_x: ', np.amax(lon_x))
+            #print('min_lat_x: ', np.amin(lat_x),'max_lat_x: ', np.amax(lat_x)) 
+            #print('min_ws_x: ', np.amin(ws_x),'max_ws_x: ', np.amax(ws_x))
+            #print('min_height_x: ', np.amin(Height_mass_x),'max_height_x: ', np.amax(Height_mass_x))
+            #print('min_td_x: ', np.amin(td_x),'max_td_x: ', np.amax(td_x))
  
             # Interpolate the model values in the space that is centered around the flight-level obs
             lon_f = dict_AF_hour['LON']
@@ -493,6 +493,7 @@ def Plot_compare_track_wind_td( Storm, small_dir, df_dir, plot_dir ):
                     td_AFspace.append( np.array(td_ith_obs).tolist() )
                 else:
                     continue
+
            
             print('Check interpolated model date......')
             print('min_ws: ', np.amin(ws_AFspace[:]),'max_ws: ', np.amax(ws_AFspace[:])) 
@@ -564,8 +565,8 @@ def Plot_compare_track_wind_td( Storm, small_dir, df_dir, plot_dir ):
             ax1.set_title('Flight-level Wind (m/s)',fontweight="bold",fontsize='12')
             ax2.set_title('Flight-level Dew Point (k)',fontweight="bold",fontsize='12')
 
-            plt.savefig( plot_dir+it_str+'ws_td_approx.png', dpi=300 )
-            print('Saving the figure: ',  plot_dir+it_str+'_track_ws_td_approx.png')
+            plt.savefig( plot_dir+it_str+'ws_td.png', dpi=300 )
+            print('Saving the figure: ',  plot_dir+it_str+'_track_ws_td.png')
             plt.close()
 
 
@@ -608,7 +609,7 @@ class Info_USAF_clt:
 
 if __name__ == '__main__':
     Storm = 'HARVEY'
-    Exper_name = 'newWRF_MW_THO'
+    Exper_name = 'newWRF_IR_only'
     big_dir = '/scratch/06191/tg854905/Pro2_PSU_MW/'
     small_dir = '/work2/06191/tg854905/stampede2/Pro2_PSU_MW/' 
 

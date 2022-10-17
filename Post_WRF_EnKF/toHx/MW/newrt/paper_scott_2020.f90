@@ -15,8 +15,8 @@ program test
   character(len=256) :: filename_in
   character(len=256) :: filename_obs
   type(model_state) :: state
-  type(model_state) :: slant(2)
-  type(rt_result) :: res(2)
+  type(model_state) :: slant(3)
+  type(rt_result) :: res(3)
   integer :: error_status
   integer :: n_channels, ich, isensor
 
@@ -47,7 +47,7 @@ program test
   
   
   
-  call model_state_read_wrf(state, filename_in, 1, error_status, buffer=20)
+  call model_state_read_wrf(state, filename_in, 1, error_status, buffer=25)
   filename_obs = nml_s_filename_obs
   
   call get_microwave(filename_obs, state, obs_mw, error_status)
@@ -108,7 +108,7 @@ program test
   deallocate( tb_conv )
   
   do isensor = 1, obs_info%nsensors
-    call rt_result_output_nc(res(isensor), state, filename_out, error_status)
+    !call rt_result_output_nc(res(isensor), state, filename_out, error_status)
     call rt_result_dealloc(res(isensor), error_status)
   end do
   
