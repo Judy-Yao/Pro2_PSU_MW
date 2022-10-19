@@ -37,22 +37,22 @@ amsr2_ch_dset = amsr2_ch.create_dataset("Channel_num", data=7)
 amsr2_ch_dset = amsr2_ch.create_dataset("fovs_alongTrack", data=22)
 amsr2_ch_dset.attrs['Units'] = 'km'
 
-amsr2_ch_dset = amsr2_ch.create_dataset("fovs_crossTrack", data=14)  
+amsr2_ch_dset = amsr2_ch.create_dataset("fovs_crossTrack", data=14)
 amsr2_ch_dset.attrs['Units'] = 'km'
 
 amsr2_lf_nsample = 243 #Number of Samples for low frequency in one scan.
-amsr2_lf_scan = np.full((1,amsr2_lf_nsample),47.57) #Assume the earth is spherical; Use laws of cosine 
+amsr2_lf_scan = np.full((1,amsr2_lf_nsample),47.57) #Assume the earth is spherical; Use laws of cosine
 amsr2_ch_dset = amsr2_ch.create_dataset("scan_angles", data=amsr2_lf_scan)
 amsr2_ch_dset.attrs['Units'] = 'degree'
-amsr2_ch_dset.attrs['Dimension'] = '1,nsamples' 
+amsr2_ch_dset.attrs['Dimension'] = '1,nsamples'
 
-amsr2_ch_dset = amsr2_ch.create_dataset("max_scan_angle", data=47.57)  
+amsr2_ch_dset = amsr2_ch.create_dataset("max_scan_angle", data=47.57)
 amsr2_ch_dset.attrs['Units'] = 'degree'
 
 # --- high f
 amsr2_ch = amsr2.create_group("89GHzV-PolA-Scan")
 
-amsr2_ch_dset = amsr2_ch.create_dataset("Channel_num", data=13)   
+amsr2_ch_dset = amsr2_ch.create_dataset("Channel_num", data=13)
 
 amsr2_ch_dset = amsr2_ch.create_dataset("fovs_alongTrack", data=5)
 amsr2_ch_dset.attrs['Units'] = 'km'
@@ -60,8 +60,8 @@ amsr2_ch_dset.attrs['Units'] = 'km'
 amsr2_ch_dset = amsr2_ch.create_dataset("fovs_crossTrack", data=3)
 amsr2_ch_dset.attrs['Units'] = 'km'
 
-amsr2_hf_nsample = 972 #combine A scan and B scan  
-amsr2_hf_scan = np.full((1,amsr2_hf_nsample),47.57)  
+amsr2_hf_nsample = 972 #combine A scan and B scan
+amsr2_hf_scan = np.full((1,amsr2_hf_nsample),47.57)
 amsr2_ch_dset = amsr2_ch.create_dataset("scan_angles", data=amsr2_hf_scan)
 amsr2_ch_dset.attrs['Units'] = 'degree'
 amsr2_ch_dset.attrs['Dimension'] = '1,nsamples'
@@ -70,24 +70,24 @@ amsr2_ch_dset = amsr2_ch.create_dataset("max_scan_angle", data=47.57)
 amsr2_ch_dset.attrs['Units'] = 'degree'
 
 # ----
-#amsr2_ch = amsr2.create_group("89GHzV-PolB-Scan")    
-#
-#amsr2_ch_dset = amsr2_ch.create_dataset("Channel_num", data=13)
-#
-#amsr2_ch_dset = amsr2_ch.create_dataset("fovs_alongTrack", data=5)
-#amsr2_ch_dset.attrs['Units'] = 'km'
-#
-#amsr2_ch_dset = amsr2_ch.create_dataset("fovs_crossTrack", data=3)
-#amsr2_ch_dset.attrs['Units'] = 'km'
-#
-#amsr2_hf_nsample = 972 #combine A scan and B scan 
-#amsr2_hf_scan = np.full((1,amsr2_hf_nsample),47.57)
-#amsr2_ch_dset = amsr2_ch.create_dataset("scan_angles", data=amsr2_hf_scan)
-#amsr2_ch_dset.attrs['Units'] = 'degree'
-#amsr2_ch_dset.attrs['Dimension'] = '1,nsamples'
-#
-#amsr2_ch_dset = amsr2_ch.create_dataset("max_scan_angle", data=47.57)
-#amsr2_ch_dset.attrs['Units'] = 'degree'
+amsr2_ch = amsr2.create_group("89GHzV-PolB-Scan")
+
+amsr2_ch_dset = amsr2_ch.create_dataset("Channel_num", data=14)
+
+amsr2_ch_dset = amsr2_ch.create_dataset("fovs_alongTrack", data=5)
+amsr2_ch_dset.attrs['Units'] = 'km'
+
+amsr2_ch_dset = amsr2_ch.create_dataset("fovs_crossTrack", data=3)
+amsr2_ch_dset.attrs['Units'] = 'km'
+
+amsr2_hf_nsample = 972 #combine A scan and B scan
+amsr2_hf_scan = np.full((1,amsr2_hf_nsample),47.57)
+amsr2_ch_dset = amsr2_ch.create_dataset("scan_angles", data=amsr2_hf_scan)
+amsr2_ch_dset.attrs['Units'] = 'degree'
+amsr2_ch_dset.attrs['Dimension'] = '1,nsamples'
+
+amsr2_ch_dset = amsr2_ch.create_dataset("max_scan_angle", data=47.57)
+amsr2_ch_dset.attrs['Units'] = 'degree'
 
 
 # Group: ATMS
@@ -99,7 +99,7 @@ atms_ch = atms.create_group("183.31+-7GHzQH-Pol")
 
 atms_ch_dset = atms_ch.create_dataset("Channel_num", data=18)
 
-atms_ch_dset = atms_ch.create_dataset('fovs_alongTrack',data=1.1) 
+atms_ch_dset = atms_ch.create_dataset('fovs_alongTrack',data=1.1)
 atms_ch_dset.attrs['Units'] = 'degree'
 
 atms_ch_dset = atms_ch.create_dataset('fovs_crossTrack',data=2.2)
@@ -182,7 +182,7 @@ mhs_ch_dset = mhs_ch.create_dataset("scan_angles", data=mhs_scan)
 mhs_ch_dset.attrs['Units'] = 'degree'
 mhs_ch_dset.attrs['Dimension'] = '1,nsamples'
 
-mhs_ch_dset = mhs_ch.create_dataset("max_scan_angle", data=49.5) 
+mhs_ch_dset = mhs_ch.create_dataset("max_scan_angle", data=49.5)
 mhs_ch_dset.attrs['Units'] = 'degree'
 
 
@@ -266,10 +266,10 @@ ssmis_ch = ssmis.create_group("19.35GHzV-Pol")
 
 ssmis_ch_dset = ssmis_ch.create_dataset("Channel_num", data=13)
 
-ssmis_ch_dset = ssmis_ch.create_dataset("fovs_alongTrack", data=73) 
+ssmis_ch_dset = ssmis_ch.create_dataset("fovs_alongTrack", data=73)
 ssmis_ch_dset.attrs['Units'] = 'km'
 
-ssmis_ch_dset = ssmis_ch.create_dataset("fovs_crossTrack", data=47) 
+ssmis_ch_dset = ssmis_ch.create_dataset("fovs_crossTrack", data=47)
 ssmis_ch_dset.attrs['Units'] = 'km'
 
 ssmis_lf_nsample = 90
@@ -286,10 +286,10 @@ ssmis_ch = ssmis.create_group("183.31+-6.6GHzH-Pol")
 
 ssmis_ch_dset = ssmis_ch.create_dataset("Channel_num", data=9)
 
-ssmis_ch_dset = ssmis_ch.create_dataset("fovs_alongTrack", data=14) 
+ssmis_ch_dset = ssmis_ch.create_dataset("fovs_alongTrack", data=14)
 ssmis_ch_dset.attrs['Units'] = 'km'
 
-ssmis_ch_dset = ssmis_ch.create_dataset("fovs_crossTrack", data=13) 
+ssmis_ch_dset = ssmis_ch.create_dataset("fovs_crossTrack", data=13)
 ssmis_ch_dset.attrs['Units'] = 'km'
 
 ssmis_hf_nsample = 180
@@ -304,6 +304,3 @@ ssmis_ch_dset.attrs['Units'] = 'degree'
 
 
 f.close()
-
-# Header
-
