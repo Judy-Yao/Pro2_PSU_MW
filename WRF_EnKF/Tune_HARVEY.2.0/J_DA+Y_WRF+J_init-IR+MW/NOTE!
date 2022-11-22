@@ -1,0 +1,9 @@
+Background: after going through the first phase of reproducing Zhang 2021'work using the exactly same tools + initial conditions + boundary conditions, the result looks promising even with uncertainties that comes from the use of a different cluster + different version of intel compiler.
+
+Goal: replace WRF version from 3.6.1 to 4.1.2, see if IR+MW method still works.
+
+Modifications to the bash scripts:
+- Add force_use_old_data = .true. To &time_control section in namelist_real.sh/namelist_wrf_realtime.sh/namelist_wrf.sh   
+
+- Add hybrid_opt = 0 To &dynamics section in namelist_real.sh/namelist_wrf_realtime.sh/namelist_wrf.sh
+- Add use_theta_m = 0 To &dynamics section in namelist_real.sh/namelist_wrf_realtime.sh/namelist_wrf.sh  
