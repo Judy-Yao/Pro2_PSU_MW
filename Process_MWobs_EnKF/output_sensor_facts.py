@@ -125,10 +125,10 @@ gmi_ch = gmi.create_group("18.7GHzV-Pol")
 
 gmi_ch_dset = gmi_ch.create_dataset("Channel_num", data=3)
 
-gmi_ch_dset = gmi_ch.create_dataset("fovs_alongTrack", data=10.9)
+gmi_ch_dset = gmi_ch.create_dataset("fovs_alongTrack", data=18.1)
 gmi_ch_dset.attrs["Units"] = 'km'
 
-gmi_ch_dset = gmi_ch.create_dataset("fovs_crossTrack", data=18.1)
+gmi_ch_dset = gmi_ch.create_dataset("fovs_crossTrack", data=10.9)
 gmi_ch_dset.attrs["Units"] = 'km'
 
 gmi_lf_nsample = 221
@@ -145,19 +145,19 @@ gmi_ch = gmi.create_group("183.31+-7GHzV-Pol")
 
 gmi_ch_dset = gmi_ch.create_dataset("Channel_num", data=13)
 
-gmi_ch_dset = gmi_ch.create_dataset("fovs_alongTrack", data=3.8)
+gmi_ch_dset = gmi_ch.create_dataset("fovs_alongTrack", data=5.8)
 gmi_ch_dset.attrs["Units"] = 'km'
 
-gmi_ch_dset = gmi_ch.create_dataset("fovs_crossTrack", data=5.8)
+gmi_ch_dset = gmi_ch.create_dataset("fovs_crossTrack", data=3.8)
 gmi_ch_dset.attrs["Units"] = 'km'
 
 gmi_hf_nsample = 221
-gmi_hf_scan = np.full((1,gmi_hf_nsample),48.5)
+gmi_hf_scan = np.full((1,gmi_hf_nsample),45.36)
 gmi_ch_dset = gmi_ch.create_dataset("scan_angles", data=gmi_hf_scan)
 gmi_ch_dset.attrs["Units"] = 'degree'
 gmi_ch_dset.attrs['Dimension'] = '1,nsamples'
 
-gmi_ch_dset = gmi_ch.create_dataset("max_scan_angle", data=48.5)
+gmi_ch_dset = gmi_ch.create_dataset("max_scan_angle", data=45.36) 
 gmi_ch_dset.attrs["Units"] = 'degree'
 
 
@@ -304,6 +304,3 @@ ssmis_ch_dset.attrs['Units'] = 'degree'
 
 
 f.close()
-
-# Header
-
