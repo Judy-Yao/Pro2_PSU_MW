@@ -161,8 +161,8 @@ def write_mean_eachSensor( Hx_dir, sensor ):
     ncol = 8
 
     # List the Yb and Ya files
-    file_yb = sorted( glob.glob(Hx_dir + '/input_mem*' + sensor + '*.txt') ) 
-    file_ya = sorted( glob.glob(Hx_dir + '/output_mem*' + sensor + '*.txt') )
+    file_yb = sorted( glob.glob(Hx_dir + '/input_mem0*' + sensor + '*.txt') ) 
+    file_ya = sorted( glob.glob(Hx_dir + '/output_mem0*' + sensor + '*.txt') )
 
     # Sanity check the number of calculated ens
     if np.size(file_yb) != num_ens:
@@ -181,7 +181,7 @@ def write_mean_eachSensor( Hx_dir, sensor ):
     Azimuth_angle = [ "{0:.3f}".format(item) for item in tmp_control[7::ncol] ] #Azimuth angle
 
     # ---- Read prior Tb from the ens ----
-    sum_yb = np.empty( shape=np.shape(Control_yo) )
+    sum_yb = np.zeros( shape=np.shape(Control_yo) )
     # Iterate thru input ens
     for ifile in file_yb:
         print('Reading the file: ' + ifile)
@@ -196,7 +196,7 @@ def write_mean_eachSensor( Hx_dir, sensor ):
     Yb_all_mean = np.round( (sum_yb / num_ens), 3 )
 
     # ---- Read posterior Tb from the ens -----
-    sum_ya = np.empty( shape=np.shape(Control_yo) )
+    sum_ya = np.zeros( shape=np.shape(Control_yo) )
     # Iterate thru output ens
     for ifile in file_ya:
         print('Reading the file: ' + ifile)
@@ -228,7 +228,7 @@ def write_mean_eachSensor( Hx_dir, sensor ):
 
     return( len_records )  
 
-def read_Tb(Tb_file, sensor, dict_ss_len):
+def read_Tb(Tb_file, sensor, dict_ss_len, d_wrf_d03):
 
     lat_obs = []
     lon_obs = []
@@ -236,6 +236,12 @@ def read_Tb(Tb_file, sensor, dict_ss_len):
     Yo_obs = []
     meanYb_obs = []
     meanYa_obs = []
+
+    # Define the wrf domain
+    lat_min = d_wrf_d03['lat_min']
+    lat_max = d_wrf_d03['lat_max']
+    lon_min = d_wrf_d03['lon_min']
+    lon_max = d_wrf_d03['lon_max']
 
     # number of columns of each record
     #ncol = 9
@@ -246,18 +252,24 @@ def read_Tb(Tb_file, sensor, dict_ss_len):
         with open(ifile) as f:
             next(f)
             all_lines = f.readlines() 
-
+        
         for line in all_lines:
             split_line = line.split()
-            lat_obs.append( float(split_line[0]) )
-            lon_obs.append( float(split_line[1]) )
-            ch_obs.append( int(split_line[2]) )
-            Yo_obs.append( float(split_line[3]) ) 
-            meanYb_obs.append( float(split_line[4]) )
-            meanYa_obs.append( float(split_line[5]) )
+            
+            read_lat = float(split_line[0])
+            read_lon = float(split_line[1])
+            if read_lat <= lat_max and read_lat >= lat_min and read_lon <= lon_max and read_lon >= lon_min:
+                lat_obs.append( read_lat )
+                lon_obs.append( read_lon )
+                ch_obs.append( int(split_line[2]) )
+                Yo_obs.append( float(split_line[3]) ) 
+                meanYb_obs.append( float(split_line[4]) )
+                meanYa_obs.append( float(split_line[5]) )
+            else:
+                continue
 
-    if np.size(lat_obs) != dict_ss_len[sensor]:
-        raise ValueError('The length of post-processed file is not equal to the pre-processed file!')
+    #if np.size(lat_obs) != dict_ss_len[sensor]:
+    #    raise ValueError('The length of post-processed file is not equal to the pre-processed file!')
 
     lat_obs = np.array( lat_obs )
     lon_obs = np.array( lon_obs )
@@ -276,14 +288,14 @@ def plot_Tb(Storm, Exper_name, DAtime, sensor, dict_ss_len):
     # Define the low and high frequency for each sensor
     d_lowf = {'atms_npp':0, 'amsr2_gcom-w1':7, 'gmi_gpm':3, 'mhs_n19':0, 'mhs_n18':0, 'mhs_metop-a':0, 'mhs_metop-b':0, 'saphir_meghat':0, 'ssmis_f16': 13, 'ssmis_f17': 13, 'ssmis_f18': 13, 'ssmi_f15':1}
 
-    # Read data
-    Hx_dir = '/scratch/06191/tg854905/Pro2_PSU_MW/'+Storm+'/'+Exper_name+'/Obs_Hx/MW/'+DAtime
-    Tb_file = glob.glob( Hx_dir + '/mean_d03*' + sensor + '*.txt' )
-    d_all = read_Tb(Tb_file, sensor, dict_ss_len)
-
     # Read WRF domain
     wrf_file = '/scratch/06191/tg854905/Pro2_PSU_MW/'+Storm+'/'+Exper_name+'/fc/'+DAtime+'/wrf_enkf_output_d03_mean'
     d_wrf_d03 = read_wrf_domain( wrf_file )
+
+    # Read data
+    Hx_dir = '/scratch/06191/tg854905/Pro2_PSU_MW/'+Storm+'/'+Exper_name+'/Obs_Hx/MW/'+DAtime
+    Tb_file = glob.glob( Hx_dir + '/mean_d03*' + sensor + '*.txt' )
+    d_all = read_Tb(Tb_file, sensor, dict_ss_len, d_wrf_d03)
 
     # Read location from TCvitals
     if any( hh in DAtime[8:10] for hh in ['00','06','12','18']):
@@ -417,14 +429,14 @@ def plot_Tb_diff(Storm, Exper_name, DAtime, sensor, dict_ss_len):
     # Define the low and high frequency for each sensor
     d_lowf = {'atms_npp':0, 'amsr2_gcom-w1':7, 'gmi_gpm':3, 'mhs_n19':0, 'mhs_n18':0, 'mhs_metop-a':0, 'mhs_metop-b':0, 'saphir_meghat':0, 'ssmis_f16': 13, 'ssmis_f17': 13, 'ssmis_f18': 13, 'ssmi_f15':1}
 
-    # Read data
-    Hx_dir = '/scratch/06191/tg854905/Pro2_PSU_MW/'+Storm+'/'+Exper_name+'/Obs_Hx/MW/'+DAtime
-    Tb_file = glob.glob( Hx_dir + '/mean_d03*' + sensor + '*.txt' )
-    d_all = read_Tb(Tb_file, sensor, dict_ss_len)
-
     # Read WRF domain
     wrf_file = '/scratch/06191/tg854905/Pro2_PSU_MW/'+Storm+'/'+Exper_name+'/fc/'+DAtime+'/wrf_enkf_output_d03_mean'
     d_wrf_d03 = read_wrf_domain( wrf_file )
+
+    # Read data
+    Hx_dir = '/scratch/06191/tg854905/Pro2_PSU_MW/'+Storm+'/'+Exper_name+'/Obs_Hx/MW/'+DAtime
+    Tb_file = glob.glob( Hx_dir + '/mean_d03*' + sensor + '*.txt' )
+    d_all = read_Tb(Tb_file, sensor, dict_ss_len, d_wrf_d03)
 
     # Read location from TCvitals
     if any( hh in DAtime[8:10] for hh in ['00','06','12','18']):
@@ -444,8 +456,10 @@ def plot_Tb_diff(Storm, Exper_name, DAtime, sensor, dict_ss_len):
     f, ax=plt.subplots(2, 2, subplot_kw={'projection': ccrs.PlateCarree()}, gridspec_kw = {'wspace':0, 'hspace':0}, linewidth=0.5, sharex='all', sharey='all',  figsize=(4,4.5), dpi=500)
 
     # Customize colormap
-    max_T=50
-    min_T=-50
+    max_T=10
+    min_T=-10
+    min_RWB = 0
+    newRWB = Util_Vis.newRWB(max_T, min_T, min_RWB)
 
     #scatter_size = [2.5, 2.5]
     # Define the domain
@@ -490,7 +504,7 @@ def plot_Tb_diff(Storm, Exper_name, DAtime, sensor, dict_ss_len):
         # HXb - Obs
         ax[i,0].set_extent([lon_min,lon_max,lat_min,lat_max], crs=ccrs.PlateCarree())
         ax[i,0].coastlines(resolution='10m', color='black',linewidth=0.5)
-        ax[i,0].scatter(Lon_obs_ch[mask_x],Lat_obs_ch[mask_x],2.5,c=Yb_obspace[mask_x]-Yo_obs_ch[mask_x],edgecolors='none', cmap='RdBu_r', vmin=min_T, vmax=max_T,transform=ccrs.PlateCarree())
+        ax[i,0].scatter(Lon_obs_ch[mask_x],Lat_obs_ch[mask_x],2.5,c=Yb_obspace[mask_x]-Yo_obs_ch[mask_x],edgecolors='none', cmap=newRWB, vmin=min_T, vmax=max_T,transform=ccrs.PlateCarree())
         if any( hh in DAtime[8:10] for hh in ['00','06','12','18']):
             ax[i,0].scatter(tc_lon, tc_lat, s=3, marker='*', edgecolors='black', transform=ccrs.PlateCarree())
         
@@ -500,7 +514,7 @@ def plot_Tb_diff(Storm, Exper_name, DAtime, sensor, dict_ss_len):
         ax[i,1].set_extent([lon_min, lon_max, lat_min, lat_max], crs=ccrs.PlateCarree())
         ax[i,1].coastlines(resolution='10m', color='black',linewidth=0.5)
         cs = ax[i,1].scatter(Lon_obs_ch[mask_x], Lat_obs_ch[mask_x],2.5,c=Ya_obspace[mask_x]-Yo_obs_ch[mask_x],\
-                 edgecolors='none', cmap='RdBu_r', vmin=min_T, vmax=max_T, transform=ccrs.PlateCarree())
+                 edgecolors='none', cmap=newRWB, vmin=min_T, vmax=max_T, transform=ccrs.PlateCarree())
         if any( hh in DAtime[8:10] for hh in ['00','06','12','18']):
             ax[i,1].scatter(tc_lon, tc_lat, s=3, marker='*', edgecolors='black', transform=ccrs.PlateCarree())
 
@@ -578,7 +592,7 @@ if __name__ == '__main__':
 
     Storm = 'HARVEY'
     Exper_name =  'J_DA+Y_WRF+J_init-IR+MW'#'JerryRun/MW_THO/'#'J_DA+J_WRF+J_init'
-    Exper_obs = 'J_DA+J_WRF+J_init'
+    Exper_obs = 'J_DA+Y_WRF+J_init-IR+MW'
 
     MW_times = ['201708221200',]#'201708230000']
     #MW_times = ['201708221200','201708221300','201708221900','201708222000','201708222100','201708222300','201708230000']
@@ -618,6 +632,6 @@ if __name__ == '__main__':
             print(sensor)
             print(dict_ss_ch[sensor])
             print('------------ Plot ----------------------')
-            plot_Tb( Storm, Exper_name, DAtime, sensor, dict_ss_len) 
+            #plot_Tb( Storm, Exper_name, DAtime, sensor, dict_ss_len) 
             plot_Tb_diff( Storm, Exper_name, DAtime, sensor, dict_ss_len) 
 
