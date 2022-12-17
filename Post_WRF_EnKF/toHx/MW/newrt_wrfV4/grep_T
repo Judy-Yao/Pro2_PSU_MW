@@ -1,0 +1,4 @@
+rt_namelist_module.f90:      nf_put_att_logical = nf_put_att_text(fid, varid, sname, n, 'T')
+rt_state_module.f90:    call get_variable3d_local(fid,'T',       xbeg1, xend1, ybeg1, yend1, 1, zmax,  time_idx, t)
+rt_state_module.f90:    call get_variable3d_local(fid,'T',    xbeg1, xend1, ybeg1, yend1, 1, zmax, time_idx, state%temperature) ! temperature (K)
+rt_state_module.f90:!    call get_variable3d_local(fid,'T',       xbeg1, xend1, ybeg1, yend1, 1, zmax,  time_idx, t)

@@ -93,12 +93,6 @@ def plot_UV10_slp( wrfout,plot_dir, dict_AF_masked, dict_btk, if_btk_exist, idx_
     if if_btk_exist:
         ax.scatter(dict_btk['lon'][idx_btk],dict_btk['lat'][idx_btk], 8, 'green', marker='*',transform=ccrs.PlateCarree()) 
     #ax.scatter(lon_minslp, lat_minslp, s=5, marker='*', edgecolors='red', transform=ccrs.PlateCarree())
-    # Plot rectangle of domain 3
-    #d03_name = wrfout.replace('d02','d03')
-    #[d03_lon_min, d03_lon_max, d03_lat_min, d03_lat_max] = d03_domain( d03_name )
-    #rec_x = [d03_lon_max, d03_lon_max, d03_lon_min, d03_lon_min, d03_lon_max]
-    #rec_y = [d03_lat_max, d03_lat_min, d03_lat_min, d03_lat_max, d03_lat_max]
-    #ax.plot( rec_x,rec_y,color='darkgreen',linewidth=1,marker='.',transform=ccrs.PlateCarree())
     # Plot aircraft observation
     if dict_AF_masked is not None:
         min_height = np.amin( dict_AF_masked['gpsa'][:] )
@@ -189,8 +183,6 @@ def plot_d03(Storm, wrf_dir, plot_dir, USAF_per_day):
                 dict_AF_masked = None
             # plot
             plot_UV10_slp( wrfout, plot_dir, dict_AF_masked, dict_btk, if_btk_exist, idx_btk )
-
-
 
 
 
@@ -593,17 +585,12 @@ def DF_compare_track_wind_dew( Storm, Exper_name, big_dir, small_dir ):
             Plot_compare_track_wind_td( Storm, small_dir, df_dir, plot_dir )
 
 
-
-
-
 class Info_USAF_clt:
     '''This object is designed to collect information for each wrf day'''
     def __init__(self, filedir, beg_time, end_time):
         self.filedir = filedir
         self.beg_time = beg_time
         self.end_time = end_time
-
-
 
 
 if __name__ == '__main__':

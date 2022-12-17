@@ -9,6 +9,8 @@ from matplotlib.colors import ListedColormap
 # --------------------------------------------------------------
 # ---------------------- COLOR MAP -----------------------------
 # --------------------------------------------------------------
+
+# Plot full Tbs
 def newJet(max_T, min_T, min_Jet):
 
     max_T = 300
@@ -36,6 +38,42 @@ def newJet(max_T, min_T, min_Jet):
     newJet = ListedColormap(newJet_value)
     
     return newJet
+
+# Plot Tb differences
+def newRWB(max_T, min_T, min_RWB):
+
+    max_T = 10
+    min_T = -10
+    min_RWB = -8
+    RWBLength = 18 # max_T - min_RWB + 1
+    notRWBLength = 2 #(min_RWB - 1) - (min_T + 1) + 1
+
+    RWB = cm.get_cmap('RdBu_r', max_T-min_T)
+    MyRWB = RWB(np.linspace(0,1,RWBLength))
+
+    RWB_red = MyRWB[:,0]
+    RWB_green = MyRWB[:,1]
+    RWB_blue = MyRWB[:,2]
+
+    #RWBAdd_red = np.linspace(1.0, RWB_red[0], notRWBLength)
+    #RWBAdd_green = np.linspace(1.0, RWB_green[0], notRWBLength)
+    #RWBAdd_blue  = np.linspace(1.0, RWB_blue[0], notRWBLength)
+
+    cm_red = np.append( np.insert(RWB_red,0,0), 0)
+    cm_green = np.append( np.insert(RWB_green,0,0), 0)
+    cm_blue = np.append( np.insert(RWB_blue,0,0), 0)
+
+    newRWB_value = np.column_stack([cm_red,cm_green,cm_blue])
+    #newRWB_value = np.column_stack([cm_red,cm_green,cm_blue, np.ones(len(cm_red))])
+    newRWB = ListedColormap(newRWB_value)
+
+    return newRWB
+
+
+
+
+
+
 
 # colormap for plotting infrared BT
 def IRcmap(c_int):

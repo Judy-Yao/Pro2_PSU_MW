@@ -30,6 +30,11 @@ matplotlib.rcParams['lines.markersize'] = 2
 matplotlib.rcParams['lines.markeredgewidth'] = 0
 matplotlib.rcParams['font.size'] = 6
 
+
+# ------------------------------------------------------------------------------------------------------
+#       Object: Post-storm Best Track; Operation: Read and Process
+# ------------------------------------------------------------------------------------------------------
+
 # Read the post-storm best-track file of the storm at all times
 def read_bestrack(Storm):
 
@@ -69,14 +74,14 @@ def read_bestrack(Storm):
     return dict_bestrack
 
 
-# Return records in the complete best-track file at times of interest 
-def btk_in_duration(Storm, Btk_start, Btk_end):
+# Return records only at times of interest from the complete best-track file 
+def btk_in_duration(Storm, Btk_start, Btk_end, hour_step):
     
     # Calculate the duration from the start to the end of deterministic forecast in hour
     Btk_diff = datetime.strptime(Btk_end,"%Y%m%d%H%M") - datetime.strptime(Btk_start,"%Y%m%d%H%M") 
     Btk_diff_hour = Btk_diff.total_seconds() / 3600 
     # List the times (in string format) every 6 hours in the duration 
-    time_interest_dt = [datetime.strptime(Btk_start,"%Y%m%d%H%M") + timedelta(hours=t) for t in list(range(0, int(Btk_diff_hour), 6))]
+    time_interest_dt = [datetime.strptime(Btk_start,"%Y%m%d%H%M") + timedelta(hours=t) for t in list(range(0, int(Btk_diff_hour), hour_step))]
     time_interest_str = [time_dt.strftime("%Y%m%d%H%M") for time_dt in time_interest_dt]
     # Read the complete best-track file
     dict_all_btk = read_bestrack(Storm)    
@@ -102,7 +107,51 @@ def btk_in_duration(Storm, Btk_start, Btk_end):
     return dict_btk
 
 
-# Get track/intensity from model output
+# ------------------------------------------------------------------------------------------------------
+#           Object: Analyses (wrf_enkf_output_d03_mean); Operation: Read and Process  
+# ------------------------------------------------------------------------------------------------------
+
+# Get analyses' estimated HPI 
+def read_HPI_analyses(Storm, Exper_name, wrf_dir, filename_analyses=None, force_reload=False):
+   
+    #filename_analyses = wrf_dir+Storm+'/'+Exper_name+'/fc/HPI_analyses.txt'
+    DAtimes_dir =  sorted(glob.glob(wrf_dir+Storm+'/'+Exper_name+'/fc/20*') )
+    
+    DAtime_str = []
+    max_wind = []
+    min_slp = []
+    lat_storm = []
+    lon_storm = []
+       
+    # Read through analyses of the whole ensemble
+    for it_dir in DAtimes_dir:
+        # get DA time
+        DAtime_str.append( os.path.split(it_dir)[1])
+
+        filename = it_dir+'/wrf_enkf_output_d03_mean'
+        #print('Reading analysis: '+ filename)
+        with Dataset(filename) as ncid:
+            # maximum wind
+            ws = np.sqrt( ncid.variables['U10'][:]**2 + ncid.variables['V10'][:]**2 )
+            max_wind.append( np.max( ws ))
+            # minimum sea level pressure
+            slp = getvar(ncid, 'slp')
+            min_slp.append( np.min( slp )) 
+            # location of the minimum slp
+            slp_smooth = sp.ndimage.filters.gaussian_filter(slp, [11, 11] )
+            idx = np.nanargmin( slp_smooth )
+            lat_storm.append( ncid.variables['XLAT'][:].flatten()[idx]) 
+            lon_storm.append( ncid.variables['XLONG'][:].flatten()[idx]) 
+
+    HPI_analyses = {'time':DAtime_str, 'lat': lat_storm, 'lon':lon_storm, 'max_ws': max_wind, 'min_slp':min_slp}
+
+    return HPI_analyses
+
+# ------------------------------------------------------------------------------------------------------
+#            Object: Deterministic Forecast; Operation: Read and Process  
+# ------------------------------------------------------------------------------------------------------
+
+# Get DF forecast's HPI from model output
 def read_wrfout(Storm, Exper_name, directory, filename_pickle=None, force_reload=False):
     if filename_pickle is None:
         filename_pickle = directory + '/HPI.pickle'
@@ -143,7 +192,7 @@ def read_wrfout(Storm, Exper_name, directory, filename_pickle=None, force_reload
     return HPI
 
 
-# Get track and intensity from ATCF part in rsl.error.0000
+# Get DF forecast's HPI from ATCF part in rsl.error.0000
 def read_rsl_error(Storm, Exper_name, directory, DF_start, DF_end):
     
     # Check if the file exists
@@ -200,7 +249,10 @@ def read_rsl_error(Storm, Exper_name, directory, DF_start, DF_end):
     for time_str in time_interest_str:
         boolean_compare = [ eachT  == time_str for eachT in time_all ]
         if any(boolean_compare):
-            idx = int( np.where(boolean_compare)[0] )
+            if len( np.where(boolean_compare)[0] ) > 1:
+                idx = int( np.where(boolean_compare)[0][0] )
+            else:
+                idx = int( np.where(boolean_compare)[0] )
             idx_sbs.append(idx)
             lat_sbs.append( lat_all[idx] )
             lon_sbs.append( lon_all[idx] )
@@ -212,7 +264,11 @@ def read_rsl_error(Storm, Exper_name, directory, DF_start, DF_end):
     return dict_model
 
 
-def plot_one( ax0, ax1, ax2,  state, color, label, step=1):
+# ------------------------------------------------------------------------------------------------------
+#            Operation: Plot
+# ------------------------------------------------------------------------------------------------------
+
+def plot_one( ax0, ax1, ax2,  state, color, line, line_width, label):
   
     if label == 'Best track':
         times = state['time']
@@ -230,7 +286,7 @@ def plot_one( ax0, ax1, ax2,  state, color, label, step=1):
         dates = [datetime.strptime(i,"%Y%m%d%H%M") for i in times]
         
     else:
-        steps = 6 
+        steps = 6
         times = state['time'][::steps]
         lon = state['lon'][::steps]
         lat = state['lat'][::steps]
@@ -238,7 +294,7 @@ def plot_one( ax0, ax1, ax2,  state, color, label, step=1):
         x_max_ws = state['max_ws'][::steps]
   
         #print('times to plot:', times)
-        ax0.plot(lon, lat, marker='o', markersize=2, color=color,linewidth=1, label=label, transform=ccrs.PlateCarree())
+        ax0.plot(lon, lat, marker='o', markersize=2, color=color,linewidth=line_width, label=label, linestyle=line, transform=ccrs.PlateCarree())
     
         idx = 0
         for it in times:
@@ -250,117 +306,41 @@ def plot_one( ax0, ax1, ax2,  state, color, label, step=1):
             idx = idx + 1
 
         dates = [datetime.strptime(i,"%Y%m%d%H%M") for i in times] 
-        ax1.plot_date(dates, x_min_slp, color, label=label)
-        ax2.plot_date(dates, x_max_ws, color, label=label)
+        ax1.plot_date(dates, x_min_slp, color, label=label, linestyle=line)
+        ax2.plot_date(dates, x_max_ws, color, label=label, linestyle=line)
 
 
-def plot_hpi_eachtime( Storm, Exper, wrf_dir, read_HPI_wrfout, domain_range, output_dir=None ):
-    reload_data = False
-    step = 1
 
-    # Read post-storm analysis HPI data
-    if Storm == 'HARVEY':
-        Btk_start = '201708221200' # '201709161800' #'201709030600'
-        Btk_end = '201708270000' # '201709210000' #'201709090000'
-    best_track = btk_in_duration(Storm, Btk_start, Btk_end)
+def plot_hpi_ef( Config, domain_range ):
 
-    # Read prior and posterior HPI data
+    wrf_dir = Config[0]
+    Storm = Config[1]
+    Exper = Config[2]
+    DF_model_start = Config[3]
+    mem_id = Config[4]
+    read_fc_wrfout = Config[5]
+    Plot_analyses = Config[6]
+
+    # Set the end point of the period to investigate
     if Storm == 'HARVEY':
         DF_model_end  = '201708270000'
-  
-    #if os.path.exists( wrf_dir+'/'+Storm+'/'+Exper[0]+'/wrf_df/' ):
-    #    IR_init_times = sorted(os.listdir( wrf_dir+'/'+Storm+'/'+Exper+'/wrf_df/' )
-    #else:
-    #    IR_init_times = None
- 
-    if os.path.exists( wrf_dir+'/'+Storm+'/'+Exper[1]+'/wrf_df/' ):
-        IRMW_init_times = sorted(os.listdir( wrf_dir+'/'+Storm+'/'+Exper[1]+'/wrf_df/' ))
-    else:
-        IRMW_init_times = None
 
-
-    # Iterate thru DF_init_times
-    for init_time in IRMW_init_times:
-        print('Init time is: ', init_time)
-
-        if os.path.exists( wrf_dir+'/'+Storm+'/'+Exper[0]+'/wrf_df/'+init_time ): 
-           dict_IR_only = read_rsl_error(Storm, Exper[0], wrf_dir+'/'+Storm+'/'+Exper[0]+'/wrf_df/'+init_time, init_time, DF_model_end)
+    # Identify the available forecasts with their id members
+    Exper_content_lbl = {}
+    for iExper in Exper:
+        if iExper is not None:
+            if os.path.exists( wrf_dir+'/'+Storm+'/'+iExper+'/wrf_ef/'+DF_model_start ):
+                Exper_content_lbl[iExper] = ['006','009','mean'] #sorted(os.listdir( wrf_dir+'/'+Storm+'/'+iExper+'/wrf_ef/'+DF_model_start ))
+            else:
+                Exper_content_lbl[iExper] = None
         else:
-           dict_IR_only = None
-
-        dict_IR_MW = read_rsl_error(Storm, Exper[1], wrf_dir+'/'+Storm+'/'+Exper[1]+'/wrf_df/'+init_time, init_time, DF_model_end)
-        
-        # Skip if both experiments don't have data
-        if all( item is None for item in [dict_IR_only,  dict_IR_MW] ):
-            continue
-
-        # Set up figure
-        fig = plt.figure( figsize=(12,4), dpi=150 )
-        gs = fig.add_gridspec(1,3)
-
-        ax0 = fig.add_subplot( gs[0,0],  projection=ccrs.PlateCarree())
-        ax0.set_extent( domain_range,  crs=ccrs.PlateCarree())
-        ax0.coastlines( resolution='10m', color='black',linewidth=0.5 )
-        ax1 = fig.add_subplot( gs[0,1] )
-        ax2 = fig.add_subplot( gs[0,2] ) 
-    
-        # Plot post-storm analysis data
-        plot_one ( ax0, ax1, ax2, best_track,  'black', 'Best track', step=step )
-
-        # Plot prior and posterior HPI data
-        if read_HPI_wrfout == True:
-            pass      
-        elif read_HPI_wrfout == False:
-            if dict_IR_only is not None:
-                plot_one( ax0, ax1, ax2, dict_IR_only, 'red', 'IR: '+ init_time, step=step)
-            if dict_IR_MW is not None:
-                plot_one( ax0, ax1, ax2, dict_IR_MW, 'blue', 'IR+MW: '+ init_time, step=step)
-
-        # Set labels
-        lon_ticks = list(range(math.ceil(domain_range[0]), math.ceil(domain_range[1]), 4))
-        lat_ticks = list(range(math.ceil(domain_range[2]), math.ceil(domain_range[3]), 2))
-        gl = ax0.gridlines(crs=ccrs.PlateCarree(), draw_labels=False,linewidth=0.1, color='gray', alpha=0.5, linestyle='--')
-        gl.ylabels_left = True
-        gl.xlabels_bottom = True
-        gl.ylocator = mticker.FixedLocator(lat_ticks)
-        gl.xlocator = mticker.FixedLocator(lon_ticks)
-        gl.yformatter = LATITUDE_FORMATTER
-        gl.xformatter = LONGITUDE_FORMATTER
-        gl.xlabel_style = {'size': 6}
-        gl.ylabel_style = {'size': 6}
-
-        if Storm == 'HARVEY':
-            ax1.set_xlim([datetime(2017, 8, 22, 12, 0, 0), datetime(2017, 8, 27)])
-            ax2.set_xlim([datetime(2017, 8, 22, 12, 0, 0), datetime(2017, 8, 27)])
-        #ax1.set_xlim([datetime(2017, 9, 3, 6, 0, 0), datetime(2017, 9, 9)])
-        #ax2.set_xlim([datetime(2017, 9, 3, 6, 0, 0), datetime(2017, 9, 9)])
-        #ax1.set_xlim([datetime(2017, 9, 16, 18, 0, 0), datetime(2017, 9, 21)])
-        #ax2.set_xlim([datetime(2017, 9, 16, 18, 0, 0), datetime(2017, 9, 21)])
-        ax1.tick_params(axis='x', labelrotation=45)
-        ax2.tick_params(axis='x', labelrotation=45)
-        ax2.legend(frameon=False, loc='upper left')
-        # Set titles
-        ax0.set_title( 'Track' )
-        ax1.set_title( 'MSLP' )
-        ax2.set_title( 'Vmax' )
-
-        if output_dir is not None:
-            plt.savefig('/work2/06191/tg854905/stampede2/Pro2_PSU_MW/'+Storm+'/'+Exper[1]+'Vis_analyze/Model/'+Storm+'_'+init_time+'.png')
-            print('Saving the figure:', '/work2/06191/tg854905/stampede2/Pro2_PSU_MW/'+Storm+'/'+Exper[1]+'Vis_analyze/Model/'+Storm+'_'+init_time+'.png')
-            #plt.savefig('%s/hpi_fcst_%s_%s.png' % (output_dir, '201708240000', '201708270000') )                                                
-        else:
-            plt.show()
-        plt.clf()
-
-def plot_hpi_all(Storm, Exper, wrf_dir, read_HPI_wrfout, domain_range, output_dir=None):
-    reload_data = False
-    step = 1
+             Exper_content_lbl[iExper] = None
 
     # Set up figure
     fig = plt.figure( figsize=(12,4), dpi=150 )
     gs = fig.add_gridspec(1,3)
 
-    ax0 = fig.add_subplot( gs[0,0],  projection=ccrs.PlateCarree()) 
+    ax0 = fig.add_subplot( gs[0,0],  projection=ccrs.PlateCarree())
     ax0.set_extent( domain_range,  crs=ccrs.PlateCarree())
     ax0.coastlines( resolution='10m', color='black',linewidth=0.5 )
     ax1 = fig.add_subplot( gs[0,1] )
@@ -370,48 +350,193 @@ def plot_hpi_all(Storm, Exper, wrf_dir, read_HPI_wrfout, domain_range, output_di
     if Storm == 'HARVEY':
         Btk_start = '201708221200' # '201709161800' #'201709030600'
         Btk_end = '201708270000' # '201709210000' #'201709090000'
-    best_track = btk_in_duration(Storm, Btk_start, Btk_end)
-    #Btk_start = '201709161800'#'201708221200'#'201709030600'
-    #Btk_end = '201709210000'#'201708270000'#'201709090000'
-    plot_one ( ax0, ax1, ax2, best_track,  'black', 'Best track', step=step )
+    elif Storm == 'IRMA':
+        Btk_start = '201709030600'
+        Btk_end = '201709090000'
+    elif Storm == 'MARIA':
+        Btk_start = '201709161800'
+        Btk_end = '201709210000'
 
-    # Read prior and posterior HPI data
+    best_track = btk_in_duration(Storm, Btk_start, Btk_end, hour_step=6)
+    plot_one ( ax0, ax1, ax2, best_track,  'black', '-', 1, 'Best track' )
+
+    # Plot wrf_enkf_output_mean estimated HPI
+    if Plot_analyses == True:
+        HPI_analyses = read_HPI_analyses(Storm, Exper_name, wrf_dir)
+        plot_one ( ax0, ax1, ax2, HPI_analyses, 'black', 'dotted', 'Analysis' )
+
+    # Customize color maps 
+    Color2 = ['#A52A2A','#FF0000','#FF7F50','#FFA500','#FFD700','#B8860B','#9ACD32','#006400']
+    #Color1 = ['#0000FF','#1E90FF','#00BFFF','#6495ED','#00FFFF','#008B8B','#00FF7F','#2BDED8','#2BDEAD','#86DE2B','#A52A2A']
+    Color1 = ['#008B8B','#2BDEAD','#A52A2A']
+    Color_set = {'c0':Color1, 'c1':Color2}
+    
+
+    # Customize linestyles
+    Line_types = ['-']
+
+    # Customize labels ###### Chnage it every time !!!!!!!!!!!!!!! 
+    Labels = ['IRMW ']
+
+    # Plot HPI for each deterministic forecasts
+    if read_fc_wrfout == True:
+        i = 0
+        for init_time in DF_init_times:
+            #plot_one( ax0, ax1, ax2, read_wrfout(Storm, wrf_dir+'/'+Storm+'/newWRF_MW_THO/wrf_df/'+init_time, force_reload=reload_data), color_model[i], 'IR+MW: '+ init_time, step=step)
+            pass
+            i = i+1
+
+    elif read_fc_wrfout == False:
+
+        iExper = 0
+        for key in Exper_content_lbl:
+            print('Experiment: ', key)
+            if Exper_content_lbl[key] is not None:
+                ic = 0
+                for it in Exper_content_lbl[key]:
+                    print('Plotting ', it)
+                    print(wrf_dir+'/'+Storm+'/'+key+'/wrf_ef/'+it)
+                    HPI_model = read_rsl_error(Storm, key, wrf_dir+'/'+Storm+'/'+key+'/wrf_ef/'+DF_model_start+'/'+it, DF_model_start, DF_model_end)
+                    plot_one( ax0, ax1, ax2, HPI_model, Color_set['c'+str(iExper)][ic], Line_types[iExper], 1, Labels[iExper]+it )
+                    ic = ic + 1
+            else:
+                print('No available data!')
+                ic = ic + 1
+            iExper = iExper + 1
+
+    # Set labels
+    lon_ticks = list(range(math.ceil(domain_range[0]), math.ceil(domain_range[1]), 4))
+    lat_ticks = list(range(math.ceil(domain_range[2]), math.ceil(domain_range[3]), 2))
+    gl = ax0.gridlines(crs=ccrs.PlateCarree(), draw_labels=False,linewidth=0.1, color='gray', alpha=0.5, linestyle='--')
+    gl.ylabels_left = True
+    gl.xlabels_bottom = True
+    gl.ylocator = mticker.FixedLocator(lat_ticks)
+    gl.xlocator = mticker.FixedLocator(lon_ticks)
+    gl.yformatter = LATITUDE_FORMATTER
+    gl.xformatter = LONGITUDE_FORMATTER
+    gl.xlabel_style = {'size': 6}
+    gl.ylabel_style = {'size': 6}
+
+    if Storm == 'HARVEY':
+        ax1.set_xlim([datetime(2017, 8, 22, 12, 0, 0), datetime(2017, 8, 27)])
+        ax2.set_xlim([datetime(2017, 8, 22, 12, 0, 0), datetime(2017, 8, 27)])
+    elif Storm == 'IRMA':
+        ax1.set_xlim([datetime(2017, 9, 3, 6, 0, 0), datetime(2017, 9, 9)])
+        ax2.set_xlim([datetime(2017, 9, 3, 6, 0, 0), datetime(2017, 9, 9)])
+    elif Storm == 'MARIA':
+        ax1.set_xlim([datetime(2017, 9, 16, 18, 0, 0), datetime(2017, 9, 21)])
+        ax2.set_xlim([datetime(2017, 9, 16, 18, 0, 0), datetime(2017, 9, 21)])
+    ax1.tick_params(axis='x', labelrotation=45)
+    ax2.tick_params(axis='x', labelrotation=45)
+    ax2.legend(frameon=False, loc='upper left')
+    # Set titles
+    ax0.set_title( 'Track' )
+    ax1.set_title( 'MSLP' )
+    ax2.set_title( 'Vmax' )
+
+    plt.savefig('/work2/06191/tg854905/stampede2/Pro2_PSU_MW/'+Storm+'/'+Exper[0]+'/Vis_analyze/Model/'+Storm+'_EF.png')
+    print('Saving the figure: ', '/work2/06191/tg854905/stampede2/Pro2_PSU_MW/'+Storm+'/'+Exper[0]+'/Vis_analyze/Model/'+Storm+'_EF.png')
+
+
+
+def plot_hpi_df( Config, domain_range ):
+
+    wrf_dir = Config[0]
+    Storm = Config[1]
+    Exper = Config[2]
+    DF_model_start = Config[3]
+    mem_id = Config[4]
+    read_fc_wrfout = Config[5]
+    Plot_analyses = Config[6]
+
+    # Set the end point of the period to investigate
     if Storm == 'HARVEY':
         DF_model_end  = '201708270000'
 
-    if os.path.exists( wrf_dir+'/'+Storm+'/'+Exper[0]+'/wrf_df/' ):
-        IR_init_times = sorted(os.listdir( wrf_dir+'/'+Storm+'/'+Exper+'/wrf_df/' )
-    else:
-        IR_init_times = None
+    # Identify the available forecasts with either their initialization times or their id members
+    Exper_content_lbl = {}
+    for iExper in Exper:
+        if iExper is not None:
+            if os.path.exists( wrf_dir+'/'+Storm+'/'+iExper+'/wrf_df/' ):
+                Exper_content_lbl[iExper] = sorted(os.listdir( wrf_dir+'/'+Storm+'/'+iExper+'/wrf_df/' ))
+            else:
+                Exper_content_lbl[iExper] = None
+        else:
+             Exper_content_lbl[iExper] = None
 
-    if os.path.exists( wrf_dir+'/'+Storm+'/'+Exper[1]+'/wrf_df/' ):
-        IRMW_init_times = sorted(os.listdir( wrf_dir+'/'+Storm+'/'+Exper[1]+'/wrf_df/' ))
-    else:
-        IRMW_init_times = None
-   
-    IR_color = ['#FFEB3B','#CDDC39','#8BC34A','#4CAF50','#009688','#00BCD4','#2196F3','#3F51B5','#673AB7','#9C27B0','#E91E63','#F44336']
-    IRMW_color = ['#F57F17','#827717','#33691E','#1B5E20','#004D40','#006064','#0D47A1','#1A237E','#311B92','#4A148C','#880E4F','#B71C1C' ]
+    # Set up figure
+    fig = plt.figure( figsize=(12,4), dpi=150 )
+    gs = fig.add_gridspec(1,3)
+
+    ax0 = fig.add_subplot( gs[0,0],  projection=ccrs.PlateCarree())
+    ax0.set_extent( domain_range,  crs=ccrs.PlateCarree())
+    ax0.coastlines( resolution='10m', color='black',linewidth=0.5 )
+    ax1 = fig.add_subplot( gs[0,1] )
+    ax2 = fig.add_subplot( gs[0,2] )
+
+    # Plot HPI from post-storm analysis
+    if Storm == 'HARVEY':
+        Btk_start = '201708221200' # '201709161800' #'201709030600'
+        Btk_end = '201708270000' # '201709210000' #'201709090000'
+    elif Storm == 'IRMA':
+        Btk_start = '201709030600'
+        Btk_end = '201709090000'
+    elif Storm == 'MARIA':
+        Btk_start = '201709161800'
+        Btk_end = '201709210000'
+
+    best_track = btk_in_duration(Storm, Btk_start, Btk_end, hour_step=6)
+    plot_one ( ax0, ax1, ax2, best_track,  'black', '-', 1, 'Best track' )
+
+    # Plot wrf_enkf_output_mean estimated HPI
+    #if Plot_analyses == True:
+    #    HPI_analyses = read_HPI_analyses(Storm, Exper, wrf_dir)        
+    #    plot_one ( ax0, ax1, ax2, HPI_analyses, 'grey', 'dotted', 'Analysis' )
+
+    # Customize color maps 
+    Color1 = ['#A52A2A','#FF0000','#FF7F50','#FFA500','#FFD700','#B8860B','#9ACD32','#006400']
+    Color2 = ['#0000FF','#1E90FF','#00BFFF','#6495ED','#48D1CC','#00FFFF','#008B8B','#00FF7F']
+    Color_set = {'c0':Color1, 'c1':Color2}
+
+    Ana_color = ['#C4AEAD','#748b97']
+    # Customize linestyles
+    Line_types = ['-', '-']
+    
+    # Customize labels ###### Chnage it every time !!!!!!!!!!!!!!! 
+    Labels = ['IR ', 'IRMW ']
+    Ana_labels = ['IR-analysis', 'IRMW-analysis']
 
 
-    if read_HPI_wrfout == True:
+    # Plot HPI for each deterministic forecasts
+    if read_fc_wrfout == True:
         i = 0
         for init_time in DF_init_times:
-            plot_one( ax0, ax1, ax2, read_wrfout(Storm, wrf_dir+'/'+Storm+'/newWRF_MW_THO/wrf_df/'+init_time, force_reload=reload_data), color_model[i], 'IR+MW: '+ init_time, step=step)
+            #plot_one( ax0, ax1, ax2, read_wrfout(Storm, wrf_dir+'/'+Storm+'/newWRF_MW_THO/wrf_df/'+init_time, force_reload=reload_data), color_model[i], 'IR+MW: '+ init_time, step=step)
+            pass
             i = i+1
 
-    elif read_HPI_wrfout == False:
-        
-        if IR_init_times is not None:
-            i = 0
-            for init_time in IR_init_times:
-                plot_one( ax0, ax1, ax2, read_rsl_error(Storm, Exper[0], wrf_dir+'/'+Storm+'/'+Exper[0]+'/wrf_df/'+init_time, init_time, DF_model_end), IR_color[i], 'IR: '+ init_time, step=step)
-                i = i+1
-        
-        if IRMW_init_times is not None:
-            i = 0
-            for init_time in IRMW_init_times:
-                plot_one( ax0, ax1, ax2, read_rsl_error(Storm, Exper[1], wrf_dir+'/'+Storm+'/'+Exper[1]+'/wrf_df/'+init_time, init_time, DF_model_end), IRMW_color[i], 'IR+MW: '+ init_time, step=step)
-                i = i+1 
+    elif read_fc_wrfout == False:
+         
+        iExper = 0
+        for key in Exper_content_lbl: 
+            print('Experiment: ', key)
+            if Exper_content_lbl[key] is not None:
+                ic = 0
+                if Plot_analyses == True:
+                    print('Plotting the analyses...')
+                    HPI_analyses = read_HPI_analyses(Storm, key, wrf_dir)
+                    plot_one ( ax0, ax1, ax2, HPI_analyses, Ana_color[iExper], '--', 1.5, Ana_labels[iExper] )
+                for it in Exper_content_lbl[key]:
+                    print('Plotting ', it)
+                    print(wrf_dir+'/'+Storm+'/'+key+'/wrf_df/'+it)
+                    HPI_model = read_rsl_error(Storm, key, wrf_dir+'/'+Storm+'/'+key+'/wrf_df/'+it, it, DF_model_end) 
+                    plot_one( ax0, ax1, ax2, HPI_model, Color_set['c'+str(iExper)][ic], Line_types[iExper], 1, Labels[iExper]+it )
+
+                    ic = ic + 1
+            else:
+                print('No available data!')
+            iExper = iExper + 1
+
 
     # Set labels
     lon_ticks = list(range(math.ceil(domain_range[0]), math.ceil(domain_range[1]), 4))
@@ -428,11 +553,13 @@ def plot_hpi_all(Storm, Exper, wrf_dir, read_HPI_wrfout, domain_range, output_di
    
     if Storm == 'HARVEY':
         ax1.set_xlim([datetime(2017, 8, 22, 12, 0, 0), datetime(2017, 8, 27)])
-        ax2.set_xlim([datetime(2017, 8, 22, 12, 0, 0), datetime(2017, 8, 27)]) 
-    #ax1.set_xlim([datetime(2017, 9, 3, 6, 0, 0), datetime(2017, 9, 9)])
-    #ax2.set_xlim([datetime(2017, 9, 3, 6, 0, 0), datetime(2017, 9, 9)])
-    #ax1.set_xlim([datetime(2017, 9, 16, 18, 0, 0), datetime(2017, 9, 21)])
-    #ax2.set_xlim([datetime(2017, 9, 16, 18, 0, 0), datetime(2017, 9, 21)])
+        ax2.set_xlim([datetime(2017, 8, 22, 12, 0, 0), datetime(2017, 8, 27)])
+    elif Storm == 'IRMA':
+        ax1.set_xlim([datetime(2017, 9, 3, 6, 0, 0), datetime(2017, 9, 9)])
+        ax2.set_xlim([datetime(2017, 9, 3, 6, 0, 0), datetime(2017, 9, 9)])
+    elif Storm == 'MARIA':
+        ax1.set_xlim([datetime(2017, 9, 16, 18, 0, 0), datetime(2017, 9, 21)])
+        ax2.set_xlim([datetime(2017, 9, 16, 18, 0, 0), datetime(2017, 9, 21)])
     ax1.tick_params(axis='x', labelrotation=45)
     ax2.tick_params(axis='x', labelrotation=45)
     ax2.legend(frameon=False, loc='upper left')
@@ -441,41 +568,43 @@ def plot_hpi_all(Storm, Exper, wrf_dir, read_HPI_wrfout, domain_range, output_di
     ax1.set_title( 'MSLP' )
     ax2.set_title( 'Vmax' )
     
-    if output_dir is not None:                             
-        plt.savefig('/work2/06191/tg854905/stampede2/Pro2_PSU_MW/'+Storm+'/'+Exper[1]+'Vis_analyze/Model/'+Storm+'_all.png')
-        print('Saving the figure: ', '/work2/06191/tg854905/stampede2/Pro2_PSU_MW/'+Storm+'/'+Exper[1]+'Vis_analyze/Model/'+Storm+'_all.png')
-        #plt.savefig('%s/hpi_fcst_%s_%s.png' % (output_dir, '201708240000', '201708270000') )                                                
-    else:
-        plt.show()
-    plt.clf()
+    plt.savefig('/work2/06191/tg854905/stampede2/Pro2_PSU_MW/'+Storm+'/'+Exper[1]+'/Vis_analyze/Model/'+Storm+'_DF.png')
+    print('Saving the figure: ', '/work2/06191/tg854905/stampede2/Pro2_PSU_MW/'+Storm+'/'+Exper[1]+'/Vis_analyze/Model/'+Storm+'_DF.png')
 
 
 if __name__ == '__main__':
     
+    big_dir = '/scratch/06191/tg854905/Pro2_PSU_MW/'
+
+    # configuration
     Storm = 'HARVEY'
-    Exper_name = [None, 'J_DA+J_WRF+J_init'] # IR experiment, IR+MW experiment
-    wrf_dir = '/scratch/06191/tg854905/Pro2_PSU_MW/'
+    Exper_name = ['J_DA+Y_WRF+J_init-IR','J_DA+Y_WRF+J_init-IR+MW'] 
+    DF_model_start = '201708231200' # Default value of DF_model_start. Especially useful when dealing with ensemble forecast
+    mem_id = 'mean' # Default value of member id. Especially useful when dealing with deterministic forecast
+    read_fc_wrfout = False # Feature that decides the way of reading HPI from model files
+    Plot_analyses = True # Feature that plots the analyses of an experiment
 
-    read_HPI_wrfout = False
+    Config = [big_dir, Storm, Exper_name, DF_model_start, mem_id, read_fc_wrfout, Plot_analyses]
 
+    # Pre-set the domain for DF forecast
     if Storm == 'HARVEY':
         lon_min = -101
         lon_max = -86
         lat_min = 16
         lat_max = 31
-
-    #lon_min = -85
-    #lon_max = -45
-    #lat_min = 12
-    #lat_max = 30
-    
-    #lon_min = -70
-    #lon_max = -48
-    #lat_min = 5
-    #lat_max = 20
+    elif Storm == 'IRMA':
+        lon_min = -85
+        lon_max = -45
+        lat_min = 12
+        lat_max = 30
+    elif Storm == 'MARIA':
+        lon_min = -70
+        lon_max = -48
+        lat_min = 5
+        lat_max = 20
     domain_range = [lon_min, lon_max, lat_min, lat_max]
 
-    #plot_hpi_eachtime( Storm, wrf_dir, read_HPI_wrfout, domain_range, output_dir = './out' )
-    plot_hpi_all( Storm, Exper_name, wrf_dir, read_HPI_wrfout, domain_range, output_dir = './out')
+    #plot_hpi_eachtime( Storm, wrf_dir, domain_range, read_fc_wrfout, Plot_analyses)
+    plot_hpi_df( Config, domain_range)
 
 
