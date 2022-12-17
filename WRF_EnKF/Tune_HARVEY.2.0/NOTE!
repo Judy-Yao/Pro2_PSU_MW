@@ -1,0 +1,104 @@
+Background: after going through the first phase of reproducing Zhang 2021'work using the exactly same tools + initial conditions + boundary conditions, the result looks promising even with uncertainties that comes from the use of a different cluster + different version of intel compiler.
+
+Goal: replace WRF version from 3.6.1 to 4.1.2, see if IR+MW method still beats IR-only method.
+
+******************************************
+Modifications to bash scripts:
+******************************************
+- Add force_use_old_data = .true. To &time_control section in namelist_real.sh/namelist_wrf_realtime.sh/namelist_wrf.sh   
+
+- Add hybrid_opt = 0 To &dynamics section in namelist_real.sh/namelist_wrf_realtime.sh/namelist_wrf.sh
+- Add use_theta_m = 0 To &dynamics section in namelist_real.sh/namelist_wrf_realtime.sh/namelist_wrf.sh  
+
+****************************************************************
+Modifications to EnKF code and Initial condition of the project
+***************************************************************
+Context: The current project uses initial conditions of v3.6.1 as input while WRF v4.1.2 is being used as NWP. Starting from v4.0, the moist theta temperature option is introduced. 
+	- WRFout: the variable of perturbation potential temperature in older version (e.g., v3) is divided into two variables starting from v4.0: T and THM. T is the perturbation potential temperature theta-t0 and THM is either 1) pert moist pot temp=(1+Rv/Rd Qv)*(theta)-T0, or 2) pert dry pot temp=t. Under the condition use_theta_m = 0, WRF is supposed to use dry theta in dynamics. In this case, THM and T are the same, and both are perturbation dry potential temperature. However, T is a diagnostic variable while THM is a prognosic variable so we'd like to use THM variable in the WRF-EnKF system.
+	- WRFbdy: names of perturbation potential temperature of different borders in older version are consistently used in the v4.0. Note in v4.0, different value of use_theta_m leads to different interpretation. When use_theta_m = 0, dry perturbation potential temperature; when use_theta_m = 1, wet perturbation potential temperature. 
+
+Solution: to deal with the possible inconsistency, we need to 1. change the variable 'T' in the code to 'THM'; 2. rename the variable 'T' in WRFinput of version 3.6.1 provided by Jerry to 'THM'
+	- note: since variable names are consistent between v.3.6.1 and v4.0(and newer)
+
+~~~~~~~~~~~~~~~~~~~~~~~ Modifications to EnKF code ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+Main idea: Get a new copy of EnKF code; Change T in namelist_enkf.sh and EnKF code to THM.
+
+Steps:
+1. Add WRF_VERSION(1/2/3/4) to configure file.
+2. In namelist_enkf.sh: 
+	- condition enkfvar based on the version of WRF used in the &enkf_parameter section.
+		- note: each enkfvar occupies 10 spaces 
+	- add new parameter wrf_version in the end of &enkf_parameter section.
+3. In module_structure.f:
+	- in namelist_define section:
+		- declare "integer   :: wrf_version"
+		- add wrf_version to "namelist /enkf_parameter / ...... use_sfc_td, wrf_version"
+4. In sub_enkf_util.f:
+	- in read_namelist section:
+		- initialize "wrf_version = 999"   
+		- add "write(6, (a,3x,i3    )) 'wrf_version = ',wrf_version" 
+	- in find_enkfvar_indices(nv) section:
+		- condition the load of variable names
+			"if ( wrf_version >= 4) then
+				if ( trim(varname) == 'THM' ) ind_t == vv
+			 else
+				if ( trim(varname) == 'T' ) ind_t == vv	
+			 endif "
+	- in supplement_enkfvar(nv) section:
+        - condition the writing of variables needed for observation operators
+            "if ( wrf_version >= 4) then 
+                write( needvars(10), 'a') 'THM       '
+             else
+				write( needvars(10), 'a') 'T         '
+             endif "
+5. In hurricane_center.f:
+	- in hurricane_center_assimilation section:
+		- condition the load of T	
+6. In xb.f:
+	- in xb_to_microwave section:
+		- condition the load of T
+	- in xb_to_rv section (not relevant to this project?)
+		- condition the indices
+		- condition the load of T 
+7. In cal_roi.f:
+	- in corr_elf section:
+		- change "case('T','TSK')" to "case('T','THM','TSK')"
+8. In replace_environment_by_gfs.f:
+	- condition the variables (T) that will be replaced
+
+~~~~~~~~~~~~~~~~~~~~~~~ Modifications to Jerry's initial conditions ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+Original solution: rename variable name T to THM of Jerrys' initial condition.
+Problem with the original solution: at the update-boundary-condition step, the source code (da_updatebc.f) of WRFv4.1.2 uses the variable "T" to update the boundary condition instead of "THM" (maybe that's why variable T stays in the new version of WRF due to history legacy issue). If we simply rename variable "T" in initial condition files to "THM", error will occur at this step.
+Revised solution:
+	1. Go to fc/201708220000
+	2. For each wrfinput file:
+	- Extract the variable "T" and output it to a new nc file
+	- Rename the variable "T" in this nc file as "THM"
+	- Add the variable "THM" to the wrfinput file
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

@@ -1,0 +1,1 @@
+Note that, in CRTM MW part, ODAS(optical depth in absorber space) and ODPS(optical depth in pressure space) are different transmittance algorithms! They are exclusive to each other! However, both algorithms were used in CRTM-EnKF cycle!

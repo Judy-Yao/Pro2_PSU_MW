@@ -20,6 +20,7 @@
  DATE_CYCLE_START=201708221200
  DATE_CYCLE_END=201708250000 #201708251200
  STORM_ID=HARVEY
+ WRF_VERSION=4
 
 # ==== Directories ===
  WORK_DIR=/expanse/lustre/scratch/zuy121/temp_project/Pro2_PSU_MW/${STORM_ID}/${EXP_NAME} #/scratch/02191/yuz31/${STORM_ID}/$EXP_NAME
@@ -36,7 +37,7 @@
  WRFDA_DIR=${CODE_DIR}/WRFDA_install/WRFDA_v4.1
  CRTM_DIR=${SCRIPT_DIR}
  CRTM_COEFF_DIR=/expanse/lustre/projects/pen116/zuy121/JerryZhang/J_PSU-EnKF_w_satellites/fortran_src/crtm_v2.3.0/coefficients  #/scratch/02191/yuz31/coefficients_l
- ENKF_DIR=/expanse/lustre/projects/pen116/zuy121/JerryZhang/J_PSU-EnKF_w_satellites/fortran_src/EnSRF/src_back/ ##ENKF_DIR=$CODE_DIR/EnKF_crtm_rob/code/EnKF/src
+ ENKF_DIR=/expanse/lustre/projects/pen116/zuy121/JerryZhang/J_PSU-EnKF_w_satellites/fortran_src/EnSRF/src_v4/
  # Input Data
  FG_DIR_GFS=${DATA_DIR}/GFS
  TCVITALS_DIR=${DATA_DIR}/TCvitals

@@ -1,0 +1,5 @@
+check*
+*.log
+log*
+.*swp
+**/*.swp

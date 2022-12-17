@@ -11,13 +11,30 @@ if [[ $domain_id != 3 ]]; then USE_RADAR_RV=false; fi
 ##enkfvar      = 'T         ', 'U         ', 'V         ', 'QVAPOR    ', 'QCLOUD    ', 'QRAIN     ', 'QICE      ', 'QSNOW     ', 'QGRAUP    ', 'PH        ', 'MU        ', 'PSFC      ', 'P         ', 'PHB       ', 'PB        ', 'MUB       ', 'U10       ', 'V10       ', 'TSK       ','W         ',
 ##updatevar    = 'T         ', 'U         ', 'V         ', 'QVAPOR    ', 'QCLOUD    ', 'QRAIN     ', 'QICE      ', 'QSNOW     ', 'QGRAUP    ', 'PH        ', 'MU        ', 'PSFC      ', 'P         ', 'U10       ', 'V10       ', 'TSK       ', 
 
-
+#============ enkf parameter ==========
 cat << EOF
 &enkf_parameter
 numbers_en   = $NUM_ENS, 
 expername    = '$EXP_NAME',  
+EOF
+
+if  [ $WRF_VERSION -lt 4 ]; then
+cat << EOF
 enkfvar      = 'T         ', 'U         ', 'V         ', 'QVAPOR    ', 'QCLOUD    ', 'QRAIN     ', 'QICE      ', 'QSNOW     ', 'QGRAUP    ', 'PH        ', 'MU        ', 'PSFC      ', 'P         ', 'PHB       ', 'PB        ', 'MUB       ', 'U10       ', 'V10       ', 'TSK       ','W         ',
 updatevar    = 'T         ', 'U         ', 'V         ', 'QVAPOR    ', 'QCLOUD    ', 'QRAIN     ', 'QICE      ', 'QSNOW     ', 'QGRAUP    ', 'PH        ', 'MU        ', 'PSFC      ', 'P         ', 'U10       ', 'V10       ', 'TSK       ', 
+EOF
+else
+cat << EOF
+enkfvar      = 'THM       ', 'U         ', 'V         ', 'QVAPOR    ', 'QCLOUD    ', 'QRAIN     ', 'QICE      ', 'QSNOW     ', 'QGRAUP    ', 'PH        ', 'MU        ', 'PSFC      ', 'P         ', 'PHB       ', 'PB        
+', 'MUB       ', 'U10       ', 'V10       ', 'TSK       ','W         ',                                       
+updatevar    = 'THM       ', 'U         ', 'V         ', 'QVAPOR    ', 'QCLOUD    ', 'QRAIN     ', 'QICE      '
+, 'QSNOW     ', 'QGRAUP    ', 'PH        ', 'MU        ', 'PSFC      ', 'P         ', 'U10       ', 'V10       
+', 'TSK       ', 
+EOF
+
+fi
+EOF
+cat << EOF
 update_is    = 1,
 update_ie    = ${E_WE[$domain_id-1]},
 update_js    = 1,
@@ -38,6 +55,7 @@ random_order = .false.,
 print_detail = 0,
 use_sfc_theta= true,
 use_sfc_td   = true,
+wrf_version = $WRF_VERSION,
 /
 
 &parallel
