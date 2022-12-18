@@ -74,25 +74,9 @@ function [] = IR_vis(istorm, min_lat, max_lat, min_lon, max_lon, Tb_file, contro
     H = m_scatter(lon_needed,lat_needed,Tbs_needed, Tbs_needed, 'o','filled');
     
     % Set up my own colormap
-    max_T = 250;
-    min_T = 190;
-    min_Jet = 210;
-    jetLength = (max_T) - (min_Jet) + 1;
-    notJetLength = (min_Jet - 1) - (min_T + 1) + 1;
-    theJet = jet(jetLength);
-    jet_red = theJet(:,1);
-    jet_green = theJet(:,2);
-    jet_blue = theJet(:,3);
-    jetAdd_red = (1.0:((jet_red(1)-1)/notJetLength)  :jet_red(1))';
-    jetAdd_green = (1.0:((jet_green(1)-1)/notJetLength):jet_green(1))';
-    jetAdd_blue  = (1.0:((jet_blue(1)-1)/notJetLength) :jet_blue(1))';
-    cm_red   = [0.0; jetAdd_red;   jet_red;   0.0];
-    cm_green = [0.0; jetAdd_green; jet_green; 0.0];
-    cm_blue  = [0.0; jetAdd_blue;  jet_blue;  0.0];
-    myColormap = ([cm_red cm_green cm_blue]);
-
-    colormap(myColormap);
-    caxis([min_T,max_T])
+	myColormap = set_satellite_radiance_color( 0.5 )
+    %colormap(myColormap);
+    caxis([185,325])
     cb = colorbar;
     set(cb,'Fontsize', 23);
     cb.Label.String = 'Brightness Temperature (K)';
@@ -109,7 +93,7 @@ function [] = IR_vis(istorm, min_lat, max_lat, min_lon, max_lon, Tb_file, contro
         title(['CH8 2nd RI of Irma: ', time],'Fontsize',20);
     elseif string(control.storm_phase{istorm}) == 'Jose_RI'
         title(['CH8 RI of Jose: ', time],'Fontsize',20);
-    elseif string(control.storm_phase{istorm}) == 'Maria_RI'
+    elseif string(control.storm_phase{istorm}) == 'MARIA'
         title(['CH8 RI of Maria: ', time],'Fontsize',20);
     end
     savename = append(control.plot_dir,control.storm_phase{istorm},'/','IR_CH8_',time_save,'.png');

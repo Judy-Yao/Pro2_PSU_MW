@@ -3,10 +3,10 @@
 % control variables
 control = struct;
 
-control.obs_dir = './Obs/GOESR_IR/';
-control.plot_dir = './Visual/Obs/GOESR_IR/';
+control.obs_dir = '../../raw_Obs/GOESR_IR/';
+control.plot_dir = '../../Visual/Obs/GOESR_IR/';
 %control.storm_phase = {'Irma_1stRI','Irma_2ndRI','Jose_RI','Maria_RI'};
-control.storm_phase = {'Jose_RI','Maria_RI'};
+control.storm_phase = {'MARIA',};
 
 
 % Operation for each storm phase
@@ -27,11 +27,11 @@ for istorm = 1:length(control.storm_phase)
             max_lat = 20;
             min_lon = -50;
             max_lon = -35;
-        case 'Maria_RI'
-            min_lat = 5;
-            max_lat = 20;
-            min_lon = -60;
-            max_lon = -45; 
+        case 'MARIA'
+            min_lat = 0;
+            max_lat = 10;
+            min_lon = -30;
+            max_lon = -15; 
     end
     
     % Operation for each observation file
