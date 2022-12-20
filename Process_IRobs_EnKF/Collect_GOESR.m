@@ -25,7 +25,8 @@ function [] = Collect_GOESR(istorm, bestrack_str, control)
     end
     % Loop through files for each channel
     for ich = 1:length(control.favCH) 
-        Tb_dir = [control.obs_dir, control.storm_phase{istorm},'/CH',num2str(control.favCH(ich)),'/*.nc'];
+        Tb_dir = [control.obs_dir, control.storm_phase{istorm},'/*.nc'];
+        %Tb_dir = [control.obs_dir, control.storm_phase{istorm},'/CH',num2str(control.favCH(ich)),'/*.nc'];
         Tb_files = strsplit(ls(Tb_dir));
         Tb_files = Tb_files(cellfun(@isempty, Tb_files) == 0); % Get rid of the annyoing empty cell
 
