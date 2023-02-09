@@ -59,7 +59,7 @@ function [] = IR_vis(istorm, min_lat, max_lat, min_lon, max_lon, Tb_file, contro
     figure;
     set(gcf,'PaperPositionMode', 'auto'); 
     hFig=gcf;
-    set(hFig, 'Position', [0 0 1000 1000]);
+    set(hFig, 'Position', [0 0 1000 500]);
     set(gcf,'PaperPositionMode', 'auto');
 
     % Limits of the map
@@ -71,11 +71,11 @@ function [] = IR_vis(istorm, min_lat, max_lat, min_lon, max_lon, Tb_file, contro
     % Initialize the projection 
     m_proj('mercator','lon',[min_lon_plt max_lon_plt],'lat',[min_lat_plt max_lat_plt]);
     % Plot Tbs distribution by m_scatter
-    H = m_scatter(lon_needed,lat_needed,Tbs_needed, Tbs_needed, 'o','filled');
+    H = m_scatter(lon_needed,lat_needed,10, Tbs_needed, 'o','filled');
     
     % Set up my own colormap
-	myColormap = set_satellite_radiance_color( 0.5 )
-    %colormap(myColormap);
+	myColormap = set_satellite_radiance_color( 0.5 );
+    colormap(myColormap);
     caxis([185,325])
     cb = colorbar;
     set(cb,'Fontsize', 23);
