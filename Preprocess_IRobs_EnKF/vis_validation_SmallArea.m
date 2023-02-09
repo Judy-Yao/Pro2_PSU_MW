@@ -6,8 +6,8 @@ control = struct;
 control.obs_dir = '../../toEnKFobs/GOESR_IR/'; 
 control.output_dir = '../../Visual/toEnKFobs/GOESR_IR/';
 % ---Storm information
-%control.storm_phase = {'JoseRI',};  
-control.storm_phase = {'Irma2ndRI','JoseRI','MariaRI'};
+control.storm_phase = {'MARIA',};  
+%control.storm_phase = {'Irma2ndRI','JoseRI','MariaRI'};
 % --- WRF setup
 control.nx = 20; % number of grid points along X direction
 control.ny = 20; % number of grid points along Y direction

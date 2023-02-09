@@ -80,7 +80,7 @@ function [myTimes,mySat_name,myChNum,myLat,myLon,myTb,myROI_hydro,myROI_other,my
             lat_obs_toPick = lat_obs; lon_obs_toPick = lon_obs;
         end
         [lat_obs_toPick, lon_obs_toPick, idx_PickObs] = PickRawforCRTM(lat_obs_toPick,lon_obs_toPick,xlat_m,xlon_m,grid_start(iroi),filter_grid_step(iroi),control);
-        obs_index{iroi} = ;
+        obs_index{iroi} = idx_PickObs;
         [v, w] = unique(obs_index{iroi},'stable' );
         duplicate_idx = setdiff(1:numel(obs_index{iroi}),w );
         if sum(duplicate_idx) ~= 0 
