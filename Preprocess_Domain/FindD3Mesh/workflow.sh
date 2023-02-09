@@ -7,16 +7,16 @@ module restore intel19  # Intel Compiler Version 19
 
 #!!!!!!!!!!!!!!!!!! Attention !!!!!!!!!!!!!!!!!!!!!!!!!!!!
 PRED_SCRIPT_DIR=/work2/06191/tg854905/stampede2/Pro2_PSU_MW/SourceCode/Preprocess_Domain/
-PRED_DIR=/work2/06191/tg854905/stampede2/Pro2_PSU_MW/Preprocess_Domain/${STORM_ID}
 
 #load configuration files, functions, parameters
-if [ -f config_IR_MW.HARVEY ]; then
-  export CONFIG_FILE=$(pwd)/config_IR_MW.HARVEY
+if [ -f config_IR_MW.MARIA ]; then
+  export CONFIG_FILE=$(pwd)/config_IR_MW.MARIA
   source "$CONFIG_FILE"
 fi
 if [ -f util.sh ]; then
   source "$(pwd)/util.sh"
 fi
+PRED_DIR=/work2/06191/tg854905/stampede2/Pro2_PSU_MW/Preprocess_Domain/${STORM_ID}
 #!!!!!!!!!!!!!!!!!! Attention !!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
 if [[ ! -d "$PRED_DIR" ]]; then mkdir -p "$PRED_DIR"; fi
@@ -68,13 +68,11 @@ while [[ $NEXTDATE -le $DATE_CYCLE_END ]]; do
        cat > run_wps_real.sh << EOF
 #!/bin/bash -x
 #SBATCH -J GetDomain
-#SBATCH -p skx-dev
+#SBATCH -p development
 #SBATCH -N 1
 #SBATCH -n 48 
-#SBATCH -t 0:30:00
+#SBATCH -t 02:00:00
 #SBATCH -o run_wps.batch
-#SBATCH --mail-type=ALL
-#SBATCH --mail-user=yao.zhu.91@gmail.com
 
 date
 cd $rundir
@@ -105,3 +103,5 @@ EOF
 done
 echo CYCLING COMPLETE
 echo bottom "$MODULEPATH_ROOT"
+
+cp config_IR_MW.MARIA /work2/06191/tg854905/stampede2/Pro2_PSU_MW/Preprocess_Domain/${STORM_ID}/ 
