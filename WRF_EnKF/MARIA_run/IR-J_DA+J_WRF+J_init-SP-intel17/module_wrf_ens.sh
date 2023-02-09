@@ -114,8 +114,8 @@ done
 for NE in $(seq 1 "$NUM_ENS"); do
   id=$(expr "$NE" + 1000 |cut -c2-)  
   watch_log "$id"/rsl.error.0000 SUCCESS 5 "$rundir"
-  rm "$id"/rsl.*
-  echo SUCCESS > "$id"/rsl.error.0000
+  #rm "$id"/rsl.*
+  #echo SUCCESS > "$id"/rsl.error.0000
   #outfile=$id/wrfinput_d01_`wrf_time_string $NEXTDATE`
   
   outfile=$id/wrfout_d01_$(wrf_time_string "$NEXTDATE") ## !!!!

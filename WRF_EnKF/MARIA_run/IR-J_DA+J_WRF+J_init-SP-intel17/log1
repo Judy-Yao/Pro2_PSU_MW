@@ -1,0 +1,471 @@
+nohup: ignoring input
+[3J[H[2J
+
+   IP ADDR: 129.114.63.42
+   USER: tg854905
+   DATE: Thu Feb  9 08:55:49 CST 2023
+   UPTIME: up 37 weeks, 1 day, 22 hours, 32 minutes
+   HOSTNAME: login2.stampede2.tacc.utexas.edu
+   KERNEL: Linux 3.10.0-1160.53.1.el7.x86_64 x86_64
+   MEMORY: 17G/93G
+
+Restoring modules from user's intel17
+(standard_in) 2: syntax error
+----------------------------------------------------------------------
+CURRENT CYCLE: 2017-09-13_12:00:00 => 2017-09-14_00:00:00
+cat: run/201709131200/*/stat: No such file or directory
+./IR-J_DA+J_WRF+J_init-SP-intel17.sh: line 99: run/201709131200/*/stat: No such file or directory
+[3J[H[2J
+
+   IP ADDR: 129.114.63.42
+   USER: tg854905
+   DATE: Thu Feb  9 08:55:58 CST 2023
+   UPTIME: up 37 weeks, 1 day, 22 hours, 32 minutes
+   HOSTNAME: login2.stampede2.tacc.utexas.edu
+   KERNEL: Linux 3.10.0-1160.53.1.el7.x86_64 x86_64
+   MEMORY: 17G/93G
+
+  Calculating preset nesting...
+  Running ungrib.exe...
+201709131200
+/work2/06191/tg854905/stampede2/Pro2_PSU_MW/Obs_input_EnKF/MARIA/GFS/gfs.0p25.2017091312.f000.grib2
+/work2/06191/tg854905/stampede2/Pro2_PSU_MW/Obs_input_EnKF/MARIA/GFS/gfs.0p25.2017091312.f006.grib2
+/work2/06191/tg854905/stampede2/Pro2_PSU_MW/Obs_input_EnKF/MARIA/GFS/gfs.0p25.2017091312.f012.grib2
+/work2/06191/tg854905/stampede2/Pro2_PSU_MW/Obs_input_EnKF/MARIA/GFS/gfs.0p25.2017091312.f000.grib2 /work2/06191/tg854905/stampede2/Pro2_PSU_MW/Obs_input_EnKF/MARIA/GFS/gfs.0p25.2017091312.f006.grib2 /work2/06191/tg854905/stampede2/Pro2_PSU_MW/Obs_input_EnKF/MARIA/GFS/gfs.0p25.2017091312.f012.grib2
+  Running geogrid.exe, metgrid.exe, and real.exe...
+  Running PerturbIC...
+    Generating perturbations using WRF 3DVar
+/scratch/06191/tg854905/Pro2_PSU_MW/MARIA/IR-J_DA+J_WRF+J_init-SP-intel17/run/201709131200/perturb_ic
+/scratch/06191/tg854905/Pro2_PSU_MW/MARIA/IR-J_DA+J_WRF+J_init-SP-intel17/run/201709131200/perturb_ic
+/scratch/06191/tg854905/Pro2_PSU_MW/MARIA/IR-J_DA+J_WRF+J_init-SP-intel17/run/201709131200/perturb_ic
+/scratch/06191/tg854905/Pro2_PSU_MW/MARIA/IR-J_DA+J_WRF+J_init-SP-intel17/run/201709131200/perturb_ic
+/scratch/06191/tg854905/Pro2_PSU_MW/MARIA/IR-J_DA+J_WRF+J_init-SP-intel17/run/201709131200/perturb_ic
+/scratch/06191/tg854905/Pro2_PSU_MW/MARIA/IR-J_DA+J_WRF+J_init-SP-intel17/run/201709131200/perturb_ic
+/scratch/06191/tg854905/Pro2_PSU_MW/MARIA/IR-J_DA+J_WRF+J_init-SP-intel17/run/201709131200/perturb_ic
+/scratch/06191/tg854905/Pro2_PSU_MW/MARIA/IR-J_DA+J_WRF+J_init-SP-intel17/run/201709131200/perturb_ic
+/scratch/06191/tg854905/Pro2_PSU_MW/MARIA/IR-J_DA+J_WRF+J_init-SP-intel17/run/201709131200/perturb_ic
+/scratch/06191/tg854905/Pro2_PSU_MW/MARIA/IR-J_DA+J_WRF+J_init-SP-intel17/run/201709131200/perturb_ic
+/scratch/06191/tg854905/Pro2_PSU_MW/MARIA/IR-J_DA+J_WRF+J_init-SP-intel17/run/201709131200/perturb_ic
+/scratch/06191/tg854905/Pro2_PSU_MW/MARIA/IR-J_DA+J_WRF+J_init-SP-intel17/run/201709131200/perturb_ic
+/scratch/06191/tg854905/Pro2_PSU_MW/MARIA/IR-J_DA+J_WRF+J_init-SP-intel17/run/201709131200/perturb_ic
+/scratch/06191/tg854905/Pro2_PSU_MW/MARIA/IR-J_DA+J_WRF+J_init-SP-intel17/run/201709131200/perturb_ic
+/scratch/06191/tg854905/Pro2_PSU_MW/MARIA/IR-J_DA+J_WRF+J_init-SP-intel17/run/201709131200/perturb_ic
+/scratch/06191/tg854905/Pro2_PSU_MW/MARIA/IR-J_DA+J_WRF+J_init-SP-intel17/run/201709131200/perturb_ic
+/scratch/06191/tg854905/Pro2_PSU_MW/MARIA/IR-J_DA+J_WRF+J_init-SP-intel17/run/201709131200/perturb_ic
+/scratch/06191/tg854905/Pro2_PSU_MW/MARIA/IR-J_DA+J_WRF+J_init-SP-intel17/run/201709131200/perturb_ic
+/scratch/06191/tg854905/Pro2_PSU_MW/MARIA/IR-J_DA+J_WRF+J_init-SP-intel17/run/201709131200/perturb_ic
+/scratch/06191/tg854905/Pro2_PSU_MW/MARIA/IR-J_DA+J_WRF+J_init-SP-intel17/run/201709131200/perturb_ic
+/scratch/06191/tg854905/Pro2_PSU_MW/MARIA/IR-J_DA+J_WRF+J_init-SP-intel17/run/201709131200/perturb_ic
+/scratch/06191/tg854905/Pro2_PSU_MW/MARIA/IR-J_DA+J_WRF+J_init-SP-intel17/run/201709131200/perturb_ic
+/scratch/06191/tg854905/Pro2_PSU_MW/MARIA/IR-J_DA+J_WRF+J_init-SP-intel17/run/201709131200/perturb_ic
+/scratch/06191/tg854905/Pro2_PSU_MW/MARIA/IR-J_DA+J_WRF+J_init-SP-intel17/run/201709131200/perturb_ic
+/scratch/06191/tg854905/Pro2_PSU_MW/MARIA/IR-J_DA+J_WRF+J_init-SP-intel17/run/201709131200/perturb_ic
+/scratch/06191/tg854905/Pro2_PSU_MW/MARIA/IR-J_DA+J_WRF+J_init-SP-intel17/run/201709131200/perturb_ic
+/scratch/06191/tg854905/Pro2_PSU_MW/MARIA/IR-J_DA+J_WRF+J_init-SP-intel17/run/201709131200/perturb_ic
+/scratch/06191/tg854905/Pro2_PSU_MW/MARIA/IR-J_DA+J_WRF+J_init-SP-intel17/run/201709131200/perturb_ic
+/scratch/06191/tg854905/Pro2_PSU_MW/MARIA/IR-J_DA+J_WRF+J_init-SP-intel17/run/201709131200/perturb_ic
+/scratch/06191/tg854905/Pro2_PSU_MW/MARIA/IR-J_DA+J_WRF+J_init-SP-intel17/run/201709131200/perturb_ic
+/scratch/06191/tg854905/Pro2_PSU_MW/MARIA/IR-J_DA+J_WRF+J_init-SP-intel17/run/201709131200/perturb_ic
+/scratch/06191/tg854905/Pro2_PSU_MW/MARIA/IR-J_DA+J_WRF+J_init-SP-intel17/run/201709131200/perturb_ic
+/scratch/06191/tg854905/Pro2_PSU_MW/MARIA/IR-J_DA+J_WRF+J_init-SP-intel17/run/201709131200/perturb_ic
+/scratch/06191/tg854905/Pro2_PSU_MW/MARIA/IR-J_DA+J_WRF+J_init-SP-intel17/run/201709131200/perturb_ic
+/scratch/06191/tg854905/Pro2_PSU_MW/MARIA/IR-J_DA+J_WRF+J_init-SP-intel17/run/201709131200/perturb_ic
+/scratch/06191/tg854905/Pro2_PSU_MW/MARIA/IR-J_DA+J_WRF+J_init-SP-intel17/run/201709131200/perturb_ic
+/scratch/06191/tg854905/Pro2_PSU_MW/MARIA/IR-J_DA+J_WRF+J_init-SP-intel17/run/201709131200/perturb_ic
+/scratch/06191/tg854905/Pro2_PSU_MW/MARIA/IR-J_DA+J_WRF+J_init-SP-intel17/run/201709131200/perturb_ic
+/scratch/06191/tg854905/Pro2_PSU_MW/MARIA/IR-J_DA+J_WRF+J_init-SP-intel17/run/201709131200/perturb_ic
+/scratch/06191/tg854905/Pro2_PSU_MW/MARIA/IR-J_DA+J_WRF+J_init-SP-intel17/run/201709131200/perturb_ic
+/scratch/06191/tg854905/Pro2_PSU_MW/MARIA/IR-J_DA+J_WRF+J_init-SP-intel17/run/201709131200/perturb_ic
+/scratch/06191/tg854905/Pro2_PSU_MW/MARIA/IR-J_DA+J_WRF+J_init-SP-intel17/run/201709131200/perturb_ic
+/scratch/06191/tg854905/Pro2_PSU_MW/MARIA/IR-J_DA+J_WRF+J_init-SP-intel17/run/201709131200/perturb_ic
+/scratch/06191/tg854905/Pro2_PSU_MW/MARIA/IR-J_DA+J_WRF+J_init-SP-intel17/run/201709131200/perturb_ic
+/scratch/06191/tg854905/Pro2_PSU_MW/MARIA/IR-J_DA+J_WRF+J_init-SP-intel17/run/201709131200/perturb_ic
+/scratch/06191/tg854905/Pro2_PSU_MW/MARIA/IR-J_DA+J_WRF+J_init-SP-intel17/run/201709131200/perturb_ic
+/scratch/06191/tg854905/Pro2_PSU_MW/MARIA/IR-J_DA+J_WRF+J_init-SP-intel17/run/201709131200/perturb_ic
+/scratch/06191/tg854905/Pro2_PSU_MW/MARIA/IR-J_DA+J_WRF+J_init-SP-intel17/run/201709131200/perturb_ic
+/scratch/06191/tg854905/Pro2_PSU_MW/MARIA/IR-J_DA+J_WRF+J_init-SP-intel17/run/201709131200/perturb_ic
+/scratch/06191/tg854905/Pro2_PSU_MW/MARIA/IR-J_DA+J_WRF+J_init-SP-intel17/run/201709131200/perturb_ic
+/scratch/06191/tg854905/Pro2_PSU_MW/MARIA/IR-J_DA+J_WRF+J_init-SP-intel17/run/201709131200/perturb_ic
+/scratch/06191/tg854905/Pro2_PSU_MW/MARIA/IR-J_DA+J_WRF+J_init-SP-intel17/run/201709131200/perturb_ic
+/scratch/06191/tg854905/Pro2_PSU_MW/MARIA/IR-J_DA+J_WRF+J_init-SP-intel17/run/201709131200/perturb_ic
+/scratch/06191/tg854905/Pro2_PSU_MW/MARIA/IR-J_DA+J_WRF+J_init-SP-intel17/run/201709131200/perturb_ic
+/scratch/06191/tg854905/Pro2_PSU_MW/MARIA/IR-J_DA+J_WRF+J_init-SP-intel17/run/201709131200/perturb_ic
+/scratch/06191/tg854905/Pro2_PSU_MW/MARIA/IR-J_DA+J_WRF+J_init-SP-intel17/run/201709131200/perturb_ic
+/scratch/06191/tg854905/Pro2_PSU_MW/MARIA/IR-J_DA+J_WRF+J_init-SP-intel17/run/201709131200/perturb_ic
+/scratch/06191/tg854905/Pro2_PSU_MW/MARIA/IR-J_DA+J_WRF+J_init-SP-intel17/run/201709131200/perturb_ic
+/scratch/06191/tg854905/Pro2_PSU_MW/MARIA/IR-J_DA+J_WRF+J_init-SP-intel17/run/201709131200/perturb_ic
+/scratch/06191/tg854905/Pro2_PSU_MW/MARIA/IR-J_DA+J_WRF+J_init-SP-intel17/run/201709131200/perturb_ic
+    Nestdown perturbation for inner domains...
+begin nest down for d02
+  any need to work on member  001
+/scratch/06191/tg854905/Pro2_PSU_MW/MARIA/IR-J_DA+J_WRF+J_init-SP-intel17/run/201709131200/perturb_ic/001/d02/rsl.error.0000
+  yes
+  any need to work on member  002
+/scratch/06191/tg854905/Pro2_PSU_MW/MARIA/IR-J_DA+J_WRF+J_init-SP-intel17/run/201709131200/perturb_ic/002/d02/rsl.error.0000
+  yes
+  any need to work on member  003
+/scratch/06191/tg854905/Pro2_PSU_MW/MARIA/IR-J_DA+J_WRF+J_init-SP-intel17/run/201709131200/perturb_ic/003/d02/rsl.error.0000
+  yes
+  any need to work on member  004
+/scratch/06191/tg854905/Pro2_PSU_MW/MARIA/IR-J_DA+J_WRF+J_init-SP-intel17/run/201709131200/perturb_ic/004/d02/rsl.error.0000
+  yes
+  any need to work on member  005
+/scratch/06191/tg854905/Pro2_PSU_MW/MARIA/IR-J_DA+J_WRF+J_init-SP-intel17/run/201709131200/perturb_ic/005/d02/rsl.error.0000
+  yes
+  any need to work on member  006
+/scratch/06191/tg854905/Pro2_PSU_MW/MARIA/IR-J_DA+J_WRF+J_init-SP-intel17/run/201709131200/perturb_ic/006/d02/rsl.error.0000
+  yes
+  any need to work on member  007
+/scratch/06191/tg854905/Pro2_PSU_MW/MARIA/IR-J_DA+J_WRF+J_init-SP-intel17/run/201709131200/perturb_ic/007/d02/rsl.error.0000
+  yes
+  any need to work on member  008
+/scratch/06191/tg854905/Pro2_PSU_MW/MARIA/IR-J_DA+J_WRF+J_init-SP-intel17/run/201709131200/perturb_ic/008/d02/rsl.error.0000
+  yes
+  any need to work on member  009
+/scratch/06191/tg854905/Pro2_PSU_MW/MARIA/IR-J_DA+J_WRF+J_init-SP-intel17/run/201709131200/perturb_ic/009/d02/rsl.error.0000
+  yes
+  any need to work on member  010
+/scratch/06191/tg854905/Pro2_PSU_MW/MARIA/IR-J_DA+J_WRF+J_init-SP-intel17/run/201709131200/perturb_ic/010/d02/rsl.error.0000
+  yes
+  any need to work on member  011
+/scratch/06191/tg854905/Pro2_PSU_MW/MARIA/IR-J_DA+J_WRF+J_init-SP-intel17/run/201709131200/perturb_ic/011/d02/rsl.error.0000
+  yes
+  any need to work on member  012
+/scratch/06191/tg854905/Pro2_PSU_MW/MARIA/IR-J_DA+J_WRF+J_init-SP-intel17/run/201709131200/perturb_ic/012/d02/rsl.error.0000
+  yes
+  any need to work on member  013
+/scratch/06191/tg854905/Pro2_PSU_MW/MARIA/IR-J_DA+J_WRF+J_init-SP-intel17/run/201709131200/perturb_ic/013/d02/rsl.error.0000
+  yes
+  any need to work on member  014
+/scratch/06191/tg854905/Pro2_PSU_MW/MARIA/IR-J_DA+J_WRF+J_init-SP-intel17/run/201709131200/perturb_ic/014/d02/rsl.error.0000
+  yes
+  any need to work on member  015
+/scratch/06191/tg854905/Pro2_PSU_MW/MARIA/IR-J_DA+J_WRF+J_init-SP-intel17/run/201709131200/perturb_ic/015/d02/rsl.error.0000
+  yes
+  any need to work on member  016
+/scratch/06191/tg854905/Pro2_PSU_MW/MARIA/IR-J_DA+J_WRF+J_init-SP-intel17/run/201709131200/perturb_ic/016/d02/rsl.error.0000
+  yes
+  any need to work on member  017
+/scratch/06191/tg854905/Pro2_PSU_MW/MARIA/IR-J_DA+J_WRF+J_init-SP-intel17/run/201709131200/perturb_ic/017/d02/rsl.error.0000
+  yes
+  any need to work on member  018
+/scratch/06191/tg854905/Pro2_PSU_MW/MARIA/IR-J_DA+J_WRF+J_init-SP-intel17/run/201709131200/perturb_ic/018/d02/rsl.error.0000
+  yes
+  any need to work on member  019
+/scratch/06191/tg854905/Pro2_PSU_MW/MARIA/IR-J_DA+J_WRF+J_init-SP-intel17/run/201709131200/perturb_ic/019/d02/rsl.error.0000
+  yes
+  any need to work on member  020
+/scratch/06191/tg854905/Pro2_PSU_MW/MARIA/IR-J_DA+J_WRF+J_init-SP-intel17/run/201709131200/perturb_ic/020/d02/rsl.error.0000
+  yes
+  any need to work on member  021
+/scratch/06191/tg854905/Pro2_PSU_MW/MARIA/IR-J_DA+J_WRF+J_init-SP-intel17/run/201709131200/perturb_ic/021/d02/rsl.error.0000
+  yes
+  any need to work on member  022
+/scratch/06191/tg854905/Pro2_PSU_MW/MARIA/IR-J_DA+J_WRF+J_init-SP-intel17/run/201709131200/perturb_ic/022/d02/rsl.error.0000
+  yes
+  any need to work on member  023
+/scratch/06191/tg854905/Pro2_PSU_MW/MARIA/IR-J_DA+J_WRF+J_init-SP-intel17/run/201709131200/perturb_ic/023/d02/rsl.error.0000
+  yes
+  any need to work on member  024
+/scratch/06191/tg854905/Pro2_PSU_MW/MARIA/IR-J_DA+J_WRF+J_init-SP-intel17/run/201709131200/perturb_ic/024/d02/rsl.error.0000
+  yes
+  any need to work on member  025
+/scratch/06191/tg854905/Pro2_PSU_MW/MARIA/IR-J_DA+J_WRF+J_init-SP-intel17/run/201709131200/perturb_ic/025/d02/rsl.error.0000
+  yes
+  any need to work on member  026
+/scratch/06191/tg854905/Pro2_PSU_MW/MARIA/IR-J_DA+J_WRF+J_init-SP-intel17/run/201709131200/perturb_ic/026/d02/rsl.error.0000
+  yes
+  any need to work on member  027
+/scratch/06191/tg854905/Pro2_PSU_MW/MARIA/IR-J_DA+J_WRF+J_init-SP-intel17/run/201709131200/perturb_ic/027/d02/rsl.error.0000
+  yes
+  any need to work on member  028
+/scratch/06191/tg854905/Pro2_PSU_MW/MARIA/IR-J_DA+J_WRF+J_init-SP-intel17/run/201709131200/perturb_ic/028/d02/rsl.error.0000
+  yes
+  any need to work on member  029
+/scratch/06191/tg854905/Pro2_PSU_MW/MARIA/IR-J_DA+J_WRF+J_init-SP-intel17/run/201709131200/perturb_ic/029/d02/rsl.error.0000
+  yes
+  any need to work on member  030
+/scratch/06191/tg854905/Pro2_PSU_MW/MARIA/IR-J_DA+J_WRF+J_init-SP-intel17/run/201709131200/perturb_ic/030/d02/rsl.error.0000
+  yes
+  any need to work on member  031
+/scratch/06191/tg854905/Pro2_PSU_MW/MARIA/IR-J_DA+J_WRF+J_init-SP-intel17/run/201709131200/perturb_ic/031/d02/rsl.error.0000
+  yes
+  any need to work on member  032
+/scratch/06191/tg854905/Pro2_PSU_MW/MARIA/IR-J_DA+J_WRF+J_init-SP-intel17/run/201709131200/perturb_ic/032/d02/rsl.error.0000
+  yes
+  any need to work on member  033
+/scratch/06191/tg854905/Pro2_PSU_MW/MARIA/IR-J_DA+J_WRF+J_init-SP-intel17/run/201709131200/perturb_ic/033/d02/rsl.error.0000
+  yes
+  any need to work on member  034
+/scratch/06191/tg854905/Pro2_PSU_MW/MARIA/IR-J_DA+J_WRF+J_init-SP-intel17/run/201709131200/perturb_ic/034/d02/rsl.error.0000
+  yes
+  any need to work on member  035
+/scratch/06191/tg854905/Pro2_PSU_MW/MARIA/IR-J_DA+J_WRF+J_init-SP-intel17/run/201709131200/perturb_ic/035/d02/rsl.error.0000
+  yes
+  any need to work on member  036
+/scratch/06191/tg854905/Pro2_PSU_MW/MARIA/IR-J_DA+J_WRF+J_init-SP-intel17/run/201709131200/perturb_ic/036/d02/rsl.error.0000
+  yes
+  any need to work on member  037
+/scratch/06191/tg854905/Pro2_PSU_MW/MARIA/IR-J_DA+J_WRF+J_init-SP-intel17/run/201709131200/perturb_ic/037/d02/rsl.error.0000
+  yes
+  any need to work on member  038
+/scratch/06191/tg854905/Pro2_PSU_MW/MARIA/IR-J_DA+J_WRF+J_init-SP-intel17/run/201709131200/perturb_ic/038/d02/rsl.error.0000
+  yes
+  any need to work on member  039
+/scratch/06191/tg854905/Pro2_PSU_MW/MARIA/IR-J_DA+J_WRF+J_init-SP-intel17/run/201709131200/perturb_ic/039/d02/rsl.error.0000
+  yes
+  any need to work on member  040
+/scratch/06191/tg854905/Pro2_PSU_MW/MARIA/IR-J_DA+J_WRF+J_init-SP-intel17/run/201709131200/perturb_ic/040/d02/rsl.error.0000
+  yes
+  any need to work on member  041
+/scratch/06191/tg854905/Pro2_PSU_MW/MARIA/IR-J_DA+J_WRF+J_init-SP-intel17/run/201709131200/perturb_ic/041/d02/rsl.error.0000
+  yes
+  any need to work on member  042
+/scratch/06191/tg854905/Pro2_PSU_MW/MARIA/IR-J_DA+J_WRF+J_init-SP-intel17/run/201709131200/perturb_ic/042/d02/rsl.error.0000
+  yes
+  any need to work on member  043
+/scratch/06191/tg854905/Pro2_PSU_MW/MARIA/IR-J_DA+J_WRF+J_init-SP-intel17/run/201709131200/perturb_ic/043/d02/rsl.error.0000
+  yes
+  any need to work on member  044
+/scratch/06191/tg854905/Pro2_PSU_MW/MARIA/IR-J_DA+J_WRF+J_init-SP-intel17/run/201709131200/perturb_ic/044/d02/rsl.error.0000
+  yes
+  any need to work on member  045
+/scratch/06191/tg854905/Pro2_PSU_MW/MARIA/IR-J_DA+J_WRF+J_init-SP-intel17/run/201709131200/perturb_ic/045/d02/rsl.error.0000
+  yes
+  any need to work on member  046
+/scratch/06191/tg854905/Pro2_PSU_MW/MARIA/IR-J_DA+J_WRF+J_init-SP-intel17/run/201709131200/perturb_ic/046/d02/rsl.error.0000
+  yes
+  any need to work on member  047
+/scratch/06191/tg854905/Pro2_PSU_MW/MARIA/IR-J_DA+J_WRF+J_init-SP-intel17/run/201709131200/perturb_ic/047/d02/rsl.error.0000
+  yes
+  any need to work on member  048
+/scratch/06191/tg854905/Pro2_PSU_MW/MARIA/IR-J_DA+J_WRF+J_init-SP-intel17/run/201709131200/perturb_ic/048/d02/rsl.error.0000
+  yes
+  any need to work on member  049
+/scratch/06191/tg854905/Pro2_PSU_MW/MARIA/IR-J_DA+J_WRF+J_init-SP-intel17/run/201709131200/perturb_ic/049/d02/rsl.error.0000
+  yes
+  any need to work on member  050
+/scratch/06191/tg854905/Pro2_PSU_MW/MARIA/IR-J_DA+J_WRF+J_init-SP-intel17/run/201709131200/perturb_ic/050/d02/rsl.error.0000
+  yes
+  any need to work on member  051
+/scratch/06191/tg854905/Pro2_PSU_MW/MARIA/IR-J_DA+J_WRF+J_init-SP-intel17/run/201709131200/perturb_ic/051/d02/rsl.error.0000
+  yes
+  any need to work on member  052
+/scratch/06191/tg854905/Pro2_PSU_MW/MARIA/IR-J_DA+J_WRF+J_init-SP-intel17/run/201709131200/perturb_ic/052/d02/rsl.error.0000
+  yes
+  any need to work on member  053
+/scratch/06191/tg854905/Pro2_PSU_MW/MARIA/IR-J_DA+J_WRF+J_init-SP-intel17/run/201709131200/perturb_ic/053/d02/rsl.error.0000
+  yes
+  any need to work on member  054
+/scratch/06191/tg854905/Pro2_PSU_MW/MARIA/IR-J_DA+J_WRF+J_init-SP-intel17/run/201709131200/perturb_ic/054/d02/rsl.error.0000
+  yes
+  any need to work on member  055
+/scratch/06191/tg854905/Pro2_PSU_MW/MARIA/IR-J_DA+J_WRF+J_init-SP-intel17/run/201709131200/perturb_ic/055/d02/rsl.error.0000
+  yes
+  any need to work on member  056
+/scratch/06191/tg854905/Pro2_PSU_MW/MARIA/IR-J_DA+J_WRF+J_init-SP-intel17/run/201709131200/perturb_ic/056/d02/rsl.error.0000
+  yes
+  any need to work on member  057
+/scratch/06191/tg854905/Pro2_PSU_MW/MARIA/IR-J_DA+J_WRF+J_init-SP-intel17/run/201709131200/perturb_ic/057/d02/rsl.error.0000
+  yes
+  any need to work on member  058
+/scratch/06191/tg854905/Pro2_PSU_MW/MARIA/IR-J_DA+J_WRF+J_init-SP-intel17/run/201709131200/perturb_ic/058/d02/rsl.error.0000
+  yes
+  any need to work on member  059
+/scratch/06191/tg854905/Pro2_PSU_MW/MARIA/IR-J_DA+J_WRF+J_init-SP-intel17/run/201709131200/perturb_ic/059/d02/rsl.error.0000
+  yes
+  any need to work on member  060
+/scratch/06191/tg854905/Pro2_PSU_MW/MARIA/IR-J_DA+J_WRF+J_init-SP-intel17/run/201709131200/perturb_ic/060/d02/rsl.error.0000
+  yes
+begin nest down for d03
+  any need to work on member  001
+/scratch/06191/tg854905/Pro2_PSU_MW/MARIA/IR-J_DA+J_WRF+J_init-SP-intel17/run/201709131200/perturb_ic/001/d03/rsl.error.0000
+  yes
+  any need to work on member  002
+/scratch/06191/tg854905/Pro2_PSU_MW/MARIA/IR-J_DA+J_WRF+J_init-SP-intel17/run/201709131200/perturb_ic/002/d03/rsl.error.0000
+  yes
+  any need to work on member  003
+/scratch/06191/tg854905/Pro2_PSU_MW/MARIA/IR-J_DA+J_WRF+J_init-SP-intel17/run/201709131200/perturb_ic/003/d03/rsl.error.0000
+  yes
+  any need to work on member  004
+/scratch/06191/tg854905/Pro2_PSU_MW/MARIA/IR-J_DA+J_WRF+J_init-SP-intel17/run/201709131200/perturb_ic/004/d03/rsl.error.0000
+  yes
+  any need to work on member  005
+/scratch/06191/tg854905/Pro2_PSU_MW/MARIA/IR-J_DA+J_WRF+J_init-SP-intel17/run/201709131200/perturb_ic/005/d03/rsl.error.0000
+  yes
+  any need to work on member  006
+/scratch/06191/tg854905/Pro2_PSU_MW/MARIA/IR-J_DA+J_WRF+J_init-SP-intel17/run/201709131200/perturb_ic/006/d03/rsl.error.0000
+  yes
+  any need to work on member  007
+/scratch/06191/tg854905/Pro2_PSU_MW/MARIA/IR-J_DA+J_WRF+J_init-SP-intel17/run/201709131200/perturb_ic/007/d03/rsl.error.0000
+  yes
+  any need to work on member  008
+/scratch/06191/tg854905/Pro2_PSU_MW/MARIA/IR-J_DA+J_WRF+J_init-SP-intel17/run/201709131200/perturb_ic/008/d03/rsl.error.0000
+  yes
+  any need to work on member  009
+/scratch/06191/tg854905/Pro2_PSU_MW/MARIA/IR-J_DA+J_WRF+J_init-SP-intel17/run/201709131200/perturb_ic/009/d03/rsl.error.0000
+  yes
+  any need to work on member  010
+/scratch/06191/tg854905/Pro2_PSU_MW/MARIA/IR-J_DA+J_WRF+J_init-SP-intel17/run/201709131200/perturb_ic/010/d03/rsl.error.0000
+  yes
+  any need to work on member  011
+/scratch/06191/tg854905/Pro2_PSU_MW/MARIA/IR-J_DA+J_WRF+J_init-SP-intel17/run/201709131200/perturb_ic/011/d03/rsl.error.0000
+  yes
+  any need to work on member  012
+/scratch/06191/tg854905/Pro2_PSU_MW/MARIA/IR-J_DA+J_WRF+J_init-SP-intel17/run/201709131200/perturb_ic/012/d03/rsl.error.0000
+  yes
+  any need to work on member  013
+/scratch/06191/tg854905/Pro2_PSU_MW/MARIA/IR-J_DA+J_WRF+J_init-SP-intel17/run/201709131200/perturb_ic/013/d03/rsl.error.0000
+  yes
+  any need to work on member  014
+/scratch/06191/tg854905/Pro2_PSU_MW/MARIA/IR-J_DA+J_WRF+J_init-SP-intel17/run/201709131200/perturb_ic/014/d03/rsl.error.0000
+  yes
+  any need to work on member  015
+/scratch/06191/tg854905/Pro2_PSU_MW/MARIA/IR-J_DA+J_WRF+J_init-SP-intel17/run/201709131200/perturb_ic/015/d03/rsl.error.0000
+  yes
+  any need to work on member  016
+/scratch/06191/tg854905/Pro2_PSU_MW/MARIA/IR-J_DA+J_WRF+J_init-SP-intel17/run/201709131200/perturb_ic/016/d03/rsl.error.0000
+  yes
+  any need to work on member  017
+/scratch/06191/tg854905/Pro2_PSU_MW/MARIA/IR-J_DA+J_WRF+J_init-SP-intel17/run/201709131200/perturb_ic/017/d03/rsl.error.0000
+  yes
+  any need to work on member  018
+/scratch/06191/tg854905/Pro2_PSU_MW/MARIA/IR-J_DA+J_WRF+J_init-SP-intel17/run/201709131200/perturb_ic/018/d03/rsl.error.0000
+  yes
+  any need to work on member  019
+/scratch/06191/tg854905/Pro2_PSU_MW/MARIA/IR-J_DA+J_WRF+J_init-SP-intel17/run/201709131200/perturb_ic/019/d03/rsl.error.0000
+  yes
+  any need to work on member  020
+/scratch/06191/tg854905/Pro2_PSU_MW/MARIA/IR-J_DA+J_WRF+J_init-SP-intel17/run/201709131200/perturb_ic/020/d03/rsl.error.0000
+  yes
+  any need to work on member  021
+/scratch/06191/tg854905/Pro2_PSU_MW/MARIA/IR-J_DA+J_WRF+J_init-SP-intel17/run/201709131200/perturb_ic/021/d03/rsl.error.0000
+  yes
+  any need to work on member  022
+/scratch/06191/tg854905/Pro2_PSU_MW/MARIA/IR-J_DA+J_WRF+J_init-SP-intel17/run/201709131200/perturb_ic/022/d03/rsl.error.0000
+  yes
+  any need to work on member  023
+/scratch/06191/tg854905/Pro2_PSU_MW/MARIA/IR-J_DA+J_WRF+J_init-SP-intel17/run/201709131200/perturb_ic/023/d03/rsl.error.0000
+  yes
+  any need to work on member  024
+/scratch/06191/tg854905/Pro2_PSU_MW/MARIA/IR-J_DA+J_WRF+J_init-SP-intel17/run/201709131200/perturb_ic/024/d03/rsl.error.0000
+  yes
+  any need to work on member  025
+/scratch/06191/tg854905/Pro2_PSU_MW/MARIA/IR-J_DA+J_WRF+J_init-SP-intel17/run/201709131200/perturb_ic/025/d03/rsl.error.0000
+  yes
+  any need to work on member  026
+/scratch/06191/tg854905/Pro2_PSU_MW/MARIA/IR-J_DA+J_WRF+J_init-SP-intel17/run/201709131200/perturb_ic/026/d03/rsl.error.0000
+  yes
+  any need to work on member  027
+/scratch/06191/tg854905/Pro2_PSU_MW/MARIA/IR-J_DA+J_WRF+J_init-SP-intel17/run/201709131200/perturb_ic/027/d03/rsl.error.0000
+  yes
+  any need to work on member  028
+/scratch/06191/tg854905/Pro2_PSU_MW/MARIA/IR-J_DA+J_WRF+J_init-SP-intel17/run/201709131200/perturb_ic/028/d03/rsl.error.0000
+  yes
+  any need to work on member  029
+/scratch/06191/tg854905/Pro2_PSU_MW/MARIA/IR-J_DA+J_WRF+J_init-SP-intel17/run/201709131200/perturb_ic/029/d03/rsl.error.0000
+  yes
+  any need to work on member  030
+/scratch/06191/tg854905/Pro2_PSU_MW/MARIA/IR-J_DA+J_WRF+J_init-SP-intel17/run/201709131200/perturb_ic/030/d03/rsl.error.0000
+  yes
+  any need to work on member  031
+/scratch/06191/tg854905/Pro2_PSU_MW/MARIA/IR-J_DA+J_WRF+J_init-SP-intel17/run/201709131200/perturb_ic/031/d03/rsl.error.0000
+  yes
+  any need to work on member  032
+/scratch/06191/tg854905/Pro2_PSU_MW/MARIA/IR-J_DA+J_WRF+J_init-SP-intel17/run/201709131200/perturb_ic/032/d03/rsl.error.0000
+  yes
+  any need to work on member  033
+/scratch/06191/tg854905/Pro2_PSU_MW/MARIA/IR-J_DA+J_WRF+J_init-SP-intel17/run/201709131200/perturb_ic/033/d03/rsl.error.0000
+  yes
+  any need to work on member  034
+/scratch/06191/tg854905/Pro2_PSU_MW/MARIA/IR-J_DA+J_WRF+J_init-SP-intel17/run/201709131200/perturb_ic/034/d03/rsl.error.0000
+  yes
+  any need to work on member  035
+/scratch/06191/tg854905/Pro2_PSU_MW/MARIA/IR-J_DA+J_WRF+J_init-SP-intel17/run/201709131200/perturb_ic/035/d03/rsl.error.0000
+  yes
+  any need to work on member  036
+/scratch/06191/tg854905/Pro2_PSU_MW/MARIA/IR-J_DA+J_WRF+J_init-SP-intel17/run/201709131200/perturb_ic/036/d03/rsl.error.0000
+  yes
+  any need to work on member  037
+/scratch/06191/tg854905/Pro2_PSU_MW/MARIA/IR-J_DA+J_WRF+J_init-SP-intel17/run/201709131200/perturb_ic/037/d03/rsl.error.0000
+  yes
+  any need to work on member  038
+/scratch/06191/tg854905/Pro2_PSU_MW/MARIA/IR-J_DA+J_WRF+J_init-SP-intel17/run/201709131200/perturb_ic/038/d03/rsl.error.0000
+  yes
+  any need to work on member  039
+/scratch/06191/tg854905/Pro2_PSU_MW/MARIA/IR-J_DA+J_WRF+J_init-SP-intel17/run/201709131200/perturb_ic/039/d03/rsl.error.0000
+  yes
+  any need to work on member  040
+/scratch/06191/tg854905/Pro2_PSU_MW/MARIA/IR-J_DA+J_WRF+J_init-SP-intel17/run/201709131200/perturb_ic/040/d03/rsl.error.0000
+  yes
+  any need to work on member  041
+/scratch/06191/tg854905/Pro2_PSU_MW/MARIA/IR-J_DA+J_WRF+J_init-SP-intel17/run/201709131200/perturb_ic/041/d03/rsl.error.0000
+  yes
+  any need to work on member  042
+/scratch/06191/tg854905/Pro2_PSU_MW/MARIA/IR-J_DA+J_WRF+J_init-SP-intel17/run/201709131200/perturb_ic/042/d03/rsl.error.0000
+  yes
+  any need to work on member  043
+/scratch/06191/tg854905/Pro2_PSU_MW/MARIA/IR-J_DA+J_WRF+J_init-SP-intel17/run/201709131200/perturb_ic/043/d03/rsl.error.0000
+  yes
+  any need to work on member  044
+/scratch/06191/tg854905/Pro2_PSU_MW/MARIA/IR-J_DA+J_WRF+J_init-SP-intel17/run/201709131200/perturb_ic/044/d03/rsl.error.0000
+  yes
+  any need to work on member  045
+/scratch/06191/tg854905/Pro2_PSU_MW/MARIA/IR-J_DA+J_WRF+J_init-SP-intel17/run/201709131200/perturb_ic/045/d03/rsl.error.0000
+  yes
+  any need to work on member  046
+/scratch/06191/tg854905/Pro2_PSU_MW/MARIA/IR-J_DA+J_WRF+J_init-SP-intel17/run/201709131200/perturb_ic/046/d03/rsl.error.0000
+  yes
+  any need to work on member  047
+/scratch/06191/tg854905/Pro2_PSU_MW/MARIA/IR-J_DA+J_WRF+J_init-SP-intel17/run/201709131200/perturb_ic/047/d03/rsl.error.0000
+  yes
+  any need to work on member  048
+/scratch/06191/tg854905/Pro2_PSU_MW/MARIA/IR-J_DA+J_WRF+J_init-SP-intel17/run/201709131200/perturb_ic/048/d03/rsl.error.0000
+  yes
+  any need to work on member  049
+/scratch/06191/tg854905/Pro2_PSU_MW/MARIA/IR-J_DA+J_WRF+J_init-SP-intel17/run/201709131200/perturb_ic/049/d03/rsl.error.0000
+  yes
+  any need to work on member  050
+/scratch/06191/tg854905/Pro2_PSU_MW/MARIA/IR-J_DA+J_WRF+J_init-SP-intel17/run/201709131200/perturb_ic/050/d03/rsl.error.0000
+  yes
+  any need to work on member  051
+/scratch/06191/tg854905/Pro2_PSU_MW/MARIA/IR-J_DA+J_WRF+J_init-SP-intel17/run/201709131200/perturb_ic/051/d03/rsl.error.0000
+  yes
+  any need to work on member  052
+/scratch/06191/tg854905/Pro2_PSU_MW/MARIA/IR-J_DA+J_WRF+J_init-SP-intel17/run/201709131200/perturb_ic/052/d03/rsl.error.0000
+  yes
+  any need to work on member  053
+/scratch/06191/tg854905/Pro2_PSU_MW/MARIA/IR-J_DA+J_WRF+J_init-SP-intel17/run/201709131200/perturb_ic/053/d03/rsl.error.0000
+  yes
+  any need to work on member  054
+/scratch/06191/tg854905/Pro2_PSU_MW/MARIA/IR-J_DA+J_WRF+J_init-SP-intel17/run/201709131200/perturb_ic/054/d03/rsl.error.0000
+  yes
+  any need to work on member  055
+/scratch/06191/tg854905/Pro2_PSU_MW/MARIA/IR-J_DA+J_WRF+J_init-SP-intel17/run/201709131200/perturb_ic/055/d03/rsl.error.0000
+  yes
+  any need to work on member  056
+/scratch/06191/tg854905/Pro2_PSU_MW/MARIA/IR-J_DA+J_WRF+J_init-SP-intel17/run/201709131200/perturb_ic/056/d03/rsl.error.0000
+  yes
+  any need to work on member  057
+/scratch/06191/tg854905/Pro2_PSU_MW/MARIA/IR-J_DA+J_WRF+J_init-SP-intel17/run/201709131200/perturb_ic/057/d03/rsl.error.0000
+  yes
+  any need to work on member  058
+/scratch/06191/tg854905/Pro2_PSU_MW/MARIA/IR-J_DA+J_WRF+J_init-SP-intel17/run/201709131200/perturb_ic/058/d03/rsl.error.0000
+  yes
+  any need to work on member  059
+/scratch/06191/tg854905/Pro2_PSU_MW/MARIA/IR-J_DA+J_WRF+J_init-SP-intel17/run/201709131200/perturb_ic/059/d03/rsl.error.0000
+  yes
+  any need to work on member  060
+/scratch/06191/tg854905/Pro2_PSU_MW/MARIA/IR-J_DA+J_WRF+J_init-SP-intel17/run/201709131200/perturb_ic/060/d03/rsl.error.0000
+  yes
+[3J[H[2J
+
+   IP ADDR: 129.114.63.42
+   USER: tg854905
+   DATE: Thu Feb  9 09:32:22 CST 2023
+   UPTIME: up 37 weeks, 1 day, 23 hours, 8 minutes
+   HOSTNAME: login2.stampede2.tacc.utexas.edu
+   KERNEL: Linux 3.10.0-1160.53.1.el7.x86_64 x86_64
+   MEMORY: 18G/93G
+
+  Running UpdateBC...

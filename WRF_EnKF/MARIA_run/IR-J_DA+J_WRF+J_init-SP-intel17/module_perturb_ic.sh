@@ -118,8 +118,6 @@ cat > run_wrfvar.sh << EOF
 #SBATCH -n 48
 #SBATCH -t 0:30:00
 #SBATCH -o run_wrfvar.batch
-#SBATCH --mail-type=ALL
-#SBATCH --mail-user=yao.zhu.91@gmail.com
 
 date
 for NE in \`seq 1 $NUM_ENS\`; do
@@ -209,8 +207,6 @@ cat > run_ndown.sh << EOF
 #SBATCH -n 48
 #SBATCH -t 0:30:00
 #SBATCH -o run_ndown.batch
-#SBATCH --mail-type=ALL
-#SBATCH --mail-user=yao.zhu.91@gmail.com
 date
 for n in \`seq 2 $MAX_DOM\`; do
   dm=d\`expr \$n + 100 |cut -c2-\`

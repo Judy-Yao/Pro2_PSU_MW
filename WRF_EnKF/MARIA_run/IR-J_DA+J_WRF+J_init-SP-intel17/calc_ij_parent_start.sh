@@ -19,17 +19,24 @@ for i in 0 1; do
   if [ ! -f $tcvitals_data ]; then echo "$tcvitals_data not found!"; exit; fi
   latstr=`head -n1 $tcvitals_data |awk '{print $6}'`
   lonstr=`head -n1 $tcvitals_data |awk '{print $7}'`
-  if [ ${latstr:3:1} == "N" ]; then
-    lat[$i]=`echo "${latstr:0:3}/10" |bc -l`
+  #if [ ${latstr:3:1} == "N" ]; then
+  if [ ${latstr:0-1} == "N" ]; then
+    lat[$i]=$(echo $(echo ${latstr} | awk '{ print substr( $0, 1, length($0)-1 ) }')/10 |bc -l)
+    #lat[$i]=`echo "${latstr:0:3}/10" |bc -l`
   else
-    lat[$i]=`echo "-${latstr:0:3}/10" |bc -l`
+    lat[$i]=$(echo $(echo -${latstr} | awk '{ print substr( $0, 1, length($0)-1 ) }')/10 |bc -l)
+    #lat[$i]=`echo "-${latstr:0:3}/10" |bc -l`
   fi
-  if [ ${lonstr:4:1} == "E" ]; then
-    lon[$i]=`echo "${lonstr:0:4}/10" |bc -l`
+  #if [ ${lonstr:4:1} == "E" ]; then
+  if [ ${lonstr:0-1} == "E" ]; then
+    #lon[$i]=`echo "${lonstr:0:4}/10" |bc -l`
+    lon[$i]=$(echo $(echo ${lonstr} | awk '{ print substr( $0, 1, length($0)-1 ) }')/10 |bc -l)
   else
-    lon[$i]=`echo "-${lonstr:0:4}/10" |bc -l`
+    #lon[$i]=`echo "-${lonstr:0:4}/10" |bc -l`
+    lon[$i]=$(echo $(echo -${lonstr} | awk '{ print substr( $0, 1, length($0)-1 ) }')/10 |bc -l)
   fi
 done
+
 
 iclat=$(echo "${lat[0]}+(${lat[1]} - ${lat[0]})*$minute_off/$LBC_INTERVAL" |bc -l)
 iclon=$(echo "${lon[0]}+(${lon[1]} - ${lon[0]})*$minute_off/$LBC_INTERVAL" |bc -l)

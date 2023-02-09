@@ -3,12 +3,12 @@
 
 #source ~/.bashrc
 source /home1/06191/tg854905/.bashrc
-module restore intel19  # Intel Compiler Version 19
+module restore intel17  # Intel Compiler Version 19
 
 #!!!!!!!!!!!!!!!!!! Attention !!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
 #load configuration files, functions, parameters
-export CONFIG_FILE=/work2/06191/tg854905/stampede2/Pro2_PSU_MW/SourceCode/WRF_EnKF/Tune_HARVEY.3.0/IR+MW-J_DA+J_WRF+J_init-SP-intel19/config_IR_MW.HARVEY
+export CONFIG_FILE=/work2/06191/tg854905/stampede2/Pro2_PSU_MW/SourceCode/WRF_EnKF/MARIA_run/IR-J_DA+J_WRF+J_init-SP-intel17/config_IR.MARIA
 #!!!!!!!!!!!!!!!!!! Attention !!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
 source "$CONFIG_FILE"

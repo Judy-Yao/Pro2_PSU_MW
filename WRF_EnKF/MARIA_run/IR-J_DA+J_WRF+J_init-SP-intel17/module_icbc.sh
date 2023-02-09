@@ -205,8 +205,6 @@ if [[ ! `tail -n2 rsl.error.0000 |grep SUCCESS` ]]; then
 #SBATCH -n 48 
 #SBATCH -t 0:30:00
 #SBATCH -o run_wps.batch
-#SBATCH --mail-type=ALL
-#SBATCH --mail-user=yao.zhu.91@gmail.com
 
 date
 cd $rundir

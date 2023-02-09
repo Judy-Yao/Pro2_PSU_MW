@@ -13,9 +13,10 @@
 . util.sh
 . $CONFIG_FILE
 
-date1=$1
-date2=$2
-outfile=$3
+date1=201708221300
+date2=201708221400
+#date2=$DATE_END
+outfile=/work2/06191/tg854905/stampede2/Pro2_PSU_MW/SourceCode/WRF_EnKF/MARIA_run/IR-J_DA+J_WRF+J_init-SP-intel17/debug/test
 
 echo "---------------------------------------------------"
 echo "Find TCvitals data that covers the period"
@@ -130,7 +131,7 @@ for i in `seq 0 $((end_index-1))`; do  #For each time
   dj=`echo "(${nj[$i+1]} - ${nj[$i]})" |bc`
   echo "j direction: two locations are off" $dj "grid points in D1"
   for i in `seq 2 $((MAX_DOM-1))`; do #Convert from D01 to smallest domain's parent domain for move steps
-    echo "For D$i..."
+    echo "For D" $i "..."
     di=`echo "$di*${GRID_RATIO[$i-1]}" |bc`
     echo "i direction: two locations are off" $di "grid points in D$i" 
     dj=`echo "$dj*${GRID_RATIO[$i-1]}" |bc`
@@ -151,7 +152,6 @@ for i in `seq 0 $((end_index-1))`; do  #For each time
         dt=`echo "$dt + $dmin - ($s-1)*$dmin/$s" |bc`
         echo "Timing:" $dt "minutes (from the start storm location/TCvital records)"
       fi
-
       if [ $off1 -lt $dt ] && [ $dt -le $off3 ]; then
         echo "The storm (from TCvitals) is moving between the current cycle and the next cycle..."
         num_moves=$((num_moves+1))
@@ -167,7 +167,6 @@ for i in `seq 0 $((end_index-1))`; do  #For each time
           echo "Storm is $interval minutes in advance from the current cycle"
           move_interval="$move_interval $interval,"
         fi
-
         if [ `abs $di` -gt 0 ] && [ `abs $dj` -gt 0 ]; then
           echo "The storm moves both in i and j direction between the two TCvital records"
           if [ `abs $di` -ge `abs $dj` ]; then
@@ -201,7 +200,6 @@ for i in `seq 0 $((end_index-1))`; do  #For each time
           move_cd_y="$move_cd_y $(echo "$dj/`abs $dj`" |bc),"
         fi
       fi
-
     done
   else
     dt=`echo "$dt + $dmin" |bc`
