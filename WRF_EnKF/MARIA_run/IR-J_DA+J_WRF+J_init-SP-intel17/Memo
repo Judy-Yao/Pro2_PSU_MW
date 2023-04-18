@@ -1,0 +1,3 @@
+Special modifications from the Harvey run:
+1. The old way to read lat/lon from TCvitals in calc_ij_parent_start.sh and calc_domain_moves.sh is limited to the situation where the value of lat/lon is two-digit (from 10 to 99). Judy modified the reading algorithm to make it more generic.
+2. In the initial attempt to run MARIA, Judy found out D3 is not able to move (Warning "MOAD can not move..." in rsl.error.0000). The reason is the two nested domains (D2 and D3) are too closed to the boundary of D1. Thus, Judy modified the D1 to ensure in the period of interest such situation will not occur by changing the value REF_LAT/REF_LON in configuration file.
