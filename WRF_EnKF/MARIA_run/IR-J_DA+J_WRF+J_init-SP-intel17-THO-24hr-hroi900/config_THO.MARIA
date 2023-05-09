@@ -18,7 +18,7 @@
  DATE_START=201709151200
  DATE_END=201709210000 
  DATE_CYCLE_START=201709160000 #201709160000
- DATE_CYCLE_END=201709170000
+ DATE_CYCLE_END=201709180000
  STORM_ID=MARIA
 
 # ==== Directories ===
@@ -53,7 +53,7 @@
  DX=(27000 9000 3000)
  DY=(27000 9000 3000)
  # !!!!!!!!!!!!! Attention !!!!!!!!!!!!!!!!!!
- TIME_STEP=90
+ TIME_STEP=75
  # WRF3.6.1: Rob used a time step of 60; Jerry used a time step of 90; Judy spins up with 60 and run other part with 90s
  # !!!!!!!!!!!!! Attention !!!!!!!!!!!!!!!!!!
  PARENT_ID=(0 1 2)

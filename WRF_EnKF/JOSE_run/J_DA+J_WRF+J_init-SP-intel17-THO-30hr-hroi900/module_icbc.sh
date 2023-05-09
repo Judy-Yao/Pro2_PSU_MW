@@ -200,8 +200,7 @@ if [[ ! `tail -n2 rsl.error.0000 |grep SUCCESS` ]]; then
   cat > run_wps_real.sh << EOF
 #!/bin/bash -x
 #SBATCH -J run_wps
-#SBATCH -p icx-normal
-##SBATCH -p skx-dev
+#SBATCH -p skx-dev
 #SBATCH -N 1
 #SBATCH -n 48 
 #SBATCH -t 0:30:00

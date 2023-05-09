@@ -113,8 +113,7 @@ done
 cat > run_wrfvar.sh << EOF
 #!/bin/bash -x
 #SBATCH -J wrf_var
-#SBATCH -p icx-normal
-##SBATCH -p skx-dev
+#SBATCH -p skx-dev
 #SBATCH -N 1 
 #SBATCH -n 48
 #SBATCH -t 0:30:00
@@ -202,8 +201,7 @@ if [ "$MAX_DOM" -gt 1 ]; then
 #    wait
 cat > run_ndown.sh << EOF
 #!/bin/bash -x
-#SBATCH -p icx-normal
-##SBATCH -p skx-dev
+#SBATCH -p skx-dev
 #SBATCH -J run_ndown
 #SBATCH -N 1 
 #SBATCH -n 48
