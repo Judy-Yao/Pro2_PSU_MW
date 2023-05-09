@@ -94,9 +94,9 @@ def read_diag( filename, v_interest ):
         d_diag[var] = list_all[v_idx]
 
     # Print a record to make sure reading process is correct
-    print('Sanity check of reading process...Printing 888th record...') 
-    for key in d_diag:
-        print(key, ':', d_diag[key][888])
+    #print('Sanity check of reading process...Printing 888th record...') 
+    #for key in d_diag:
+    #    print(key, ':', d_diag[key][888])
 
     return d_diag
 
@@ -246,7 +246,7 @@ def label_mw_obs( file_Diag, MW_SO, v_interest ):
     return Diag_list_reshape
 
 # ---------------------------------------------------------------------------------------------------------
-#           Operation: Find Radiance records from diagnostics 
+#           Operation: Find IR Radiance records from diagnostics 
 # ---------------------------------------------------------------------------------------------------------
 
 def Find_IR( file_Diag, v_interest ):
@@ -276,10 +276,54 @@ def Find_IR( file_Diag, v_interest ):
         Diag_IR[key] = IR_list[idx_var]
         print(key, ':', Diag_IR[key][222])
 
-
-
-
     return Diag_IR
+
+# ---------------------------------------------------------------------------------------------------------
+#           Operation: Find minimum slp records from diagnostics 
+# ---------------------------------------------------------------------------------------------------------
+
+def Find_min_slp( file_Diag, v_interest ):
+    # Read the diagnostics from fort.10000 (obs assmilated by enkf)
+    d_diag = read_diag( file_Diag, v_interest )
+    # Get the indices of minimum slp
+    idx_slp = []
+    irc = 0
+    for iobs in d_diag['obs_type']:
+        if d_diag['obs_type'][irc] == 'slp':
+            idx_slp.append( irc )
+        irc = irc + 1
+
+    if len(idx_slp) == 0:
+        raise ValueError('No slp is assimilated!')
+    elif len(idx_slp) > 1:
+        print('More than ONE slp are assimilated!')
+    else:
+        print('One slp is assimilated!')
+
+    # Get the minimum slp part
+    slp_list = [[] for i in range(len(v_interest))]
+    if len(idx_slp) > 0:
+        for var in  v_interest:
+            idx_var = v_interest.index(var)
+            for it in idx_slp:
+                if var == 'obs_type':
+                    slp_list[idx_var].append( d_diag[var][it])
+                else:
+                    slp_list[idx_var].append( float(d_diag[var][it]))
+
+        Diag_slp = {}
+        print('Sanity check of reading process...Printing 1st record...')
+        for key in v_interest:
+            idx_var = v_interest.index( key )
+            Diag_slp[key] = slp_list[idx_var]
+            print(key, ':', Diag_slp[key][0])
+    else:
+        Diag_slp = None
+
+    return Diag_slp
+
+
+
 
 
 if __name__ == '__main__':
@@ -289,12 +333,12 @@ if __name__ == '__main__':
     # configuration
     Storm = 'HARVEY'
     #Exper_name = ['IR+MW-J_DA+J_WRF+J_init-SP-intel19',]
-    filename = '/scratch/06191/tg854905/Pro2_PSU_MW/HARVEY/JerryRun/MW_THO/run/201708221200/enkf/d03/fort.10000'
+    filename = '/scratch/06191/tg854905/Pro2_PSU_MW/MARIA/IR-J_DA+J_WRF+J_init-SP-intel17-WSM6-24hr/run/201709160100/enkf/d03/fort.10000'
     MW_SO = '/scratch/06191/tg854905/Pro2_PSU_MW/HARVEY/JerryRun/MW_THO/run/201708221200/enkf/d03/microwave_201708221200_so'
     IR_SO = '/scratch/06191/tg854905/Pro2_PSU_MW/HARVEY/JerryRun/MW_THO/run/201708221200/enkf/d03/radiance_201708221200_so'
     v_interest = ['obs_type','lat','lon','height','i_grid','j_grid','k_grid','Hroi','Vroi','obs','obs_error_variance','prior_mean','posterior_mean','prior_spread','posterior_spread']
     #label_mw_obs( filename, MW_SO, v_interest )
-    Find_IR( filename, v_interest )
+    Find_min_slp( filename, v_interest )
 
 
 

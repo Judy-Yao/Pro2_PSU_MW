@@ -9,6 +9,35 @@ from matplotlib.colors import ListedColormap
 # --------------------------------------------------------------
 # ---------------------- COLOR MAP -----------------------------
 # --------------------------------------------------------------
+def HydroIncre( N_nega, N_posi ):
+    
+    N = N_nega+N_posi
+    buff = 1                    
+    # Define default colors         
+    end_nega_color = np.array([0, 0, 1])
+    end_posi_color = np.array([1,0,0])      
+    white_color = np.array([1,1,1])
+    black_color = np.array([0,0,0])             
+                                                    
+    # Initialize map
+    Hydromap = np.zeros([N,3])                          
+                                                            
+    # place red, white, blue                                                
+    for i in range( N ):                                                                         
+        if i <= ( N_nega-buff ): 
+            near_nega = i
+            near_center = (N_nega-buff)-i                                                                   
+            Hydromap[i,:] = (near_center/(N_nega-buff))*end_nega_color + (near_nega/(N_nega-buff))*white_color
+        elif i >= ( N_nega+buff ):
+            near_posi = (N_nega+N_posi-buff-i) 
+            near_center = i-( N_nega )
+            Hydromap[i,:] = (near_center/(N_posi-buff))*end_posi_color + (near_posi/(N_posi-buff))*white_color
+        else:
+            Hydromap[i,:] = white_color                                                                     
+    arr = np.append(Hydromap, np.ones( [N,1] ), axis=1)     
+    HydroMap = ListedColormap( arr )                                                                        
+    return HydroMap 
+
 
 # Plot full Tbs
 def newJet(max_T, min_T, min_Jet):
@@ -71,10 +100,6 @@ def newRWB(max_T, min_T, min_RWB):
 
 
 
-
-
-
-
 # colormap for plotting infrared BT
 def IRcmap(c_int):
     
@@ -129,4 +154,17 @@ def IRcmap(c_int):
     IRcmap = ListedColormap( cmap )
     
     return IRcmap
+
+if __name__ == '__main__':
+    
+    #RWB = cm.get_cmap('RdBu_r', 256)    
+    #MyRWB = RWB(np.linspace(0,1,255))
+    #print(MyRWB)
+    np.random.seed(19680801)
+    data = np.random.randn(30, 30)
+    cmap = HydroIncre(7,6)
+    fig, ax = plt.subplots(1, 1, figsize=(6, 3), constrained_layout=True)
+    psm = ax.pcolormesh(data, cmap=cmap, rasterized=True)
+    fig.colorbar(psm, ax=ax)
+    plt.show()
 
