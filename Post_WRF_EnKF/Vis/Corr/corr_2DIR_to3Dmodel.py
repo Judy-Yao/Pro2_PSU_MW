@@ -16,8 +16,11 @@ from matplotlib import colors
 from cartopy import crs as ccrs
 from cartopy.mpl.gridliner import LONGITUDE_FORMATTER, LATITUDE_FORMATTER
 from mpl_toolkits.axes_grid1 import make_axes_locatable
+import Util_Vis
+import Read_Obspace_IR as ROIR
 import time
 import pickle
+
 
 # ------------------------------------------------------------------------------------------------------
 #           Operation: Verify the use of data
@@ -192,7 +195,7 @@ def cal_pert_stddev_xb( DAtime, wrf_dir, var_name ):
 
     # May save the perturbations
     if If_save:
-        des_path = wrf_dir+ "xb_d03_ens_pert_" + DAtime + '_' + var_name + '.pickle'
+        des_path = wrf_dir+ "xb_d03_3D_ens_pert_" + DAtime + '_' + var_name + '.pickle'
         f = open( des_path, 'wb' )
         pickle.dump( xb_ens, f )
         f.close()
@@ -212,7 +215,7 @@ def cal_pert_stddev_xb( DAtime, wrf_dir, var_name ):
 
     # May save the perturbations
     if If_save:
-        des_path = wrf_dir+ "xb_d03_ens_stddev_" + DAtime + '_' +  var_name + '.pickle'
+        des_path = wrf_dir+ "xb_d03_3D_ens_stddev_" + DAtime + '_' +  var_name + '.pickle'
         f = open( des_path, 'wb' )
         pickle.dump( stddev_xb, f )
         f.close()
@@ -287,6 +290,113 @@ def calculate_corr( DAtime, Hx_dir, sensor, wrf_dir, var_name, idx_xb, idx_hxb):
 # ------------------------------------------------------------------------------------------------------
 #           Operation: Plot the correlation between the specified Tb and the 3D model (at specified levels)
 # ------------------------------------------------------------------------------------------------------
+def plot_corr_cloud_3Dmodel(big_dir, small_dir, Storm, Exper_name, var_name, DAtime, sensor, P_of_interest, d_model_res ):
+
+    # Read WRF domain
+    wrf_file = big_dir+Storm+'/'+Exper_name+'/fc/'+DAtime+'/wrf_enkf_output_d03_mean'
+    d_wrf_d03 = ROIR.read_wrf_domain( wrf_file )
+
+    # Read Tbs of Hxb
+    Tb_file = big_dir+Storm+'/'+Exper_name+'/Obs_Hx/IR/'+DAtime+'/' + "/mean_obs_res_d03" + DAtime + '_' +  sensor + '.txt'
+    d_all = ROIR.read_allTb(Tb_file, sensor )
+
+    # Read location from TCvitals
+    if any( hh in DAtime[8:10] for hh in ['00','06','12','18']):
+        tc_lon, tc_lat = ROIR.read_TCvitals(small_dir+Storm+'/TCvitals/'+Storm+'_tcvitals', DAtime)
+        print( 'Location from TCvital: ', tc_lon, tc_lat )
+
+    # ------------------ Plot -----------------------
+    fig, ax=plt.subplots(2, 2, subplot_kw={'projection': ccrs.PlateCarree()}, gridspec_kw = {'wspace':0, 'hspace':0}, linewidth=0.5, sharex='all', sharey='all',  figsize=(6.5,6.5), dpi=400)
+
+    # Define the domain
+    lat_min = d_wrf_d03['lat_min']
+    lat_max = d_wrf_d03['lat_max']
+    lon_min = d_wrf_d03['lon_min']
+    lon_max = d_wrf_d03['lon_max']
+
+    ### ---Plot Hxb---
+    #Define Tb threshold
+    min_T = 185
+    max_T = 325
+    IRcmap = Util_Vis.IRcmap( 0.5 )
+    ax[0,0].set_extent([lon_min,lon_max,lat_min,lat_max], crs=ccrs.PlateCarree())
+    ax[0,0].coastlines(resolution='10m', color='black',linewidth=0.5)
+    xb_Tb = ax[0,0].scatter(d_all['lon_obs'],d_all['lat_obs'],2.5,c=d_all['meanYb_obs'],edgecolors='none', cmap=IRcmap, vmin=min_T, vmax=max_T,transform=ccrs.PlateCarree()) 
+    if any( hh in DAtime[8:10] for hh in ['00','06','12','18'] ):
+        ax[0,0].scatter(tc_lon, tc_lat, s=3, marker='*', edgecolors='white', transform=ccrs.PlateCarree())
+    # Colorbar
+    #caxes = fig.add_axes([0.12, 0.1, 0.45, 0.02])
+    #Tb_bar = fig.colorbar(xb_Tb,ax=ax[0,0],orientation="horizontal", cax=caxes)
+    #Tb_bar.ax.tick_params()
+
+    ### ---Plot correlation---
+    min_corr = -0.3
+    max_corr = 0.3
+    cloud_idx = d_model_res['cloud_idx']
+    for isub in range(1,4):
+        ax.flat[isub].set_extent([lon_min, lon_max, lat_min, lat_max], crs=ccrs.PlateCarree())
+        ax.flat[isub].coastlines(resolution='10m', color='black',linewidth=0.5)
+        cs = ax.flat[isub].scatter(d_model_res['lon_model'],d_model_res['lat_model'],1.5,c=d_model_res['corr'][isub-1,:],\
+                edgecolors='none', cmap='RdBu_r', vmin=min_corr, vmax=max_corr, transform=ccrs.PlateCarree())
+        ax.flat[isub].scatter(d_model_res['lon_model'][cloud_idx],d_model_res['lat_model'][cloud_idx],2.5,c='black',edgecolors='none', transform=ccrs.PlateCarree())
+
+    # Colorbar
+    caxes = fig.add_axes([0.2, 0.05, 0.6, 0.02])
+    #cb_corr_ticks = np.linspace(min_corr, max_corr, 5, endpoint=True)
+    corr_bar = fig.colorbar(cs, ax=ax.flat[2:], orientation="horizontal", cax=caxes)
+    corr_bar.ax.tick_params()
+
+    #subplot title
+    font = {'size':8,}
+    ax.flat[0].set_title('H(Xb)', font, fontweight='bold')
+    for isub in range(1,4):
+        ax.flat[isub].set_title( str(P_of_interest[isub-1])+' hPa', font, fontweight='bold')
+
+    #title for all
+    fig.suptitle(Storm+': '+Exper_name+'(corr of Qvapor&Tb)', fontsize=8, fontweight='bold')
+
+    # Axis labels
+    lon_ticks = list(range(math.ceil(lon_min)-2, math.ceil(lon_max)+2,2))
+    lat_ticks = list(range(math.ceil(lat_min)-2, math.ceil(lat_max)+2,2))
+
+    for j in range(4):
+        gl = ax.flat[j].gridlines(crs=ccrs.PlateCarree(),draw_labels=False,linewidth=0.1, color='gray', alpha=0.5, linestyle='--')
+
+        gl.xlabels_top = False
+        gl.xlabels_bottom = True
+        if j==0 or j==2:
+            gl.ylabels_left = True
+            gl.ylabels_right = False
+        else:
+            gl.ylabels_left = False
+            gl.ylabels_right = False
+
+        if j==2 or j==3:
+            gl.xlabels_bottom = True
+            gl.xlabels_top = False
+        else:
+            gl.xlabels_bottom = False
+            gl.xlabels_top = False
+
+
+        gl.ylocator = mticker.FixedLocator(lat_ticks)
+        gl.xlocator = mticker.FixedLocator(lon_ticks)
+        gl.xformatter = LONGITUDE_FORMATTER
+        gl.yformatter = LATITUDE_FORMATTER
+        gl.xlabel_style = {'size': 8}
+        gl.ylabel_style = {'size': 8}
+
+
+    # Save figures
+    des_name = small_dir+Storm+'/'+Exper_name+'/Vis_analyze/Corr/IR/corr_'+DAtime+'_'+var_name+'_'+sensor+'.png'
+    plt.savefig( des_name, dpi=300)
+    print('Saving the figure: ', des_name)
+
+
+
+
+
+
 def find_cloudy_allEns( DAtime, sensor, Hx_dir):
 
     print("Looking for regions that are cloudy for all ensemble members...")
@@ -297,27 +407,53 @@ def find_cloudy_allEns( DAtime, sensor, Hx_dir):
     # Dimension of the domain
     xmax = 297
     ymax = 297
-    # Cloudy Tb threshold
-    cold_Tb = 226 # !!! after some tests 206
-    idx_cloud_ens = [ [] for i in range(num_ens) ] 
+    
     # Collect indices that are cloudy for all ensemble members
     file_hxb = sorted( glob.glob(Hx_dir + '/TB_GOES_CRTM_input_mem0*.bin') )
+    # Read Tbs from the whole ensemble
+    tmp_control = np.fromfile( file_hxb[0],dtype='<f4')
+    n_ch = int( len(tmp_control)/(xmax*ymax) - 2 )
+    Tb_ens = np.zeros( shape=(num_ens,xmax*ymax) )
     for ifile in file_hxb:
         tmp_control = np.fromfile( ifile,dtype='<f4') # <: little endian; f: float; 4: 4 bytes
-        n_ch = int( len(tmp_control)/(xmax*ymax) - 2 )
         tmp_data = tmp_control[:].reshape(n_ch+2,ymax,xmax)
-        Tb_all = np.array(tmp_data[2,:,:].flatten())
-        idx = file_hxb.index( ifile )
-        tmp_idx = np.where(Tb_all<cold_Tb)
-        idx_cloud_ens[idx] = tmp_idx[0]
-    # Find the common index (or indices)
-    common_ini = list(set( idx_cloud_ens[0] ).intersection( idx_cloud_ens[1] ))
-    for i in range(1,num_ens-1):
-        if i == 1:
-            common_idx = common_ini
-        common_idx = list(set( common_idx ).intersection( idx_cloud_ens[i+1] ))
-    print('Indices of cloudy region:'+str(common_idx))
-    return common_idx
+        idx_file = file_hxb.index( ifile )
+        Tb_ens[idx_file,:] = np.array(tmp_data[2,:,:].flatten())
+    # Find the Tb threshold when all ens mems are cloudy
+    # Cloudy Tb threshold
+    cold_Tb_start = 180 # !!! after some tests 
+    ## Maria: IR_THO -- 201709160000: 226; 201709160600: 206;  201709161200: 208
+    ## Maria: IR_WSM6 -- 201709160000: 234 
+    cold_Tb = cold_Tb_start
+    common_idx = None
+    while common_idx is None:
+        idx_cloud_ens = np.where(Tb_ens<cold_Tb) # technique to save memory: sparisity
+        # idea: any member should have at least one sample that meets the first requirement ( its value is less than the threshold)
+        if not np.any( idx_cloud_ens ): # no member meets the 1st requirement
+            common_idx = None
+            cold_Tb = cold_Tb + 1
+            continue
+        elif len(np.unique(idx_cloud_ens[0])) != num_ens: # not all members meet the 1st requirement
+            common_idx = None
+            cold_Tb = cold_Tb + 1
+            continue
+        else: # all members meet the 1st requirement
+            idx_mem1 = np.where(idx_cloud_ens[0]==0)[0]
+            idx_mem2 = np.where(idx_cloud_ens[0]==1)[0]
+            common_ini = list(set( idx_cloud_ens[1][idx_mem1] ).intersection( idx_cloud_ens[1][idx_mem2] ))
+            for imem in range(1,num_ens-1):  
+                    if imem == 1:
+                        common_idx = common_ini
+                    idx_mem = np.where(idx_cloud_ens[0]==imem)[0]
+                    common_idx = list(set( common_idx ).intersection( idx_cloud_ens[1][idx_mem] ))
+            if not np.any( common_idx ): # not all members are cloudy at the same location(s)
+                common_idx = None
+                cold_Tb = cold_Tb + 1
+                continue
+            else:
+                print('The Tb threshold when all members are cloudy at the same locations is: ' +str(cold_Tb)+ ' K!'  )
+                print('Indices of cloudy region:'+str(common_idx))
+                return common_idx
 
 
 def corr_cloud_3Dmodel( DAtime, Hx_dir, sensor, wrf_dir, small_dir, Storm, Exper_name, var_name ):
@@ -337,6 +473,10 @@ def corr_cloud_3Dmodel( DAtime, Hx_dir, sensor, wrf_dir, small_dir, Storm, Exper
     #    corr_xb_hxb = pickle.load( f )
     print('Shape of corr_xb_hxb: '+ str(np.shape(corr_xb_hxb)))
 
+    # Average the correlation of the cloudy area
+    corr_xb_hxb_cloud = np.mean(corr_xb_hxb, axis=2)
+    print('Shape of corr_xb_hxb_cloud: '+ str(np.shape(corr_xb_hxb_cloud)))
+
     # Read model attributes
     nLevel = corr_xb_hxb.shape[0] 
     mean_xb = wrf_dir + '/wrf_enkf_input_d03_mean'
@@ -349,14 +489,29 @@ def corr_cloud_3Dmodel( DAtime, Hx_dir, sensor, wrf_dir, small_dir, Storm, Exper
     # lon and lat
     lon = ncdir.variables['XLONG'][0,:,:].flatten()
     lat = ncdir.variables['XLAT'][0,:,:].flatten()
-    print([lon[idx] for idx in cloud_hxb])
-    print([lat[idx] for idx in cloud_hxb])
+    print('Locations for cloudy points:')
+    for idx in cloud_hxb:
+        print(str(lon[idx])+','+str(lat[idx]))
 
     # Specify pressure levels of interest
-    P_of_interest = [100,850,500]
+    P_of_interest = [100,500,850]
+    
+    # Calculate the corr at specified levels
+    start_time=time.process_time()
+    corr_xb_hxb_cloud_P = np.zeros( (len(P_of_interest),corr_xb_hxb.shape[1]),  )
+    for im in range( corr_xb_hxb.shape[1] ):
+        f_interp = interpolate.interp1d( P_hpa[:,im], corr_xb_hxb_cloud[:,im])
+        corr_xb_hxb_cloud_P[:,im] = f_interp( P_of_interest )
+    #corr_xb_hxb_cloud_P = corr_xb_hxb_cloud[:3,:] # test....
+    end_time = time.process_time()
+    print ('time needed for the interpolation: ', end_time-start_time, ' seconds')
+    print('Min of correlation: '+str(np.amin( corr_xb_hxb_cloud_P )))
+    print('Max of correlation: '+str(np.amax( corr_xb_hxb_cloud_P )))
 
-    #f_interp = interpolate.interp1d( P_hpa[iz,:].reshape( np.shape, var_mean )
-    #    var_interp = f_interp( P_of_interest ) 
+    d_model_res = {'lon_model':lon,'lat_model':lat,'corr':corr_xb_hxb_cloud_P,'cloud_idx':cloud_hxb}
+
+    # Plot the correlation
+    plot_corr_cloud_3Dmodel(big_dir, small_dir, Storm, Exper_name, var_name, DAtime, sensor, P_of_interest, d_model_res )
 
 
 
@@ -371,9 +526,9 @@ if __name__ == '__main__':
     v_interest = [ 'QVAPOR',]
     sensor = 'abi_gr'
     ch_list = ['8',]
-    start_time_str = '201709160000'
-    end_time_str = '201709160000'
-    Consecutive_times = True
+    start_time_str = '201709160600'
+    end_time_str = '201709160600'
+    Consecutive_times = False
     If_cal_pert_stddev = False
     If_cal_corr = False
     If_save = True
@@ -381,7 +536,7 @@ if __name__ == '__main__':
     
 
     if not Consecutive_times:
-        IR_times = ['201709050000','201709050600','201709051200',]#'201708221800','201708230000','201708230600','201708231200']
+        IR_times = ['201709160600','201709161200','201709161800','201709170000','201709170600','201709171200','201709171800',]#['201709160000','201709161200','201709161800',]#'201708221800','201708230000','201708230600','201708231200']
     else:
         time_diff = datetime.strptime(end_time_str,"%Y%m%d%H%M") - datetime.strptime(start_time_str,"%Y%m%d%H%M")
         time_diff_hour = time_diff.total_seconds() / 3600
