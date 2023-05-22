@@ -1,4 +1,4 @@
-#!/usr/bin/env python3
+#!/work2/06191/tg854905/stampede2/opt/anaconda3/lib/python3.7
 
 from numba import njit, prange
 import os,sys,stat # functions for interacting with the operating system
@@ -16,10 +16,13 @@ from matplotlib import colors
 from cartopy import crs as ccrs
 from cartopy.mpl.gridliner import LONGITUDE_FORMATTER, LATITUDE_FORMATTER
 from mpl_toolkits.axes_grid1 import make_axes_locatable
-import Util_Vis
-import Read_Obspace_IR as ROIR
 import time
 import pickle
+
+import Util_Vis
+import Read_Obspace_IR as ROIR
+import Diagnostics as Diag
+import matlab.engine
 
 
 # ------------------------------------------------------------------------------------------------------
@@ -70,7 +73,7 @@ def var_3D(A):
     return res
 
 
-## Calculate the covariance*(N-1) between Tbs (2D: lon*lat) and the model variale (3D: level,lon*lat)
+## Calculate the covariance*(N-1) between Tbs (at several locations) and the model variale (3D: level,lon*lat)
 @njit(parallel=True)
 def cross_Tb_to3D( xb_ens,hxb_ens ):
     assert xb_ens.shape[1] == hxb_ens.shape[0]
@@ -80,7 +83,7 @@ def cross_Tb_to3D( xb_ens,hxb_ens ):
         res[i,:,:] = mat_mult( xb_ens[i,:,:].transpose(), hxb_ens)
     return res
 
-## Calculate the correlation between Tbs (2D: lon*lat) and the model variale (3D: level,lon*lat)
+## Calculate the correlation between Tbs (at several locations) and the model variale (3D: level,lon*lat)
 @njit(parallel=True)
 def corr_Tb_to3D( cov_xb_hxb,stddev_xb,stddev_hxb ):
     assert cov_xb_hxb.shape[1] == stddev_xb.shape[1] 
@@ -93,6 +96,114 @@ def corr_Tb_to3D( cov_xb_hxb,stddev_xb,stddev_hxb ):
                 res[i,j,k] = res[i,j,k]/stddev_hxb[k]
     return res
 
+
+# ------------------------------------------------------------------------------------------------------
+#           Object: ; Operation: Write or read Tbs at obs locations
+# ------------------------------------------------------------------------------------------------------
+# Interpolate IR Tbs in model resolution to obs locations and Write it to a txt file
+def interp_simu_to_obs_matlab_ens( d_obs, Hx_dir, sensor, DAtime ):
+
+    start_time=time.process_time()
+
+    # Number of ensemble members
+    num_ens = 60
+    # Dimension of the domain
+    xmax = 297
+    ymax = 297
+    # Read IR_obs attributes
+    IR_obs = d_obs['obs']
+    lon_obs = d_obs['lon']
+    lat_obs = d_obs['lat']
+ 
+    hxb_ens = np.zeros( shape=[num_ens,len(d_obs['obs_type'])] )
+    file_hxb = sorted( glob.glob(Hx_dir + '/TB_GOES_CRTM_input_mem0*.bin') )
+    # Get common variables: lat,lon
+    tmp_control = np.fromfile( file_hxb[0],dtype='<f4')
+    n_ch = int( len(tmp_control)/(xmax*ymax) - 2 )
+    tmp_data = tmp_control[:].reshape(n_ch+2,ymax,xmax)
+    lon_x =  list(tmp_data[0,:,:].flatten()) #longitude
+    lat_x = list(tmp_data[1,:,:].flatten())  #latitude
+    ## Interpolate to obs location
+    # start a matlab process
+    eng = matlab.engine.start_matlab() 
+    for ifile in file_hxb:
+        print(ifile)
+        idx = file_hxb.index( ifile )
+        tmp_control = np.fromfile( ifile,dtype='<f4') # <: little endian; f: float; 4: 4 bytes
+        n_ch = int( len(tmp_control)/(xmax*ymax) - 2 )
+        tmp_data = tmp_control[:].reshape(n_ch+2,ymax,xmax)
+        Yb_x = list(tmp_data[2,:,:].flatten())
+        
+        for ich in ch_list:
+            if ifile == file_hxb[0]:
+                Ch_all = np.full( np.shape(IR_obs), ich )
+            if sum(np.isnan(Yb_x)) != 0:
+                warnings.warn('NaN value exists in Yb_x!') 
+            # interpolate simulated Tbs to obs location
+            mYb_obspace = eng.griddata(matlab.double(lon_x), matlab.double(lat_x), matlab.double(Yb_x), matlab.double(lon_obs), matlab.double(lat_obs) )
+            Yb_obspace = np.array(mYb_obspace._data)
+            hxb_ens[idx,:] = ["{0:.3f}".format(item) for item in Yb_obspace]
+    # end the matlab process
+    eng.quit()
+
+    # Stack each list into an array
+    all_attrs = np.row_stack( (Ch_all,lat_obs,lon_obs,IR_obs,hxb_ens)  )
+    all_attrs = all_attrs.transpose()
+    print('Shape of all_attrs: '+str(np.shape(all_attrs)))
+    # ---- Write to file and save it to the disk ----
+    header = ['Ch_num','Lat','Lon','Tb_obs']
+    file_name = Hx_dir + "/ens_obs_res_d03" + DAtime + '_' +  sensor + '.txt'
+    with open(file_name,'w') as f:
+        # Add header 
+        f.write('\t'.join( item.rjust(6) for item in header ) + '\n' )
+        # Write the record to the file serially
+        len_records = np.shape( all_attrs )[0]
+        for irow in range( len_records ):
+            irecord =  [str(item) for item in all_attrs[irow,:] ]
+            f.write('\t'.join( item.rjust(6) for item in irecord ) + '\n')
+    print('Save '+file_name)
+    end_time = time.process_time()
+    print ('time needed: ', end_time-start_time, ' seconds')
+
+    return None 
+
+# Read simulated Tb at obs locations
+def read_obspace( ens_Tb_file, sensor ):
+
+    # Number of ensemble members
+    num_ens = 60
+
+    ch_obs = []
+    lat_obs = []
+    lon_obs = []
+    Yo_obs = []
+
+    with open( ens_Tb_file ) as f:
+        next(f)
+        all_lines = f.readlines()
+    
+    for line in all_lines:
+        split_line = line.split()
+        ch_obs.append( int(split_line[0]) )
+        lat_obs.append( float(split_line[1]) )
+        lon_obs.append( float(split_line[2]) )
+        Yo_obs.append( float(split_line[3]) )
+
+    hxb_ens = np.zeros( (num_ens,len(Yo_obs)) )
+    il = 0
+    for line in all_lines:
+        tmp = [float(it) for it in split_line[4:]]
+        hxb_ens[:,il] = tmp
+        it = il+1
+
+    lat_obs = np.array( lat_obs )
+    lon_obs = np.array( lon_obs )
+    ch_obs = np.array( ch_obs )
+    Yo_obs = np.array( Yo_obs )
+    hxb_ens = np.array( hxb_ens )
+
+    d_obspace = {'lat_obs':lat_obs, 'lon_obs':lon_obs, 'ch_obs':ch_obs, 'Yo_obs':Yo_obs, 'hxb_ens':hxb_ens}
+    return d_obspace
 
 # ------------------------------------------------------------------------------------------------------
 #           Object: ; Operation: Calculate ensemble perturbations/variances of Xb and Hxb
@@ -110,10 +221,9 @@ def cal_pert_stddev_Hxb( DAtime, sensor, Hx_dir, If_save):
     xmax = 297
     ymax = 297
    
-    hxb_ens = np.zeros( shape=[num_ens+1,xmax*ymax] ) # the 0 to last - 1 rows are ensemble perturbations, the last row is mean value
     # Read the ensemble mean calculated from the other program: Obspace_compare_IR_txt_bin.py 
     meanYb = []
-    mean_hxb = Hx_dir + "mean_model_res_d03" + DAtime + '_' +  sensor + '.txt'
+    mean_hxb = Hx_dir + "mean_obs_res_d03" + DAtime + '_' +  sensor + '.txt'
     print('Reading the ensemble mean of Hx: ', mean_hxb,'...')
     with open(mean_hxb) as f:
         next(f)
@@ -121,16 +231,17 @@ def cal_pert_stddev_Hxb( DAtime, sensor, Hx_dir, If_save):
     for line in all_lines:
         split_line = line.split()
         meanYb.append( float(split_line[3]) )
+
+    hxb_ens = np.zeros( shape=[num_ens+1,len(meanYb)] ) # the 0 to last - 1 rows are ensemble perturbations, the last row is mean value
     hxb_ens[num_ens,:] = np.array( meanYb )
-    # Read the ensemble of Hxb
-    file_hxb = sorted( glob.glob(Hx_dir + '/TB_GOES_CRTM_input_mem0*.bin') )
-    for ifile in file_hxb:
-        tmp_control = np.fromfile( ifile,dtype='<f4') # <: little endian; f: float; 4: 4 bytes
-        n_ch = int( len(tmp_control)/(xmax*ymax) - 2 )
-        tmp_data = tmp_control[:].reshape(n_ch+2,ymax,xmax)
-        Tb_all = np.array(tmp_data[2,:,:].flatten())
-        idx = file_hxb.index( ifile )
-        hxb_ens[idx,:] = Tb_all - hxb_ens[num_ens,:]
+    # Read the ensemble of Hxb at obs locations
+    ens_Tb_file = Hx_dir + "/ens_obs_res_d03" + DAtime + '_' +  sensor + '.txt'
+    print('Reading the ensemble of Hx: ', ens_Tb_file,'...')
+    d_obspace = read_obspace( ens_Tb_file, sensor )
+    hxb_ens_obs = d_obspace['hxb_ens']
+    print('Shape of hxb_ens_obs: '+str(np.shape(hxb_ens_obs)))
+    for im in range(60):
+        hxb_ens[im,:] = hxb_ens_obs[im,:] - hxb_ens[num_ens,:]
 
     # May save the perturbations
     if If_save:
@@ -163,8 +274,7 @@ def cal_pert_stddev_Hxb( DAtime, sensor, Hx_dir, If_save):
     return None
 
 
-
-def cal_pert_stddev_xb( DAtime, wrf_dir, var_name ):
+def cal_pert_stddev_xb( DAtime, wrf_dir, var_name, If_save ):
     
     ### ------------------------- Perturbation -------------------------
     print("Read the ensemble and calculate the perturbations for Xb...")
@@ -213,7 +323,7 @@ def cal_pert_stddev_xb( DAtime, wrf_dir, var_name ):
     var_xb = var_xb / ( num_ens-1 )
     stddev_xb = np.sqrt( var_xb )
 
-    # May save the perturbations
+    # May save the standard deviation
     if If_save:
         des_path = wrf_dir+ "xb_d03_3D_ens_stddev_" + DAtime + '_' +  var_name + '.pickle'
         f = open( des_path, 'wb' )
@@ -393,10 +503,6 @@ def plot_corr_cloud_3Dmodel(big_dir, small_dir, Storm, Exper_name, var_name, DAt
     print('Saving the figure: ', des_name)
 
 
-
-
-
-
 def find_cloudy_allEns( DAtime, sensor, Hx_dir):
 
     print("Looking for regions that are cloudy for all ensemble members...")
@@ -420,10 +526,7 @@ def find_cloudy_allEns( DAtime, sensor, Hx_dir):
         idx_file = file_hxb.index( ifile )
         Tb_ens[idx_file,:] = np.array(tmp_data[2,:,:].flatten())
     # Find the Tb threshold when all ens mems are cloudy
-    # Cloudy Tb threshold
-    cold_Tb_start = 180 # !!! after some tests 
-    ## Maria: IR_THO -- 201709160000: 226; 201709160600: 206;  201709161200: 208
-    ## Maria: IR_WSM6 -- 201709160000: 234 
+    cold_Tb_start = 180  
     cold_Tb = cold_Tb_start
     common_idx = None
     while common_idx is None:
@@ -520,20 +623,25 @@ if __name__ == '__main__':
     big_dir = '/scratch/06191/tg854905/Pro2_PSU_MW/'
     small_dir =  '/work2/06191/tg854905/stampede2/Pro2_PSU_MW/'
 
-    # Configuration
+    # ---------- Configuration -------------------------
     Storm = 'MARIA'
     Exper_name = 'IR-J_DA+J_WRF+J_init-SP-intel17-THO-24hr-hroi900'
+
     v_interest = [ 'QVAPOR',]
     sensor = 'abi_gr'
     ch_list = ['8',]
-    start_time_str = '201709160600'
-    end_time_str = '201709160600'
-    Consecutive_times = False
-    If_cal_pert_stddev = False
+    fort_v = ['obs_type','lat','lon','obs']
+
+    start_time_str = '201709160000'
+    end_time_str = '201709160000'
+    Consecutive_times = True
+
+    ens_Interp_to_obs = False
+    If_cal_pert_stddev = True
     If_cal_corr = False
     If_save = True
-    If_plot = True
-    
+    If_plot = False
+    # -------------------------------------------------------    
 
     if not Consecutive_times:
         IR_times = ['201709160600','201709161200','201709161800','201709170000','201709170600','201709171200','201709171800',]#['201709160000','201709161200','201709161800',]#'201708221800','201708230000','201708230600','201708231200']
@@ -542,6 +650,18 @@ if __name__ == '__main__':
         time_diff_hour = time_diff.total_seconds() / 3600
         time_interest_dt = [datetime.strptime(start_time_str,"%Y%m%d%H%M") + timedelta(hours=t) for t in list(range(0, int(time_diff_hour)+1, 1))]
         IR_times = [time_dt.strftime("%Y%m%d%H%M") for time_dt in time_interest_dt]
+
+
+    # Interpolate simulated Tb at model resolution to obs resolution
+    if ens_Interp_to_obs:
+        print('------- For all members, interpolate Hx in model resolution to obs location ------')
+        for DAtime in IR_times:
+            # Read assimilated obs 
+            file_Diag = big_dir+Storm+'/'+Exper_name+'/run/'+DAtime+'/enkf/d03/fort.10000'
+            d_obs = Diag.Find_IR( file_Diag, fort_v )
+            # Interpolate
+            Hx_dir = big_dir+Storm+'/'+Exper_name+'/Obs_Hx/IR/'+DAtime+'/'
+            interp_simu_to_obs_matlab_ens( d_obs, Hx_dir, sensor, DAtime )
 
     # Calculate ensemble perturbations and variances
     if If_cal_pert_stddev:
@@ -553,7 +673,7 @@ if __name__ == '__main__':
             # Xb
             wrf_dir = big_dir+Storm+'/'+Exper_name+'/fc/'+DAtime+'/'
             for var_name in v_interest:
-                cal_pert_stddev_xb( DAtime, wrf_dir, var_name )
+                cal_pert_stddev_xb( DAtime, wrf_dir, var_name, If_save )
 
     # Calculate correlations
     if If_cal_corr:
@@ -574,7 +694,6 @@ if __name__ == '__main__':
             for var_name in v_interest:
                 print('Plot '+var_name+'...')
                 corr_cloud_3Dmodel( DAtime, Hx_dir, sensor, wrf_dir, small_dir, Storm, Exper_name, var_name )
-
 
 
 
