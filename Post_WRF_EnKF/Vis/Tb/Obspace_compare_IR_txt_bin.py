@@ -3,7 +3,6 @@
 import os
 import glob
 import numpy as np
-import Util_Vis
 import netCDF4 as nc
 from matplotlib import pyplot as plt
 import matplotlib.ticker as mticker
@@ -12,9 +11,15 @@ from cartopy.mpl.gridliner import LONGITUDE_FORMATTER, LATITUDE_FORMATTER
 from global_land_mask import globe
 import math
 from datetime import datetime, timedelta
-import matlab.engine
 import time
 
+import Util_Vis
+import matlab.engine
+import Diagnostics as Diag
+
+
+def RMSE(simu, obs):
+    return np.sqrt( ((simu - obs) ** 2).mean() )
 
 # ------------------------------------------------------------------------------------------------------
 #           Object: Tbs and their attributes; Operation: Read and Process 
@@ -130,7 +135,7 @@ def write_mean_bin ( DAtime, sensor, Hx_dir, ch_list ):
     # Iterate thru input ens
     for ifile in file_yb:
         print('Reading the file: ' + ifile)
-        tmp = np.fromfile( file_yb[0],dtype='<f4')
+        tmp = np.fromfile( ifile,dtype='<f4')
         
         # Sanity check
         n_ch = int( len(tmp_control)/(xmax*ymax) - 2 )
@@ -144,7 +149,7 @@ def write_mean_bin ( DAtime, sensor, Hx_dir, ch_list ):
     # Iterate thru input ens
     for ifile in file_ya:
         print('Reading the file: ' + ifile)
-        tmp = np.fromfile( file_ya[0],dtype='<f4')
+        tmp = np.fromfile( ifile,dtype='<f4')
 
         # Sanity check
         n_ch = int( len(tmp_control)/(xmax*ymax) - 2 )
@@ -204,13 +209,10 @@ def read_Hx_mean( Hx_file ):
 
 
 # Interpolate IR Tbs in model resolution to obs locations and Write it to a txt file
-def interp_simu_to_obs_matlab( Hx_dir, sensor, DAtime, obs_file_dir, d_wrf_d03 ):
+def interp_simu_to_obs_matlab( Hx_dir, sensor, DAtime, d_obs):
 
     print("Initiate the function to interpolate simulated Tbs to obs locations...")
     start_time=time.process_time()
-
-    # Read obs data
-    d_obs = read_obs( obs_file_dir,d_wrf_d03 )
 
     # Read simulated Tbs
     Hx_file = Hx_dir + "/mean_model_res_d03" + DAtime + '_' +  sensor + '.txt' 
@@ -231,10 +233,10 @@ def interp_simu_to_obs_matlab( Hx_dir, sensor, DAtime, obs_file_dir, d_wrf_d03 )
     for ich in ch_list:
 
         print('Channel number: ', ich)
-        Ch_idx_obs = d_obs['Ch_obs'] == ich
-        Lat_obs_ch = d_obs['Lat_obs'][Ch_idx_obs]
-        Lon_obs_ch = d_obs['Lon_obs'][Ch_idx_obs]
-        Yo_obs_ch = d_obs['Yo_obs'][Ch_idx_obs]
+        #Ch_idx_obs = d_obs['Ch'] == ich
+        Lat_obs_ch = d_obs['lat']
+        Lon_obs_ch = d_obs['lon']
+        Yo_obs_ch = d_obs['obs']
 
         Ch_idx_x = d_simu['Ch_x'] == ich
         Lat_x_ch = d_simu['Lat_x'][Ch_idx_x]
@@ -245,10 +247,10 @@ def interp_simu_to_obs_matlab( Hx_dir, sensor, DAtime, obs_file_dir, d_wrf_d03 )
         print('Number of NaN in Yb_x_ch', sum(np.isnan(Yb_x_ch)))
         print('Number of NaN in Ya_x_ch', sum(np.isnan(Ya_x_ch)))
         # interpolate simulated Tbs to obs location
-        mYb_obspace = eng.griddata(matlab.double(Lon_x_ch.tolist()), matlab.double(Lat_x_ch.tolist()), matlab.double(Yb_x_ch.tolist()), matlab.double(Lon_obs_ch.tolist()), matlab.double(Lat_obs_ch.tolist()) )
+        mYb_obspace = eng.griddata(matlab.double(Lon_x_ch.tolist()), matlab.double(Lat_x_ch.tolist()), matlab.double(Yb_x_ch.tolist()), matlab.double(Lon_obs_ch), matlab.double(Lat_obs_ch) )
         Yb_obspace = np.array(mYb_obspace._data)
         print('Number of NaN in Yb_obspace', sum(np.isnan(Yb_obspace)))
-        mYa_obspace = eng.griddata(matlab.double(Lon_x_ch.tolist()), matlab.double(Lat_x_ch.tolist()), matlab.double(Ya_x_ch.tolist()), matlab.double(Lon_obs_ch.tolist()), matlab.double(Lat_obs_ch.tolist()) )
+        mYa_obspace = eng.griddata(matlab.double(Lon_x_ch.tolist()), matlab.double(Lat_x_ch.tolist()), matlab.double(Ya_x_ch.tolist()), matlab.double(Lon_obs_ch), matlab.double(Lat_obs_ch) )
         Ya_obspace = np.array(mYa_obspace._data)
         print('Number of NaN in Ya_obspace', sum(np.isnan(Ya_obspace)))
 
@@ -269,7 +271,7 @@ def interp_simu_to_obs_matlab( Hx_dir, sensor, DAtime, obs_file_dir, d_wrf_d03 )
     all_attrs = np.column_stack( (Lat_obspace_all, Lon_obspace_all, Ch_obspace_all, Yo_all, Yb_obspace_all, Ya_obspace_all) )
 
     # ---- Write to file and save it to the disk ----
-    header = ['Lat','Lon','Ch_num','Tb_obs','Tb_Yb_ibs','Tb_Ya_obs']
+    header = ['Lat','Lon','Ch_num','Tb_obs','Tb_Yb_obs','Tb_Ya_obs']
     file_name = Hx_dir + "/mean_obs_res_d03" + DAtime + '_' +  sensor + '.txt'
     with open(file_name,'w') as f:
         # Add header 
@@ -379,7 +381,7 @@ def read_wrf_domain( wrf_file ):
     return d03_list
 
 
-def plot_Tb(Storm, Exper_name, DAtime, sensor, ch_list ):
+def plot_Tb(Storm, Exper_name, Hx_dir, DAtime, sensor, ch_list ):
 
     # Read WRF domain
     wrf_file = '/scratch/06191/tg854905/Pro2_PSU_MW/'+Storm+'/'+Exper_name+'/fc/'+DAtime+'/wrf_enkf_output_d03_mean'
@@ -427,7 +429,7 @@ def plot_Tb(Storm, Exper_name, DAtime, sensor, ch_list ):
         ax[2].scatter(tc_lon, tc_lat, s=3, marker='*', edgecolors='white', transform=ccrs.PlateCarree())
 
     # Colorbar
-    caxes = f.add_axes([0.2, 0.97, 0.6, 0.02])
+    caxes = f.add_axes([0.2, 0.1, 0.6, 0.02])
     cbar = f.colorbar(cs, orientation="horizontal", cax=caxes)
     cbar.ax.tick_params(labelsize=6)
 
@@ -436,6 +438,9 @@ def plot_Tb(Storm, Exper_name, DAtime, sensor, ch_list ):
     ax[0].set_title('Yo', font, fontweight='bold')
     ax[1].set_title('H(Xb)', font, fontweight='bold')
     ax[2].set_title('H(Xa)', font, fontweight='bold')
+
+    #title for all
+    f.suptitle(Storm+': '+Exper_name, fontsize=8, fontweight='bold')
 
     # Axis labels
     lon_ticks = list(range(math.ceil(lon_min)-2, math.ceil(lon_max)+2,2))
@@ -464,20 +469,147 @@ def plot_Tb(Storm, Exper_name, DAtime, sensor, ch_list ):
     print('Saving the figure: ', '/work2/06191/tg854905/stampede2/Pro2_PSU_MW/'+Storm+'/'+Exper_name+'/Vis_analyze/Tb/IR/Obspace/'+DAtime+'_'+sensor+'_Obspace.png') 
 
 
+def plot_Tb_diff(Storm, Exper_name, Hx_dir, DAtime, sensor, ch_list ):
+
+    # Read WRF domain
+    wrf_file = '/scratch/06191/tg854905/Pro2_PSU_MW/'+Storm+'/'+Exper_name+'/fc/'+DAtime+'/wrf_enkf_output_d03_mean'
+    d_wrf_d03 = read_wrf_domain( wrf_file )
+
+    # Read Tbs of obs, Hxb, Hxa
+    Tb_file = Hx_dir + "/mean_obs_res_d03" + DAtime + '_' +  sensor + '.txt'
+    d_all = read_allTb(Tb_file, sensor )
+
+    # Read location from TCvitals
+    if any( hh in DAtime[8:10] for hh in ['00','06','12','18']):
+        tc_lon, tc_lat = read_TCvitals('/work2/06191/tg854905/stampede2/Pro2_PSU_MW/'+Storm+'/TCvitals/'+Storm+'_tcvitals', DAtime)
+        print( 'Location from TCvital: ', tc_lon, tc_lat )
+
+    # Prepare to calculate RMSE between the Hx and Yo
+    rmse = np.full(2, fill_value=None) # default type: none
+
+    # ------------------ Plot -----------------------
+    f, axs=plt.subplots(1, 3, subplot_kw={'projection': ccrs.PlateCarree()}, gridspec_kw = {'wspace':0, 'hspace':0}, linewidth=0.5, sharex='all', sharey='all',  figsize=(5,2.5), dpi=400)
+
+
+    # Define the domain
+    lat_min = d_wrf_d03['lat_min']
+    lat_max = d_wrf_d03['lat_max']
+    lon_min = d_wrf_d03['lon_min']
+    lon_max = d_wrf_d03['lon_max']
+    
+    # Obs
+    min_obs = 185
+    max_obs = 325
+    IRcmap = Util_Vis.IRcmap( 0.5 )
+    axs.flat[0].set_extent([lon_min,lon_max,lat_min,lat_max], crs=ccrs.PlateCarree())
+    axs.flat[0].coastlines(resolution='10m', color='black',linewidth=0.5)
+    obs_s = axs.flat[0].scatter(d_all['lon_obs'],d_all['lat_obs'],1.5,c=d_all['Yo_obs'],edgecolors='none', cmap=IRcmap, vmin=min_obs, vmax=max_obs,transform=ccrs.PlateCarree())
+    # Colorbar
+    caxes = f.add_axes([0.12, 0.1, 0.25, 0.02])
+    obs_bar = f.colorbar(obs_s,ax=axs[0],orientation="horizontal", cax=caxes)
+    obs_bar.ax.tick_params(labelsize=6)
+
+    max_T=20
+    min_T=-20
+    #min_RWB = 0
+    #newRWB = Util_Vis.newRWB(max_T, min_T, min_RWB)
+    # HXb - Obs
+    axs.flat[1].set_extent([lon_min, lon_max, lat_min, lat_max], crs=ccrs.PlateCarree())
+    axs.flat[1].coastlines(resolution='10m', color='black',linewidth=0.5)
+    xb_s = axs.flat[1].scatter(d_all['lon_obs'], d_all['lat_obs'],1.5,c=d_all['meanYb_obs']-d_all['Yo_obs'],\
+                edgecolors='none', cmap='RdBu_r', vmin=min_T, vmax=max_T, transform=ccrs.PlateCarree())
+    if any( hh in DAtime[8:10] for hh in ['00','06','12','18'] ):
+        axs.flat[0].scatter(tc_lon, tc_lat, s=3, marker='*', edgecolors='white', transform=ccrs.PlateCarree())
+    
+    rmse[0] = RMSE(d_all['meanYb_obs'], d_all['Yo_obs'] )
+
+    # HXa - Obs
+    axs.flat[2].set_extent([lon_min, lon_max, lat_min, lat_max], crs=ccrs.PlateCarree())
+    axs.flat[2].coastlines(resolution='10m', color='black',linewidth=0.5)
+    xa_s = axs.flat[2].scatter(d_all['lon_obs'], d_all['lat_obs'],1.5,c=d_all['meanYa_obs']-d_all['Yo_obs'],\
+                edgecolors='none', cmap='RdBu_r', vmin=min_T, vmax=max_T, transform=ccrs.PlateCarree())
+    if any( hh in DAtime[8:10] for hh in ['00','06','12','18'] ):
+        axs.flat[2].scatter(tc_lon, tc_lat, s=3, marker='*', edgecolors='white', transform=ccrs.PlateCarree())
+    
+    rmse[1] = RMSE(d_all['meanYa_obs'], d_all['Yo_obs'] )
+   
+    # Colorbar
+    caxes = f.add_axes([0.4, 0.1, 0.5, 0.02])
+    cb_diff_ticks = np.linspace(min_T, max_T, 5, endpoint=True)
+    cbar = f.colorbar(xa_s, ax=axs[1:], ticks=cb_diff_ticks, orientation="horizontal", cax=caxes)
+    cbar.ax.tick_params(labelsize=6)
+
+    #subplot title
+    font = {'size':8,}
+    axs.flat[0].set_title('Ch'+ch_list[0]+':Yo', font, fontweight='bold')
+    if rmse[0] is None:
+        axs.flat[1].set_title('Ch'+ch_list[0]+':H(Xb)-Yo ', font, fontweight='bold')
+    else:
+        rmse_str = '%.2f' % rmse[0]
+        axs.flat[1].set_title('Ch'+ch_list[0]+':H(Xb)-Yo '+rmse_str, font, fontweight='bold')
+
+    if rmse[1] is None:
+        axs.flat[2].set_title('Ch'+ch_list[0]+':H(Xa)-Yo ', font, fontweight='bold')
+    else:
+        rmse_str = '%.2f' % rmse[1]
+        axs.flat[2].set_title('Ch'+ch_list[0]+':H(Xa)-Yo '+rmse_str, font, fontweight='bold')
+
+    #title for all
+    f.suptitle(Storm+': '+Exper_name, fontsize=8, fontweight='bold') 
+
+    # Axis labels
+    lon_ticks = list(range(math.ceil(lon_min)-2, math.ceil(lon_max)+2,2))
+    lat_ticks = list(range(math.ceil(lat_min)-2, math.ceil(lat_max)+2,2))
+
+    for j in range(2):
+        gl = axs.flat[j].gridlines(crs=ccrs.PlateCarree(),draw_labels=False,linewidth=0.1, color='gray', alpha=0.5, linestyle='--')
+
+        gl.xlabels_top = False
+        gl.xlabels_bottom = True
+        if j==0:
+            gl.ylabels_left = True
+            gl.ylabels_right = False
+        else:
+            gl.ylabels_left = False
+            gl.ylabels_right = False
+
+        gl.ylocator = mticker.FixedLocator(lat_ticks)
+        gl.xlocator = mticker.FixedLocator(lon_ticks)
+        gl.xformatter = LONGITUDE_FORMATTER
+        gl.yformatter = LATITUDE_FORMATTER
+        gl.xlabel_style = {'size': 4}
+        gl.ylabel_style = {'size': 6}
+
+    figure_des='/work2/06191/tg854905/stampede2/Pro2_PSU_MW/'+Storm+'/'+Exper_name+'/Vis_analyze/Tb/IR/Obspace/'+DAtime+'_'+sensor+'_Obspace_Diff_range20.png'
+    plt.savefig(figure_des, dpi=300)
+    print('Saving the figure: ', figure_des)
+
+
+
+
 
 if __name__ == '__main__':
 
-    Storm = 'HARVEY'
-    Exper_name = 'J_DA+J_WRF+J_init'
+    big_dir = '/scratch/06191/tg854905/Pro2_PSU_MW/'
+
+    # ---------- Configuration -------------------------
+    Storm = 'MARIA'
+    Exper_name = 'IR-J_DA+J_WRF+J_init-SP-intel17-THO-24hr-hroi900'
     sensor = 'abi_gr'
     ch_list = ['8',]
-    start_time_str = '201708221200' 
-    end_time_str = '201708231200'
+    fort_v = ['obs_type','lat','lon','obs']
+
+    start_time_str = '201709160000' 
+    end_time_str = '201709180000'
+    Consecutive_times = True
+
     Interp_to_obs = True
-    Consecutive_times = False
+    If_plot = False
+    # -------------------------------------------------------   
+
 
     if not Consecutive_times:
-        IR_times = ['201708230000','201708230600','201708231200']
+        IR_times = ['201709050000','201709050600','201709051200','201709051800','201709060000',]
     else:
         time_diff = datetime.strptime(end_time_str,"%Y%m%d%H%M") - datetime.strptime(start_time_str,"%Y%m%d%H%M")
         time_diff_hour = time_diff.total_seconds() / 3600
@@ -486,30 +618,30 @@ if __name__ == '__main__':
 
 
     # Process Tbs to obs location
-    for DAtime in IR_times:
+    if Interp_to_obs:
+        for DAtime in IR_times:
+            # Read assimilated obs 
+            file_Diag = big_dir+Storm+'/'+Exper_name+'/run/'+DAtime+'/enkf/d03/fort.10000'
+            d_obs = Diag.Find_IR( file_Diag, fort_v )
 
-        # Get obs's sensor/channel info
-        obs_file_name = 'radiance_d03_' + DAtime + '_so'
-        obs_file_dir = '/work2/06191/tg854905/stampede2/Pro2_PSU_MW/'+Storm+'/Obs_y/IR/'+obs_file_name
-
-        if Interp_to_obs:
+            Hx_dir = big_dir+Storm+'/'+Exper_name+'/Obs_Hx/IR/'+DAtime+'/'
             # Calculate mean of H(Xb) and H(Xa)
             print('------------ Calculate mean of Hx in model resolution --------------')
-            Hx_dir = '/scratch/06191/tg854905/Pro2_PSU_MW/'+Storm+'/'+Exper_name+'/Obs_Hx/IR/'+DAtime+'/'
-            write_mean_bin( DAtime, sensor, Hx_dir, ch_list  )
+            #write_mean_bin( DAtime, sensor, Hx_dir, ch_list)
 
             # Interpolate HX in model resolution to obs location AND write it to a txt file
             print('------------ Interpolate Hx in model resolution to obs location --------------')
-            # Read WRF domain
-            wrf_file = '/scratch/06191/tg854905/Pro2_PSU_MW/'+Storm+'/'+Exper_name+'/fc/'+DAtime+'/wrf_enkf_output_d03_mean'
-            d_wrf_d03 = read_wrf_domain( wrf_file )
-            interp_simu_to_obs_matlab( Hx_dir, sensor, DAtime, obs_file_dir, d_wrf_d03 )
+            interp_simu_to_obs_matlab( Hx_dir, sensor, DAtime, d_obs)
             #time.sleep(60)
 
-        print('------------ Plot ----------------------')         
-        print('DAtime: '+ DAtime)
-        plot_Tb( Storm, Exper_name, DAtime, sensor, ch_list) 
-       
+    # Plot
+    if If_plot:
+        for DAtime in IR_times:
+            Hx_dir = big_dir+Storm+'/'+Exper_name+'/Obs_Hx/IR/'+DAtime+'/'
+            print('------------ Plot ----------------------')         
+            print('DAtime: '+ DAtime)
+            plot_Tb( Storm, Exper_name, Hx_dir, DAtime, sensor, ch_list) 
+            #plot_Tb_diff( Storm, Exper_name, Hx_dir, DAtime, sensor, ch_list) 
     
 
 
