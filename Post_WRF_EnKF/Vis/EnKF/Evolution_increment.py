@@ -521,7 +521,7 @@ def incre_snapshot( DAtime, wrf_dir, small_dir, Storm, Exper_name, var_name ):
     elif interp_H:
         mean_xa = wrf_dir + '/wrf_enkf_output_d03_mean'
         ncdir = nc.Dataset( mean_xa, 'r')
-        H_of_interest = [1.0,3.0,5.0,7.0,9.0,11.0]
+        H_of_interest = [3.5,4.0,5.0,7.0,9.0,11.0]
         Interp_incre = np.zeros( [len(H_of_interest),xmax*ymax] )
         PHB = ncdir.variables['PHB'][0,:,:,:]
         PH = ncdir.variables['PH'][0,:,:,:]
@@ -571,19 +571,19 @@ if __name__ == '__main__':
     small_dir =  '/work2/06191/tg854905/stampede2/Pro2_PSU_MW/'
 
     # ---------- Configuration -------------------------
-    Storm = 'MARIA'
-    Exper_name = 'IR-J_DA+J_WRF+J_init-SP-intel17-THO-24hr-hroi900'
+    Storm = 'HARVEY'
+    Exper_name = 'JerryRun/IR_WSM6'
     v_interest = ['QVAPOR',]#[ 'QICE','QCLOUD','QRAIN','QSNOW','QGRAUP']
     fort_v = ['obs_type','lat','lon','obs']
     
-    start_time_str = '201709160000'
-    end_time_str = '201709160000'
+    start_time_str = '201708221200'
+    end_time_str = '201708221200'
     Consecutive_times = True
     
     interp_P = False
     P_of_interest = list(range( 995,49,-20 ))
     interp_H = True
-    interp_to_obs = True
+    interp_to_obs = False
 
     If_ncdiff = False
     If_plot_snapshot = True

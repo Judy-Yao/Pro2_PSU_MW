@@ -154,16 +154,16 @@ if __name__ == '__main__':
     small_dir =  '/work2/06191/tg854905/stampede2/Pro2_PSU_MW/'
 
     # ---------- Configuration -------------------------
-    Storm = 'MARIA'
-    Exper_name = 'IR-J_DA+J_WRF+J_init-SP-intel17-WSM6-24hr-hroi900'
+    Storm = 'HARVEY'
+    Exper_name = 'JerryRun/IR_THO'
 
     v_interest = [ 'QVAPOR',]
     sensor = 'abi_gr'
     ch_list = ['8',]
     fort_v = ['obs_type','lat','lon','obs']
 
-    start_time_str = '201709170000'
-    end_time_str = '201709170000'
+    start_time_str = '201708221200'
+    end_time_str = '201708221200'
     Consecutive_times = True
 
     # Number of ensemble members
@@ -172,7 +172,7 @@ if __name__ == '__main__':
     xmax = 297
     ymax = 297
 
-    total_hydro = False
+    total_hydro = True
     cloud_P = True
     If_save = True
 

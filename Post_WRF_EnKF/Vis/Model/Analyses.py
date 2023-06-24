@@ -426,8 +426,8 @@ def Gather_slp( Storm, Expers, DAtimes, big_dir ):
 
 if __name__ == '__main__':
 
-    Storm = 'JOSE'
-    Expers = ['IR-J_DA+J_WRF+J_init-SP-intel17-THO-30hr-hroi900',]
+    Storm = 'IRMA'
+    Expers = ['J_DA+J_WRF+J_init-SP-intel17-THO-30hr-hroi900',]
     #Expers = ['J_DA+J_WRF+J_init-SP-intel17-THO-24hr-hroi900','J_DA+J_WRF+J_init-SP-intel17-WSM6-24hr-hroi900','IR-J_DA+J_WRF+J_init-SP-intel17-THO-24hr-hroi900','IR-J_DA+J_WRF+J_init-SP-intel17-WSM6-24hr-hroi900']
     big_dir = '/scratch/06191/tg854905/Pro2_PSU_MW/'
     small_dir = '/work2/06191/tg854905/stampede2/Pro2_PSU_MW/'
@@ -437,12 +437,12 @@ if __name__ == '__main__':
     Plot_minslp_evo = False
 
     # Time range set up
-    start_time_str = '201709050000'
-    end_time_str = '201709051600'
-    Consecutive_times = False
+    start_time_str = '201709030000'
+    end_time_str = '201709030000'
+    Consecutive_times = True
 
     if not Consecutive_times:
-        DAtimes = ['201709060000','201709060600',]
+        DAtimes = ['201709030000','201709030600','201709031200','201709031800','201709040000',]
     else:
         time_diff = datetime.strptime(end_time_str,"%Y%m%d%H%M") - datetime.strptime(start_time_str,"%Y%m%d%H%M")
         time_diff_hour = time_diff.total_seconds() / 3600

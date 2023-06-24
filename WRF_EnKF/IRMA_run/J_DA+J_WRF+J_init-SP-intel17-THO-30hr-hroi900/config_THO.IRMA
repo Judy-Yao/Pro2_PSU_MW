@@ -14,7 +14,7 @@
  USE_PERTS=false
 
 # ==== Experiment Design ====
- EXP_NAME=J_DA+J_WRF+J_init-SP-intel17-WSM6-30hr-hroi900
+ EXP_NAME=J_DA+J_WRF+J_init-SP-intel17-THO-30hr-hroi900
  DATE_START=201709021200
  DATE_END=201709080000 
  DATE_CYCLE_START=201709030000 #201709160000
@@ -23,7 +23,7 @@
 
 # ==== Directories ===
  WORK_DIR=/scratch/06191/tg854905/Pro2_PSU_MW/${STORM_ID}/${EXP_NAME}
- SCRIPT_DIR=/work2/06191/tg854905/stampede2/Pro2_PSU_MW/SourceCode/WRF_EnKF/IRMA_run/J_DA+J_WRF+J_init-SP-intel17-WSM6-30hr-hroi900
+ SCRIPT_DIR=/work2/06191/tg854905/stampede2/Pro2_PSU_MW/SourceCode/WRF_EnKF/IRMA_run/J_DA+J_WRF+J_init-SP-intel17-THO-30hr-hroi900
  CODE_DIR=/work2/06191/tg854905/stampede2/JerryZhang_IRMW/intel17_J_code/ 
  DATA_DIR=/work2/06191/tg854905/stampede2/Pro2_PSU_MW/Obs_input_EnKF/IRMA
  # Tools
@@ -36,7 +36,7 @@
  WRFDA_DIR=${CODE_DIR}/WRFDA
  CRTM_DIR=${SCRIPT_DIR}
  CRTM_COEFF_DIR=/work2/06191/tg854905/stampede2/opt/PSU-EnKF_w_satellites/fortran_src/crtm_v2.3.0/coefficients  
- ENKF_DIR=/work2/06191/tg854905/stampede2/JerryZhang_IRMW/intel17_J_code/J_PSU-EnKF_w_satellites/fortran_src/EnSRF/src_back_WSM6
+ ENKF_DIR=/work2/06191/tg854905/stampede2/JerryZhang_IRMW/intel17_J_code/J_PSU-EnKF_w_satellites/fortran_src/EnSRF/src_back
  # Input Data
  FG_DIR_GFS=${DATA_DIR}/GFS
  TCVITALS_DIR=${DATA_DIR}/TCvitals
@@ -82,7 +82,7 @@
 
 # === Physics ===
 # !!!!!!!!!!!!! Attention !!!!!!!!!!!!!!!!!!
- MP_PHYSICS=(6 6 6 6)
+ MP_PHYSICS=(8 8 8 8)
 # !!!!!!!!!!!!! Attention !!!!!!!!!!!!!!!!!!
  RA_LW_PHYSICS=(4 4 4 4)
  RA_SW_PHYSICS=(4 4 4 4)

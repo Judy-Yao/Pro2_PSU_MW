@@ -28,7 +28,7 @@ matplotlib.rcParams['ytick.right'] = True
 matplotlib.rcParams['lines.linewidth'] = 2.5#1.5
 matplotlib.rcParams['lines.markersize'] = 2.5
 matplotlib.rcParams['lines.markeredgewidth'] = 0
-matplotlib.rcParams['font.size'] = 10#6
+matplotlib.rcParams['font.size'] = 15#6
 
 
 # ------------------------------------------------------------------------------------------------------
@@ -113,10 +113,17 @@ def btk_in_duration(Storm, Btk_start, Btk_end, hour_step):
 
 # Get analyses' estimated HPI 
 def read_HPI_analyses(Storm, Exper_name, wrf_dir, filename_analyses=None, force_reload=False):
-   
-    #filename_analyses = wrf_dir+Storm+'/'+Exper_name+'/fc/HPI_analyses.txt'
-    DAtimes_dir =  sorted(glob.glob(wrf_dir+Storm+'/'+Exper_name+'/fc/20*') )
+  
 
+    #start_als = '201708221200'
+    #end_als = '201708241300'
+    #als_diff = datetime.strptime(end_als,"%Y%m%d%H%M") - datetime.strptime(start_als,"%Y%m%d%H%M")
+    #als_diff_hour = als_diff.total_seconds() / 3600
+    #time_interest_dt = [datetime.strptime(start_als,"%Y%m%d%H%M") + timedelta(hours=t) for t in list(range(0, int(als_diff_hour), 1))]
+    #DAtimes =  [time_dt.strftime("%Y%m%d%H%M") for time_dt in time_interest_dt]
+    #DAtimes_dir = [wrf_dir+Storm+'/'+Exper_name+'/fc/'+ it for it in DAtimes]
+    
+    DAtimes_dir =  sorted(glob.glob(wrf_dir+Storm+'/'+Exper_name+'/fc/20*') )
     # remove the first directory (spin-up)
     DAtimes_dir.pop(0)
 
@@ -136,7 +143,7 @@ def read_HPI_analyses(Storm, Exper_name, wrf_dir, filename_analyses=None, force_
             continue
         #print('Reading analysis: '+ filename)
         with Dataset(filename) as ncid:
-            #print('Reading analysis: ', filename)
+            print('Reading analysis: ', filename)
             # maximum wind
             ws = np.sqrt( ncid.variables['U10'][:]**2 + ncid.variables['V10'][:]**2 )
             max_wind.append( np.max( ws ))
@@ -253,7 +260,7 @@ def read_rsl_error(Storm, Exper_name, directory, DF_start, DF_end):
     # List the times (in string format) every hour in the duration 
     time_interest_dt = [datetime.strptime(DF_start_real[0],"%Y%m%d%H%M") + timedelta(hours=t) for t in list(range(0, int(DF_diff_hour), 1))]
     time_interest_str = [time_dt.strftime("%Y%m%d%H%M") for time_dt in time_interest_dt]
-    
+
     # Get the indices in the best-track file corresponded to the times of interest
     idx_sbs = []
     lat_sbs = []
@@ -284,7 +291,7 @@ def read_rsl_error(Storm, Exper_name, directory, DF_start, DF_end):
 # ------------------------------------------------------------------------------------------------------
 
 def plot_one( ax0, ax1, ax2,  state, color, line, line_width, label):
-  
+ 
     if label == 'Best track':
         times = state['time']
         lon = state['lon']
@@ -292,10 +299,10 @@ def plot_one( ax0, ax1, ax2,  state, color, line, line_width, label):
         x_min_slp = state['min_slp']
         x_max_ws = state['max_ws']
 
-        ax0.plot(lon, lat, marker='o',markersize=3, color=color,linewidth=line_width, label=label, linestyle=line, transform=ccrs.PlateCarree())
+        ax0.plot(lon, lat, marker='o',markersize=3, color=color,linewidth=3, label=label, linestyle=line, transform=ccrs.PlateCarree())
         dates = [datetime.strptime(i,"%Y%m%d%H%M") for i in times]
-        ax1.plot_date(dates, x_min_slp, color, label=label)
-        ax2.plot_date(dates, x_max_ws, color, label=label)
+        ax1.plot_date(dates, x_min_slp, color, label=label, linewidth=3)
+        ax2.plot_date(dates, x_max_ws, color, label=label, linewidth=3)
 
         for it in times:
             if it[8:10] == '00':
@@ -308,7 +315,7 @@ def plot_one( ax0, ax1, ax2,  state, color, line, line_width, label):
         steps = 6
         Diff_start_next6x = state['Diff_start_next6x']
     
-        if Diff_start_next6x != 6: # it means time_to_move in namelist is not equal to 0
+        if Diff_start_next6x != 6 and Diff_start_next6x != 0: # it means time_to_move in namelist is not equal to 0
             start_next6x = datetime.strptime(state['time'][0],"%Y%m%d%H%M") + timedelta(hours=Diff_start_next6x)
             boolean_compare = [ start_next6x.strftime("%Y%m%d%H%M") == time_str for time_str in state['time'][:] ]
             idx_next6x = int( np.where(boolean_compare)[0] )
@@ -372,7 +379,7 @@ def plot_hpi_ef( Config, domain_range ):
              Exper_content_lbl[iExper] = None
 
     # Set up figure
-    fig = plt.figure( figsize=(12,4), dpi=150 )
+    fig = plt.figure( figsize=(13,4), dpi=150 )
     gs = fig.add_gridspec(1,3)
 
     ax0 = fig.add_subplot( gs[0,0],  projection=ccrs.PlateCarree())
@@ -477,7 +484,6 @@ def plot_hpi_df( Config, domain_range ):
     wrf_dir = Config[0]
     Storm = Config[1]
     Exper = Config[2]
-    DF_model_start = Config[3]
     mem_id = Config[4]
     read_fc_wrfout = Config[5]
     Plot_analyses = Config[6]
@@ -485,6 +491,8 @@ def plot_hpi_df( Config, domain_range ):
     # Set the end point of the period to investigate
     if Storm == 'HARVEY':
         DF_model_end  = '201708270000'
+    elif Storm == 'IRMA':
+        DF_model_end  = '201709080000'
     elif Storm == 'MARIA':
         DF_model_end  = '201709210000'
     elif Storm == 'JOSE':
@@ -504,7 +512,7 @@ def plot_hpi_df( Config, domain_range ):
              Exper_content_lbl[iExper] = None
 
     # Set up figure
-    fig = plt.figure( figsize=(19,6), dpi=150 ) #12,4
+    fig = plt.figure( figsize=(22,6.5), dpi=150 ) #12,4 20,6
     gs = fig.add_gridspec(2,7) # 1,3
 
     ax0 = fig.add_subplot( gs[0:,0:3],  projection=ccrs.PlateCarree())
@@ -518,35 +526,39 @@ def plot_hpi_df( Config, domain_range ):
         Btk_start = '201708221200' # '201709161800' #'201709030600'
         Btk_end = '201708270000' # '201709210000' #'201709090000'
     elif Storm == 'IRMA':
-        Btk_start = '201709030600'
-        Btk_end = '201709090000'
+        Btk_start = '201709030000'
+        Btk_end = '201709080000'
     elif Storm == 'MARIA':
         Btk_start = '2017091600'#'201709160000'
         Btk_end = '201709210000'
     elif Storm == 'JOSE':
         Btk_start = '201709050000'
         Btk_end = '201709100000'
+    else:
+        pass
+    
 
     # Plot HPI from post-storm analysis
     best_track = btk_in_duration(Storm, Btk_start, Btk_end, hour_step=6)
-    plot_one ( ax0, ax1, ax2, best_track,  'black', '-', 1, 'Best track' )
+    plot_one ( ax0, ax1, ax2, best_track,  'black', '-', 3, 'Best track' )
 
     # Customize color maps 
     #Color1 = ['#A52A2A','#FF0000','#FF7F50','#FFA500','#FFD700','#B8860B','#9ACD32','#006400']
     #Color2 = ['#0000FF','#1E90FF','#00BFFF','#6495ED','#48D1CC','#00FFFF','#008B8B','#00FF7F']
-    Color1 = ["#c23728","#e14b31","#de6e56","#e1a692","#786028","#a57c1b","#d2980d","#ffb400","#503f3f","#6d4b4b","#a86464","#e27c7c"] #redish
+    #Color1 = ["#c23728","#e14b31","#de6e56","#e1a692","#786028","#a57c1b","#d2980d","#ffb400","#503f3f","#6d4b4b","#a86464","#e27c7c"] #redish
     Color2 = ["#115f9a", "#1984c5", "#22a7f0", "#48b5c4", "#48446e", "#5e569b", "#776bcd", "#9080ff","#3c4e4b", "#466964", "#599e94", "#6cd4c5"] #blueish
+    Color1 = Color2
     Color_set = {'c0':Color1, 'c1':Color2}
 
-    Ana_color = ['#eea990', '#748b97'] #'#eea990'] #'#748b97'
+    Ana_color = ['#748b97', '#748b97'] #'#eea990'] #'#748b97'
     # Customize linestyles
-    Line_types = ['-','-']
+    Line_types = ['--','-']
     
     # Customize labels ###### Chnage it every time !!!!!!!!!!!!!!! 
     #Labels = ['GTS+HPI(hroi:300km): ']
-    Labels = ['THO:','WSM6:']
+    Labels = ['conv:','IR']
     #Labels = ['Stp2-Intel17 ','Eps-Intel19 ']
-    Ana_labels = ['THO Als', 'WSM6 Als']
+    Ana_labels = ['conv Als','IR Als' ]
     #Ana_labels = ['Stampede2 Analysis', 'Expanse Analysis']
 
     # Plot HPI for each deterministic forecasts
@@ -608,17 +620,17 @@ def plot_hpi_df( Config, domain_range ):
     ax2.set_xlim([datetime(int(Btk_start[0:4]), int(Btk_start[4:6]), int(Btk_start[6:8]), int(Btk_start[8:10])), datetime(int(Btk_end[0:4]), int(Btk_end[4:6]), int(Btk_end[6:8]), int(Btk_end[8:10]))])
     ax1.set_ylim([900,1020])     #([940, 1015])
     ax2.set_ylim([10,80])   #([10,60])
-    ax1.tick_params(axis='x', labelrotation=45)
-    ax2.tick_params(axis='x', labelrotation=45)
-    ax2.legend(bbox_to_anchor=(1.5, 1.0),frameon=True,loc='upper right',fontsize='9')
+    ax1.tick_params(axis='x', labelrotation=30,labelsize=12)
+    ax2.tick_params(axis='x', labelrotation=30,labelsize=12)
+    ax2.legend(bbox_to_anchor=(1.5, 1.0),frameon=True,loc='upper right',fontsize='10')
     
     # Set titles
     ax0.set_title( 'Track',fontsize = 15 )
     ax1.set_title( 'MSLP (hPa)',fontsize = 15 )
     ax2.set_title( 'Vmax ($\mathregular{ms^{-1}}$)',fontsize = 15 )
-    fig.suptitle('CONV',fontsize = 15)
+    fig.suptitle('WSM6',fontsize = 15)
 
-    des_name = '/work2/06191/tg854905/stampede2/Pro2_PSU_MW/'+Storm+'/'+Exper[0]+'/Vis_analyze/Model/'+Storm+'_forecast_conv.png'
+    des_name = '/work2/06191/tg854905/stampede2/Pro2_PSU_MW/'+Storm+'/'+Exper[0]+'/Vis_analyze/Model/'+Storm+'_forecast_WSM6.png'
     plt.savefig( des_name )
     print( 'Saving the figure to '+des_name+'!' )
     #fig.suptitle('IR-only:201708221800', fontsize=10)
@@ -630,9 +642,9 @@ if __name__ == '__main__':
     big_dir = '/scratch/06191/tg854905/Pro2_PSU_MW/'
 
     # configuration
-    Storm = 'MARIA'
-    Exper_name = ['J_DA+J_WRF+J_init-SP-intel17-THO-24hr-hroi900','J_DA+J_WRF+J_init-SP-intel17-WSM6-24hr-hroi900'] 
-    DF_model_start = '201709050000' # Default value of DF_model_start. Especially useful when dealing with ensemble forecast
+    Storm = 'IRMA'
+    Exper_name = ['J_DA+J_WRF+J_init-SP-intel17-WSM6-30hr-hroi900','IR-J_DA+J_WRF+J_init-SP-intel17-WSM6-30hr-hroi900'] 
+    DF_model_start = '20170822180000' # Default value of DF_model_start. Especially useful when dealing with ensemble forecast
     mem_id = 'mean' # Default value of member id. Especially useful when dealing with deterministic forecast
     read_fc_wrfout = False # Feature that decides the way of reading HPI from model files
     Plot_analyses = True # Feature that plots the analyses of an experiment
@@ -641,25 +653,25 @@ if __name__ == '__main__':
 
     # Pre-set the domain for DF forecast
     if Storm == 'HARVEY':
-        lon_min = -101
-        lon_max = -86
+        lon_min = -102
+        lon_max = -85
         lat_min = 16
         lat_max = 31
     elif Storm == 'IRMA':
-        lon_min = -68
+        lon_min = -72
         lon_max = -42
-        lat_min = 12
+        lat_min = 10
         lat_max = 30
     elif Storm == 'MARIA':
-        lon_min = -70
+        lon_min = -68
         lon_max = -43#-45
-        lat_min = 4# 
-        lat_max = 20
+        lat_min = 5# 
+        lat_max = 25
     elif Storm == 'JOSE':
         lon_min = -65
         lon_max = -35#-45
-        lat_min = 5
-        lat_max = 23
+        lat_min = 0
+        lat_max = 25
  
     domain_range = [lon_min, lon_max, lat_min, lat_max]
 
