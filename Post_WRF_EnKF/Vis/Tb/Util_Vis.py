@@ -70,11 +70,6 @@ def newRWB(max_T, min_T, min_RWB):
     return newRWB
 
 
-
-
-
-
-
 # colormap for plotting infrared BT
 def IRcmap(c_int):
     

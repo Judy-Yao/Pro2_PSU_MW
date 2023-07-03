@@ -15,6 +15,8 @@ from cartopy.mpl.gridliner import LONGITUDE_FORMATTER, LATITUDE_FORMATTER
 from mpl_toolkits.axes_grid1 import make_axes_locatable
 import time
 import subprocess
+from itertools import chain
+
 import Obspace_compare_IR_txt_bin as IR_obs
 
 # setting font size
@@ -36,8 +38,8 @@ def Plot_IR_metric( small_dir, Storm, Expers, DAtimes, IR_metric ):
     # ------ Define range of metrics -------------------
     rmse_min = 0#np.amin( [np.amin(IR_metric['xb_rmse']),np.amin(IR_metric['xa_rmse']) ])
     rmse_max = 15#np.amax( [np.amax(IR_metric['xb_rmse']),np.amax(IR_metric['xa_rmse']) ])
-    bias_min = -10#np.amin( [np.amin(IR_metric['xb_bias']),np.amin(IR_metric['xa_bias']) ])
-    bias_max = 5#np.amax( [np.amax(IR_metric['xb_bias']),np.amax(IR_metric['xa_bias']) ])
+    bias_min = -7.5#np.amin( [np.amin(IR_metric['xb_bias']),np.amin(IR_metric['xa_bias']) ])
+    bias_max = 0.5#np.amax( [np.amax(IR_metric['xb_bias']),np.amax(IR_metric['xa_bias']) ])
     
     # ------ Plot Figure -------------------
     dates = [datetime.strptime( it,"%Y%m%d%H%M") for it in DAtimes]   
@@ -51,8 +53,9 @@ def Plot_IR_metric( small_dir, Storm, Expers, DAtimes, IR_metric ):
     elif len(Expers) == 2:
         fig,ax = plt.subplots(2, 2, figsize=(18,8), dpi=300 )
         Color_set = ['red','blue']
-        Line_types = [['--','-'],['--','-']] 
-        Labels = [['THO:Xb','THO:Xa'],['WSM6:Xb','WSM6:Xa']]
+        Labels = ['conv','conv+IR']
+        #Line_types = [['--','-'],['--','-']] 
+        #Labels = [['conv:Xb','conv:Xa'],['IR:Xb','IR:Xa']]
     else:
         raise ValueError("Current algorithm does not handle the color and label setting. Modify it as needed!")
 
@@ -63,17 +66,22 @@ def Plot_IR_metric( small_dir, Storm, Expers, DAtimes, IR_metric ):
 
     if len(Expers) == 1:
         iexper = 0
+        dates_zip = list( chain.from_iterable( zip(dates,dates)) )
         for j in range(2):
             if j == 0:
-                ax[j].plot_date(dates, IR_metric['xb_rmse'][iexper,:], color=Color_set[iexper], linestyle=Line_types[iexper][0])
-                ax[j].plot_date(dates, IR_metric['xa_rmse'][iexper,:], color=Color_set[iexper], linestyle=Line_types[iexper][1])
+                rmse_zip = list( chain.from_iterable( zip(IR_metric['xb_rmse'][iexper,:],IR_metric['xa_rmse'][iexper,:]) ) )
+                ax[j].plot_date(dates_zip,rmse_zip,color=Color_set[iexper])
+                #ax[j].plot_date(dates, IR_metric['xb_rmse'][iexper,:], color=Color_set[iexper], linestyle=Line_types[iexper][0])
+                #ax[j].plot_date(dates, IR_metric['xa_rmse'][iexper,:], color=Color_set[iexper], linestyle=Line_types[iexper][1])
                 ax[j].set_ylim( rmse_min,rmse_max )
             elif j == 1:
-                ax[j].plot_date(dates, IR_metric['xb_bias'][iexper,:], color=Color_set[iexper], label=Labels[iexper][0], linestyle=Line_types[iexper][0])
-                ax[j].plot_date(dates, IR_metric['xa_bias'][iexper,:], color=Color_set[iexper], label=Labels[iexper][1], linestyle=Line_types[iexper][1])
-                for i in range(len(dates)-1):
-                    ax[j].annotate("", xytext=(dates[i], IR_metric['xb_bias'][iexper,i]), xy=(dates[i], IR_metric['xa_bias'][iexper,i]),arrowprops=dict(arrowstyle="->",color='black',lw=2,ls='--'))
-                    ax[j].annotate("", xytext=(dates[i], IR_metric['xa_bias'][iexper,i]), xy=(dates[i+1], IR_metric['xb_bias'][iexper,i+1]),arrowprops=dict(arrowstyle='->',lw=2.5,ls='-'))    
+                bias_zip = list( chain.from_iterable( zip(IR_metric['xb_bias'][iexper,:],IR_metric['xa_bias'][iexper,:]) ))
+                ax[j].plot_date(dates_zip,bias_zip,color=Color_set[iexper])
+                #ax[j].plot_date(dates, IR_metric['xb_bias'][iexper,:], color=Color_set[iexper], label=Labels[iexper][0], linestyle=Line_types[iexper][0])
+                #ax[j].plot_date(dates, IR_metric['xa_bias'][iexper,:], color=Color_set[iexper], label=Labels[iexper][1], linestyle=Line_types[iexper][1])
+                #for i in range(len(dates)-1):
+                #    ax[j].annotate("", xytext=(dates[i], IR_metric['xb_bias'][iexper,i]), xy=(dates[i], IR_metric['xa_bias'][iexper,i]),arrowprops=dict(arrowstyle="->",color='black',lw=2,ls='--'))
+                #    ax[j].annotate("", xytext=(dates[i], IR_metric['xa_bias'][iexper,i]), xy=(dates[i+1], IR_metric['xb_bias'][iexper,i+1]),arrowprops=dict(arrowstyle='->',lw=2.5,ls='-'))    
                 ax[j].set_ylim( bias_min,bias_max )
                 ax[j].axhline(y=0.0,color='k',linestyle='-')
             else:
@@ -84,18 +92,22 @@ def Plot_IR_metric( small_dir, Storm, Expers, DAtimes, IR_metric ):
             
     else:
         for iexper in range(len(Expers)):
+            dates_zip = list( chain.from_iterable( zip(dates,dates)) )
             for j in range(2):
                 if j == 0:
-                    ax[iexper,j].plot_date(dates, IR_metric['xb_rmse'][iexper,:], color=Color_set[iexper], linestyle=Line_types[iexper][0])
-                    ax[iexper,j].plot_date(dates, IR_metric['xa_rmse'][iexper,:], color=Color_set[iexper], linestyle=Line_types[iexper][1])
+                    rmse_zip = list( chain.from_iterable( zip(IR_metric['xb_rmse'][iexper,:],IR_metric['xa_rmse'][iexper,:]) ))
+                    ax[iexper,j].plot_date(dates_zip,rmse_zip,color=Color_set[iexper],linestyle='-',label=Labels[iexper])
+                    #ax[iexper,j].plot_date(dates, IR_metric['xb_rmse'][iexper,:], color=Color_set[iexper], linestyle=Line_types[iexper][0])
+                    #ax[iexper,j].plot_date(dates, IR_metric['xa_rmse'][iexper,:], color=Color_set[iexper], linestyle=Line_types[iexper][1])
                     ax[iexper,j].set_ylim( rmse_min,rmse_max )
-
                 elif j == 1:
-                    ax[iexper,j].plot_date(dates, IR_metric['xb_bias'][iexper,:], color=Color_set[iexper], label=Labels[iexper][0], linestyle=Line_types[iexper][0])
-                    ax[iexper,j].plot_date(dates, IR_metric['xa_bias'][iexper,:], color=Color_set[iexper], label=Labels[iexper][1], linestyle=Line_types[iexper][1])
-                    for i in range(len(dates)-1):
-                        #ax[iexper,j].annotate("", xytext=(dates[i], IR_metric['xb_bias'][iexper,i]), xy=(dates[i], IR_metric['xa_bias'][iexper,i]),arrowprops=dict(arrowstyle="->",color='black',lw=2,ls='--'))
-                        ax[iexper,j].annotate("", xytext=(dates[i], IR_metric['xa_bias'][iexper,i]), xy=(dates[i+1], IR_metric['xb_bias'][iexper,i+1]),arrowprops=dict(arrowstyle='->',lw=2.5,ls='-'))
+                    bias_zip = list( chain.from_iterable( zip(IR_metric['xb_bias'][iexper,:],IR_metric['xa_bias'][iexper,:]) ))
+                    ax[iexper,j].plot_date(dates_zip,bias_zip,color=Color_set[iexper],linestyle='-',label=Labels[iexper])
+                    #ax[iexper,j].plot_date(dates, IR_metric['xb_bias'][iexper,:], color=Color_set[iexper], label=Labels[iexper][0], linestyle=Line_types[iexper][0])
+                    #ax[iexper,j].plot_date(dates, IR_metric['xa_bias'][iexper,:], color=Color_set[iexper], label=Labels[iexper][1], linestyle=Line_types[iexper][1])
+                    #for i in range(len(dates)-1):
+                    #    ax[iexper,j].annotate("", xytext=(dates[i], IR_metric['xb_bias'][iexper,i]), xy=(dates[i], IR_metric['xa_bias'][iexper,i]),arrowprops=dict(arrowstyle="->",color='black',lw=2,ls='--'))
+                    #    ax[iexper,j].annotate("", xytext=(dates[i], IR_metric['xa_bias'][iexper,i]), xy=(dates[i+1], IR_metric['xb_bias'][iexper,i+1]),arrowprops=dict(arrowstyle='->',lw=2.5,ls='-'))
                     ax[iexper,j].set_ylim( bias_min,bias_max )
                     ax[iexper,j].axhline(y=0.0,color='k',linestyle='-')
                 else:
@@ -151,9 +163,9 @@ def Gather_IR_metric( Storm, sensor, Expers, DAtimes, big_dir ):
 
 if __name__ == '__main__':
 
-    Storm = 'MARIA'
+    Storm = 'JOSE'
     #Expers = ['IR-J_DA+J_WRF+J_init-SP-intel17-THO-24hr-hroi900',]
-    Expers = ['J_DA+J_WRF+J_init-SP-intel17-THO-24hr-hroi900','J_DA+J_WRF+J_init-SP-intel17-WSM6-24hr-hroi900']
+    Expers = ['J_DA+J_WRF+J_init-SP-intel17-THO-30hr-hroi900','IR-J_DA+J_WRF+J_init-SP-intel17-THO-30hr-hroi900']
     big_dir = '/scratch/06191/tg854905/Pro2_PSU_MW/'
     small_dir = '/work2/06191/tg854905/stampede2/Pro2_PSU_MW/'
 
@@ -161,8 +173,8 @@ if __name__ == '__main__':
     Plot_MW = False
 
     # Time range set up
-    start_time_str = '201709160000'
-    end_time_str = '201709170000'
+    start_time_str = '201709050000'
+    end_time_str = '201709051500'
     Consecutive_times = True
 
     if not Consecutive_times:

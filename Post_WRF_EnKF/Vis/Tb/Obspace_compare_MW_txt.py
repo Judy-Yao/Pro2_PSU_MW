@@ -456,10 +456,10 @@ def plot_Tb_diff(Storm, Exper_name, DAtime, sensor, dict_ss_len):
     f, ax=plt.subplots(2, 2, subplot_kw={'projection': ccrs.PlateCarree()}, gridspec_kw = {'wspace':0, 'hspace':0}, linewidth=0.5, sharex='all', sharey='all',  figsize=(4,4.5), dpi=500)
 
     # Customize colormap
-    max_T=10
-    min_T=-10
-    min_RWB = 0
-    newRWB = Util_Vis.newRWB(max_T, min_T, min_RWB)
+    max_T=50
+    min_T=-50
+    #min_RWB = 0
+    #newRWB = Util_Vis.newRWB(max_T, min_T, min_RWB)
 
     #scatter_size = [2.5, 2.5]
     # Define the domain
@@ -504,7 +504,7 @@ def plot_Tb_diff(Storm, Exper_name, DAtime, sensor, dict_ss_len):
         # HXb - Obs
         ax[i,0].set_extent([lon_min,lon_max,lat_min,lat_max], crs=ccrs.PlateCarree())
         ax[i,0].coastlines(resolution='10m', color='black',linewidth=0.5)
-        ax[i,0].scatter(Lon_obs_ch[mask_x],Lat_obs_ch[mask_x],2.5,c=Yb_obspace[mask_x]-Yo_obs_ch[mask_x],edgecolors='none', cmap=newRWB, vmin=min_T, vmax=max_T,transform=ccrs.PlateCarree())
+        ax[i,0].scatter(Lon_obs_ch[mask_x],Lat_obs_ch[mask_x],2.5,c=Yb_obspace[mask_x]-Yo_obs_ch[mask_x],edgecolors='none', cmap='RdBu_r', vmin=min_T, vmax=max_T,transform=ccrs.PlateCarree())
         if any( hh in DAtime[8:10] for hh in ['00','06','12','18']):
             ax[i,0].scatter(tc_lon, tc_lat, s=3, marker='*', edgecolors='black', transform=ccrs.PlateCarree())
         
@@ -514,7 +514,7 @@ def plot_Tb_diff(Storm, Exper_name, DAtime, sensor, dict_ss_len):
         ax[i,1].set_extent([lon_min, lon_max, lat_min, lat_max], crs=ccrs.PlateCarree())
         ax[i,1].coastlines(resolution='10m', color='black',linewidth=0.5)
         cs = ax[i,1].scatter(Lon_obs_ch[mask_x], Lat_obs_ch[mask_x],2.5,c=Ya_obspace[mask_x]-Yo_obs_ch[mask_x],\
-                 edgecolors='none', cmap=newRWB, vmin=min_T, vmax=max_T, transform=ccrs.PlateCarree())
+                 edgecolors='none', cmap='RdBu_r', vmin=min_T, vmax=max_T, transform=ccrs.PlateCarree())
         if any( hh in DAtime[8:10] for hh in ['00','06','12','18']):
             ax[i,1].scatter(tc_lon, tc_lat, s=3, marker='*', edgecolors='black', transform=ccrs.PlateCarree())
 
@@ -553,6 +553,8 @@ def plot_Tb_diff(Storm, Exper_name, DAtime, sensor, dict_ss_len):
     else:
         rmse_str = '%.2f' % rmse[1,1]
         ax[1,1].set_title('HF:H(Xa)-Yo '+rmse_str, font, fontweight='bold')
+    
+    f.suptitle(Storm+': '+Exper_name, fontsize=8, fontweight='bold')
 
     # Tick labels
     lon_ticks = list(range(math.ceil(lon_min)-2, math.ceil(lon_max)+2,2))
@@ -583,7 +585,7 @@ def plot_Tb_diff(Storm, Exper_name, DAtime, sensor, dict_ss_len):
             gl.ylabel_style = {'size': 6}
 
 
-    plt.savefig('/work2/06191/tg854905/stampede2/Pro2_PSU_MW/'+Storm+'/'+Exper_name+'/Vis_analyze/Tb/MW/Obspace/'+DAtime+'_'+sensor+'_Diff_Obspace.png', dpi=300)
+    plt.savefig('/work2/06191/tg854905/stampede2/Pro2_PSU_MW/'+Storm+'/'+Exper_name+'/Vis_analyze/Tb/MW/Obspace/'+DAtime+'_'+sensor+'_Diff_Obspace_range50.png', dpi=300)
     print('Saving the figure: ', '/work2/06191/tg854905/stampede2/Pro2_PSU_MW/'+Storm+'/'+Exper_name+'/Vis_analyze/Tb/MW/Obspace/'+DAtime+'_'+sensor+'_Diff_Obspace.png')
 
 
@@ -591,11 +593,11 @@ def plot_Tb_diff(Storm, Exper_name, DAtime, sensor, dict_ss_len):
 if __name__ == '__main__':
 
     Storm = 'HARVEY'
-    Exper_name =  'J_DA+Y_WRF+J_init-IR+MW'#'JerryRun/MW_THO/'#'J_DA+J_WRF+J_init'
-    Exper_obs = 'J_DA+Y_WRF+J_init-IR+MW'
+    Exper_name =  'J_DA+J_WRF+J_init'#'JerryRun/MW_THO/'#'J_DA+J_WRF+J_init'
+    Exper_obs = 'J_DA+J_WRF+J_init'
 
-    MW_times = ['201708221200',]#'201708230000']
-    #MW_times = ['201708221200','201708221300','201708221900','201708222000','201708222100','201708222300','201708230000']
+    #MW_times = ['201708230800','201708231200']
+    MW_times = ['201708221200',]#'201708221300','201708221900','201708222000','201708222100','201708222300','201708230000','201708230800','201708231200']
     #MW_times = ['201709161800','201709161900','201709162100','201709162200','201709162300','201709170100','201709170400','201709170500','201709170700','201709170900','201709171000','201709171100','201709171300','201709171700']
 
 #    Plot_scatter = True # Plot Tbs on scattered grid points OR plt.contourf
@@ -632,6 +634,6 @@ if __name__ == '__main__':
             print(sensor)
             print(dict_ss_ch[sensor])
             print('------------ Plot ----------------------')
-            #plot_Tb( Storm, Exper_name, DAtime, sensor, dict_ss_len) 
+            plot_Tb( Storm, Exper_name, DAtime, sensor, dict_ss_len) 
             plot_Tb_diff( Storm, Exper_name, DAtime, sensor, dict_ss_len) 
 

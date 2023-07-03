@@ -146,7 +146,13 @@ ncea ${output_ncFiles[@]} output_mean_${domain}_${time}.tb.${sensor}.crtm.nc
 
 
 # Read MW obs records
-def read_obs(obs_file):
+def read_obs(obs_file, d_wrf_d03):
+
+    # Define the wrf domain
+    lat_min = d_wrf_d03['lat_min']
+    lat_max = d_wrf_d03['lat_max']
+    lon_min = d_wrf_d03['lon_min']
+    lon_max = d_wrf_d03['lon_max']
 
     with open(obs_file) as tmp:
         obs_all = tmp.readlines()
@@ -157,11 +163,15 @@ def read_obs(obs_file):
     Yo_obs = []
     for line in obs_all:
         line_split = line.split()
+
         if sensor in line_split[1]:
-            Ch_obs.append(int(line_split[2]))
-            Lat_obs.append(float(line_split[3]))
-            Lon_obs.append(float(line_split[4]))
-            Yo_obs.append(float(line_split[5]))
+            read_lat = float(line_split[3])
+            read_lon = float(line_split[4])
+            if read_lat <= lat_max and read_lat >= lat_min and read_lon <= lon_max and read_lon >= lon_min:
+                Ch_obs.append(int(line_split[2]))
+                Lat_obs.append( read_lat)
+                Lon_obs.append( read_lon )
+                Yo_obs.append( float(line_split[5]) )
 
     Ch_obs = np.array(Ch_obs)
     Lat_obs = np.array(Lat_obs)
@@ -194,13 +204,13 @@ def read_simu_Tb(Hxb_files, Hxa_files):
 
 
 # Interpolate MW Tbs in model resolution to obs locations and Write it to a txt file
-def interp_simu_to_obs_matlab( Hx_dir, sensor, DAtime, obs_file_dir ):
+def interp_simu_to_obs_matlab( Hx_dir, sensor, DAtime, obs_file_dir, d_wrf_d03 ):
 
     print("Initiate the function to interpolate simulated Tbs to obs locations...")
     start_time=time.process_time()
 
     # Read obs data
-    d_obs = read_obs( obs_file_dir )
+    d_obs = read_obs( obs_file_dir,d_wrf_d03 )
 
     # Read simulated Tbs
     Hxb_file = [Hx_dir+'/input_mean_d03_'+DAtime+'.tb.'+sensor+'.crtm.nc',]
@@ -237,10 +247,10 @@ def interp_simu_to_obs_matlab( Hx_dir, sensor, DAtime, obs_file_dir ):
         print('Number of NaN in Yb_x_ch', sum(np.isnan(Yb_x_ch)))
         print('Number of NaN in Ya_x_ch', sum(np.isnan(Ya_x_ch)))
         # interpolate simulated Tbs to obs location
-        mYb_obspace = eng.griddata(matlab.double(Lon_x_ch.tolist()), matlab.double(Lat_x_ch.tolist()), matlab.double(Yb_x_ch.tolist()), matlab.double(Lon_obs_ch.tolist()), matlab.double(Lat_obs_ch.tolist()))
+        mYb_obspace = eng.griddata(matlab.double(Lon_x_ch.tolist()), matlab.double(Lat_x_ch.tolist()), matlab.double(Yb_x_ch.tolist()), matlab.double(Lon_obs_ch.tolist()), matlab.double(Lat_obs_ch.tolist()) )
         Yb_obspace = np.array(mYb_obspace._data)
         print('Number of NaN in Yb_obspace', sum(np.isnan(Yb_obspace)))
-        mYa_obspace = eng.griddata(matlab.double(Lon_x_ch.tolist()), matlab.double(Lat_x_ch.tolist()), matlab.double(Ya_x_ch.tolist()), matlab.double(Lon_obs_ch.tolist()), matlab.double(Lat_obs_ch.tolist()))
+        mYa_obspace = eng.griddata(matlab.double(Lon_x_ch.tolist()), matlab.double(Lat_x_ch.tolist()), matlab.double(Ya_x_ch.tolist()), matlab.double(Lon_obs_ch.tolist()), matlab.double(Lat_obs_ch.tolist()) )
         Ya_obspace = np.array(mYa_obspace._data)
         print('Number of NaN in Ya_obspace', sum(np.isnan(Ya_obspace)))
 
@@ -547,6 +557,10 @@ def plot_Tb_diff(Storm, Exper_name, DAtime, sensor, dict_ss_len):
     # Define the low and high frequency for each sensor
     d_lowf = {'atms_npp':0, 'amsr2_gcom-w1':7, 'gmi_gpm':3, 'mhs_n19':0, 'mhs_n18':0, 'mhs_metop-a':0, 'mhs_metop-b':0, 'saphir_meghat':0, 'ssmis_f16': 13, 'ssmis_f17': 13, 'ssmis_f18': 13, 'ssmi_f15':1}
 
+    # Read WRF domain
+    wrf_file = '/scratch/06191/tg854905/Pro2_PSU_MW/'+Storm+'/'+Exper_name+'/fc/'+DAtime+'/wrf_enkf_output_d03_mean'
+    d_wrf_d03 = read_wrf_domain( wrf_file )
+
     # Read Tbs of obs, Hxb, Hxa
     Hx_dir = '/scratch/06191/tg854905/Pro2_PSU_MW/'+Storm+'/'+Exper_name+'/Obs_Hx/MW/'+DAtime
     if sensor == 'gmi_gpm':
@@ -556,9 +570,6 @@ def plot_Tb_diff(Storm, Exper_name, DAtime, sensor, dict_ss_len):
 
     d_all = read_allTb(Tb_file, sensor, dict_ss_len)
 
-    # Read WRF domain
-    wrf_file = '/scratch/06191/tg854905/Pro2_PSU_MW/'+Storm+'/'+Exper_name+'/fc/'+DAtime+'/wrf_enkf_output_d03_mean'
-    d_wrf_d03 = read_wrf_domain( wrf_file )
 
     # Read location from TCvitals
     if any( hh in DAtime[8:10] for hh in ['00','06','12','18']):
@@ -703,8 +714,8 @@ def plot_Tb_diff(Storm, Exper_name, DAtime, sensor, dict_ss_len):
 if __name__ == '__main__':
 
     Storm = 'HARVEY'
-    Exper_name =  'J_DA+J_WRF+J_init'#'JerryRun/MW_THO/'#'J_DA+J_WRF+J_init'
-    Exper_obs = 'J_DA+J_WRF+J_init'
+    Exper_name =  'JerryRun/MW_THO/'#'JerryRun/MW_THO/'#'J_DA+J_WRF+J_init'
+    Exper_obs = 'JerryRun/MW_THO/'
 
     MW_times = ['201708221200',]#'201708230000']
     #MW_times = ['201708221200','201708221300','201708221900','201708222000','201708222100','201708222300','201708230000']
@@ -718,6 +729,10 @@ if __name__ == '__main__':
         obs_file_name = 'microwave_' + DAtime + '_so'
         obs_file_dir = '/work2/06191/tg854905/stampede2/Pro2_PSU_MW/'+Storm+'/Obs_y/MW/Processed_2nd_time/'+Exper_name+'/'+obs_file_name 
         dict_ss_ch = getSensor_Ch( obs_file_dir )
+
+        # Read WRF domain
+        wrf_file = '/scratch/06191/tg854905/Pro2_PSU_MW/'+Storm+'/'+Exper_name+'/fc/'+DAtime+'/wrf_enkf_output_d03_mean'
+        d_wrf_d03 = read_wrf_domain( wrf_file )
 
         # Iterate thru each sensor 
         dict_ss_len = {} # sensor: len_records_before (used to check if the length of readed records matches the length of pre-processed records)
@@ -740,16 +755,16 @@ if __name__ == '__main__':
             print('------------ Interpolate Hx in model resolution to obs location --------------')
             if sensor == 'gmi_gpm':
                 len_pre_all = 0
-                len_pre_processed = interp_simu_to_obs_matlab( Hx_dir, 'gmi_gpm_lf', DAtime, obs_file_dir )
+                len_pre_processed = interp_simu_to_obs_matlab( Hx_dir, 'gmi_gpm_lf', DAtime, obs_file_dir, d_wrf_d03 )
                 time.sleep(60)
                 len_pre_all = len_pre_all + len_pre_processed                
 
-                len_pre_processed = interp_simu_to_obs_matlab( Hx_dir, 'gmi_gpm_hf', DAtime, obs_file_dir )
+                len_pre_processed = interp_simu_to_obs_matlab( Hx_dir, 'gmi_gpm_hf', DAtime, obs_file_dir, d_wrf_d03 )
                 time.sleep(60)
                 len_pre_all = len_pre_all + len_pre_processed
                 dict_ss_len[sensor] = len_pre_all
             else:
-                len_pre_processed = interp_simu_to_obs_matlab( Hx_dir, sensor, DAtime, obs_file_dir )
+                len_pre_processed = interp_simu_to_obs_matlab( Hx_dir, sensor, DAtime, obs_file_dir, d_wrf_d03 )
                 time.sleep(60)
                 dict_ss_len[sensor] = len_pre_processed
 
@@ -759,6 +774,6 @@ if __name__ == '__main__':
             print(sensor)
             print(dict_ss_ch[sensor])
             print('------------ Plot ----------------------')
-            plot_Tb( Storm, Exper_name, DAtime, sensor, dict_ss_len) 
+            #plot_Tb( Storm, Exper_name, DAtime, sensor, dict_ss_len) 
             plot_Tb_diff( Storm, Exper_name, DAtime, sensor, dict_ss_len) 
 

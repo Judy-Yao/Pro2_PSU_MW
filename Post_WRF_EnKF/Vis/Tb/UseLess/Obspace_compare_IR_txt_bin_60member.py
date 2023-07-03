@@ -272,7 +272,7 @@ def interp_simu_to_obs_matlab( Hxb, sensor, DAtime, obs_file_dir, d_wrf_d03 ):
 
     # ---- Write to file and save it to the disk ----
     header = ['Lat','Lon','Ch_num','Tb_obs','Tb_Yb_obs','Tb_Ya_obs']
-    file_name = Hxb.replace('TB_GOES_CRTM_input','Interp_Tb_')
+    file_name = Hxb.replace('TB_GOES_CRTM_input','Interp_Tb')
     file_name = file_name.replace('bin','txt')
     with open(file_name,'w') as f:
         # Add header 
@@ -464,7 +464,7 @@ def plot_Tb(Storm, Exper_name, ifile, DAtime, sensor, ch_list ):
 
     head_tail = os.path.split( ifile )
     mem = head_tail[1].replace('.txt','')
-    plt.savefig('/work2/06191/tg854905/stampede2/Pro2_PSU_MW/'+Storm+'/'+Exper_name+'/Vis_analyze/Tb/IR/60mem_201709170000/'+DAtime+'_'+sensor+'_'+mem+'.png', dpi=300)
+    plt.savefig('/work2/06191/tg854905/stampede2/Pro2_PSU_MW/'+Storm+'/'+Exper_name+'/Vis_analyze/Tb/IR/60mem_201709160000/'+DAtime+'_'+sensor+'_'+mem+'.png', dpi=300)
     #print('Saving the figure: ', '/work2/06191/tg854905/stampede2/Pro2_PSU_MW/'+Storm+'/'+Exper_name+'/Vis_analyze/Tb/IR/Obspace/'+DAtime+'_'+sensor+'_Obspace.png') 
 
 
@@ -575,18 +575,18 @@ def plot_Tb_diff(Storm, Exper_name, Hx_dir, DAtime, sensor, ch_list ):
 if __name__ == '__main__':
 
     Storm = 'MARIA'
-    Exper_name = 'IR-J_DA+J_WRF+J_init-SP-intel17'
+    Exper_name = 'IR-J_DA+J_WRF+J_init-SP-intel17-THO-24hr-hroi900'
     sensor = 'abi_gr'
     ch_list = ['8',]
-    start_time_str = '201709170000' 
-    end_time_str = '201709170000'
+    start_time_str = '201709160000' 
+    end_time_str = '201709160000'
     Interp_to_obs = False
     Consecutive_times = False
     If_plot = True
     num_ens = 60
 
     if not Consecutive_times:
-        IR_times = ['201709170000',]#'201708221800','201708230000','201708230600','201708231200']
+        IR_times = ['201709160000',]#'201708221800','201708230000','201708230600','201708231200']
     else:
         time_diff = datetime.strptime(end_time_str,"%Y%m%d%H%M") - datetime.strptime(start_time_str,"%Y%m%d%H%M")
         time_diff_hour = time_diff.total_seconds() / 3600
@@ -603,7 +603,7 @@ if __name__ == '__main__':
 
             Hx_dir = '/scratch/06191/tg854905/Pro2_PSU_MW/'+Storm+'/'+Exper_name+'/Obs_Hx/IR/'+DAtime+'/'
             # List the Yb and Ya files
-            file_yb = sorted( glob.glob(Hx_dir + '/TB_GOES_CRTM_input_mem060*.bin') ) 
+            file_yb = sorted( glob.glob(Hx_dir + '/TB_GOES_CRTM_input_mem0*.bin') ) 
             for Hxb in file_yb:
                 print('Reading the Hxb: ' + Hxb)
                 Hxa = Hxb.replace( 'input','output')
@@ -622,7 +622,7 @@ if __name__ == '__main__':
             print('------------ Plot ----------------------')         
             print('DAtime: '+ DAtime)
             # List the interpolated files
-            interp_files = sorted( glob.glob(Hx_dir + '/Interp_Tb__mem0*.txt') ) 
+            interp_files = sorted( glob.glob(Hx_dir + '/Interp_Tb_mem0*.txt') ) 
             for ifile in interp_files:
                 print('Plotting ' + ifile)
                 plot_Tb( Storm, Exper_name, ifile, DAtime, sensor, ch_list) 
