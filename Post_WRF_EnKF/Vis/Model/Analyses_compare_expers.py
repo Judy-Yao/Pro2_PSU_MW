@@ -42,24 +42,6 @@ def d03_domain( wrfout_d03 ):
     d03_list = [d03_lon_min, d03_lon_max, d03_lat_min, d03_lat_max]
     return d03_list
 
-def cal_IC_water( filename ):
-    ncdir = nc.Dataset( filename )
-    # read water vapor mixing ratio
-    qvapor_3d = ncdir.variables['QVAPOR'][0,:,:,:] #bottom_top, south_north, west_east
-    qvapor_3d_TtoB = np.flip( qvapor_3d, axis=0 )
-    # calculated the water vapor mixting ratio at the grid center (staggered)
-    qvapor_mass_center = (qvapor_3d_TtoB[1:,:,:] + qvapor_3d_TtoB[0:np.size(qvapor_3d,0)-1,:,:])/2
-    # use the assumption (hydrostatic balance) to calculate IC water
-    PB = ncdir.variables['PB'][0,:,:,:]
-    P = ncdir.variables['P'][0,:,:,:]
-    P_3d = PB + P
-    P_3d_TtoB = np.flip( P_3d,axis=0 )
-    delta_P = P_3d_TtoB[1:,:,:] - P_3d_TtoB[0:np.size(qvapor_3d,0)-1,:,:]
-    vapor_content = qvapor_mass_center*delta_P;
-    IC_water_file = np.sum(vapor_content,axis=0)/9.8
-    return IC_water_file
-
-
 # ------------------------------------------------------------------------------------------------------
 #           Operation: Read, process, and plot precipitable water
 # ------------------------------------------------------------------------------------------------------
@@ -79,7 +61,8 @@ def read_IC_water( Expers,wrf_dirs, DAtime ):
             IC_water = np.zeros( [len(mean_dir), np.size(lat,0), np.size(lat,1)] )
             for i in range(len(mean_dir)):
                 file_name = mean_dir[i]
-                IC_water[i,:,:] = cal_IC_water( file_name )
+                ncdir = nc.Dataset( file_name )
+                IC_water[i,:,:] = getvar( ncdir,'pw' )
             d_IC_water = {'lat':lat,'lon':lon,'IC_water':IC_water}
         else:
             mem_dirs = sorted( glob.glob(wrf_dirs[idx_exper]+DAtime+'/wrf_enkf_input_d03_0*') )
@@ -92,7 +75,8 @@ def read_IC_water( Expers,wrf_dirs, DAtime ):
                 print('Reading '+mem_dir)
                 file_name = mem_dir
                 idx = mem_dirs.index( mem_dir )
-                IC_water[idx,:,:] = cal_IC_water( file_name )  
+                ncdir = nc.Dataset( file_name )
+                IC_water[idx,:,:] = getvar( ncdir,'pw' )
            
             meanOverEns_ICw = np.mean(IC_water,axis=0)
             print(np.shape(meanOverEns_ICw))

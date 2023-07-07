@@ -505,7 +505,10 @@ def plot_hpi_df( Config, domain_range ):
     for iExper in Exper:
         if iExper is not None:
             if os.path.exists( wrf_dir+'/'+Storm+'/'+iExper+'/wrf_df/' ):
-                Exper_content_lbl[iExper] = sorted(fnmatch.filter(os.listdir( wrf_dir+'/'+Storm+'/'+iExper+'/wrf_df/' ),'20*'))  #['201709160600','201709161200','201709161800','201709170000']
+                Exper_content_lbl[iExper] = ['WSM6_wQV_WSM6','WSM6_wQV_THO_all',]
+                #Exper_content_lbl[iExper] = ['THO_wQV_THO','THO_wQV_WSM6_d03','THO_wQV_WSM6_all']
+                #Exper_content_lbl[iExper] = sorted(fnmatch.filter(os.listdir( wrf_dir+'/'+Storm+'/'+iExper+'/wrf_df/201709160600/' ),'IR_*')) 
+                #Exper_content_lbl[iExper] = sorted(fnmatch.filter(os.listdir( wrf_dir+'/'+Storm+'/'+iExper+'/wrf_df/' ),'20*'))  
             else:
                 Exper_content_lbl[iExper] = None
         else:
@@ -529,8 +532,8 @@ def plot_hpi_df( Config, domain_range ):
         Btk_start = '201709030000'
         Btk_end = '201709080000'
     elif Storm == 'MARIA':
-        Btk_start = '2017091600'#'201709160000'
-        Btk_end = '201709210000'
+        Btk_start = '2017091600'#'201709160600'
+        Btk_end = '201709202000'
     elif Storm == 'JOSE':
         Btk_start = '201709050000'
         Btk_end = '201709100000'
@@ -552,11 +555,11 @@ def plot_hpi_df( Config, domain_range ):
 
     Ana_color = ['#748b97', '#748b97'] #'#eea990'] #'#748b97'
     # Customize linestyles
-    Line_types = ['--','-']
+    Line_types = ['-','--',':']
     
     # Customize labels ###### Chnage it every time !!!!!!!!!!!!!!! 
     #Labels = ['GTS+HPI(hroi:300km): ']
-    Labels = ['conv:','IR']
+    Labels = ['','']
     #Labels = ['Stp2-Intel17 ','Eps-Intel19 ']
     Ana_labels = ['conv Als','IR Als' ]
     #Ana_labels = ['Stampede2 Analysis', 'Expanse Analysis']
@@ -583,8 +586,10 @@ def plot_hpi_df( Config, domain_range ):
                 for it in Exper_content_lbl[key]:
                     print('Plotting ', it)
                     print(wrf_dir+'/'+Storm+'/'+key+'/wrf_df/'+it)
-                    HPI_model = read_rsl_error(Storm, key, wrf_dir+'/'+Storm+'/'+key+'/wrf_df/'+it, it, DF_model_end)
-                    plot_one( ax0, ax1, ax2, HPI_model, Color_set['c'+str(iExper)][ic], Line_types[iExper], 1.5, Labels[iExper]+it )
+                    HPI_model = read_rsl_error(Storm, key, wrf_dir+'/'+Storm+'/'+key+'/wrf_df/201709161200/'+it, '201709161200', DF_model_end) 
+                    #HPI_model = read_rsl_error(Storm, key, wrf_dir+'/'+Storm+'/'+key+'/wrf_df/'+it, it, DF_model_end)
+                    plot_one( ax0, ax1, ax2, HPI_model, Color_set['c'+str(iExper)][1], Line_types[ic], 1.5, Labels[iExper]+it )
+                    #plot_one( ax0, ax1, ax2, HPI_model, Color_set['c'+str(iExper)][ic], Line_types[iExper], 1.5, Labels[iExper]+it )
                     #plot_one( ax0, ax1, ax2, HPI_model, Color_set['c0'][ic], '-', 1, Labels[iExper]+it )
                     #print(wrf_dir+'/'+Storm+'/'+key+'/wrf_df_Judy_stampd_intel19/'+it)
                     #HPI_model = read_rsl_error(Storm, key, wrf_dir+'/'+Storm+'/'+key+'/wrf_df_Judy_stampd_intel19/'+it, it, DF_model_end)
@@ -628,9 +633,9 @@ def plot_hpi_df( Config, domain_range ):
     ax0.set_title( 'Track',fontsize = 15 )
     ax1.set_title( 'MSLP (hPa)',fontsize = 15 )
     ax2.set_title( 'Vmax ($\mathregular{ms^{-1}}$)',fontsize = 15 )
-    fig.suptitle('WSM6',fontsize = 15)
+    fig.suptitle('IR:201709161200',fontsize = 15)
 
-    des_name = '/work2/06191/tg854905/stampede2/Pro2_PSU_MW/'+Storm+'/'+Exper[0]+'/Vis_analyze/Model/'+Storm+'_forecast_WSM6.png'
+    des_name = '/work2/06191/tg854905/stampede2/Pro2_PSU_MW/'+Storm+'/'+Exper[0]+'/Vis_analyze/Model/'+Storm+'_forecast_IR_WSM6.png'
     plt.savefig( des_name )
     print( 'Saving the figure to '+des_name+'!' )
     #fig.suptitle('IR-only:201708221800', fontsize=10)
@@ -642,12 +647,12 @@ if __name__ == '__main__':
     big_dir = '/scratch/06191/tg854905/Pro2_PSU_MW/'
 
     # configuration
-    Storm = 'IRMA'
-    Exper_name = ['J_DA+J_WRF+J_init-SP-intel17-WSM6-30hr-hroi900','IR-J_DA+J_WRF+J_init-SP-intel17-WSM6-30hr-hroi900'] 
+    Storm = 'MARIA'
+    Exper_name = ['Post_Experiment',] 
     DF_model_start = '20170822180000' # Default value of DF_model_start. Especially useful when dealing with ensemble forecast
     mem_id = 'mean' # Default value of member id. Especially useful when dealing with deterministic forecast
     read_fc_wrfout = False # Feature that decides the way of reading HPI from model files
-    Plot_analyses = True # Feature that plots the analyses of an experiment
+    Plot_analyses = False # Feature that plots the analyses of an experiment
 
     Config = [big_dir, Storm, Exper_name, DF_model_start, mem_id, read_fc_wrfout, Plot_analyses]
 
@@ -659,7 +664,7 @@ if __name__ == '__main__':
         lat_max = 31
     elif Storm == 'IRMA':
         lon_min = -72
-        lon_max = -42
+        lon_max = -44
         lat_min = 10
         lat_max = 30
     elif Storm == 'MARIA':
