@@ -21,6 +21,7 @@ import pickle
 import warnings
 
 import Util_Vis
+import Util_data as UD
 import Read_Obspace_IR as ROIR
 import corr_2DIR_to3Dmodel as stat_3D
 import Diagnostics as Diag
@@ -105,12 +106,15 @@ def Find_nearest_col( Hx_dir, wrf_dir, DAtime, sensor):
     Idx_nearest = []
     for io in range(len(lon_obs)):
         Idx_nearest.append( int(Idx_j[io]*len(lon_x1d)+Idx_i[io]) )
+    
     # check 
-    print('Checking the 3000th obs... lon: '+str(lon_obs[99])+' lat: '+str(lat_obs[99]))
-    print('Its nearest model grid -- lon: '+str( lon_x[Idx_nearest[99]] )+' lat: '+str( lat_x[Idx_nearest[99]] ))
+    check_idx = 3000
+    print('Checking the '+str(check_idx)+'th obs... lon: '+str(lon_obs[check_idx])+' lat: '+str(lat_obs[check_idx]))
+    print('Its nearest model grid -- lon: '+str( lon_x[Idx_nearest[check_idx]] )+' lat: '+str( lat_x[Idx_nearest[check_idx]] ))
 
     if len(np.unique(Idx_nearest)) != len(lon_obs):
         warnings.warn('The nearest model grids might be repetitive!')
+        #raise ValueError('The nearest model grids might be repetitive!')
         print('Number of obs is '+str(len(lon_obs))+' while the number of the unique model location is '+str(len(np.unique(Idx_nearest))))
 
     end_time = time.process_time()
@@ -165,6 +169,9 @@ def cal_2Dcorr_IR_ColVar( DAtime, var_name):
     print("Elapsed (after compilation) of covariance calculation = {}s".format((end - start)))
     cov_xb_hxb = cov_xb_hxb / ( num_ens-1 )
 
+    # Check if there are any NaN values using assert
+    assert not np.isnan(cov_xb_hxb).any()
+
     # Calculate the correlation between Xb and Hxb
     print('Calculating the correlation between Tbs and ' + var_name + '......' )
     start = time.perf_counter()
@@ -202,12 +209,12 @@ def plot_corr_snapshot( lat,lon,Interp_corr,ver_coor ):
     d_wrf_d03 = ROIR.read_wrf_domain( wrf_file )
 
     # Read Tbs of Hxb
-    Tb_file = big_dir+Storm+'/'+Exper_name+'/Obs_Hx/IR/'+DAtime+'/' + "/mean_obs_res_d03" + DAtime + '_' +  sensor + '.txt'
+    Tb_file = big_dir+Storm+'/'+Exper_name+'/Obs_Hx/IR/'+DAtime+'/' + "/mean_obs_res_d03_" + DAtime + '_' +  sensor + '.txt'
     d_all = ROIR.read_Tb_obsRes(Tb_file, sensor )
 
     # Read location from TCvitals
     if any( hh in DAtime[8:10] for hh in ['00','06','12','18']):
-        tc_lon, tc_lat = ROIR.read_TCvitals(small_dir+Storm+'/TCvitals/'+Storm+'_tcvitals', DAtime)
+        tc_lon, tc_lat = UD.read_TCvitals(small_dir+Storm+'/TCvitals/'+Storm+'_tcvitals', DAtime)
         print( 'Location from TCvital: ', tc_lon, tc_lat )
 
     # ------------------ Plot -----------------------
@@ -219,8 +226,8 @@ def plot_corr_snapshot( lat,lon,Interp_corr,ver_coor ):
     lon_min = d_wrf_d03['lon_min']
     lon_max = d_wrf_d03['lon_max']
 
-    min_corr = -1
-    max_corr = 1
+    min_corr = -0.5
+    max_corr = 0.5
     for isub in range(6):
         ax.flat[isub].set_extent([lon_min, lon_max, lat_min, lat_max], crs=ccrs.PlateCarree())
         ax.flat[isub].coastlines(resolution='10m', color='black',linewidth=0.5)
@@ -232,9 +239,10 @@ def plot_corr_snapshot( lat,lon,Interp_corr,ver_coor ):
 
     # Colorbar
     cbaxes = fig.add_axes([0.91, 0.1, 0.03, 0.8])
-    #cb_corr_ticks = np.linspace(min_corr, max_corr, 5, endpoint=True)
+    color_ticks = np.linspace(min_corr, max_corr, 5, endpoint=True)
     cbar = fig.colorbar(cs, cax=cbaxes,fraction=0.046, pad=0.04, )
-    cbar.ax.tick_params(labelsize=6)
+    cbar.set_ticks( color_ticks )
+    cbar.ax.tick_params(labelsize=11)
 
     #subplot title
     font = {'size':15,}
@@ -242,7 +250,7 @@ def plot_corr_snapshot( lat,lon,Interp_corr,ver_coor ):
         ax.flat[isub].set_title( str(ver_coor[isub])+' KM', font, fontweight='bold')
 
     #title for all
-    fig.suptitle(Storm+': '+Exper_name+'(ver_corr of Qvapor&Tb)', fontsize=8, fontweight='bold')
+    fig.suptitle(Storm+': '+Exper_name+'(ver_corr of Qvapor&Tb)', fontsize=10, fontweight='bold')
 
     # Axis labels
     lon_ticks = list(range(math.ceil(lon_min)-2, math.ceil(lon_max)+2,2))
@@ -310,7 +318,8 @@ def corr_snapshot( DAtime,var_name ):
    # Make interpolation
     if interp_H:
         ncdir = nc.Dataset( mean_xb, 'r')
-        H_of_interest = [3.5,4.0,5.0,7.0,9.0,11.0]
+        H_of_interest = [1.0,3.0,5.0,7.0,9.0,11.0]
+        #H_of_interest = [3.5,4.0,5.0,7.0,9.0,11.0]
         Interp_corr_xb_hxb = np.zeros( [len(H_of_interest),len(idx_xb)] )
         PHB = ncdir.variables['PHB'][0,:,:,:]
         PH = ncdir.variables['PH'][0,:,:,:]
@@ -591,16 +600,16 @@ if __name__ == '__main__':
     small_dir =  '/work2/06191/tg854905/stampede2/Pro2_PSU_MW/'
 
     # ---------- Configuration -------------------------
-    Storm = 'HARVEY'
-    Exper_name = 'JerryRun/IR_THO'
+    Storm = 'MARIA'
+    Exper_name = 'IR-J_DA+J_WRF+J_init-SP-intel17-WSM6-24hr-hroi900'
 
     v_interest = [ 'QVAPOR',]
     sensor = 'abi_gr'
     ch_list = ['8',]
     fort_v = ['obs_type','lat','lon','obs']
 
-    start_time_str = '201708221200'
-    end_time_str = '201708221200'
+    start_time_str = '201709160000'
+    end_time_str = '201709160000'
     Consecutive_times = True
 
     # Number of ensemble members
@@ -609,9 +618,8 @@ if __name__ == '__main__':
     xmax = 297
     ymax = 297
     
-    to_obs_res = False
+    to_obs_res = True
     ens_Interp_to_obs = False
-    If_interp_before_pert = True
     
     interp_P = False
     P_of_interest = list(range( 995,49,-20 ))
@@ -651,12 +659,13 @@ if __name__ == '__main__':
         for DAtime in DAtimes:
             # Hxb
             Hx_dir = big_dir+Storm+'/'+Exper_name+'/Obs_Hx/IR/'+DAtime+'/'
+            wrf_dir = big_dir+Storm+'/'+Exper_name+'/fc/'+DAtime+'/'
             if to_obs_res:
                 print('At obs space...')
-                stat_3D.cal_pert_stddev_obsRes_Hxb( DAtime, sensor, Hx_dir, If_save, If_interp_before_pert, fort_v, wrf_dir)
+                stat_3D.cal_pert_stddev_obsRes_Hxb( DAtime, sensor, Hx_dir, If_save, fort_v, wrf_dir)
             else:
                 print('At model space...')
-                stat_3D.cal_pert_stddev_modelRes_Hxb( DAtime, sensor, Hx_dir, If_save)
+                stat_3D.cal_pert_stddev_modelRes_Hxb( DAtime, sensor, Hx_dir, If_save, wrf_dir)
             # Xb
             wrf_dir = big_dir+Storm+'/'+Exper_name+'/fc/'+DAtime+'/'
             for var_name in v_interest:

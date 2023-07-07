@@ -97,77 +97,6 @@ def corr_Tb_to3D( cov_xb_hxb,stddev_xb,stddev_hxb ):
     return res
 
 
-# ------------------------------------------------------------------------------------------------------
-#           Object: ; Operation: Write or read Tbs at obs locations
-# ------------------------------------------------------------------------------------------------------
-# Interpolate IR Tbs in model resolution to assimilated obs locations and Write it to a txt file
-def interp_simu_to_obs_matlab_ens( d_obs, Hx_dir, sensor, ch_list,  DAtime ):
-
-    # Number of ensemble members
-    num_ens = 60
-    # Dimension of the domain
-    xmax = 297
-    ymax = 297
-
-    start_time=time.process_time()
-
-    # Read IR_obs attributes
-    IR_obs = d_obs['obs']
-    lon_obs = d_obs['lon']
-    lat_obs = d_obs['lat']
- 
-    hxb_ens = np.zeros( shape=[num_ens,len(d_obs['obs_type'])] )
-    file_hxb = sorted( glob.glob(Hx_dir + '/TB_GOES_CRTM_input_mem0*.bin') )
-    # Get common variables: lat,lon
-    tmp_control = np.fromfile( file_hxb[0],dtype='<f4')
-    n_ch = int( len(tmp_control)/(xmax*ymax) - 2 )
-    tmp_data = tmp_control[:].reshape(n_ch+2,ymax,xmax)
-    lon_x =  list(tmp_data[0,:,:].flatten()) #longitude
-    lat_x = list(tmp_data[1,:,:].flatten())  #latitude
-    ## Interpolate to obs location
-    # start a matlab process
-    eng = matlab.engine.start_matlab() 
-    for ifile in file_hxb:
-        print(ifile)
-        idx = file_hxb.index( ifile )
-        tmp_control = np.fromfile( ifile,dtype='<f4') # <: little endian; f: float; 4: 4 bytes
-        n_ch = int( len(tmp_control)/(xmax*ymax) - 2 )
-        tmp_data = tmp_control[:].reshape(n_ch+2,ymax,xmax)
-        Yb_x = list(tmp_data[2,:,:].flatten())
-        
-        for ich in ch_list:
-            if ifile == file_hxb[0]:
-                Ch_all = np.full( np.shape(IR_obs), ich )
-            if sum(np.isnan(Yb_x)) != 0:
-                warnings.warn('NaN value exists in Yb_x!') 
-            # interpolate simulated Tbs to obs location
-            mYb_obspace = eng.griddata(matlab.double(lon_x), matlab.double(lat_x), matlab.double(Yb_x), matlab.double(lon_obs), matlab.double(lat_obs) )
-            Yb_obspace = np.array(mYb_obspace._data)
-            hxb_ens[idx,:] = ["{0:.4f}".format(item) for item in Yb_obspace]
-    # end the matlab process
-    eng.quit()
-
-    # Stack each list into an array
-    all_attrs = np.row_stack( (Ch_all,lat_obs,lon_obs,IR_obs,hxb_ens)  )
-    all_attrs = all_attrs.transpose()
-    print('Shape of all_attrs: '+str(np.shape(all_attrs)))
-    # ---- Write to file and save it to the disk ----
-    header = ['Ch_num','Lat','Lon','Tb_obs','Hxb']
-    file_name = Hx_dir + "/Hxb_ens_obs_res_d03_" + DAtime + '_' +  sensor + '.txt'
-    with open(file_name,'w') as f:
-        # Add header 
-        f.write('\t'.join( item.rjust(6) for item in header ) + '\n' )
-        # Write the record to the file serially
-        len_records = np.shape( all_attrs )[0]
-        for irow in range( len_records ):
-            irecord =  [str(item) for item in all_attrs[irow,:] ]
-            f.write('\t'.join( item.rjust(6) for item in irecord ) + '\n')
-    print('Save '+file_name)
-    end_time = time.process_time()
-    print ('time needed: ', end_time-start_time, ' seconds')
-
-    return None 
-
 # Read simulated Tb at obs locations for all members
 def read_ens_obspace( ens_Tb_file, sensor ):
 
@@ -238,15 +167,17 @@ def verify_hxb( var, wrf_dir=None ):
     ax.set_extent([lon_min,lon_max,lat_min,lat_max], crs=ccrs.PlateCarree())
     ax.coastlines(resolution='10m', color='black',linewidth=0.5)
     if to_obs_res:
-        cs = ax.scatter(lon_obs,lat_obs,3,var,cmap='rainbow',vmin=0,vmax=15,transform=ccrs.PlateCarree())
+        cs = ax.scatter(lon_obs,lat_obs,3,var,cmap='jet',vmin=0,vmax=25,transform=ccrs.PlateCarree())
     else:
-        cs = ax.scatter(xlon,xlat,1,var,cmap='rainbow',vmin=0,vmax=15,transform=ccrs.PlateCarree())
+        cs = ax.scatter(xlon,xlat,1,var,cmap='jet',vmin=0,vmax=25,transform=ccrs.PlateCarree())
 
-   # Colorbar
+    # Colorbar
     cbaxes = fig.add_axes([0.91, 0.1, 0.03, 0.8])
-    color_ticks = [0,3,6,9,12,15]
+    #color_ticks = [0.1,0.3,0.5,0.7,0.9]
     cbar = fig.colorbar(cs, cax=cbaxes)
-    cbar.set_ticks( color_ticks )
+    #cbar = fig.colorbar(cs, cax=cbaxes,ticks=color_ticks,fraction=0.046, pad=0.04)
+    #bounds_str =  [ str(item) for item in color_ticks ]
+    #cbar.ax.set_xticklabels( bounds_str, rotation=45)
     cbar.ax.tick_params(labelsize=12)
 
     # Axis labels
@@ -306,7 +237,7 @@ def cal_pert_stddev_modelRes_Hxb( DAtime, sensor, Hx_dir, If_save, wrf_dir):
 
     # Read the ensemble mean calculated from the other program: Obspace_compare_IR_txt_bin.py 
     meanYb = []
-    mean_hxb = Hx_dir + "mean_model_res_d03_" + DAtime + '_' +  sensor + '.txt'
+    mean_hxb = Hx_dir + "mean_model_res_d03" + DAtime + '_' +  sensor + '.txt'
     print('Reading the ensemble mean of Hxb: ', mean_hxb,'...')
     with open(mean_hxb) as f:
         next(f)
@@ -316,9 +247,9 @@ def cal_pert_stddev_modelRes_Hxb( DAtime, sensor, Hx_dir, If_save, wrf_dir):
         meanYb.append( float(split_line[3]) )
     meanYb = np.array( meanYb )
     
-    hxb_ens = np.zeros( shape=[num_ens+1,xmax*ymax] ) # the 0 to last - 1 rows are ensemble perturbations, the last row is mean value
+    hxb_ens = np.zeros( shape=[num_ens,xmax*ymax] ) # the 0 to last - 1 rows are ensemble perturbations, the last row is mean value
     hxb_ens[:] = np.nan
-    hxb_ens[num_ens,:] = meanYb
+    #hxb_ens[num_ens,:] = meanYb
     # Read the ensemble of Hxb at model locations
     file_hxb = sorted( glob.glob(Hx_dir + '/TB_GOES_CRTM_input_mem0*.bin') )
     for ifile in file_hxb:
@@ -328,7 +259,6 @@ def cal_pert_stddev_modelRes_Hxb( DAtime, sensor, Hx_dir, If_save, wrf_dir):
         tmp_data = tmp_control[:].reshape(n_ch+2,ymax,xmax)
         Yb_x = tmp_data[2,:,:].flatten()
         hxb_ens[idx,:] = Yb_x - meanYb
-
 
     # May save the perturbations
     if If_save:
@@ -350,9 +280,6 @@ def cal_pert_stddev_modelRes_Hxb( DAtime, sensor, Hx_dir, If_save, wrf_dir):
     var_hxb = var_hxb / ( num_ens-1 )
     stddev_hxb = np.sqrt( var_hxb )
 
-    # Check if there are any NaN values using assert
-    assert not np.isnan(stddev_hxb).any()
-
     verify_hxb( stddev_hxb, wrf_dir )
 
     # May save the standard deviation
@@ -367,7 +294,7 @@ def cal_pert_stddev_modelRes_Hxb( DAtime, sensor, Hx_dir, If_save, wrf_dir):
 
 
 # Calculate values in observation space
-def cal_pert_stddev_obsRes_Hxb( DAtime, sensor, Hx_dir, If_save, fort_v, wrf_dir=None):
+def cal_pert_stddev_obsRes_Hxb( DAtime, sensor, Hx_dir, If_save, fort_v,  If_interp_before_pert=True, wrf_dir=None):
 
     # Number of ensemble members
     num_ens = 60
@@ -380,29 +307,62 @@ def cal_pert_stddev_obsRes_Hxb( DAtime, sensor, Hx_dir, If_save, fort_v, wrf_dir
     start_time=time.process_time()
     
     # Read the ensemble mean calculated from the other program: Obspace_compare_IR_txt_bin.py 
+    latYb = []
+    lonYb = []
     meanYb = []
-    mean_hxb = Hx_dir + "mean_obs_res_d03_" + DAtime + '_' +  sensor + '.txt'
+    mean_hxb = Hx_dir + "mean_obs_res_d03" + DAtime + '_' +  sensor + '.txt'
     print('Reading the ensemble mean of Hx: ', mean_hxb,'...')
     with open(mean_hxb) as f:
         next(f)
         all_lines = f.readlines()
     for line in all_lines:
         split_line = line.split()
-        meanYb.append( float(split_line[4]) )
+        latYb.append( float(split_line[0]) )
+        lonYb.append( float(split_line[1]) )
+        meanYb.append( float(split_line[3]) )
+    latYb = np.array( latYb )
+    lonYb = np.array( lonYb )
     meanYb = np.array( meanYb )
 
     hxb_ens_os = np.zeros( shape=[num_ens+1,len(meanYb)] ) # the 0 to last - 1 rows are ensemble perturbations, the last row is mean value
     hxb_ens_os[:] = np.nan
     hxb_ens_os[num_ens,:] = meanYb
     
-    # Read the ensemble of Hxb at obs locations
-    ens_Tb_file = Hx_dir + "/Hxb_ens_obs_res_d03_" + DAtime + '_' +  sensor + '.txt'
-    print('Reading the ensemble of Hx: ', ens_Tb_file,'...')
-    d_obspace = read_ens_obspace( ens_Tb_file, sensor )
-    hxb_ens_os = d_obspace['hxb_ens']
-    print('Shape of hxb_ens_obs: '+str(np.shape(hxb_ens_os)))
-    for im in range( num_ens ):
-        hxb_ens_os[im,:] = hxb_ens_os[im,:] - meanYb
+    # interp model-equivalent ens Tbs to obs location first
+    if If_interp_before_pert: 
+        # Read the ensemble of Hxb at obs locations
+        ens_Tb_file = Hx_dir + "/Hxb_ens_obs_res_d03_" + DAtime + '_' +  sensor + '.txt'
+        print('Reading the ensemble of Hx: ', ens_Tb_file,'...')
+        d_obspace = read_ens_obspace( ens_Tb_file, sensor )
+        hxb_ens_os = d_obspace['hxb_ens']
+        print('Shape of hxb_ens_obs: '+str(np.shape(hxb_ens_os)))
+        for im in range( num_ens ):
+            hxb_ens_os[im,:] = hxb_ens_os[im,:] - meanYb
+    else: # calculate perturbations at model resolution first then interpolate to obs locations
+        print('Interpolate perturbation from model res to obs location...')
+        # Get lon_x and lat_x
+        mean_xb = wrf_dir + '/fc/'+ DAtime +'/wrf_enkf_input_d03_mean'
+        ncdir = nc.Dataset( mean_xb, 'r')
+        lon_x = ncdir.variables['XLONG'][0,:,:].flatten()
+        lat_x = ncdir.variables['XLAT'][0,:,:].flatten()
+        # Get lon_obs and lat_obs
+        file_Diag = wrf_dir+'/run/'+DAtime+'/enkf/d03/fort.10000'
+        d_obs = Diag.Find_IR( file_Diag, fort_v )
+        lon_obs = list( d_obs['lon'] )
+        lat_obs = list( d_obs['lat'] )
+        # Read the ensemble of Hxb perturbations at model locations
+        des_path = Hx_dir+ "Hxb_ensPert_modelRes_" + DAtime + '_' +  sensor + '.pickle'
+        with open( des_path,'rb' ) as f:
+            hxb_ens_ms = pickle.load( f )
+        # Interpolate to obs location
+        eng = matlab.engine.start_matlab()
+        for im in range( num_ens ):
+            print('member '+str(im))
+            mYb_obspace = eng.griddata(matlab.double(lon_x.tolist()), matlab.double(lat_x.tolist()), matlab.double(hxb_ens_ms[im,:].tolist()), matlab.double(lon_obs), matlab.double(lat_obs) )
+            Yb_obspace = np.array(mYb_obspace._data)
+            hxb_ens_os[im,:] = Yb_obspace
+        # end the matlab process
+        eng.quit()
     
     # May save the perturbations
     if If_save:
@@ -424,11 +384,12 @@ def cal_pert_stddev_obsRes_Hxb( DAtime, sensor, Hx_dir, If_save, fort_v, wrf_dir
     var_hxb = var_hxb / ( num_ens-1 )
     stddev_hxb = np.sqrt( var_hxb )
 
-    # Check if there are any NaN values using assert
-    assert not np.isnan(stddev_hxb).any()
+    # Find the maxium stddev of hxb and its location
+    max_stddev = np.amax( stddev_hxb )
+    idx_max_obs =  np.where( stddev_hxb==max_stddev )[0][0] 
 
     # verify the standard deviation of hxb
-    verify_hxb( stddev_hxb, wrf_dir )
+    #verify_hxb( stddev_hxb, wrf_dir )
 
     # May save the standard deviation
     if If_save:
@@ -440,69 +401,6 @@ def cal_pert_stddev_obsRes_Hxb( DAtime, sensor, Hx_dir, If_save, fort_v, wrf_dir
 
     return None
 
-
-def cal_pert_stddev_xb( DAtime, wrf_dir, var_name, If_save ):
-  
-    # Number of ensemble members
-    num_ens = 60
-    # Dimension of the domain
-    xmax = 297
-    ymax = 297
-  
-    ### ------------------------- Perturbation -------------------------
-    print("Read the ensemble and calculate the perturbations for Xb...")
-    start_time=time.process_time()
-    
-    if 'Q' in var_name:
-        nLevel = 42
-    
-    xb_ens = np.zeros( shape=[nLevel,num_ens+1,xmax*ymax] )
-    xb_ens[:] = np.nan
-    # read the ensemble mean of xb
-    mean_xb = wrf_dir + '/wrf_enkf_input_d03_mean'
-    ncdir = nc.Dataset( mean_xb, 'r')
-    var = ncdir.variables[var_name][0,:,:,:]
-    xb_ens[:,num_ens,:] = var.reshape(nLevel,xmax*ymax)
-    # read the ensemble of xb
-    file_xb = sorted( glob.glob(wrf_dir + '/wrf_enkf_input_d03_0*') )
-    for ifile in file_xb:
-        idx = file_xb.index( ifile )
-        ncdir = nc.Dataset( ifile, 'r')
-        var = ncdir.variables[var_name][0,:,:,:]
-        xb_ens[:,idx,:] = var.reshape(nLevel,xmax*ymax)
-    
-    # Check if there are any NaN values using assert
-    assert not np.isnan(xb_ens).any()
-
-    # May save the perturbations
-    if If_save:
-        des_path = wrf_dir+ "xb_d03_3D_ensPert_" + DAtime + '_' + var_name + '.pickle'
-        f = open( des_path, 'wb' )
-        pickle.dump( xb_ens, f )
-        f.close()
-        print('Save '+des_path)
-
-    end_time = time.process_time()
-    print ('time needed: ', end_time-start_time, ' seconds')
-
-    ### ------------------------- Variance -------------------------
-    print('Calculating the ensemble variance of model variable......' )
-    start = time.perf_counter()
-    var_xb = var_3D( xb_ens[:,:num_ens,:] )
-    end = time.perf_counter()
-    print("Elapsed (after compilation) = {}s".format((end - start)))
-    var_xb = var_xb / ( num_ens-1 )
-    stddev_xb = np.sqrt( var_xb )
-
-    # May save the standard deviation
-    if If_save:
-        des_path = wrf_dir+ "xb_d03_3D_ensStddev_" + DAtime + '_' +  var_name + '.pickle'
-        f = open( des_path, 'wb' )
-        pickle.dump( stddev_xb, f )
-        f.close()
-        print('Save '+des_path)
-
-    return None
 
 
 # ------------------------------------------------------------------------------------------------------
@@ -570,225 +468,8 @@ def calculate_corr( DAtime, Hx_dir, sensor, wrf_dir, var_name, idx_xb, idx_hxb):
     return corr_xb_hxb
 
 
-# ------------------------------------------------------------------------------------------------------
-#           Operation: find obs of interest
-# ------------------------------------------------------------------------------------------------------
-
-# Collect indices that are cloudy for all ensemble members (not very useful for Hxb ens at obs location )
-def find_cloudy_allEns( DAtime, sensor, Hx_dir):
-
-    print("Looking for regions that are cloudy for all ensemble members...")
-    start_time=time.process_time()
-
-    ens_Tb_file = Hx_dir + "/Hxb_ens_obs_res_d03_" + DAtime + '_' +  sensor + '.txt'
-    print('Reading the ensemble of Hx: ', ens_Tb_file,'...')
-    d_obspace = read_ens_obspace( ens_Tb_file, sensor )
-    Tb_ens = d_obspace['hxb_ens']
-    # Find the Tb threshold when all ens mems are cloudy
-    cold_Tb_start = 80
-    cold_Tb = cold_Tb_start
-    common_idx = None
-    while common_idx is None:
-        idx_cloud_ens = np.where(Tb_ens<cold_Tb) # technique to save memory: sparisity
-        # idea: any member should have at least one sample that meets the first requirement ( its value is less than the threshold)
-        if not np.any( idx_cloud_ens ): # no member meets the 1st requirement
-            common_idx = None
-            cold_Tb = cold_Tb + 1
-            continue
-        elif len(np.unique(idx_cloud_ens[0])) != num_ens: # not all members meet the 1st requirement
-            common_idx = None
-            cold_Tb = cold_Tb + 1
-            continue
-        else: # all members meet the 1st requirement
-            idx_mem1 = np.where(idx_cloud_ens[0]==0)[0]
-            idx_mem2 = np.where(idx_cloud_ens[0]==1)[0]
-            common_ini = list(set( idx_cloud_ens[1][idx_mem1] ).intersection( idx_cloud_ens[1][idx_mem2] ))
-            for imem in range(1,num_ens-1):
-                    if imem == 1:
-                        common_idx = common_ini
-                    idx_mem = np.where(idx_cloud_ens[0]==imem)[0]
-                    common_idx = list(set( common_idx ).intersection( idx_cloud_ens[1][idx_mem] ))
-            if not np.any( common_idx ): # not all members are cloudy at the same location(s)
-                common_idx = None
-                cold_Tb = cold_Tb + 1
-                continue
-            else:
-                print('The Tb threshold when all members are cloudy at the same locations is: ' +str(cold_Tb)+ ' K!'  )
-                print('Indices of cloudy region:'+str(common_idx))
-                return common_idx
 
 
-def find_coldest_obs( DAtime, sensor, Hx_dir ):
-
-    print("Looking for cloudy regions based on observations...")
-    idx_cloud = []
-    # Read assimilated obs 
-    file_Diag = big_dir+Storm+'/'+Exper_name+'/run/'+DAtime+'/enkf/d03/fort.10000'
-    d_obs = Diag.Find_IR( file_Diag, fort_v )
-    coldest_Tb = np.amin( d_obs['obs'] )
-    print('The coldest Tb is '+str(coldest_Tb)+ ' K!')
-    idx_cloud.append( d_obs['obs'].index( coldest_Tb ))
-    print('Indices of cloudy region:'+str(idx_cloud))
-    return idx_cloud,d_obs
-
-
-# ------------------------------------------------------------------------------------------------------
-#           Operation: Plot the correlation between the specified Tb and the 3D model (at specified levels)
-# ------------------------------------------------------------------------------------------------------
-def plot_corr_cloud_3Dmodel(big_dir, small_dir, Storm, Exper_name, var_name, DAtime, sensor, P_of_interest, d_model_res, cloud_idx ):
-
-    # Read WRF domain
-    wrf_file = big_dir+Storm+'/'+Exper_name+'/fc/'+DAtime+'/wrf_enkf_output_d03_mean'
-    d_wrf_d03 = ROIR.read_wrf_domain( wrf_file )
-
-    # Read Tbs of Hxb
-    Tb_file = big_dir+Storm+'/'+Exper_name+'/Obs_Hx/IR/'+DAtime+'/' + "/mean_obs_res_d03" + DAtime + '_' +  sensor + '.txt'
-    d_all = ROIR.read_allTb(Tb_file, sensor )
-
-    # Read location from TCvitals
-    if any( hh in DAtime[8:10] for hh in ['00','06','12','18']):
-        tc_lon, tc_lat = ROIR.read_TCvitals(small_dir+Storm+'/TCvitals/'+Storm+'_tcvitals', DAtime)
-        print( 'Location from TCvital: ', tc_lon, tc_lat )
-
-    # ------------------ Plot -----------------------
-    fig, ax=plt.subplots(2, 2, subplot_kw={'projection': ccrs.PlateCarree()}, gridspec_kw = {'wspace':0, 'hspace':0}, linewidth=0.5, sharex='all', sharey='all',  figsize=(6.5,6.5), dpi=400)
-
-    # Define the domain
-    lat_min = d_wrf_d03['lat_min']
-    lat_max = d_wrf_d03['lat_max']
-    lon_min = d_wrf_d03['lon_min']
-    lon_max = d_wrf_d03['lon_max']
-
-    ### ---Plot Hxb---
-    #Define Tb threshold
-    min_T = 185
-    max_T = 325
-    IRcmap = Util_Vis.IRcmap( 0.5 )
-    ax[0,0].set_extent([lon_min,lon_max,lat_min,lat_max], crs=ccrs.PlateCarree())
-    ax[0,0].coastlines(resolution='10m', color='black',linewidth=0.5)
-    xb_Tb = ax[0,0].scatter(d_all['lon_obs'],d_all['lat_obs'],4,c=d_all['meanYb_obs'],edgecolors='none', cmap=IRcmap, vmin=min_T, vmax=max_T,transform=ccrs.PlateCarree()) 
-    if any( hh in DAtime[8:10] for hh in ['00','06','12','18'] ):
-        ax[0,0].scatter(tc_lon, tc_lat, s=3, marker='*', edgecolors='white', transform=ccrs.PlateCarree())
-    # Colorbar
-    #caxes = fig.add_axes([0.12, 0.1, 0.45, 0.02])
-    #Tb_bar = fig.colorbar(xb_Tb,ax=ax[0,0],orientation="horizontal", cax=caxes)
-    #Tb_bar.ax.tick_params()
-
-    ### ---Plot correlation---
-    min_corr = -1
-    max_corr = 1
-    for isub in range(1,4):
-        ax.flat[isub].set_extent([lon_min, lon_max, lat_min, lat_max], crs=ccrs.PlateCarree())
-        ax.flat[isub].coastlines(resolution='10m', color='black',linewidth=0.5)
-        cs = ax.flat[isub].scatter(d_model_res['lon_model'],d_model_res['lat_model'],1.5,c=d_model_res['corr'][isub-1,:],\
-                edgecolors='none', cmap='RdBu_r', vmin=min_corr, vmax=max_corr, transform=ccrs.PlateCarree())
-        ax.flat[isub].scatter(d_all['lon_obs'][cloud_idx[0]],d_all['lat_obs'][cloud_idx[0]],2.5,c='black',edgecolors='none', transform=ccrs.PlateCarree())
-
-    # Colorbar
-    caxes = fig.add_axes([0.2, 0.05, 0.6, 0.02])
-    #cb_corr_ticks = np.linspace(min_corr, max_corr, 5, endpoint=True)
-    corr_bar = fig.colorbar(cs, ax=ax.flat[2:], orientation="horizontal", cax=caxes)
-    corr_bar.ax.tick_params()
-
-    #subplot title
-    font = {'size':8,}
-    ax.flat[0].set_title('H(xb)', font, fontweight='bold')
-    for isub in range(1,4):
-        ax.flat[isub].set_title( str(P_of_interest[isub-1])+' hPa', font, fontweight='bold')
-
-    #title for all
-    fig.suptitle(Storm+': '+Exper_name+'(corr of Qvapor&Tb)', fontsize=8, fontweight='bold')
-
-    # Axis labels
-    lon_ticks = list(range(math.ceil(lon_min)-2, math.ceil(lon_max)+2,2))
-    lat_ticks = list(range(math.ceil(lat_min)-2, math.ceil(lat_max)+2,2))
-
-    for j in range(4):
-        gl = ax.flat[j].gridlines(crs=ccrs.PlateCarree(),draw_labels=False,linewidth=0.1, color='gray', alpha=0.5, linestyle='--')
-
-        gl.xlabels_top = False
-        gl.xlabels_bottom = True
-        if j==0 or j==2:
-            gl.ylabels_left = True
-            gl.ylabels_right = False
-        else:
-            gl.ylabels_left = False
-            gl.ylabels_right = False
-
-        if j==2 or j==3:
-            gl.xlabels_bottom = True
-            gl.xlabels_top = False
-        else:
-            gl.xlabels_bottom = False
-            gl.xlabels_top = False
-
-
-        gl.ylocator = mticker.FixedLocator(lat_ticks)
-        gl.xlocator = mticker.FixedLocator(lon_ticks)
-        gl.xformatter = LONGITUDE_FORMATTER
-        gl.yformatter = LATITUDE_FORMATTER
-        gl.xlabel_style = {'size': 8}
-        gl.ylabel_style = {'size': 8}
-
-    # Save figures
-    des_name = small_dir+Storm+'/'+Exper_name+'/Vis_analyze/Corr/IR/corr_'+DAtime+'_'+var_name+'_'+sensor+'.png'
-    plt.savefig( des_name, dpi=300)
-    print('Saving the figure: ', des_name)
-    plt.close()
-    return None
-
-
-def corr_cloud_3Dmodel( DAtime, Hx_dir, sensor, wrf_dir, small_dir, Storm, Exper_name, var_name ):
- 
-    # Calculate the correlation
-    idx_xb = np.arange(xmax*ymax)
-    # Find cloudy region
-    #cloud_hxb = find_cloudy_allEns( DAtime, sensor, Hx_dir)
-    #cloud_hxb,d_obs = find_coldest_obs( DAtime, sensor, Hx_dir )
-    cloud_hxb = [5000,]
-    corr_xb_hxb = calculate_corr( DAtime, Hx_dir, sensor, wrf_dir, var_name, idx_xb, cloud_hxb)
-    print('Shape of corr_xb_hxb: '+ str(np.shape(corr_xb_hxb)))
-
-    # Average the correlation of the cloudy area
-    corr_xb_hxb_cloud = np.mean(corr_xb_hxb, axis=2)
-    print('Shape of corr_xb_hxb_cloud: '+ str(np.shape(corr_xb_hxb_cloud)))
-
-    # Read model attributes
-    nLevel = corr_xb_hxb.shape[0] 
-    mean_xb = wrf_dir + '/wrf_enkf_input_d03_mean'
-    ncdir = nc.Dataset( mean_xb, 'r')
-    # pressure levels
-    PB = ncdir.variables['PB'][0,:,:,:]
-    P = ncdir.variables['P'][0,:,:,:]
-    P_hpa = (PB + P)/100 # 0 dimension: bottom to top
-    P_hpa = P_hpa.reshape(nLevel,xmax*ymax)
-    # lon and lat
-    lon = ncdir.variables['XLONG'][0,:,:].flatten()
-    lat = ncdir.variables['XLAT'][0,:,:].flatten()
-    print('Locations for cloudy points:')
-    for idx in cloud_hxb:
-        print(str(lon[idx])+','+str(lat[idx]))
-
-    # Specify pressure levels of interest
-    P_of_interest = [100,500,850]
-    
-    # Calculate the corr at specified levels
-    start_time=time.process_time()
-    corr_xb_hxb_cloud_P = np.zeros( (len(P_of_interest),corr_xb_hxb.shape[1]),  )
-    corr_xb_hxb_cloud_P[:] = np.nan
-    for im in range( corr_xb_hxb.shape[1] ):
-        f_interp = interpolate.interp1d( P_hpa[:,im], corr_xb_hxb_cloud[:,im])
-        corr_xb_hxb_cloud_P[:,im] = f_interp( P_of_interest )
-    #corr_xb_hxb_cloud_P = corr_xb_hxb_cloud[:3,:] # test....
-    end_time = time.process_time()
-    print ('time needed for the interpolation: ', end_time-start_time, ' seconds')
-    print('Min of correlation: '+str(np.amin( corr_xb_hxb_cloud_P )))
-    print('Max of correlation: '+str(np.amax( corr_xb_hxb_cloud_P )))
-
-    d_model_res = {'lon_model':lon,'lat_model':lat,'corr':corr_xb_hxb_cloud_P}
-
-    # Plot the correlation
-    plot_corr_cloud_3Dmodel(big_dir, small_dir, Storm, Exper_name, var_name, DAtime, sensor, P_of_interest, d_model_res, cloud_hxb )
 
 
 
@@ -798,16 +479,16 @@ if __name__ == '__main__':
     small_dir =  '/work2/06191/tg854905/stampede2/Pro2_PSU_MW/'
 
     # ---------- Configuration -------------------------
-    Storm = 'MARIA'
-    Exper_name = 'IR-J_DA+J_WRF+J_init-SP-intel17-WSM6-24hr-hroi900'
+    Storm = 'HARVEY'
+    Exper_name = 'JerryRun/IR_THO'
 
     v_interest = [ 'QVAPOR',]
     sensor = 'abi_gr'
     ch_list = ['8',]
     fort_v = ['obs_type','lat','lon','obs']
 
-    start_time_str = '201709160000'
-    end_time_str = '201709160000'
+    start_time_str = '201708221200'
+    end_time_str = '201708221200'
     Consecutive_times = True
 
     # Number of ensemble members
@@ -818,6 +499,7 @@ if __name__ == '__main__':
 
     to_obs_res = True
     ens_Interp_to_obs = False
+    If_interp_before_pert = True
     
     If_cal_pert_stddev = True
     If_save = True
@@ -834,7 +516,7 @@ if __name__ == '__main__':
 
 
     # Interpolate simulated Tb at model resolution to obs resolution
-    if ens_Interp_to_obs:
+    if ens_Interp_to_obs and If_interp_before_pert:
         print('------- For all members, interpolate Hx in model resolution to obs location ------')
         for DAtime in IR_times:
             # Read assimilated obs 
@@ -852,7 +534,7 @@ if __name__ == '__main__':
             Hx_dir = big_dir+Storm+'/'+Exper_name+'/Obs_Hx/IR/'+DAtime+'/'
             wrf_dir =  big_dir+Storm+'/'+Exper_name
             if to_obs_res:
-                cal_pert_stddev_obsRes_Hxb( DAtime, sensor, Hx_dir, If_save, fort_v, wrf_dir)
+                cal_pert_stddev_obsRes_Hxb( DAtime, sensor, Hx_dir, If_save, fort_v, If_interp_before_pert,wrf_dir)
             else:
                 cal_pert_stddev_modelRes_Hxb( DAtime, sensor, Hx_dir, If_save, wrf_dir)
             # Xb

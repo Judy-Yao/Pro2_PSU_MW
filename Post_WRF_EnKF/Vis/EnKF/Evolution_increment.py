@@ -129,10 +129,10 @@ def transform_Q( ave_var_overT ):
             else:
                 ave_trans_Q[ir,ic] = 0
    
-    nega_min = 3#int(np.floor( np.min( nega_incre ) )) #eg., -1e-6.41183 > -1e-6
+    nega_min = int(np.floor( np.min( nega_incre ) )) #eg., -1e-6.41183 > -1e-6 3
     nega_max = int(np.ceil( np.max( nega_incre ) )) #eg., -1e-11.98404 > -1e-12
     posi_min = int(np.floor( np.min( posi_incre ) )) #eg., 1e-11.78655 > 1e-12
-    posi_max = -3#int(np.ceil( np.max( posi_incre ) )) #eg., 1e-7.4489 > 1e-7
+    posi_max = int(np.ceil( np.max( posi_incre ) )) #eg., 1e-7.4489 > 1e-7 -3
     print('Min/Max of exponent in the negative range: ', nega_min,nega_max )
     print('Min/Max of exponent in the positive range: ', posi_min,posi_max )
 
@@ -203,7 +203,8 @@ def plot_var_incre_timeseries( ave_var_overT,ave_T_profile,geoHkm=None ):
         print(np.amax(double_trans_Q))
         #print( double_trans_Q )
         #bounds = list(range(nega_min_linear,nega_max_linear+1))+[0]+list(range(posi_min_linear,posi_max_linear+1))
-        bounds = [-6,-5,-4,-3,-2,-1,0,1,2,3,4,5,6]#list(range( int(np.floor( np.amin( double_trans_Q ) )), int(np.ceil( np.amax( double_trans_Q ) )+1)))
+        bounds = list(range( int(np.floor( np.amin( double_trans_Q ) )), int(np.ceil( np.amax( double_trans_Q ) )+1)))
+        #bounds = [-6,-5,-4,-3,-2,-1,0,1,2,3,4,5,6]#list(range( int(np.floor( np.amin( double_trans_Q ) )), int(np.ceil( np.amax( double_trans_Q ) )+1)))
         incre_contourf = ax.contourf( xcoor, ycoor, np.transpose( double_trans_Q ), cmap=Hydromap, levels=bounds,extend='both')
         # Add color bar below the plot
         color_bar = fig.colorbar(incre_contourf,orientation = 'horizontal',pad=0.15,ticks=bounds)
@@ -235,8 +236,9 @@ def plot_var_incre_timeseries( ave_var_overT,ave_T_profile,geoHkm=None ):
     if not interp_P:
         pass
     else:
-        T_contour = ax.contour( xcoor[0:-5,:], ycoor[0:-5,:], np.transpose(ave_T_profile[:,0:-5]-273.15),colors='k')
-        ax.clabel(T_contour, inline=True)
+        pass
+        #T_contour = ax.contour( xcoor[0:-5,:], ycoor[0:-5,:], np.transpose(ave_T_profile[:,0:-5]-273.15),colors='k')
+        #ax.clabel(T_contour, inline=True)
 
     # Set X/Y labels
     # set X label
@@ -287,45 +289,34 @@ def plot_var_incre_timeseries( ave_var_overT,ave_T_profile,geoHkm=None ):
 
 def eachVar_plot( ):
 
+    # Dimension
+    xmax = 297
+    ymax = 297
     if 'Q' in var_name:
         nLevel = 42 
 
-    if interp_P:
-        # ---------- Interpolate to specified pressure levels ----------
-        ## Notice that PB doesn't vary much before and after assimilaiton
-        P_hpa_overT = np.zeros( [len(DAtimes),nLevel] )
-        for t_idx in range( len(DAtimes) ):
-            print( 'At ' + DAtimes[t_idx] )
-            ncdir = nc.Dataset(  big_dir+Storm+'/'+Exper_name+'/fc/'+DAtimes[t_idx]+'/wrf_enkf_input_d03_mean', 'r' )
-            PB = ncdir.variables['PB'][0,:,:,:]
-            P = ncdir.variables['P'][0,:,:,:]
-            P_hpa = (PB + P)/100
-            P_hpa_overT[t_idx,:] = np.mean( P_hpa.reshape( P_hpa.shape[0],-1),axis=1) # hPa
+    if interp_P: # ---------- Interpolate to specified pressure levels ----------
         # Construct a new array (using interpolation)
         ave_var_overT = np.zeros( [len(DAtimes),len(P_of_interest)] )
         ave_T_profile = np.zeros( [len(DAtimes),len(P_of_interest)] )
     else:
-        for t_idx in range( len(DAtimes) ):
-            print( 'At ' + DAtimes[t_idx] )
-            ncdir = nc.Dataset(  big_dir+Storm+'/'+Exper_name+'/fc/'+DAtimes[t_idx]+'/wrf_enkf_input_d03_mean', 'r' )
-            PHB = ncdir.variables['PHB'][0,:,:,:]
-            PH = ncdir.variables['PH'][0,:,:,:]
-            geoHkm = (PHB+PH)/9.8/1000 # in km
-            geoHkm = geoHkm.reshape( geoHkm.shape[0],-1)
-            geoHkm_Dmean = np.mean( geoHkm, axis=1 )
-            geoHkm_half_eta = (geoHkm_Dmean[:-1]+geoHkm_Dmean[1:])/2
-            geoHkm_half_eta = np.ma.getdata(geoHkm_half_eta) 
         # Construct a new array at model level
         ave_var_overT = np.zeros( [len(DAtimes),nLevel] )
         ave_T_profile = np.zeros( [len(DAtimes),nLevel] ) 
 
-    # Read increment of variable of interest
     for DAtime in DAtimes:
+        print('At ', DAtime)
+
+        # Get the time index
+        t_idx = np.where([DAtime == it for it in DAtimes])[0]
+        
+        # Read increment of variable of interest
         if 'Q' in var_name:
             # Read mixting ratios of interest
             wrf_file = big_dir+Storm+'/'+Exper_name+'/fc/'+DAtime+'/wrf_d03_mean_increment'
             ncdir = nc.Dataset(wrf_file, 'r')
-            var = ncdir.variables[var_name][0,:,:,:] # level,lat,lon 
+            var = ncdir.variables[var_name][0,:,:,:] # level,lat,lon
+            var = var.reshape( var.shape[0],-1) 
         elif var_name == 'T':     
             P1000MB=100000
             R_D=287
@@ -341,9 +332,9 @@ def eachVar_plot( ):
             xb_t = xb_ncdir.variables['T'][0,:,:,:]
             xb_T = (xb_t+300.0)*( (xb_Pres/P1000MB)**(R_D/CP) ) 
             var = xa_T-xb_T
+            var = var.reshape( var.shape[0],-1)
         else:
             raise ValueError('Invalid variable!')
-
         # Read T profile
         P1000MB=100000
         R_D=287
@@ -353,37 +344,66 @@ def eachVar_plot( ):
         xa_Pres = xa_ncdir.variables['P'][0,:,:,:] + xa_ncdir.variables['PB'][0,:,:,:]
         xa_t = xa_ncdir.variables['T'][0,:,:,:]
         T = (xa_t+300.0)*( (xa_Pres/P1000MB)**(R_D/CP) ) 
-        T_mean = np.mean( T.reshape( T.shape[0],-1),axis=1)      
+        T = T.reshape( T.shape[0],-1)
             
-        # Average the value over the whole domain
-        var_mean = np.mean( var.reshape( var.shape[0],-1),axis=1)  # "-1" means the last two dimensions are multiplied
-        
-        if not interp_P:
-            # Get the time index
-            t_idx = np.where([DAtime == it for it in DAtimes])[0]
+        # Set up coordinate info
+        if interp_P: # Interpolate to P level of interest
+            # Read pressure levels
+            mean_xa = big_dir+Storm+'/'+Exper_name+'/fc/'+DAtime+'/wrf_enkf_output_d03_mean'
+            ncdir = nc.Dataset( mean_xa, 'r')
+            PB = ncdir.variables['PB'][0,:,:,:]
+            P = ncdir.variables['P'][0,:,:,:]
+            P_hpa = (PB + P)/100
+            P_hpa = P_hpa.reshape( P_hpa.shape[0],-1)
+            # Quality control: the P_hpa of lowest level is less than 850 mb (it might)
+            idx_bad = np.where( P_hpa[0,:] > 850 )[0] 
+            idx_all = range( xmax*ymax )
+            idx_good = np.delete(idx_all, idx_bad)
+            good_P_hpa = P_hpa[:,idx_good]
+            good_T = T[:,idx_good]
+            good_var = var[:,idx_good]
+            # Interpolate 
+            T_interp = np.zeros( [len(P_of_interest),len(idx_good)] )  
+            var_interp = np.zeros( [len(P_of_interest),len(idx_good)] ) 
+            start_time=time.process_time()
+            for im in range( len(idx_good) ):
+                #fT_interp = interpolate.interp1d( good_P_hpa[:,im], good_T[:,im] )
+                #T_interp[:,im] = fT_interp( P_of_interest )
+                f_interp = interpolate.interp1d( good_P_hpa[:,im], good_var[:,im] )
+                var_interp[:,im] = f_interp( P_of_interest )
+            end_time = time.process_time()
+            print ('time needed for the interpolation: ', end_time-start_time, ' seconds')
+            # Process for mixing ratio
+            idx_zero = np.where( abs(var_interp) <= 1e-8 )[0]
+            var_interp[idx_zero] = 0
+            # Perform domain mean
+            ave_var_overT[t_idx,:] = np.mean( var_interp,axis=1 )
+            ave_T_profile[t_idx,:] = np.mean( T_interp,axis=1 )
+        else:
+            # Read height
+            mean_xa = big_dir+Storm+'/'+Exper_name+'/fc/'+DAtime+'/wrf_enkf_output_d03_mean'
+            ncdir = nc.Dataset( mean_xa, 'r')
+            PHB = ncdir.variables['PHB'][0,:,:,:]
+            PH = ncdir.variables['PH'][0,:,:,:]
+            geoHkm = (PHB+PH)/9.8/1000 # in km
+            geoHkm = geoHkm.reshape( geoHkm.shape[0],-1)
+            geoHkm_Dmean = np.mean( geoHkm, axis=1 )
+            geoHkm_half_eta = (geoHkm_Dmean[:-1]+geoHkm_Dmean[1:])/2
+            geoHkm_half_eta = np.ma.getdata(geoHkm_half_eta)
+            # Perform domain mean
+            T_mean = np.mean( T,axis=1 )
+            var_mean = np.mean( var,axis=1 )
             idx_zero = np.where( abs(var_mean) <= 1e-8 )[0]
             var_mean[idx_zero] = 0
             ave_var_overT[t_idx,:] = var_mean
             ave_T_profile[t_idx,:] = T_mean
-        else:   
-            # Interpolate to P level of interest
-            fT_interp = interpolate.interp1d( P_hpa_overT[t_idx,:].reshape( np.shape(T_mean) ), T_mean )
-            T_interp = fT_interp( P_of_interest )
-            f_interp = interpolate.interp1d( P_hpa_overT[t_idx,:].reshape( np.shape(var_mean) ), var_mean )
-            var_interp = f_interp( P_of_interest )
-            # Process for mixing ratio
-            idx_zero = np.where( abs(var_interp) <= 1e-8 )[0]
-            var_interp[idx_zero] = 0
-            # Get the time index
-            t_idx = np.where([DAtime == it for it in DAtimes])[0]
-            ave_var_overT[t_idx,:] = var_interp
-            ave_T_profile[t_idx,:] = T_interp
 
     # Plot the increament in a time series
-    if not interp_P:
-        plot_var_incre_timeseries( ave_var_overT,ave_T_profile,geoHkm_half_eta )
+    if interp_P:
+        plot_var_incre_timeseries( ave_var_overT,ave_T_profile )    
     else:
-        plot_var_incre_timeseries( ave_var_overT,ave_T_profile )
+        plot_var_incre_timeseries( ave_var_overT,ave_T_profile,geoHkm_half_eta )
+
 
 # ------------------------------------------------------------------------------------------------------
 #           Object: increments per snapshot 
@@ -572,22 +592,22 @@ if __name__ == '__main__':
 
     # ---------- Configuration -------------------------
     Storm = 'HARVEY'
-    Exper_name = 'JerryRun/IR_WSM6'
+    Exper_name = 'JerryRun/IR_THO/'
     v_interest = ['QVAPOR',]#[ 'QICE','QCLOUD','QRAIN','QSNOW','QGRAUP']
     fort_v = ['obs_type','lat','lon','obs']
     
     start_time_str = '201708221200'
-    end_time_str = '201708221200'
+    end_time_str = '201708221800'
     Consecutive_times = True
     
-    interp_P = False
-    P_of_interest = list(range( 995,49,-20 ))
+    interp_P = True
+    P_of_interest = list(range( 850,50,-20 ))
     interp_H = True
     interp_to_obs = False
 
     If_ncdiff = False
-    If_plot_snapshot = True
-    If_plot = False
+    If_plot_snapshot = False
+    If_plot = True
     # -------------------------------------------------------    
 
     # Identify DA times in the period of interest

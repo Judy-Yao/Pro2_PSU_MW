@@ -20,6 +20,7 @@ import time
 import pickle
 import warnings
 
+import Util_data as UD
 import Util_Vis
 import Read_Obspace_IR as ROIR
 import corr_2DIR_to3Dmodel as stat_3D
@@ -74,12 +75,12 @@ def plot_snapshot( lat,lon,Interp_cov,ver_coor ):
     d_wrf_d03 = ROIR.read_wrf_domain( wrf_file )
     
     # Read Tbs 
-    Tb_file = big_dir+Storm+'/'+Exper_name+'/Obs_Hx/IR/'+DAtime+'/' + "/mean_obs_res_d03" + DAtime + '_' +  sensor + '.txt'
+    Tb_file = big_dir+Storm+'/'+Exper_name+'/Obs_Hx/IR/'+DAtime+'/' + "/mean_obs_res_d03_" + DAtime + '_' +  sensor + '.txt'
     d_all = ROIR.read_Tb_obsRes(Tb_file, sensor )
 
     # Read location from TCvitals
     if any( hh in DAtime[8:10] for hh in ['00','06','12','18']):
-        tc_lon, tc_lat = ROIR.read_TCvitals(small_dir+Storm+'/TCvitals/'+Storm+'_tcvitals', DAtime)
+        tc_lon, tc_lat = UD.read_TCvitals(small_dir+Storm+'/TCvitals/'+Storm+'_tcvitals', DAtime)
         print( 'Location from TCvital: ', tc_lon, tc_lat )
 
     # ------------------ Plot -----------------------
@@ -92,12 +93,16 @@ def plot_snapshot( lat,lon,Interp_cov,ver_coor ):
     lon_max = d_wrf_d03['lon_max']
 
     # Define the colorbar
-    max_v = 0.00005#0.000003 #max(np.amin(abs(Interp_incre)),np.amax(abs(Interp_incre)))
-    min_v = -0.00005#-0.000003#0-max_abs
+    max_v = 0.005#0.000003 #max(np.amin(abs(Interp_incre)),np.amax(abs(Interp_incre)))
+    min_v = -0.005#-0.000003#0-max_abs
+    
+    #bounds = [-0.00004,-0.00002,0,0.00002,0.00004]
+    #bounds = [-0.00005,-0.00004,-0.00003,-0.00002,-0.00001,0,0.00001,0.00002,0.00003,0.00004,0.00005]
 
     for isub in range(6):
         ax.flat[isub].set_extent([lon_min, lon_max, lat_min, lat_max], crs=ccrs.PlateCarree())
         ax.flat[isub].coastlines(resolution='10m', color='black',linewidth=0.5)
+        #cs = ax.flat[isub].contourf(lon.reshape((297,297)),lat.reshape((297,297)),Interp_cov[isub,:].reshape((297,297)),cmap='RdBu_r',levels=bounds,extend='both',transform=ccrs.PlateCarree())
         #cs = ax.flat[isub].scatter(lon,lat,5,Interp_cov[isub,:],cmap='RdBu_r',edgecolors='none',transform=ccrs.PlateCarree(),)
         cs = ax.flat[isub].scatter(lon,lat,5,Interp_cov[isub,:],cmap='RdBu_r',edgecolors='none',vmin=min_v,vmax=max_v,transform=ccrs.PlateCarree(),)
         #cs = ax.flat[isub].scatter(lon,lat,5,Interp_cov[isub,:]*(d_all['Yo_obs']-d_all['meanYb_obs']),cmap='RdBu_r',edgecolors='none',transform=ccrs.PlateCarree(),)
@@ -107,8 +112,9 @@ def plot_snapshot( lat,lon,Interp_cov,ver_coor ):
 
     # Colorbar
     cbaxes = fig.add_axes([0.91, 0.1, 0.03, 0.8])
+    color_ticks = np.linspace(min_v, max_v, 5, endpoint=True)
     cbar = fig.colorbar(cs, cax=cbaxes,fraction=0.046, pad=0.04, )
-    #cbar.set_clim( vmin=min_var, vmax=max_abs )
+    cbar.set_ticks( color_ticks )
     cbar.ax.tick_params(labelsize=6)
 
     #subplot title
@@ -117,7 +123,8 @@ def plot_snapshot( lat,lon,Interp_cov,ver_coor ):
         ax.flat[isub].set_title( str(ver_coor[isub])+' KM', font, fontweight='bold')
 
     #title for all
-    fig.suptitle(Storm+':'+Exper_name+'~Kgain(Tb,'+var_name+')', fontsize=10, fontweight='bold')
+    fig.suptitle(Storm+':'+Exper_name+'~cov(Tb,'+var_name+')', fontsize=10, fontweight='bold')
+    #fig.suptitle(Storm+':'+Exper_name+'~EnKF from Tb to Qvapor', fontsize=10, fontweight='bold')
     #fig.suptitle(Storm+':'+Exper_name+'~sd Qvapor', fontsize=10, fontweight='bold')
 
     # Axis labels
@@ -209,9 +216,9 @@ def cal_2Dcov_IR_ColVar( DAtime, var_name):
     cov_xb_hxb = cov_xb_hxb / ( num_ens-1 )
 
     # calculate K
-    demo = stddev_hxb**2 + (3**2)
-    kgain = np.divide(cov_xb_hxb,demo)
-    cov_xb_hxb = kgain
+#    demo = stddev_hxb**2 + (3**2)
+#    kgain = np.divide(cov_xb_hxb,demo)
+#    cov_xb_hxb = kgain
 
     #tmp = np.divide(cov_xb_hxb,stddev_hxb[idx_xb])
     #tmp = np.divide(tmp,stddev_xb[:,idx_xb])
@@ -225,8 +232,8 @@ def cal_2Dcov_IR_ColVar( DAtime, var_name):
     elif interp_H:
         mean_xa = wrf_dir + '/wrf_enkf_output_d03_mean'
         ncdir = nc.Dataset( mean_xa, 'r')
+        #H_of_interest = [3.5,4.0,5.0,7.0,9.0,11.0]
         H_of_interest = [1.0,3.0,5.0,7.0,9.0,11.0]
-        #H_of_interest = [1.0,3.0,5.0,7.0,9.0,11.0] #H_of_interest = [3.5,4.0,5.0,7.0,9.0,11.0]
         Interp_cov_xb_hxb = np.zeros( [len(H_of_interest),len(idx_xb)] )
         PHB = ncdir.variables['PHB'][0,:,:,:]
         PH = ncdir.variables['PH'][0,:,:,:]
@@ -278,9 +285,8 @@ if __name__ == '__main__':
     xmax = 297
     ymax = 297
 
-    to_obs_res = False
+    to_obs_res = True
     ens_Interp_to_obs = False
-    If_interp_before_pert = False 
 
     interp_P = False
     P_of_interest = list(range( 995,49,-20 ))
@@ -303,7 +309,7 @@ if __name__ == '__main__':
         DAtimes = [time_dt.strftime("%Y%m%d%H%M") for time_dt in time_interest_dt]
 
     # Interpolate simulated Tb at model resolution to obs resolution
-    if ens_Interp_to_obs and If_interp_before_pert:
+    if ens_Interp_to_obs:
         print('------- For all members, interpolate Hx in model resolution to obs location ------')
         for DAtime in DAtimes:
             # Read assimilated obs 
@@ -322,7 +328,7 @@ if __name__ == '__main__':
             wrf_dir =  big_dir+Storm+'/'+Exper_name
             if to_obs_res:
                 print('At obs space...')
-                stat_3D.cal_pert_stddev_obsRes_Hxb( DAtime, sensor, Hx_dir, If_save, fort_v, If_interp_before_pert,wrf_dir)
+                stat_3D.cal_pert_stddev_obsRes_Hxb( DAtime, sensor, Hx_dir, If_save, fort_v, wrf_dir)
             else:
                 print('At model space...')
                 stat_3D.cal_pert_stddev_modelRes_Hxb( DAtime, sensor, Hx_dir, If_save, wrf_dir)
