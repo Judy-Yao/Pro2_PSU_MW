@@ -21,11 +21,11 @@ from matplotlib import pyplot as plt
 import matplotlib.colors as mcolors
 from cartopy import crs as ccrs
 from cartopy.mpl.gridliner import LONGITUDE_FORMATTER, LATITUDE_FORMATTER
-from Track_intensity import read_bestrack
 from mpl_toolkits.axes_grid1 import make_axes_locatable
 import time
 import subprocess
 
+from Track import read_bestrack
 
 # setting font sizeto 30
 plt.rcParams.update({'font.size': 15})
@@ -583,9 +583,9 @@ def read_rt_vo( wrf_dir ):
         Um = getvar( ncdir, 'ua') # U-component of wind on mass points
         Vm = getvar( ncdir, 'va') # V-component of wind on mass points
         # Absolute vorticity
-        avo = getvar( ncdir, 'avo') # Absolute vorticity
+        avo = getvar( ncdir, 'avo') # Absolute vorticity, units: 10-5 s-1
         # Earth vorticity
-        Coriolis_sin = ncdir.variables['F'][0,:,:] #units: s-1
+        Coriolis_sin = ncdir.variables['F'][0,:,:]/1e-5 #units: 10-5 s-1
         # Perform interpolation
         for ip in range(len(P_of_interest)):
             U_p[i,ip,:,:] = interplevel( Um,press,P_of_interest[ip] )
@@ -624,8 +624,8 @@ def plot_rt_vo( Storm, Exper_name, DAtime, wrf_dir, plot_dir ):
     fig, ax=plt.subplots(2, 2, subplot_kw={'projection': ccrs.PlateCarree()}, gridspec_kw = {'wspace':0, 'hspace':0}, linewidth=0.5, sharex='all', sharey='all',  figsize=(6.8,6.5), dpi=400)
     
     # customize the colormap
-    color_intervals = [-5,-2.5,0,2,4,6,8,10]
-    exist_cmap = plt.cm.jet
+    color_intervals = [-5,-2.5,0.0,2.0,4.0,6.0,8.0,10.0]
+    exist_cmap = plt.cm.rainbow
     colors = exist_cmap(np.linspace(0,1,len(color_intervals)))
     new_map = mcolors.LinearSegmentedColormap.from_list('custom_colormap',colors,N=len(color_intervals))
 
@@ -638,7 +638,7 @@ def plot_rt_vo( Storm, Exper_name, DAtime, wrf_dir, plot_dir ):
             rtvo_smooth = sp.ndimage.gaussian_filter( d_field['rtvo'][i,ip,:,:], [2,2])
             min_rtvo = min(color_intervals)
             max_rtvo = max(color_intervals)
-            bounds = [-5,-2.5,0,2,4,6,8,10]
+            bounds = color_intervals
             rtvo_contourf = ax[i,ip].contourf(lon,lat,rtvo_smooth,cmap=new_map,vmin=min_rtvo,vmax=max_rtvo,levels=bounds,extend='both',transform=ccrs.PlateCarree())
             # wind barbs
             lon_b = lon.flatten()
@@ -723,8 +723,8 @@ def relative_vo( Storm, Exper_name, DAtimes, big_dir, small_dir ):
 
 if __name__ == '__main__':
 
-    Storm = 'MARIA'
-    Expers = ['IR-J_DA+J_WRF+J_init-SP-intel17-THO-24hr-hroi900',]
+    Storm = 'HARVEY'
+    Expers = ['JerryRun/IR_WSM6/',]
     #Expers = ['J_DA+J_WRF+J_init-SP-intel17-THO-24hr-hroi900','J_DA+J_WRF+J_init-SP-intel17-WSM6-24hr-hroi900','IR-J_DA+J_WRF+J_init-SP-intel17-THO-24hr-hroi900','IR-J_DA+J_WRF+J_init-SP-intel17-WSM6-24hr-hroi900']
     big_dir = '/scratch/06191/tg854905/Pro2_PSU_MW/'
     small_dir = '/work2/06191/tg854905/stampede2/Pro2_PSU_MW/'
@@ -736,8 +736,8 @@ if __name__ == '__main__':
 
 
     # Time range set up
-    start_time_str = '201709160100'
-    end_time_str = '201709160500'
+    start_time_str = '201708221200'
+    end_time_str = '201708221800'
     Consecutive_times = True
 
     if not Consecutive_times:

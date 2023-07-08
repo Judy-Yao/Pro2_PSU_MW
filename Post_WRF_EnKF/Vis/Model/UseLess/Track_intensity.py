@@ -648,7 +648,7 @@ if __name__ == '__main__':
 
     # configuration
     Storm = 'MARIA'
-    Exper_name = ['Post_Experiment',] 
+    Exper_name = ['THO','WSM6'] 
     DF_model_start = '20170822180000' # Default value of DF_model_start. Especially useful when dealing with ensemble forecast
     mem_id = 'mean' # Default value of member id. Especially useful when dealing with deterministic forecast
     read_fc_wrfout = False # Feature that decides the way of reading HPI from model files
