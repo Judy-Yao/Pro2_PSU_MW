@@ -1,7 +1,6 @@
 #!/work2/06191/tg854905/stampede2/opt/anaconda3/lib/python3.7
 
 import os,sys,stat # functions for interacting with the operating system
-import subprocess
 import numpy as np
 from datetime import datetime, timedelta
 import glob
@@ -17,10 +16,11 @@ from cartopy import crs as ccrs
 from cartopy.mpl.gridliner import LONGITUDE_FORMATTER, LATITUDE_FORMATTER
 from mpl_toolkits.axes_grid1 import make_axes_locatable
 import time
+import subprocess
 
 import Read_Obspace_IR as ROIR
 from Util_Vis import HydroIncre
-import matlab.engine
+#import matlab.engine
 import Diagnostics as Diag 
 
 # Find the increment (posterior minus prior) in nc format and write it into another nc file
@@ -129,10 +129,10 @@ def transform_Q( ave_var_overT ):
             else:
                 ave_trans_Q[ir,ic] = 0
    
-    nega_min = int(np.floor( np.min( nega_incre ) )) #eg., -1e-6.41183 > -1e-6 3
-    nega_max = int(np.ceil( np.max( nega_incre ) )) #eg., -1e-11.98404 > -1e-12
-    posi_min = int(np.floor( np.min( posi_incre ) )) #eg., 1e-11.78655 > 1e-12
-    posi_max = int(np.ceil( np.max( posi_incre ) )) #eg., 1e-7.4489 > 1e-7 -3
+    nega_min = 3 #int(np.floor( np.min( nega_incre ) )) #eg., -1e-6.41183 > -1e-6 3
+    nega_max = 8 #int(np.ceil( np.max( nega_incre ) )) #eg., -1e-11.98404 > -1e-12
+    posi_min = -8 #int(np.floor( np.min( posi_incre ) )) #eg., 1e-11.78655 > 1e-12
+    posi_max = -3 #int(np.ceil( np.max( posi_incre ) )) #eg., 1e-7.4489 > 1e-7 -3
     print('Min/Max of exponent in the negative range: ', nega_min,nega_max )
     print('Min/Max of exponent in the positive range: ', posi_min,posi_max )
 
@@ -203,8 +203,8 @@ def plot_var_incre_timeseries( ave_var_overT,ave_T_profile,geoHkm=None ):
         print(np.amax(double_trans_Q))
         #print( double_trans_Q )
         #bounds = list(range(nega_min_linear,nega_max_linear+1))+[0]+list(range(posi_min_linear,posi_max_linear+1))
-        bounds = list(range( int(np.floor( np.amin( double_trans_Q ) )), int(np.ceil( np.amax( double_trans_Q ) )+1)))
-        #bounds = [-6,-5,-4,-3,-2,-1,0,1,2,3,4,5,6]#list(range( int(np.floor( np.amin( double_trans_Q ) )), int(np.ceil( np.amax( double_trans_Q ) )+1)))
+        #bounds = list(range( int(np.floor( np.amin( double_trans_Q ) )), int(np.ceil( np.amax( double_trans_Q ) )+1)))
+        bounds = [-6,-5,-4,-3,-2,-1,0,1,2,3,4,5,6]#list(range( int(np.floor( np.amin( double_trans_Q ) )), int(np.ceil( np.amax( double_trans_Q ) )+1)))
         incre_contourf = ax.contourf( xcoor, ycoor, np.transpose( double_trans_Q ), cmap=Hydromap, levels=bounds,extend='both')
         # Add color bar below the plot
         color_bar = fig.colorbar(incre_contourf,orientation = 'horizontal',pad=0.15,ticks=bounds)
@@ -355,10 +355,12 @@ def eachVar_plot( ):
             P = ncdir.variables['P'][0,:,:,:]
             P_hpa = (PB + P)/100
             P_hpa = P_hpa.reshape( P_hpa.shape[0],-1)
-            # Quality control: the P_hpa of lowest level is less than 850 mb (it might)
-            idx_bad = np.where( P_hpa[0,:] > 850 )[0] 
+            # Quality control: the P_hpa of lowest level is less than 850 mb 
+            idx_bad = np.where( P_hpa[0,:] < 900 )[0]
+            #print( len(idx_bad) )
             idx_all = range( xmax*ymax )
             idx_good = np.delete(idx_all, idx_bad)
+            #print(len(idx_good))
             good_P_hpa = P_hpa[:,idx_good]
             good_T = T[:,idx_good]
             good_var = var[:,idx_good]
@@ -374,11 +376,13 @@ def eachVar_plot( ):
             end_time = time.process_time()
             print ('time needed for the interpolation: ', end_time-start_time, ' seconds')
             # Process for mixing ratio
-            idx_zero = np.where( abs(var_interp) <= 1e-8 )[0]
-            var_interp[idx_zero] = 0
+            #T_mean = np.mean( T_interp,axis=1 )
+            var_mean = np.mean( var_interp,axis=1 )
+            idx_zero = np.where( abs(var_mean) <= 1e-8 )[0]
+            var_mean[idx_zero] = 0
             # Perform domain mean
-            ave_var_overT[t_idx,:] = np.mean( var_interp,axis=1 )
-            ave_T_profile[t_idx,:] = np.mean( T_interp,axis=1 )
+            ave_var_overT[t_idx,:] = var_mean
+            #ave_T_profile[t_idx,:] = T_mean
         else:
             # Read height
             mean_xa = big_dir+Storm+'/'+Exper_name+'/fc/'+DAtime+'/wrf_enkf_output_d03_mean'
@@ -591,18 +595,18 @@ if __name__ == '__main__':
     small_dir =  '/work2/06191/tg854905/stampede2/Pro2_PSU_MW/'
 
     # ---------- Configuration -------------------------
-    Storm = 'HARVEY'
-    Exper_name = 'JerryRun/IR_THO/'
-    v_interest = ['QVAPOR',]#[ 'QICE','QCLOUD','QRAIN','QSNOW','QGRAUP']
+    Storm = 'IRMA'
+    Exper_name = 'IR-J_DA+J_WRF+J_init-SP-intel17-WSM6-30hr-hroi900'
+    v_interest = ['QVAPOR',]#'QICE','QCLOUD','QRAIN','QSNOW','QGRAUP']
     fort_v = ['obs_type','lat','lon','obs']
     
-    start_time_str = '201708221200'
-    end_time_str = '201708221800'
+    start_time_str = '201709030000'
+    end_time_str = '201709040000'
     Consecutive_times = True
     
     interp_P = True
-    P_of_interest = list(range( 850,50,-20 ))
-    interp_H = True
+    P_of_interest = list(range( 900,10,-20 ))
+    interp_H = False
     interp_to_obs = False
 
     If_ncdiff = False
