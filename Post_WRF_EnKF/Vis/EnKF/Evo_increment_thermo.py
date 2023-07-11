@@ -17,6 +17,7 @@ from cartopy.mpl.gridliner import LONGITUDE_FORMATTER, LATITUDE_FORMATTER
 from mpl_toolkits.axes_grid1 import make_axes_locatable
 import time
 import subprocess
+import pickle
 
 import Read_Obspace_IR as ROIR
 from Util_Vis import HydroIncre
@@ -245,7 +246,7 @@ def plot_var_incre_timeseries( ave_var_overT,ave_T_profile,geoHkm=None ):
     start_time = datetime.strptime( DAtimes[0],"%Y%m%d%H%M")
     end_time = datetime.strptime( DAtimes[-1],"%Y%m%d%H%M")
     ax.set_xlim( start_time, end_time)
-    ax.tick_params(axis='x', labelrotation=45)
+    ax.tick_params(axis='x', labelrotation=45, )
     # set Y label
     if not interp_P:
         ylabel_like = [0.0,1.0,2.0,3.0,4.0,5.0,10.0,15.0,20.0]
@@ -287,7 +288,7 @@ def plot_var_incre_timeseries( ave_var_overT,ave_T_profile,geoHkm=None ):
     plt.close()
 
 
-def eachVar_plot( ):
+def eachVar_timeSeries_cal( ):
 
     # Dimension
     xmax = 297
@@ -402,11 +403,32 @@ def eachVar_plot( ):
             ave_var_overT[t_idx,:] = var_mean
             ave_T_profile[t_idx,:] = T_mean
 
+    # May save the data
+    if If_save:
+        # Metadata
+        current_datetime = datetime.now()
+        formatted_datetime = current_datetime.strftime('%Y-%m-%d %H:%M:%S')
+        # create data
+        if interp_P:
+            metadata = {'created_at':formatted_datetime, 'Interpolated_to': 'Pressure (hPa)','Interpolated_at':P_of_interest}
+            save_des = small_dir+Storm+'/'+Exper_name+'/Data_analyze/EnKF/Interp_increment_'+var_name+'_'+DAtimes[0]+'_'+DAtimes[-1]+'.pickle'
+            # create a dictionary with metadata and data
+            meta_and_data = {'metadata':metadata,'ave_var_overT':ave_var_overT,'ave_T_profile':ave_T_profile} 
+        else:
+            metadata = {'created_at':formatted_datetime}
+            save_des = small_dir+Storm+'/'+Exper_name+'/Data_analyze/EnKF/ML_increment_'+var_name+'_'+DAtimes[0]+'_'+DAtimes[-1]+'.pickle'
+            meta_and_data = {'metadata':metadata,'ave_var_overT':ave_var_overT,'ave_T_profile':ave_T_profile,'geoHkm_half_eta':geoHkm_half_eta}  
+        # Write the dictionary to a pickle file
+        with open(save_des,'wb') as file:
+            pickle.dump( meta_and_data, file )
+        print( 'Saving the data: ', save_des )
+
     # Plot the increament in a time series
-    if interp_P:
-        plot_var_incre_timeseries( ave_var_overT,ave_T_profile )    
-    else:
-        plot_var_incre_timeseries( ave_var_overT,ave_T_profile,geoHkm_half_eta )
+    if If_plot_series:
+        if interp_P:
+            plot_var_incre_timeseries( ave_var_overT,ave_T_profile )    
+        else:
+            plot_var_incre_timeseries( ave_var_overT,ave_T_profile,geoHkm_half_eta )
 
 
 # ------------------------------------------------------------------------------------------------------
@@ -595,13 +617,13 @@ if __name__ == '__main__':
     small_dir =  '/work2/06191/tg854905/stampede2/Pro2_PSU_MW/'
 
     # ---------- Configuration -------------------------
-    Storm = 'IRMA'
-    Exper_name = 'IR-J_DA+J_WRF+J_init-SP-intel17-WSM6-30hr-hroi900'
-    v_interest = ['QVAPOR',]#'QICE','QCLOUD','QRAIN','QSNOW','QGRAUP']
+    Storm = 'HARVEY'
+    Exper_name = 'JerryRun/IR_THO/'
+    v_interest = ['QVAPOR',] #'QICE','QCLOUD','QRAIN','QSNOW','QGRAUP'] #'QVAPOR',
     fort_v = ['obs_type','lat','lon','obs']
     
-    start_time_str = '201709030000'
-    end_time_str = '201709040000'
+    start_time_str = '201708221200'
+    end_time_str = '201708231200'
     Consecutive_times = True
     
     interp_P = True
@@ -610,8 +632,10 @@ if __name__ == '__main__':
     interp_to_obs = False
 
     If_ncdiff = False
+    If_cal_series = True
+    If_save = True
     If_plot_snapshot = False
-    If_plot = True
+    If_plot_series = False
     # -------------------------------------------------------    
 
     # Identify DA times in the period of interest
@@ -644,11 +668,11 @@ if __name__ == '__main__':
                 incre_snapshot( DAtime, wrf_dir, small_dir, Storm, Exper_name, var_name )
 
     # Plot the time evolution of domain-averaged increments
-    if If_plot:
+    if If_cal_series:
         start_time=time.process_time()
         for var_name in v_interest:
-            print('Plot '+var_name+'...')
-            eachVar_plot( )
+            print('Calculate '+var_name+'...')
+            eachVar_timeSeries_cal( )
         end_time = time.process_time()
         print ('time needed: ', end_time-start_time, ' seconds') 
         

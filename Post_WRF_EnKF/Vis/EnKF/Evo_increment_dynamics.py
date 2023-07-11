@@ -6,7 +6,7 @@ from datetime import datetime, timedelta
 import glob
 import netCDF4 as nc
 import math
-from wrf import getvar, interplevel
+from wrf import getvar, ll_to_xy
 # It might be possible that you are not able to conda install wrf-var with a pretty new python version
 # Solution:
 # 1. conda create -n $PYTHON34_ENV_NAME python=3.4 anaconda 
@@ -22,9 +22,11 @@ from cartopy.mpl.gridliner import LONGITUDE_FORMATTER, LATITUDE_FORMATTER
 from mpl_toolkits.axes_grid1 import make_axes_locatable
 import time
 import subprocess
+import pickle
 
+from Track import read_bestrack
 import Read_Obspace_IR as ROIR
-from Util_Vis import HydroIncre
+import Util_data as UD
 import Diagnostics as Diag
 
 
@@ -52,7 +54,6 @@ def plot_var_incre_timeseries( ave_var_overT, geoHkm=None ):
         xv = [datetime.strptime( it,"%Y%m%d%H%M") for it in DAtimes]#range( np.shape(ave_norm_overT)[0] )
         yv = range( np.shape(ave_var_overT)[1])
         xcoor, ycoor = np.meshgrid( xv, yv )
-
     
     if_all_posi = all( it[0] > 0 for it in ave_var_overT.tolist() )
     if_all_nega = all( it[0] < 0 for it in ave_var_overT.tolist() )
@@ -61,9 +62,8 @@ def plot_var_incre_timeseries( ave_var_overT, geoHkm=None ):
     else:
         cmap = 'bwr'
     
-    bounds = np.linspace(-0.2,0.2,5)
+    bounds = np.linspace(-0.3,0.3,7)
     #bounds = np.linspace( np.floor(ave_var_overT.min()),np.ceil(ave_var_overT.max()),10 )
-    #print(bounds)
     bounds_format = [ "{0:.2f}".format( item ) for item in bounds]
     #incre_contourf = ax.contourf( xcoor, ycoor, np.transpose( ave_var_overT ), cmap=cmap, vmin=ave_var_overT.min(), vmax=ave_var_overT.max(),levels=bounds_format,extend='both')
     incre_contourf = ax.contourf( xcoor, ycoor, np.transpose( ave_var_overT ), cmap=cmap,levels=bounds_format,extend='both')
@@ -79,11 +79,10 @@ def plot_var_incre_timeseries( ave_var_overT, geoHkm=None ):
     start_time = datetime.strptime( DAtimes[0],"%Y%m%d%H%M")
     end_time = datetime.strptime( DAtimes[-1],"%Y%m%d%H%M")
     ax.set_xlim( start_time, end_time)
-    ax.tick_params(axis='x', labelrotation=45)
+    ax.tick_params(axis='x', labelrotation=45, labelsize=10)
     # set Y label
     if not interp_P:
         ylabel_like = [0.0,1.0,2.0,3.0,4.0,5.0,10.0,15.0,20.0]
-        #ylabel_like = [0.0,5.0,10.0,11.0,12.0,13.0,14.0,15.0,20.0,25.0,30.0]
         yticks = []
         list_y_range = list(y_range)
         for it in ylabel_like:
@@ -99,10 +98,10 @@ def plot_var_incre_timeseries( ave_var_overT, geoHkm=None ):
 
     # Set title
     if 'rt_vo' in var_name:
-        title_name = 'EnKF Increment: relative vorticity ($10^-5$ s-1)'
+        title_name = 'EnKF Increment: relative vorticity ($10^-5$ s-1) in a circle with R='+str(radius_threshold)+' KM'
     else:
         pass
-    ax.set_title( title_name,fontweight="bold",fontsize='12' )
+    ax.set_title( title_name,fontweight="bold",fontsize='11' )
     fig.suptitle(Storm+': '+Exper_name, fontsize=10, fontweight='bold')
 
     # Save the figure
@@ -117,7 +116,7 @@ def plot_var_incre_timeseries( ave_var_overT, geoHkm=None ):
 
     return None
 
-def eachVar_plot( ):
+def eachVar_timeSeries_cal( ):
 
     # Dimension
     xmax = 297
@@ -127,11 +126,9 @@ def eachVar_plot( ):
     if interp_P: # ---------- Interpolate to specified pressure levels ----------
         # Construct a new array (using interpolation)
         ave_var_overT = np.zeros( [len(DAtimes),len(P_of_interest)] )
-        #ave_T_profile = np.zeros( [len(DAtimes),len(P_of_interest)] )
     else:
         # Construct a new array at model level
         ave_var_overT = np.zeros( [len(DAtimes),nLevel] )
-        #ave_T_profile = np.zeros( [len(DAtimes),nLevel] )
 
     for DAtime in DAtimes:
         print('At ', DAtime)
@@ -141,6 +138,30 @@ def eachVar_plot( ):
 
         # Read increment of variable of interest
         wrf_dir = big_dir+Storm+'/'+Exper_name+'/fc/'+DAtime
+
+        # might only use data in a specified area
+        if specify_area:
+            # Read storm center
+            dict_btk = read_bestrack(Storm)
+            # Find the best-track position
+            btk_dt = [it_str for it_str in dict_btk['time'] ]#[datetime.strptime(it_str,"%Y%m%d%H%M") for it_str in dict_btk['time']]
+            bool_match = [DAtime == it for it in btk_dt]
+            if True in bool_match:
+                idx_btk = np.where( bool_match )[0][0] # the second[0] is due to the possibility of multiple records at the same time
+            else:
+                if_btk_exist = None
+            # convert from ll to xy
+            wrf_file = wrf_dir+'/wrf_enkf_input_d03_mean'
+            ncdir = nc.Dataset( wrf_file )
+            tc_ij = ll_to_xy(ncdir, dict_btk['lat'][idx_btk], dict_btk['lon'][idx_btk])
+            # What ll_to_xy returns is not the xy coordinate itself but the grid index starting from 0. 
+            # (https://forum.mmm.ucar.edu/threads/what-does-wrf-python-function-ll_to_xy-returns.12248/)
+            tc_i = tc_ij.values[0]
+            tc_j = tc_ij.values[1]
+            idx_x = UD.find_circle_area( wrf_file, tc_i, tc_j, radius_threshold, 3)     
+        else:
+            idx_x = np.arange(xmax*ymax)
+
         if var_name == 'rt_vo': # relative vorticity
             # analysis
             xa_file = wrf_dir+'/wrf_enkf_output_d03_mean'
@@ -158,12 +179,39 @@ def eachVar_plot( ):
             var = xa_rtvo - xb_rtvo
             var = np.array( var )
             var = var.reshape( var.shape[0],-1) # n_level, n_points
+            var = var[:,idx_x]
         else:
             pass
 
         # Set up coordinate info
         if interp_P: # Interpolate to P level of interest
-            pass
+            # Read pressure levels
+            mean_xa = wrf_dir+'/wrf_enkf_output_d03_mean'
+            ncdir = nc.Dataset( mean_xa, 'r')
+            PB = ncdir.variables['PB'][0,:,:,:]
+            P = ncdir.variables['P'][0,:,:,:]
+            P_hpa = (PB + P)/100
+            P_hpa = P_hpa.reshape( P_hpa.shape[0],-1)
+            P_hpa = P_hpa[:,idx_x] # only select value in the specified area
+            # Quality control: the P_hpa of lowest level is less than 900 mb 
+            idx_bad = np.where( P_hpa[0,:] < 900 )[0]
+            idx_all = range( P_hpa.shape[1] )
+            idx_good = np.delete(idx_all, idx_bad)
+            good_P_hpa = P_hpa[:,idx_good]
+            good_var = var[:,idx_good]
+            # Interpolate 
+            T_interp = np.zeros( [len(P_of_interest),len(idx_good)] )
+            var_interp = np.zeros( [len(P_of_interest),len(idx_good)] )
+            start_time=time.process_time()
+            for im in range( len(idx_good) ):
+                f_interp = interpolate.interp1d( good_P_hpa[:,im], good_var[:,im] )
+                var_interp[:,im] = f_interp( P_of_interest )
+            end_time = time.process_time()
+            print ('time needed for the interpolation: ', end_time-start_time, ' seconds')
+            # Process for mixing ratio
+            var_mean = np.mean( var_interp,axis=1 )
+            # Perform domain mean
+            ave_var_overT[t_idx,:] = var_mean
         else:
             # Read height
             mean_xa = wrf_dir+'/wrf_enkf_output_d03_mean'
@@ -172,20 +220,40 @@ def eachVar_plot( ):
             PH = ncdir.variables['PH'][0,:,:,:]
             geoHkm = (PHB+PH)/9.8/1000 # in km
             geoHkm = geoHkm.reshape( geoHkm.shape[0],-1)
+            geoHkm = geoHkm[:,idx_x]
             geoHkm_Dmean = np.mean( geoHkm, axis=1 )
             geoHkm_half_eta = (geoHkm_Dmean[:-1]+geoHkm_Dmean[1:])/2
             geoHkm_half_eta = np.ma.getdata(geoHkm_half_eta)
             # Perform domain mean
             var_mean = np.mean( var,axis=1 )
-            #idx_zero = np.where( abs(var_mean) <= 1e-8 )[0]
-            #var_mean[idx_zero] = 0
             ave_var_overT[t_idx,:] = var_mean
 
+    # May save the data
+    if If_save:
+        # Metadata
+        current_datetime = datetime.now()
+        formatted_datetime = current_datetime.strftime('%Y-%m-%d %H:%M:%S')
+        # create data
+        if interp_P:
+            metadata = {'created_at':formatted_datetime, 'Interpolated_to': 'Pressure (hPa)','Interpolated_at':P_of_interest,'radius_threshold':radius_threshold}
+            save_des = small_dir+Storm+'/'+Exper_name+'/Data_analyze/EnKF/Interp_increment_'+var_name+'_'+DAtimes[0]+'_'+DAtimes[-1]+'.pickle'
+            # create a dictionary with metadata and data
+            meta_and_data = {'metadata':metadata,'ave_var_overT':ave_var_overT}
+        else:
+            metadata = {'created_at':formatted_datetime,'radius_threshold':radius_threshold}
+            save_des = small_dir+Storm+'/'+Exper_name+'/Data_analyze/EnKF/ML_increment_'+var_name+'_'+DAtimes[0]+'_'+DAtimes[-1]+'.pickle'
+            meta_and_data = {'metadata':metadata,'ave_var_overT':ave_var_overT,'geoHkm_half_eta':geoHkm_half_eta}
+        # Write the dictionary to a pickle file
+        with open(save_des,'wb') as file:
+            pickle.dump( meta_and_data, file )
+        print( 'Saving the data: ', save_des )
+
     # Plot the increament in a time series
-    if interp_P:
-        plot_var_incre_timeseries( ave_var_overT )
-    else:
-        plot_var_incre_timeseries( ave_var_overT, geoHkm_half_eta )
+    if If_plot_series:
+        if interp_P:
+            plot_var_incre_timeseries( ave_var_overT )
+        else:
+            plot_var_incre_timeseries( ave_var_overT, geoHkm_half_eta )
 
     return None
 
@@ -197,22 +265,25 @@ if __name__ == '__main__':
     small_dir =  '/work2/06191/tg854905/stampede2/Pro2_PSU_MW/'
 
     # ---------- Configuration -------------------------
-    Storm = 'IRMA'
+    Storm = 'JOSE'
     Exper_name = 'IR-J_DA+J_WRF+J_init-SP-intel17-WSM6-30hr-hroi900'
     v_interest = ['rt_vo',]
     fort_v = ['obs_type','lat','lon','obs']
 
-    start_time_str = '201709030000'
-    end_time_str = '201709040000'
+    start_time_str = '201709050000'
+    end_time_str = '201709060000'
     Consecutive_times = True
 
-    interp_P = False
-    P_of_interest = list(range( 850,50,-20 ))
-    interp_H = True
-    interp_to_obs = False
+    interp_P = True
+    P_of_interest = list(range( 900,10,-20 ))
+    interp_H = False
+    specify_area = True
+    radius_threshold = 250 #km
 
     If_ncdiff = False
-    If_plot = True
+    If_cal_series = True
+    If_save = True
+    If_plot_series = True
     # -------------------------------------------------------    
 
     # Identify DA times in the period of interest
@@ -224,14 +295,15 @@ if __name__ == '__main__':
         time_interest_dt = [datetime.strptime(start_time_str,"%Y%m%d%H%M") + timedelta(hours=t) for t in list(range(0, int(time_diff_hour)+1, 1))]
         DAtimes = [time_dt.strftime("%Y%m%d%H%M") for time_dt in time_interest_dt]
 
-    # Plot the time evolution of domain-averaged increments of dynamic fields
-    if If_plot:
+    # Plot the time evolution of domain-averaged increments
+    if If_cal_series:
         start_time=time.process_time()
         for var_name in v_interest:
-            print('Plot '+var_name+'...')
-            eachVar_plot( )
+            print('Calculate '+var_name+'...')
+            eachVar_timeSeries_cal( )
         end_time = time.process_time()
         print ('time needed: ', end_time-start_time, ' seconds')
+
 
 
 
