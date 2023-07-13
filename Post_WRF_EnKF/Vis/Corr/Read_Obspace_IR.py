@@ -1,1 +1,0 @@
-../Tb/Obspace_compare_IR_txt_bin.py
