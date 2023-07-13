@@ -11,7 +11,6 @@ from wrf import getvar, interplevel
 # 1. conda create -n $PYTHON34_ENV_NAME python=3.4 anaconda 
 # 2. conda activate python=3.4 (use wrf-python in this python environment)
 import math
-import matlab.engine
 import scipy as sp
 import scipy.ndimage
 import matplotlib
@@ -23,9 +22,8 @@ from cartopy import crs as ccrs
 from cartopy.mpl.gridliner import LONGITUDE_FORMATTER, LATITUDE_FORMATTER
 from mpl_toolkits.axes_grid1 import make_axes_locatable
 import time
-import subprocess
 
-from Track import read_bestrack
+import Util_data as UD
 
 # setting font sizeto 30
 plt.rcParams.update({'font.size': 15})
@@ -87,7 +85,7 @@ def read_IC_water( wrf_dir ):
 def plot_IC_water( Storm, Exper_name, DAtime, wrf_dir, plot_dir ):
 
     # Read storm center
-    dict_btk = read_bestrack(Storm)
+    dict_btk = UD.read_bestrack(Storm)
     # Find the best-track position
     btk_dt = [it_str for it_str in dict_btk['time'] ]#[datetime.strptime(it_str,"%Y%m%d%H%M") for it_str in dict_btk['time']]
     bool_match = [DAtime == it for it in btk_dt]
@@ -332,7 +330,7 @@ def read_UV10_slp( wrf_dir ):
 def plot_UV10_slp( Storm, Exper_name, DAtime, wrf_dir, plot_dir ):
 
     # Read storm center
-    dict_btk = read_bestrack(Storm)
+    dict_btk = UD.read_bestrack(Storm)
     # Find the best-track position
     btk_dt = [it_str for it_str in dict_btk['time'] ]#[datetime.strptime(it_str,"%Y%m%d%H%M") for it_str in dict_btk['time']]
     bool_match = [DAtime == it for it in btk_dt]
@@ -454,7 +452,7 @@ def read_IC_water( wrf_dir ):
 def plot_IC_water( Storm, Exper_name, DAtime, wrf_dir, plot_dir ):
 
     # Read storm center
-    dict_btk = read_bestrack(Storm)
+    dict_btk = UD.read_bestrack(Storm)
     # Find the best-track position
     btk_dt = [it_str for it_str in dict_btk['time'] ]#[datetime.strptime(it_str,"%Y%m%d%H%M") for it_str in dict_btk['time']]
     bool_match = [DAtime == it for it in btk_dt]
@@ -600,7 +598,7 @@ def plot_rt_vo( Storm, Exper_name, DAtime, wrf_dir, plot_dir ):
 
 
     # Read storm center
-    dict_btk = read_bestrack(Storm)
+    dict_btk = UD.read_bestrack(Storm)
     # Find the best-track position
     btk_dt = [it_str for it_str in dict_btk['time'] ]#[datetime.strptime(it_str,"%Y%m%d%H%M") for it_str in dict_btk['time']]
     bool_match = [DAtime == it for it in btk_dt]
@@ -723,14 +721,13 @@ def relative_vo( Storm, Exper_name, DAtimes, big_dir, small_dir ):
 
 if __name__ == '__main__':
 
-    Storm = 'HARVEY'
-    Expers = ['JerryRun/IR_WSM6/',]
-    #Expers = ['J_DA+J_WRF+J_init-SP-intel17-THO-24hr-hroi900','J_DA+J_WRF+J_init-SP-intel17-WSM6-24hr-hroi900','IR-J_DA+J_WRF+J_init-SP-intel17-THO-24hr-hroi900','IR-J_DA+J_WRF+J_init-SP-intel17-WSM6-24hr-hroi900']
+    Storm = 'IRMA'
+    Expers = ['IR-J_DA+J_WRF+J_init-SP-intel17-WSM6-30hr-hroi900',]
     big_dir = '/scratch/06191/tg854905/Pro2_PSU_MW/'
     small_dir = '/work2/06191/tg854905/stampede2/Pro2_PSU_MW/'
     
-    Plot_UV10_slp = False
-    Plot_IC_water = False
+    Plot_UV10_slp = True
+    Plot_IC_water = True
     Plot_minslp_evo = False
     Plot_rtvo = True
 
@@ -738,10 +735,13 @@ if __name__ == '__main__':
     # Time range set up
     start_time_str = '201708221200'
     end_time_str = '201708221800'
-    Consecutive_times = True
+    Consecutive_times = False
 
     if not Consecutive_times:
-        DAtimes = ['201709160600','201709161200','201709161800','201709170000','201709170600','201709171200','201709171800','201709180000']
+        DAtimes = ['201709050000',]
+        #DAtimes = ['201708230000','201708230600','201708231200','201708231800','201708240000','201708240600','201708241200']
+        #DAtimes = ['201709031200','201709031800','201709040000','201709040600','201709041200','201709041800','201709050000']
+        #DAtimes = ['201709161200','201709161800','201709170000','201709170600','201709171200','201709171800','201709180000']
     else:
         time_diff = datetime.strptime(end_time_str,"%Y%m%d%H%M") - datetime.strptime(start_time_str,"%Y%m%d%H%M")
         time_diff_hour = time_diff.total_seconds() / 3600

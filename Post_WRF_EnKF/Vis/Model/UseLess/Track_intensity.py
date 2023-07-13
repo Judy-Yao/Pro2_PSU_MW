@@ -504,11 +504,11 @@ def plot_hpi_df( Config, domain_range ):
     Exper_content_lbl = {}
     for iExper in Exper:
         if iExper is not None:
-            if os.path.exists( wrf_dir+'/'+Storm+'/'+iExper+'/wrf_df/' ):
-                Exper_content_lbl[iExper] = ['WSM6_wQV_WSM6','WSM6_wQV_THO_all',]
-                #Exper_content_lbl[iExper] = ['THO_wQV_THO','THO_wQV_WSM6_d03','THO_wQV_WSM6_all']
-                #Exper_content_lbl[iExper] = sorted(fnmatch.filter(os.listdir( wrf_dir+'/'+Storm+'/'+iExper+'/wrf_df/201709160600/' ),'IR_*')) 
-                #Exper_content_lbl[iExper] = sorted(fnmatch.filter(os.listdir( wrf_dir+'/'+Storm+'/'+iExper+'/wrf_df/' ),'20*'))  
+            if os.path.exists( wrf_dir+'/'+Storm+'/Post_Experiment/wrf_df/201709161200/'+iExper ):
+                if iExper == 'THO':
+                    Exper_content_lbl[iExper] = ['THO_wQV_WSM6_d03_mp8','THO_wQV_WSM6_d03_mp6']
+                elif iExper == 'WSM6':
+                    Exper_content_lbl[iExper] = ['WSM6_wQV_THO_d03_mp6','WSM6_wQV_THO_d03_mp8']
             else:
                 Exper_content_lbl[iExper] = None
         else:
@@ -532,8 +532,8 @@ def plot_hpi_df( Config, domain_range ):
         Btk_start = '201709030000'
         Btk_end = '201709080000'
     elif Storm == 'MARIA':
-        Btk_start = '2017091600'#'201709160600'
-        Btk_end = '201709202000'
+        Btk_start = '201709160000'#'201709160600'
+        Btk_end = '201709210000'
     elif Storm == 'JOSE':
         Btk_start = '201709050000'
         Btk_end = '201709100000'
@@ -548,21 +548,17 @@ def plot_hpi_df( Config, domain_range ):
     # Customize color maps 
     #Color1 = ['#A52A2A','#FF0000','#FF7F50','#FFA500','#FFD700','#B8860B','#9ACD32','#006400']
     #Color2 = ['#0000FF','#1E90FF','#00BFFF','#6495ED','#48D1CC','#00FFFF','#008B8B','#00FF7F']
-    #Color1 = ["#c23728","#e14b31","#de6e56","#e1a692","#786028","#a57c1b","#d2980d","#ffb400","#503f3f","#6d4b4b","#a86464","#e27c7c"] #redish
+    Color1 = ["#c23728","#e14b31","#de6e56","#e1a692","#786028","#a57c1b","#d2980d","#ffb400","#503f3f","#6d4b4b","#a86464","#e27c7c"] #redish
     Color2 = ["#115f9a", "#1984c5", "#22a7f0", "#48b5c4", "#48446e", "#5e569b", "#776bcd", "#9080ff","#3c4e4b", "#466964", "#599e94", "#6cd4c5"] #blueish
-    Color1 = Color2
     Color_set = {'c0':Color1, 'c1':Color2}
 
     Ana_color = ['#748b97', '#748b97'] #'#eea990'] #'#748b97'
     # Customize linestyles
-    Line_types = ['-','--',':']
+    Line_types = ['--','-']
     
     # Customize labels ###### Chnage it every time !!!!!!!!!!!!!!! 
-    #Labels = ['GTS+HPI(hroi:300km): ']
-    Labels = ['','']
-    #Labels = ['Stp2-Intel17 ','Eps-Intel19 ']
+    Labels = [['THO:cst MP','THO:incst MP'],['WSM6:cst MP','WSM6:incst MP']]
     Ana_labels = ['conv Als','IR Als' ]
-    #Ana_labels = ['Stampede2 Analysis', 'Expanse Analysis']
 
     # Plot HPI for each deterministic forecasts
     if read_fc_wrfout == True:
@@ -585,10 +581,10 @@ def plot_hpi_df( Config, domain_range ):
                     plot_one ( ax0, ax1, ax2, HPI_analyses, Ana_color[iExper], ':', 1.5, Ana_labels[iExper] )
                 for it in Exper_content_lbl[key]:
                     print('Plotting ', it)
-                    print(wrf_dir+'/'+Storm+'/'+key+'/wrf_df/'+it)
-                    HPI_model = read_rsl_error(Storm, key, wrf_dir+'/'+Storm+'/'+key+'/wrf_df/201709161200/'+it, '201709161200', DF_model_end) 
+                    print( wrf_dir+'/'+Storm+'/Post_Experiment/wrf_df/201709161200/'+key+'/'+it )
+                    HPI_model = read_rsl_error(Storm, key, wrf_dir+'/'+Storm+'/Post_Experiment//wrf_df/201709161200/'+key+'/'+it, '201709161200', DF_model_end)
                     #HPI_model = read_rsl_error(Storm, key, wrf_dir+'/'+Storm+'/'+key+'/wrf_df/'+it, it, DF_model_end)
-                    plot_one( ax0, ax1, ax2, HPI_model, Color_set['c'+str(iExper)][1], Line_types[ic], 1.5, Labels[iExper]+it )
+                    plot_one( ax0, ax1, ax2, HPI_model, Color_set['c'+str(iExper)][1], Line_types[ic], 1.5, Labels[iExper][ic] )
                     #plot_one( ax0, ax1, ax2, HPI_model, Color_set['c'+str(iExper)][ic], Line_types[iExper], 1.5, Labels[iExper]+it )
                     #plot_one( ax0, ax1, ax2, HPI_model, Color_set['c0'][ic], '-', 1, Labels[iExper]+it )
                     #print(wrf_dir+'/'+Storm+'/'+key+'/wrf_df_Judy_stampd_intel19/'+it)
@@ -627,15 +623,15 @@ def plot_hpi_df( Config, domain_range ):
     ax2.set_ylim([10,80])   #([10,60])
     ax1.tick_params(axis='x', labelrotation=30,labelsize=12)
     ax2.tick_params(axis='x', labelrotation=30,labelsize=12)
-    ax2.legend(bbox_to_anchor=(1.5, 1.0),frameon=True,loc='upper right',fontsize='10')
+    ax2.legend(bbox_to_anchor=(1.5, 1.0),frameon=True,loc='upper right',fontsize='12')
     
     # Set titles
     ax0.set_title( 'Track',fontsize = 15 )
     ax1.set_title( 'MSLP (hPa)',fontsize = 15 )
     ax2.set_title( 'Vmax ($\mathregular{ms^{-1}}$)',fontsize = 15 )
-    fig.suptitle('IR:201709161200',fontsize = 15)
+    fig.suptitle('Init: swapped wv',fontsize = 15)
 
-    des_name = '/work2/06191/tg854905/stampede2/Pro2_PSU_MW/'+Storm+'/'+Exper[0]+'/Vis_analyze/Model/'+Storm+'_forecast_IR_WSM6.png'
+    des_name = '/work2/06191/tg854905/stampede2/Pro2_PSU_MW/'+Storm+'/Post_Experiment/Vis_analyze/Model/impact_incst_mp_forecast.png'
     plt.savefig( des_name )
     print( 'Saving the figure to '+des_name+'!' )
     #fig.suptitle('IR-only:201708221800', fontsize=10)
@@ -648,7 +644,7 @@ if __name__ == '__main__':
 
     # configuration
     Storm = 'MARIA'
-    Exper_name = ['THO','WSM6'] 
+    Exper_name = ['THO','WSM6',] 
     DF_model_start = '20170822180000' # Default value of DF_model_start. Especially useful when dealing with ensemble forecast
     mem_id = 'mean' # Default value of member id. Especially useful when dealing with deterministic forecast
     read_fc_wrfout = False # Feature that decides the way of reading HPI from model files

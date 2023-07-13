@@ -22,9 +22,10 @@ import matplotlib.ticker as mticker
 from matplotlib import pyplot as plt
 from cartopy import crs as ccrs
 from cartopy.mpl.gridliner import LONGITUDE_FORMATTER, LATITUDE_FORMATTER
-from Track_intensity import read_bestrack
 from mpl_toolkits.axes_grid1 import make_axes_locatable
 import time
+
+import Util_data as UD
 
 def d03_domain(wrfout_d03):
     ncdir = nc.Dataset(wrfout_d03, 'r')
@@ -50,7 +51,7 @@ def d03_domain(wrfout_d03):
 def plot_UV10_slp( Storm, DAtime, wrfout, plot_dir, dict_AF_masked):
 
     # Read storm center
-    dict_btk = read_bestrack(Storm)
+    dict_btk = UD.read_bestrack(Storm)
     # Find the best-track position
     btk_dt = [it_str for it_str in dict_btk['time'] ]#[datetime.strptime(it_str,"%Y%m%d%H%M") for it_str in dict_btk['time']]
     bool_match = [DAtime == it for it in btk_dt]
@@ -494,7 +495,7 @@ def read_interpolation( Ifile ):
 def Plot_compare_track_wind_td( Storm, Exper_name, DAtime, idx_exist, dict_AF_mission, big_dir, plot_dir):
     
     # Read storm center
-    dict_btk = read_bestrack(Storm)
+    dict_btk = UD.read_bestrack(Storm)
     # Find the best-track position
     btk_dt = [it_str for it_str in dict_btk['time'] ]#[datetime.strptime(it_str,"%Y%m%d%H%M") for it_str in dict_btk['time']]
     bool_match = [DAtime == it for it in btk_dt]
