@@ -241,11 +241,6 @@ def plot_IC(DAtime, plot_dir, d_hydro, var, IC_xb, IC_xa, ):
     plt.close()
 
 
-
-
-
-
-
 if __name__ == '__main__':
 
     big_dir = '/scratch/06191/tg854905/Pro2_PSU_MW/'

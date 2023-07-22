@@ -22,8 +22,8 @@ def Plot_snapshot( wrf_file ):
 
     # Read files
     ncdir = nc.Dataset( wrf_file, 'r')
-    xlon = ncdir.variables['XLONG'][0,:,:].flatten()
-    xlat = ncdir.variables['XLAT'][0,:,:].flatten()
+    xlon = ncdir.variables['XLONG'][0,:,:]
+    xlat = ncdir.variables['XLAT'][0,:,:]
     if plot_geoH:
         PHB = ncdir.variables['PHB'][0,:,:,:]
         PH = ncdir.variables['PH'][0,:,:,:]
@@ -64,15 +64,15 @@ def Plot_snapshot( wrf_file ):
         min_var = 0#0-max_abs
     elif plot_pres:
         max_var = 1000
-        min_var = 200
-
+        min_var = 300
+        bounds = np.linspace(min_var, max_var, 8)
     for isub in range(6):
         ax.flat[isub].set_extent([lon_min, lon_max, lat_min, lat_max], crs=ccrs.PlateCarree())
         ax.flat[isub].coastlines(resolution='10m', color='black',linewidth=0.5)
-        var = var_all[sample[isub],:] #.reshape( (xlon.shape[0],xlon.shape[1]) )
-        c = 1.5
-        #cs = ax.flat[isub].scatter(xlon,xlat,c,var,cmap='terrain_r',edgecolors='none',transform=ccrs.PlateCarree(),)
-        cs = ax.flat[isub].scatter(xlon,xlat,c,var,cmap='terrain_r',edgecolors='none',vmin=min_var,vmax=max_var,transform=ccrs.PlateCarree(),)
+        var = var_all[sample[isub],:].reshape( (xlon.shape[0],xlon.shape[1]) )
+        cs = ax.flat[isub].contourf(xlon,xlat,var,cmap='terrain_r',vmin=min_var,vmax=max_var,levels=bounds,transform=ccrs.PlateCarree(),extend='both')
+        #c = 1.5
+        #cs = ax.flat[isub].scatter(xlon,xlat,c,var,cmap='terrain_r',edgecolors='none',vmin=min_var,vmax=max_var,transform=ccrs.PlateCarree(),)
 
         if any( hh in DAtime[8:10] for hh in ['00','06','12','18'] ):
             ax.flat[isub].scatter(tc_lon, tc_lat, s=3, marker='*', edgecolors='black', transform=ccrs.PlateCarree())
@@ -80,7 +80,7 @@ def Plot_snapshot( wrf_file ):
     # Colorbar
     cbaxes = fig.add_axes([0.91, 0.1, 0.03, 0.8])
     cbar = fig.colorbar(cs, cax=cbaxes,fraction=0.046, pad=0.04, )
-#    cbar.set_clim( vmin=min_var, vmax=max_var )
+    cbar.set_clim( vmin=min_var, vmax=max_var )
     cbar.ax.tick_params(labelsize=12)
 
     #subplot title
@@ -92,7 +92,7 @@ def Plot_snapshot( wrf_file ):
     if plot_geoH:
         fig.suptitle(Storm+':'+Exper_name+' Geo Height (km)', fontsize=10, fontweight='bold')
     elif plot_pres:
-        fig.suptitle(Storm+':'+Exper_name+' Pressure (hPa)', fontsize=10, fontweight='bold')
+        fig.suptitle('noIR  '+Storm+':'+Exper_name+' Pressure (hPa)', fontsize=10, fontweight='bold')
     else:
         pass
 
@@ -143,12 +143,12 @@ if __name__ == '__main__':
     small_dir =  '/work2/06191/tg854905/stampede2/Pro2_PSU_MW/'
 
     # ---------- Configuration -------------------------
-    Storm = 'HARVEY'
-    Exper_name = 'JerryRun/IR_THO/'
+    Storm = 'IRMA'
+    Exper_name = 'IR-J_DA+J_WRF+J_init-SP-intel17-WSM6-30hr-hroi900'
 
     start_time_str = '201708221200'
     end_time_str = '201708221200'
-    Consecutive_times = True
+    Consecutive_times = False
 
     plot_geoH = False
     plot_pres = True
@@ -156,7 +156,7 @@ if __name__ == '__main__':
     
     # Identify DA times in the period of interest
     if not Consecutive_times:
-        DAtimes = ['201709140000',]#'201708221800','201708230000','201708230600','201708231200']
+        DAtimes = ['201709041600',]#'201708221800','201708230000','201708230600','201708231200']
     else:
         time_diff = datetime.strptime(end_time_str,"%Y%m%d%H%M") - datetime.strptime(start_time_str,"%Y%m%d%H%M")
         time_diff_hour = time_diff.total_seconds() / 3600

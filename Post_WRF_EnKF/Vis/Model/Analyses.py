@@ -721,21 +721,21 @@ def relative_vo( Storm, Exper_name, DAtimes, big_dir, small_dir ):
 
 if __name__ == '__main__':
 
-    Storm = 'IRMA'
-    Expers = ['IR-J_DA+J_WRF+J_init-SP-intel17-WSM6-30hr-hroi900',]
+    Storm = 'MARIA'
+    Expers = ['IR-J_DA+J_WRF+J_init-SP-intel17-WSM6-24hr-hroi900',]
     big_dir = '/scratch/06191/tg854905/Pro2_PSU_MW/'
     small_dir = '/work2/06191/tg854905/stampede2/Pro2_PSU_MW/'
     
     Plot_UV10_slp = True
-    Plot_IC_water = True
+    Plot_IC_water = False
     Plot_minslp_evo = False
-    Plot_rtvo = True
+    Plot_rtvo = False
 
 
     # Time range set up
-    start_time_str = '201708221200'
-    end_time_str = '201708221800'
-    Consecutive_times = False
+    start_time_str = '201709171800'
+    end_time_str = '201709180000'
+    Consecutive_times = True
 
     if not Consecutive_times:
         DAtimes = ['201709050000',]

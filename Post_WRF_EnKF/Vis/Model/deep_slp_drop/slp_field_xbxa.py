@@ -24,6 +24,7 @@ from cartopy.mpl.gridliner import LONGITUDE_FORMATTER, LATITUDE_FORMATTER
 from mpl_toolkits.axes_grid1 import make_axes_locatable
 import time
 
+from Track_xbxa import read_HPI_model
 import Util_data as UD
 
 
@@ -70,14 +71,6 @@ def plot_slp( Storm, Exper_name, DAtime, wrf_dir, plot_dir ):
     # ------ Plot Figure -------------------
     fig, ax=plt.subplots(1, 2, subplot_kw={'projection': ccrs.PlateCarree()}, gridspec_kw = {'wspace':0, 'hspace':0}, linewidth=0.5, sharex='all', sharey='all',  figsize=(12,6), dpi=400)
 
-    # find a box with min slp of enkf output less than 900 hpa
-    #idx = np.where( slp[1,:,:].flatten() <= 960)[0]
-    #min_lonx = np.amin( lon.flatten()[idx] )-0.05
-    #max_lonx = np.amax( lon.flatten()[idx] )+0.05
-    #min_latx = np.amin( lat.flatten()[idx] )-0.05
-    #max_latx = np.amax( lat.flatten()[idx] )+0.05
-    #path = [ [min_lonx,min_latx],[min_lonx,max_latx],[max_lonx,max_latx],[max_lonx,min_latx], ]
-
     for i in range(2):
         ax[i].set_extent([lon_min,lon_max,lat_min,lat_max], crs=ccrs.PlateCarree())
         ax[i].coastlines (resolution='10m', color='black', linewidth=1)
@@ -85,35 +78,34 @@ def plot_slp( Storm, Exper_name, DAtime, wrf_dir, plot_dir ):
         min_slp = 900
         max_slp = 1020
         bounds = np.linspace(min_slp, max_slp, 7)
-        #start_level = max( np.amin(slp_smooth[0,:,:]), np.amin(slp_smooth[1,:,:]) )+0.1
-        #end_level = min( np.amax(slp_smooth[0,:,:]), np.amax(slp_smooth[1,:,:]) )
-        #step = (end_level -start_level)/5
-        #level = np.arange(start_level, end_level,step)
-        #slp_contour = ax[i].contour(lon,lat,slp_smooth[i,:,:],levels=level,cmap='Greys_r',vmin=min_slp,vmax=max_slp,transform=ccrs.PlateCarree())
         slp_contourf = ax[i].contourf(lon,lat,slp[i,:,:],cmap='magma',vmin=min_slp,vmax=max_slp,levels=bounds,transform=ccrs.PlateCarree())
         # Mark the best track
         if any( hh in DAtime[8:10] for hh in ['00','06','12','18'] ):
             ax[i].scatter(tc_lon,tc_lat, 20, 'black', marker='*',transform=ccrs.PlateCarree())
-            ax[i].text(tc_lon-1,tc_lat-0.5,tc_slp,fontsize=10)
+            ax[i].text(tc_lon-1,tc_lat-0.5,tc_slp,fontsize=12)
         #ax[i].add_patch(patches.Polygon(path,facecolor='none',edgecolor='black',linewidth=1.5 ))
 
     # Adding the colorbar
     cbaxes = fig.add_axes([0.01, 0.1, 0.02, 0.8])
     wind_bar = fig.colorbar(slp_contourf,cax=cbaxes,fraction=0.046, pad=0.04) #Make a colorbar for the ContourSet returned by the contourf call.
     wind_bar.set_clim( vmin=min_slp, vmax=max_slp )
-    wind_bar.ax.set_ylabel('slp (hPa)')
+    wind_bar.ax.set_ylabel('slp (hPa)',fontsize=12)
     wind_bar.ax.tick_params(labelsize='12')
 
     # Title
-    ax[0].set_title( 'Xb--min slp: '+str("{0:.3f}".format(np.min( slp[0,:,:] )))+' hPa',  fontweight='bold') #, fontsize=12)
-    ax[1].set_title( 'Xa--min slp: '+str("{0:.3f}".format(np.min( slp[1,:,:] )))+' hPa',  fontweight='bold') #, fontsize=12)
-    fig.suptitle(Storm+': '+Exper_name+'('+DAtime+')', fontsize=12, fontweight='bold')
+    ax[0].set_title( 'Xb--min slp: '+str("{0:.3f}".format(np.min( slp[0,:,:] )))+' hPa',  fontweight='bold', fontsize=13)
+    ax[1].set_title( 'Xa--min slp: '+str("{0:.3f}".format(np.min( slp[1,:,:] )))+' hPa',  fontweight='bold', fontsize=13)
+    if deep_slp_incre:
+        title_name = Storm+': '+Exper_name+' ('+DAtime+')'+'\nAbs of min SLP increment > '+str(incre_slp_th)+' hPa'
+        fig.suptitle(title_name,fontsize=12, fontweight='bold')
+    else:
+        fig.suptitle(Storm+': '+Exper_name+' ('+DAtime+')', fontsize=12, fontweight='bold')
 
     # Axis labels
-    lon_ticks = list(range(math.ceil(lon_min), math.ceil(lon_max),2))
-    lat_ticks = list(range(math.ceil(lat_min), math.ceil(lat_max),2))
+    lon_ticks = list(range(math.ceil(lon_min)-2, math.ceil(lon_max)+2,2))
+    lat_ticks = list(range(math.ceil(lat_min)-2, math.ceil(lat_max)+2,2))
     for j in range(2):
-        gl = ax[j].gridlines(crs=ccrs.PlateCarree(),draw_labels=False,linewidth=0.1, color='gray', alpha=0.5, linestyle='--')
+        gl = ax[j].gridlines(crs=ccrs.PlateCarree(),draw_labels=False,linewidth=0.5, color='gray', alpha=0.5, linestyle='--')
         gl.xlabels_top = False
         gl.xlabels_bottom = True
         if j==0:
@@ -129,7 +121,7 @@ def plot_slp( Storm, Exper_name, DAtime, wrf_dir, plot_dir ):
         gl.xlabel_style = {'size': 12}
         gl.ylabel_style = {'size': 12}
 
-    des = plot_dir+DAtime+'_slp_original.png'
+    des = plot_dir+DAtime+'_slp_deep_incre.png'
     plt.savefig( des, dpi=300 )
     print('Saving the figure: ', des)
     plt.close()
@@ -137,17 +129,25 @@ def plot_slp( Storm, Exper_name, DAtime, wrf_dir, plot_dir ):
 
 if __name__ == '__main__':
 
-    Storm = 'HARVEY'
-    Exper_name = 'JerryRun/IR_WSM6'
     big_dir = '/scratch/06191/tg854905/Pro2_PSU_MW/'
-    small_dir = '/work2/06191/tg854905/stampede2/Pro2_PSU_MW/'
-
-    Plot_slp = True
+    small_dir =  '/work2/06191/tg854905/stampede2/Pro2_PSU_MW/'
+    # ---------- Configuration -------------------------
+    Storm = 'IRMA'
+    DA = 'IR'
+    MP = 'THO'
 
     # Time range set up
-    start_time_str = '201708241200'
-    end_time_str = '201708251200'
+    start_time_str = '201709030000'
+    end_time_str = '201709050000'
     Consecutive_times = True
+
+    deep_slp_incre = True
+    incre_slp_th = 20 # threshold of increment, unit:hpa 
+    Plot_slp = True
+    # -------------------------------------------------------   
+
+    # Create experiment names
+    Exper_name =  UD.generate_one_name( Storm,DA,MP )
 
     if not Consecutive_times:
         DAtimes = ['201708251200',]
@@ -161,20 +161,28 @@ if __name__ == '__main__':
         DAtimes = [time_dt.strftime("%Y%m%d%H%M") for time_dt in time_interest_dt]
 
     # Plot low-level circulation
-    if Plot_slp:
+    if Plot_slp and deep_slp_incre:
         start_time=time.process_time()
+        # ------ Plot -------------------
+        plot_dir = small_dir+Storm+'/'+Exper_name+'/Vis_analyze/Model/deep_slp_incre/slp_field/'
+        plotdir_exists = os.path.exists( plot_dir )
+        if plotdir_exists == False:
+            os.mkdir(plot_dir)
+        # ----- Read min slp from model-----------------
+        HPI_models = {}
+        DAtimes_dir = [big_dir+Storm+'/'+Exper_name+'/fc/'+it for it in DAtimes]
+        file_kinds = ['wrf_enkf_input_d03_mean','wrf_enkf_output_d03_mean']
+        for ifk in file_kinds:
+            idx = file_kinds.index( ifk )
+            HPI_models[ifk] = read_HPI_model( Storm, Exper_name, ifk, DAtimes_dir )
+        incre_slp = np.array(HPI_models['wrf_enkf_output_d03_mean']['min_slp']) - np.array(HPI_models['wrf_enkf_input_d03_mean']['min_slp'])
         # Loop through each DAtime/analysis
         for DAtime in DAtimes:
-            wrf_dir = big_dir+Storm+'/'+Exper_name+'/fc/'+DAtime
-            print('Reading WRF background and analysis: ', wrf_dir)
-            DAtime_dt = datetime.strptime( DAtime, '%Y%m%d%H%M' )
-            # ------ Plot -------------------
-            plot_dir = small_dir+Storm+'/'+Exper_name+'/Vis_analyze/Model/study_slp/'
-            plotdir_exists = os.path.exists( plot_dir )
-            if plotdir_exists == False:
-                os.mkdir(plot_dir)
+            idx_t = DAtimes.index( DAtime )
+            if abs(incre_slp[idx_t]) > incre_slp_th:
+                wrf_dir = big_dir+Storm+'/'+Exper_name+'/fc/'+DAtime
+                print('Reading WRF background and analysis: ', wrf_dir)
+                DAtime_dt = datetime.strptime( DAtime, '%Y%m%d%H%M' )
                 plot_slp( Storm, Exper_name, DAtime, wrf_dir, plot_dir )
-            else:
-                plot_slp( Storm, Exper_name, DAtime, wrf_dir, plot_dir )        
         end_time = time.process_time()
         print ('time needed: ', end_time-start_time, ' seconds')

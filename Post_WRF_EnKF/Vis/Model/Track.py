@@ -263,7 +263,6 @@ def plot_one( ax0, ax1, ax2,  state, color, line, line_width, label, steps=6):
                 ax0.annotate(it[6:8], xy=(lon[idx], lat[idx]), color=color, xycoords='data', transform=ccrs.PlateCarree())
         
     else:
-        steps = 6
         Diff_start_next6x = state['Diff_start_next6x']
     
         if Diff_start_next6x != 6 and Diff_start_next6x != 0: # it means time_to_move in namelist is not equal to 0
@@ -363,7 +362,7 @@ def plot_hpi_df( Config, domain_range ):
     
 
     # Plot HPI from post-storm analysis
-    best_track = btk_in_duration(Storm, Btk_start, Btk_end, hour_step=6)
+    best_track = UD.btk_in_duration(Storm, Btk_start, Btk_end, hour_step=6)
     plot_one ( ax0, ax1, ax2, best_track,  'black', '-', 3, 'Best track' )
 
     # Customize color maps 
@@ -400,12 +399,12 @@ def plot_hpi_df( Config, domain_range ):
                 if Plot_analyses == True:
                     print('Plotting the analyses...')
                     HPI_analyses = read_HPI_analyses(Storm, key, wrf_dir)
-                    plot_one ( ax0, ax1, ax2, HPI_analyses, Ana_color[iExper], ':', 1.5, Ana_labels[iExper], steps=1 )
+                    plot_one ( ax0, ax1, ax2, HPI_analyses, Ana_color[iExper], '--', 1.5, Ana_labels[iExper], steps=1 )
                 for it in Exper_content_lbl[key]:
                     print('Plotting ', it)
                     print(wrf_dir+'/'+Storm+'/'+key+'/wrf_df/'+it)
                     HPI_model = read_rsl_error(Storm, key, wrf_dir+'/'+Storm+'/'+key+'/wrf_df/'+it, it, DF_model_end)
-                    plot_one( ax0, ax1, ax2, HPI_model, Color_set['c'+str(iExper)][ic], Line_types[iExper], 1.5, Labels[iExper]+it, steps=6 )
+                    #plot_one( ax0, ax1, ax2, HPI_model, Color_set['c'+str(iExper)][ic], Line_types[iExper], 1.5, Labels[iExper]+it, steps=6 )
 
                     ic = ic + 1
             else:
@@ -450,8 +449,8 @@ if __name__ == '__main__':
     big_dir = '/scratch/06191/tg854905/Pro2_PSU_MW/'
 
     # configuration
-    Storm = 'IRMA'
-    Exper_name = ['IR-J_DA+J_WRF+J_init-SP-intel17-THO-30hr-hroi900','IR-J_DA+J_WRF+J_init-SP-intel17-WSM6-30hr-hroi900',] 
+    Storm = 'HARVEY'
+    Exper_name = ['JerryRun/IR_THO','JerryRun/IR_WSM6']#['IR-J_DA+J_WRF+J_init-SP-intel17-THO-24hr-hroi900','IR-J_DA+J_WRF+J_init-SP-intel17-WSM6-24hr-hroi900',] 
     DF_model_start = '20170822180000' # Default value of DF_model_start. Especially useful when dealing with ensemble forecast
     mem_id = 'mean' # Default value of member id. Especially useful when dealing with deterministic forecast
     read_fc_wrfout = False # Feature that decides the way of reading HPI from model files
