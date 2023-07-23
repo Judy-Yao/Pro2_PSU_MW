@@ -4,6 +4,7 @@ import os
 import glob
 import numpy as np
 import netCDF4 as nc
+import matplotlib
 from matplotlib import pyplot as plt
 import matplotlib.ticker as mticker
 import matplotlib.patches as patches
@@ -35,7 +36,6 @@ def mean_Yo_Hx(simu, obs):
 def km_to_deg(km):
     earth_radius_km = 6371.0
     return km/earth_radius_km * (180.0/np.pi)
-
 
 # ------------------------------------------------------------------------------------------------------
 #           Object: Tbs and their attributes; Operation: Read and Process 
@@ -371,8 +371,8 @@ def read_wrf_domain( wrf_file ):
 def plot_Tb(Storm, Exper_name, Hx_dir, DAtime, sensor, ch_list ):
 
     # Read WRF domain
-    wrf_file = '/scratch/06191/tg854905/Pro2_PSU_MW/'+Storm+'/'+Exper_name+'/fc/'+DAtime+'/wrf_enkf_output_d03_mean'
-    d_wrf_d03 = read_wrf_domain( wrf_file )
+    output_file = '/scratch/06191/tg854905/Pro2_PSU_MW/'+Storm+'/'+Exper_name+'/fc/'+DAtime+'/wrf_enkf_output_d03_mean'
+    d_wrf_d03 = read_wrf_domain( output_file )
 
     # Read Tbs of obs, Hxb, Hxa
     Tb_file = Hx_dir + "/mean_obs_res_d03_" + DAtime + '_' +  sensor + '.txt'
@@ -459,8 +459,8 @@ def plot_Tb(Storm, Exper_name, Hx_dir, DAtime, sensor, ch_list ):
 def plot_Tb_diff(Storm, Exper_name, Hx_dir, DAtime, sensor, ch_list, HPI_models, idx_t ):
 
     # Read WRF domain
-    wrf_file = '/scratch/06191/tg854905/Pro2_PSU_MW/'+Storm+'/'+Exper_name+'/fc/'+DAtime+'/wrf_enkf_output_d03_mean'
-    d_wrf_d03 = read_wrf_domain( wrf_file )
+    output_file = big_dir+Storm+'/'+Exper_name+'/fc/'+DAtime+'/wrf_enkf_output_d03_mean'
+    d_wrf_d03 = read_wrf_domain( output_file )
 
     # Read Tbs of obs, Hxb, Hxa
     Tb_file = Hx_dir + "/mean_obs_res_d03_" + DAtime + '_' +  sensor + '.txt'
@@ -513,12 +513,19 @@ def plot_Tb_diff(Storm, Exper_name, Hx_dir, DAtime, sensor, ch_list, HPI_models,
         xa_s = axs.flat[2].scatter(d_all['lon_obs'], d_all['lat_obs'],1.5,c=d_all['Yo_obs']-d_all['meanYa_obs'],\
                         edgecolors='none', cmap='bwr', vmin=min_T, vmax=max_T, transform=ccrs.PlateCarree() )
     else:
-        pass
         bounds = np.linspace(min_T,max_T,7)
         xb_s = axs.flat[1].tricontourf(d_all['lon_obs'], d_all['lat_obs'], d_all['Yo_obs']-d_all['meanYb_obs'], cmap='bwr', \
                         vmin=min_T, vmax=max_T, levels=bounds, transform=ccrs.PlateCarree(), extend='both' )
         xa_s = axs.flat[2].tricontourf(d_all['lon_obs'], d_all['lat_obs'], d_all['Yo_obs']-d_all['meanYa_obs'], cmap='bwr', \
                         vmin=min_T, vmax=max_T, levels=bounds, transform=ccrs.PlateCarree(), extend='both' )
+        #try: #sometimes tricontourf doesn't work and the ValueError raises when saving the figure
+        #    figure_des=plot_dir+DAtime+'_'+sensor+'_Obspace_Diff_range15.png'
+        #    res = fig.savefig( figure_des ) 
+        #except ValueError: # Code to execute if a ValueError occurs
+        #    xb_s = axs.flat[1].scatter(d_all['lon_obs'], d_all['lat_obs'],1.5,c=d_all['Yo_obs']-d_all['meanYb_obs'],\
+        #                    edgecolors='none', cmap='bwr', vmin=min_T, vmax=max_T, transform=ccrs.PlateCarree() )
+        #    xa_s = axs.flat[2].scatter(d_all['lon_obs'], d_all['lat_obs'],1.5,c=d_all['Yo_obs']-d_all['meanYa_obs'],\
+        #                edgecolors='none', cmap='bwr', vmin=min_T, vmax=max_T, transform=ccrs.PlateCarree() )
     # add a reference point
     if any( hh in DAtime[8:10] for hh in ['00','06','12','18'] ):
         axs.flat[1].scatter(tc_lon, tc_lat, s=1, marker='*', edgecolors='black', transform=ccrs.PlateCarree())
@@ -545,24 +552,24 @@ def plot_Tb_diff(Storm, Exper_name, Hx_dir, DAtime, sensor, ch_list, HPI_models,
     cbar = fig.colorbar(xa_s, ax=axs[1:], ticks=cb_diff_ticks, orientation="horizontal", cax=caxes)
     cbar.ax.tick_params(labelsize=6)
 
-    #subplot title
+    #Subplot title
     font = {'size':6,}
     axs.flat[0].set_title('Ch'+ch_list[0]+':Yo', font, fontweight='bold')
-    metric[0] = mean_Yo_Hx(d_all['meanYb_obs'], d_all['Yo_obs'] )
-    metric[1] = mean_Yo_Hx(d_all['meanYa_obs'], d_all['Yo_obs'] )
-    if metric[0] is None:
-        axs.flat[1].set_title('H(Xb)-Yo ', font, fontweight='bold')
-    else:
-        metric_str = '%.2f' % metric[0]
-        #axs.flat[1].set_title('Ch'+ch_list[0]+':H(Xb)-Yo '+metric_str, font, fontweight='bold')
-        axs.flat[1].set_title('Yo-H(Xb): mean '+metric_str, font, fontweight='bold')
-
-    if metric[1] is None:
-        axs.flat[2].set_title('H(Xa)-Yo ', font, fontweight='bold')
-    else:
-        metric_str = '%.2f' % metric[1]
-#        axs.flat[2].set_title('Ch'+ch_list[0]+':H(Xa)-Yo '+metric_str, font, fontweight='bold')
-        axs.flat[2].set_title('Yo-H(Xa): mean '+metric_str, font, fontweight='bold')
+    # Find the index where its location is within the circle with center at the min slp of Xa
+    ## calculate the mean of Yo-Hx in the circle with center at the min slp of Xa
+    ct_lon = HPI_models['wrf_enkf_output_d03_mean']['lon'][idx_t]
+    ct_lat = HPI_models['wrf_enkf_output_d03_mean']['lat'][idx_t]
+    idx_area = UD.find_circle_area_ungrid( ct_lon, ct_lat, d_all['lon_obs'], d_all['lat_obs'], radius_th )
+    ## calculate the mean of Yo-Hx inside the circle
+    metric[0] = mean_Yo_Hx(d_all['meanYb_obs'][idx_area], d_all['Yo_obs'][idx_area] )
+    metric[1] = mean_Yo_Hx(d_all['meanYa_obs'][idx_area], d_all['Yo_obs'][idx_area] )
+    ## format the statistics
+    metric_str = '%.2f' % metric[0]
+    suptitle = 'Yo-H(Xb)\n (in the circle) mean: '+metric_str
+    axs.flat[1].set_title(suptitle, font, fontweight='bold')
+    metric_str = '%.2f' % metric[1]
+    suptitle = 'Yo-H(Xa)\n (in the circle) mean: '+metric_str
+    axs.flat[2].set_title(suptitle, font, fontweight='bold')
     
     #title for all
     if incre_slp_th:
@@ -607,20 +614,20 @@ if __name__ == '__main__':
     model_resolution = 3000 #m
 
     # ---------- Configuration -------------------------
-    Storm = 'IRMA'
+    Storm = 'JOSE'
     DA = 'IR'
-    MP = 'THO'
+    MP = 'WSM6'
  
     sensor = 'abi_gr'
     ch_list = ['8',]
     fort_v = ['obs_type','lat','lon','obs']
 
-    start_time_str = '201709040200' 
-    end_time_str = '201709040200'
+    start_time_str = '201709061700' 
+    end_time_str = '201709061700'
     Consecutive_times = True
 
     deep_slp_incre = True
-    incre_slp_th = 20 # threshold of increment, unit:hpa
+    incre_slp_th = 10 # threshold of increment, unit:hpa
     plot_circle = True
     radius_th = 200 # km
 

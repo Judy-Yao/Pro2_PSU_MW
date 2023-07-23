@@ -244,18 +244,18 @@ if __name__ == '__main__':
     small_dir =  '/work2/06191/tg854905/stampede2/Pro2_PSU_MW/'
     model_resolution = 3000 #m
     # ---------- Configuration -------------------------
-    Storm = 'IRMA'
+    Storm = 'JOSE'
     DA = 'IR'
-    MP = 'THO'
+    MP = 'WSM6'
     hydros = ['QCLOUD','QRAIN','QICE','QSNOW','QGRAUP']
 
     # Time range set up
-    start_time_str = '201709030000'
-    end_time_str = '201709050000'
+    start_time_str = '201709061200'
+    end_time_str = '201709070000'
     Consecutive_times = True
 
     deep_slp_incre = True
-    incre_slp_th = 20 # threshold of increment, unit:hpa
+    incre_slp_th = 10 # threshold of increment, unit:hpa
     radius_th = 200 #km
 
     each_water = True

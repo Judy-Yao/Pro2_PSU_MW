@@ -132,17 +132,17 @@ if __name__ == '__main__':
     big_dir = '/scratch/06191/tg854905/Pro2_PSU_MW/'
     small_dir =  '/work2/06191/tg854905/stampede2/Pro2_PSU_MW/'
     # ---------- Configuration -------------------------
-    Storm = 'IRMA'
+    Storm = 'JOSE'
     DA = 'IR'
-    MP = 'THO'
+    MP = 'WSM6'
 
     # Time range set up
-    start_time_str = '201709030000'
-    end_time_str = '201709050000'
+    start_time_str = '201709061200'
+    end_time_str = '201709070000'
     Consecutive_times = True
 
     deep_slp_incre = True
-    incre_slp_th = 20 # threshold of increment, unit:hpa 
+    incre_slp_th = 10 # threshold of increment, unit:hpa 
     Plot_slp = True
     # -------------------------------------------------------   
 

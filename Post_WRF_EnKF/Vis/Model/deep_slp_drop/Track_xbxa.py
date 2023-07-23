@@ -49,6 +49,7 @@ def read_HPI_model( Storm, Exper_name, file_kind, DAtimes ):
     DAtime_str = []
     max_wind = []
     min_slp = []
+    idx_location = []
     lat_storm = []
     lon_storm = []
        
@@ -70,10 +71,11 @@ def read_HPI_model( Storm, Exper_name, file_kind, DAtimes ):
             min_slp.append( np.min( slp )) 
             slp_smooth = sp.ndimage.filters.gaussian_filter(slp, [11, 11] )
             idx = np.nanargmin( slp_smooth )
+            idx_location.append( idx )
             lat_storm.append( ncid.variables['XLAT'][:].flatten()[idx]) 
             lon_storm.append( ncid.variables['XLONG'][:].flatten()[idx]) 
             
-    HPI_model = {'time':DAtime_str, 'lat': lat_storm, 'lon':lon_storm, 'max_ws': max_wind, 'min_slp':min_slp}
+    HPI_model = {'time':DAtime_str,'idx_location': idx_location, 'lat': lat_storm, 'lon':lon_storm, 'max_ws': max_wind, 'min_slp':min_slp}
 
     return HPI_model
 
