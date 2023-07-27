@@ -80,8 +80,8 @@ function [sat_name,myLat,myLon,myTb,mySat_lat,mySat_lon,mySat_alt,myAzimuth,mySc
 			%            FOV
 			% ----------------------- earth surface
             %
-			% Note: Interpretation on nChUIA
-            % For a sensor, there might be n sets of scanning setup. 
+			% Note: Interpretation on nChUIA (number of unique incidence angles for this swath)
+            % For a sensor, there might be n sets of scanning setup/incidence angles. 
             % For example, GMI sensor has two swaths, each of which uses different scanning setup; 
             % the dimension name for IncidenceAngle for swath 1 or 2 is (nscan1, npixel1, nchUIA1) or (nscan2, npixel2, nchUIA2)
             % However, it is possible that even for one swath there might be more than one set of scanning setup such as nchUIA1 might be 2.
@@ -92,7 +92,7 @@ function [sat_name,myLat,myLon,myTb,mySat_lat,mySat_lon,mySat_alt,myAzimuth,mySc
         	if size(incidenceAngles,1) == 1 % only one scanning setup for the swath
             	zenith{it}(:,:) = squeeze(incidenceAngles(1,:,:));
         	else
-            	num_Ch_perSW = size(iAIndices,1); % number of channels under this swath number of scanning setups for the swath
+            	num_Ch_perSW = size(iAIndices,1); % number of channels under this swath 
             	num_unique_perCh = zeros(1,num_Ch_perSW); 
             	for ich = 1:num_Ch_perSW
                 	num_unique_perCh(ich) = length(unique(iAIndices(ich,:)));
@@ -101,7 +101,7 @@ function [sat_name,myLat,myLon,myTb,mySat_lat,mySat_lon,mySat_alt,myAzimuth,mySc
                 	iAIndices = iAIndices(:,1); % For a channel, all scans point to the same set of zenith angles
                 	zenith{it}(:,:) = squeeze(incidenceAngles(iAIndices(ChIdx_all{iTb}(it)),:,:)); % npixel, nscan
             	else % more complicated: some scans points to first set of geometry while others point to other sets of geometry
-                	disp("Error: current algorithm does not work!! Please modify it."); 
+                	disp(['Error: current algorithm does not work!! Please modify it.']); 
             	end
         	end
 
@@ -120,15 +120,15 @@ function [sat_name,myLat,myLon,myTb,mySat_lat,mySat_lon,mySat_alt,myAzimuth,mySc
     	  	% (0-> 360 degrees)
   	      	%                     North
   	      	%                      |AZ /
-      	  	%                      |~ FOV
+      	  	%                      |~ Satellite
           	%                      | /
           	%                      |/
-          	% West ---------- Satellite ------------- East
-        	length_perscan{it} = size(Tb{it},1); % number of pixels per scan
-        	azimuth{it} = geodetic2aer(lat{it},                                       lon{it},                                       0, ...
-                                             repmat(sat_lat{it}',[length_perscan{it} 1]), repmat(sat_lon{it}',[length_perscan{it} 1]), repmat(sat_alt{it}'*1000,[length_perscan{it} 1]), ...
-                                             referenceEllipsoid('WGS 84')); % npixel, nscan
+          	% West -------------- FOV ------------- East
+        	Npixel_perscan{it} = size(Tb{it},1); % number of pixels per scan
+            azimuth{it} = geodetic2aer( repmat(sat_lat{it}',[Npixel_perscan{it} 1]),  repmat(sat_lon{it}',[Npixel_perscan{it} 1]), repmat(sat_alt{it}'*1000,[Npixel_perscan{it} 1]),...
+                                        lat{it},                                       lon{it},                                       0, referenceEllipsoid('WGS 84')); % npixel, nscan
             % geodetic2aer: transforms the geodetic coordinates specified by lat, lon, and h to the local azimuth-elevation-range (AER) spherical coordinates specified by az, elev, and slantRange.
+             
 
         	% ** (Scan) Time** 
         	year   = double(h5read(Tb_file, Swath_used{iTb}(it) + '/ScanTime/Year')); % nscan
@@ -171,9 +171,9 @@ function [sat_name,myLat,myLon,myTb,mySat_lat,mySat_lon,mySat_alt,myAzimuth,mySc
 			sat_alt{it} = ncread(Tb_file, ['spacecraft_alt_' + Swath_used{iTb}(it)]); % nscan
 
             % **azimuth of satellite scan (used in CRTM)**: the angle subtended
-            length_perscan{it} = size(Tb{it},1); % number of pixels per scan
+            Npixel_perscan{it} = size(Tb{it},1); % number of pixels per scan
             azimuth{it} = geodetic2aer(lat{it},                                       lon{it},                                       0, ...
-                                             repmat(sat_lat{it}',[length_perscan{it} 1]), repmat(sat_lon{it}',[length_perscan{it} 1]), repmat(sat_alt{it}'*1000,[length_perscan{it} 1]), ...
+                                             repmat(sat_lat{it}',[Npixel_perscan{it} 1]), repmat(sat_lon{it}',[Npixel_perscan{it} 1]), repmat(sat_alt{it}'*1000,[Npixel_perscan{it} 1]), ...
                                              referenceEllipsoid('WGS 84')); % npixel, nscan
 
             % ** (Scan) Time** 
@@ -209,23 +209,32 @@ function [sat_name,myLat,myLon,myTb,mySat_lat,mySat_lon,mySat_alt,myAzimuth,mySc
 % ================================================================================================
 %                                         Step 2
 % ================================================================================================
-%  Define area of interest for simulation AND
+%  Read domain of interest from geo_em.d03.nc generated by WPS geogrid.exe 
 %  Select the raw obs for staggered grid point for EnKF assimilation (indicated by obs_index)
 % -----------------------------------------------------------------------------------------------
 
-    % Prepare area: best-track location followed; a slightly larger area that WRF simulation
-    nx = control.nx*control.domain_buffer; % zoom out
-    ny = control.ny*control.domain_buffer; % zoom out
-    % Below algorithm works if only for all frequencies of interest, the DA_time are the same
-	min_XLAT = loc_DAtime_all{iTb}(1) - (ny/2*control.dx)/(cos(loc_DAtime_all{iTb}(1)*(pi/180))*111);
-    max_XLAT = loc_DAtime_all{iTb}(1) + (ny/2*control.dx)/(cos(loc_DAtime_all{iTb}(1)*(pi/180))*111);
-    min_XLONG = loc_DAtime_all{iTb}(2) - (nx/2*control.dx)/111;
-    max_XLONG = loc_DAtime_all{iTb}(2) + (nx/2*control.dx)/111;
-    disp(['      min of xlong: ',num2str(min_XLONG), ', max of xlong: ',num2str(max_XLONG)]);
-    disp(['      min of xlat: ',num2str(min_XLAT), ', max of xlat: ',num2str(max_XLAT)]);
-    latitudes  = linspace(min_XLAT,max_XLAT,ny);
-    longitudes = linspace(min_XLONG,max_XLONG,nx);
-    [XLAT, XLONG] = meshgrid(latitudes,longitudes);
+    geo_file =  [control.geogrid_dir,control.storm_phase{istorm},'/',DAtime,'/geo_em.',control.domain,'.nc'];
+    disp(['Reading ', geo_file, '......']);
+    xlat_m = ncread(geo_file,'XLAT_M');
+    xlon_m = ncread(geo_file,'XLONG_M');
+    min_xlat = min(xlat_m,[],'all')-0.5;
+    max_xlat = max(xlat_m,[],'all')+0.5;
+    min_xlon = min(xlon_m,[],'all')-0.5;
+    max_xlon = max(xlon_m,[],'all')+0.5;
+    %% Old method: when there is no geo_em.d03.nc 
+    %% Prepare area: best-track location followed; a slightly larger area that WRF simulation
+    %nx = control.nx*control.domain_buffer; % zoom out
+    %ny = control.ny*control.domain_buffer; % zoom out
+    %% Below algorithm works if only for all frequencies of interest, the DA_time are the same
+	%min_XLAT = loc_DAtime_all{iTb}(1) - (ny/2*control.dx)/(cos(loc_DAtime_all{iTb}(1)*(pi/180))*111);
+    %max_XLAT = loc_DAtime_all{iTb}(1) + (ny/2*control.dx)/(cos(loc_DAtime_all{iTb}(1)*(pi/180))*111);
+    %min_XLONG = loc_DAtime_all{iTb}(2) - (nx/2*control.dx)/111;
+    %max_XLONG = loc_DAtime_all{iTb}(2) + (nx/2*control.dx)/111;
+    %disp(['      min of xlong: ',num2str(min_XLONG), ', max of xlong: ',num2str(max_XLONG)]);
+    %disp(['      min of xlat: ',num2str(min_XLAT), ', max of xlat: ',num2str(max_XLAT)]);
+    %latitudes  = linspace(min_XLAT,max_XLAT,ny);
+    %longitudes = linspace(min_XLONG,max_XLONG,nx);
+    %[XLAT, XLONG] = meshgrid(latitudes,longitudes);
     
     % Note: for two ROI plans, Tb at/near different grid points are appreciated because Tb at the same point should not be picked for both large ROI plan and small ROI plan.
     % Therefore it is important to staggeredly separate gird points for small ROI plan from for large ROI plan.
