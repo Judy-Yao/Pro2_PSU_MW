@@ -77,15 +77,15 @@ function [all_Tbfile_name,all_Swath_used,all_ChIdx_perCh,all_ChName_perCh,all_DA
 						disp(['      (More) microwave observations exist in the area of interest at DA_time ' + DAtime + '!']);
 
                         % ----- Gather the useful Tb file !! --------------------
-                        source_file = erase(Tb_file,'raw_Obs/');
-
-						[filepath,filename,filext] = fileparts(Tb_file);
+                        source_file = erase(Tb_file,'Preprocess_Obs/raw_Obs/');
+						
+                        [filepath,filename,filext] = fileparts(Tb_file);
 						if contains(filext,"HDF5")
 							newfile_name = ['DAt' + DAtime + '_1C.' + control.platform{isensor}{isensor_plf} + '.' + control.sensor{isensor} + '.HDF5'];
 						elseif contains(filext,"nc")
 							newfile_name = ['DAt' + DAtime + '_1C.' + control.platform{isensor}{isensor_plf} + '.' + control.sensor{isensor} + '.nc'];	
 						end                    
-						command = ["ln -s " + source_file + " " + destination + newfile_name];% Symbolic link's path -> source file. The relatively path of source file is relative to symbolic link's path.
+						command = ["ln -s " + source_file + " " + destination + newfile_name]; % Symbolic link's path -> source file. The relatively path of source file is relative to symbolic link's path.
                         [status,~] = system(command);
                         if status == 0
                             disp(['    ',filename,filext, ' is collected!']);

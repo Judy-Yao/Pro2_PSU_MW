@@ -1,12 +1,17 @@
 #!/bin/bash
 
+NETCDF_INC=${TACC_NETCDF_INC}
+NETCDF_LIB=${TACC_NETCDF_LIB}
+HDF5_LIB=${TACC_HDF5_LIB}
+
 CRTM_DIR="/work2/06191/tg854905/stampede2/opt/CRTM/PSU_EnKF_CRTM/crtm_v2.3.0/"
 #FCFLAG=-f90=ifort -convert little_endian -traceback -I$(QN2RE)
 echo ${CRTM_DIR}
+echo ${NETCDF_INC}
+echo ${NETCDF_LIB}
 
-
-mpif90 -f90=ifort -c -i4 -w -ftz -align all -fno-alias -fp-model precise -assume realloc_lhs -convert big_endian -traceback -MIC -AVX512 -FR -I$NETCDF/include -I$CRTM_DIR/include ChofSensor.f90
-mpif90 -o sensor.exe ChofSensor.o -L$CRTM_DIR/lib -lcrtm -L$NETCDF/lib -lnetcdff 
+mpif90 -f90=ifort -c -i4 -w -ftz -align all -fno-alias -fp-model precise -assume realloc_lhs -convert big_endian -traceback -MIC -AVX512 -FR -I$NETCDF_INC -I$CRTM_DIR/include ChofSensor.f90
+mpif90 -o sensor.exe ChofSensor.o -L$CRTM_DIR/lib -lcrtm -L$NETCDF_LIB -lnetcdff 
 
 
 

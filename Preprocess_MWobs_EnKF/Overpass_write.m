@@ -29,7 +29,7 @@ function [] = Overpass_write(iTb,istorm,Swath_used,ChIdx_all,ChName_all,DAtime_a
         end
 
 		[filepath,filename,filext] = fileparts(Tb_overpass(io));
-		[sat_name{io},op_lat{io},op_lon{io},op_Tb{io},op_Sat_lat{io},op_Sat_lon{io},op_Sat_alt{io},op_azimuth{io},op_scan{io},op_zenith{io},op_Fov_crossTrack{io},op_Fov_alongTrack{io},op_times{io},op_chNum{io},op_ROI_hydro{io},op_ROI_other{io},op_ObsErr{io}] = ProduceforEnKF(iTb(io),Swath_used,ChIdx_all,ChName_all,DAtime_all,loc_DAtime_all,Tb_overpass(io),control);
+        [sat_name{io},op_lat{io},op_lon{io},op_Tb{io},op_Sat_lat{io},op_Sat_lon{io},op_Sat_alt{io},op_azimuth{io},op_scan{io},op_zenith{io},op_Fov_crossTrack{io},op_Fov_alongTrack{io},op_times{io},op_chNum{io},op_ROI_hydro{io},op_ROI_other{io},op_ObsErr{io}] = ProduceforEnKF(istorm,iTb(io),Swath_used,ChIdx_all,ChName_all,DAtime_all,loc_DAtime_all,Tb_overpass(io),control);
     end
 
 	% Gather variables of different Tb files with the same ROI combination into the same cell
@@ -59,20 +59,27 @@ function [] = Overpass_write(iTb,istorm,Swath_used,ChIdx_all,ChName_all,DAtime_a
 		tem_azimuth = []; tem_crossTrack = []; tem_alongTrack = [];
 		tem_times = []; tem_chNum =[ ]; tem_ROI_other = []; tem_ROI_hydro = []; tem_ObsErr = []; tem_Sat_name = [];
 		for io = 1:length(Tb_overpass)
-			tem_lat = [tem_lat;op_lat{io}{ir}]; tem_lon = [tem_lon;op_lon{io}{ir}]; tem_Tb = [tem_Tb;op_Tb{io}{ir}]; 
-			tem_scan = [tem_scan;op_scan{io}{ir}]; tem_zenith = [tem_zenith;op_zenith{io}{ir}];			
-			tem_Sat_lat = [tem_Sat_lat;op_Sat_lat{io}{ir}]; tem_Sat_lon = [tem_Sat_lon; op_Sat_lon{io}{ir}];
-			tem_Sat_alt = [tem_Sat_alt; op_Sat_alt{io}{ir}]; tem_azimuth = [tem_azimuth;op_azimuth{io}{ir}];
-            tem_crossTrack = [tem_crossTrack; op_Fov_crossTrack{io}{ir}];
-			tem_alongTrack = [tem_alongTrack;op_Fov_alongTrack{io}{ir}];			
-            tem_times = [tem_times; op_times{io}{ir}];
-			tem_chNum = [tem_chNum; op_chNum{io}{ir}]; tem_ROI_other = [tem_ROI_other; op_ROI_other{io}{ir}];
-			tem_ROI_hydro = [tem_ROI_hydro; op_ROI_hydro{io}{ir}]; tem_ObsErr = [tem_ObsErr;op_ObsErr{io}{ir}];
-			Sat_name_copies = repmat(sat_name{io},[length(op_Tb{io}{ir}),1]);
-			tem_Sat_name =[tem_Sat_name;Sat_name_copies];
+			if isempty( op_lat{io}{ir} )
+                tem_lat = []; tem_lon = []; tem_Tb = []; tem_scan = []; tem_zenith = [];
+                tem_Sat_lat = []; tem_Sat_lon = []; tem_Sat_alt = [];
+                tem_azimuth = []; tem_crossTrack = []; tem_alongTrack = [];
+                tem_times = []; tem_chNum =[ ]; tem_ROI_other = []; tem_ROI_hydro = []; tem_ObsErr = []; tem_Sat_name = []; 
+            else
+                tem_lat = [tem_lat;op_lat{io}{ir}]; tem_lon = [tem_lon;op_lon{io}{ir}]; tem_Tb = [tem_Tb;op_Tb{io}{ir}];
+			    tem_scan = [tem_scan;op_scan{io}{ir}]; tem_zenith = [tem_zenith;op_zenith{io}{ir}];			
+			    tem_Sat_lat = [tem_Sat_lat;op_Sat_lat{io}{ir}]; tem_Sat_lon = [tem_Sat_lon; op_Sat_lon{io}{ir}];
+			    tem_Sat_alt = [tem_Sat_alt; op_Sat_alt{io}{ir}]; tem_azimuth = [tem_azimuth;op_azimuth{io}{ir}];
+                tem_crossTrack = [tem_crossTrack; op_Fov_crossTrack{io}{ir}];
+			    tem_alongTrack = [tem_alongTrack;op_Fov_alongTrack{io}{ir}];	
+                tem_times = [tem_times; op_times{io}{ir}];
+			    tem_chNum = [tem_chNum; op_chNum{io}{ir}]; tem_ROI_other = [tem_ROI_other; op_ROI_other{io}{ir}];
+			    tem_ROI_hydro = [tem_ROI_hydro; op_ROI_hydro{io}{ir}]; tem_ObsErr = [tem_ObsErr;op_ObsErr{io}{ir}];
+			    Sat_name_copies = repmat(sat_name{io},[length(op_Tb{io}{ir}),1]);
+			    tem_Sat_name =[tem_Sat_name;Sat_name_copies];
+            end
 		end
 		% randomize
-		randOrder = randperm(length(tem_Tb));
+        randOrder = randperm(length(tem_Tb));
         myLat{ir} = tem_lat(randOrder); myLon{ir} = tem_lon(randOrder); myTb{ir} = tem_Tb(randOrder);
 		mySat_lat{ir} = tem_Sat_lat(randOrder); mySat_lon{ir} = tem_Sat_lon(randOrder);
 		mySat_alt{ir} = tem_Sat_alt(randOrder); myazimuth{ir} = tem_Sat_alt(randOrder);

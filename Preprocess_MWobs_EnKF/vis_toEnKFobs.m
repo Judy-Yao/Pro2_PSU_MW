@@ -2,23 +2,26 @@
 % Script to plot MW observations that are processed by MOPS 
 % =============================================================================================================================
 
-% -------------- Set up control variables ----------------------
+% ================= Configuration ==========================
 control = struct;
 % ----Path
-control.obs_dir = '../../toEnKFobs/MW/';
-control.output_dir = '../../Visual/toEnKFobs/MW/';
-% ---Storm information
-control.storm_phase = 'MariaRI';
+control.obs_dir = '../../Preprocess_Obs/toEnKFobs/MW/';
+control.output_dir = '../../Preprocess_Obs/Visual/toEnKFobs/MW/';
+control.geogrid_dir = '../../Preprocess_Domain/';
+% ---Storm 
+control.storm_phase = 'MARIA';
+% ---Satellite informaiton
 control.sensor_list = ["amsr2","atms","gmi","mhs","saphir","ssmi","ssmis"];
-control.freq_list = {{'18.7GHzV-Pol','89GHzV-PolA-Scan','89GHzV-PolB-Scan'},...
+control.freq_list = {{'18.7GHzV-Pol','89GHzV-Pol'},...
         {'183.31+-7GHzQH-Pol'},{'18.7GHzV-Pol','183.31+/-7GHzV-Pol'},{'190.31GHzV-Pol'},{'183.31+/-6.8GHz'},{'fcdr\_tb19v','fcdr\_tb85v'},{'19.35GHzV-Pol','183.31+/-6.6GHzH-Pol'}};
 control.ch_list= {[7,13],18,[3,13],5,5,[1,6],[13,9]}; % Reference to SourceCode/output_sensor_facts.py
 control.numPerscan = {[243,486],96,[221,221],90,182,[64,128],[90,180]}; % Reference to SourceCode/output_sensor_facts.py (be careful with AMSR2 89GHz-Pol!)
+% --- Other parameters
 control.nx = 297;
 control.ny = 297;
 control.dx = 3;
-
 control.roi_oh = {[200,0]; [60,60]};
+control.domain = 3;
 % --- Customize colormap
 max_T = 300;
 min_T = 80;
@@ -36,15 +39,14 @@ cm_red   = [0.0; jetAdd_red;   jet_red;   0.0];
 cm_green = [0.0; jetAdd_green; jet_green; 0.0];
 cm_blue  = [0.0; jetAdd_blue;  jet_blue;  0.0];
 myColormap = ([cm_red cm_green cm_blue]);
+% ============================================================
 
-% -------------- Obtain files ----------------------
-obs_dir = [control.obs_dir,control.storm_phase,'/*_so'];
-bestrack_dir = [control.obs_dir,control.storm_phase,'/bestrack_perHour'];
-obs_files = strsplit(ls(obs_dir));
-obs_files = obs_files(~cellfun('isempty',obs_files));
+
+date_plot = date;
+disp(['Starting the plotting MW Tb so files from the microwave-observation-preprocessing system (MOPS) on ', date_plot]);
+
 
 disp(['Plotting Tb of storm: ',control.storm_phase]);
-
 if ~exist([control.output_dir,control.storm_phase],'dir')
     [~, msg, ~] = mkdir(control.output_dir,control.storm_phase);
      if isempty(msg)
@@ -54,6 +56,11 @@ if ~exist([control.output_dir,control.storm_phase],'dir')
      end
 end
 
+% -------------- Obtain MW SO files ----------------------
+obs_dir = [control.obs_dir,control.storm_phase,'/*_so'];
+bestrack_dir = [control.obs_dir,control.storm_phase,'/bestrack_perHour'];
+obs_files = strsplit(ls(obs_dir));
+obs_files = obs_files(~cellfun('isempty',obs_files));
 
 % -------------- Read and process raw best-track file ------------
 fid = fopen(bestrack_dir);
@@ -71,9 +78,13 @@ for ir = 1:len_unique_BTrecord
 end
 
 % -------------- Handle MW so file ------------
+
+% Loop through each times
 for iso = 1:length(obs_files)
+    DA_time = loc_storm(iso,1);
+    disp(['DA time is ', char(DA_time), ' ......']);
     so_file = obs_files{iso};
-    disp(so_file);
+    disp(['Reading obs file: ',so_file,' ......']);
     % --- Read the so file
     fid = fopen(so_file);
     obs_record = textscan(fid,'%s','delimiter','');
@@ -108,7 +119,7 @@ for iso = 1:length(obs_files)
     lat_bt = str2double(loc_storm(idx_inBT,2));
     lon_bt = str2double(loc_storm(idx_inBT,3));
 
-    % --- Allocate indices for records for each sensor and each channel
+    % Loop through ROIs 
     for iroi = 1:length(index_ROI)
         sensors_plf = unique(obs_str{iroi,1}(:,1)); % unique sensor names
         
@@ -120,8 +131,9 @@ for iso = 1:length(obs_files)
             idx_perChperSS{iss,1} = cell(length(chNum{iss,1}),1);
         end
     
-        % --- Plot each kind of record
+        % Loop through sensors
         for iss = 1:length(sensors_plf)
+            % Loop through channels on that sensor
             for ich = 1:length(idx_perChperSS{iss,1})
                 sensor_plf = sensors_plf(iss);
                 sensor = split(sensor_plf,"_"); sensor = sensor{1};
@@ -131,7 +143,8 @@ for iso = 1:length(obs_files)
                 iss_list = sensor == control.sensor_list;
                 ich_list = chNum_int == control.ch_list{iss_list};
                 freq = control.freq_list{iss_list}{ich_list};
-
+    
+                % Identify records of that ROI + that sensor + that channel
                 idx_ss_obs_str = obs_str{iroi,1}(:,1) == sensor_plf;
                 ichNum_obs_str = obs_str{iroi,1}(:,2) == chNum_char;
                 idx_perChperSS{iss,1}{ich,1} = idx_ss_obs_str & ichNum_obs_str;
@@ -139,30 +152,38 @@ for iso = 1:length(obs_files)
                 lat = str2double(obs_str{iroi,1}(idx_perChperSS{iss,1}{ich,1},3));
                 lon = str2double(obs_str{iroi,1}(idx_perChperSS{iss,1}{ich,1},4));
                 Tb = str2double(obs_str{iroi,1}(idx_perChperSS{iss,1}{ich,1},5));
-                % - Plot the figure
+  
+                % Plot the figure
                 figure;
                 hFig=gcf;
                 set(hFig, 'Position', [0 0 750 800]);
-                % map boundaries
-                min_lat = lat_bt - (control.ny/2*control.dx)/(cos(lat_bt*(pi/180))*111);
-                max_lat = lat_bt + (control.ny/2*control.dx)/(cos(lat_bt*(pi/180))*111);
-                min_lon = lon_bt - (control.nx/2*control.dx)/111;
-                max_lon = lon_bt + (control.nx/2*control.dx)/111; 
+                % identify the domain
+                geo_file =  strcat(control.geogrid_dir,control.storm_phase,'/',DA_time,'/geo_em.',control.domain,'.nc');
+                disp(strcat('Reading ', geo_file, '......'));
+                xlat_m = ncread(geo_file,'XLAT_M');
+                xlon_m = ncread(geo_file,'XLONG_M');
+                %min_lat = lat_bt - (control.ny/2*control.dx)/(cos(lat_bt*(pi/180))*111);
+                %max_lat = lat_bt + (control.ny/2*control.dx)/(cos(lat_bt*(pi/180))*111);
+                %min_lon = lon_bt - (control.nx/2*control.dx)/111;
+                %max_lon = lon_bt + (control.nx/2*control.dx)/111;
+                min_xlat = min(xlat_m,[],'all')-0.5;
+                max_xlat = max(xlat_m,[],'all')+0.5;
+                min_xlon = min(xlon_m,[],'all')-0.5;
+                max_xlon = max(xlon_m,[],'all')+0.5;
 
-                % limits of the map
-                min_xlat = double(min_lat-0.2);
-                min_xlon = double(min_lon-0.2);
-                max_xlat = double(max_lat+0.2);
-                max_xlon = double(max_lon+0.2);
                 % scatter Tbs on a projected map
                 m_proj('mercator','lon',[min_xlon max_xlon],'lat',[min_xlat max_xlat]);
                 % Pointsize is inverse proportional to number per scan for each channel
                 pointsize = control.numPerscan{iss_list}(ich_list)*(-0.114)+60.26; % linear interpolation
                 % number per scan: 486  <--> pointsize = 5
                 % number per scan: 90   <--> pointsize = 50
-                H = m_scatter(lon,lat,pointsize,Tb,'o','filled');
+                if iroi == 1
+                    H = m_scatter(lon,lat,pointsize,Tb,'^','filled');
+                else
+                    H = m_scatter(lon,lat,pointsize,Tb,'v','filled');
+                end
                 hold on;
-                if contains(control.freq_list{iss_list}{ich_list}, '18.7GHzV-Pol') | contains(control.freq_list{iss_list}{ich_list},'19.35GHzV-Pol') | contains(control.freq_list{iss_list}{ich_list},'fcdr_tb19v')
+                if contains(control.freq_list{iss_list}{ich_list}, '18.7GHzV-Pol') | contains(control.freq_list{iss_list}{ich_list},'19.35GHzV-Pol') | contains(control.freq_list{iss_list}{ich_list},'fcdr\_tb19v')
                     m_scatter(lon_bt,lat_bt,50,0, '*'); % 0 is represented by black color in this colormap
                 else
                     m_scatter(lon_bt,lat_bt,50,299, '*'); % 299 is represented by red color in this colormap
@@ -212,22 +233,14 @@ for iso = 1:length(obs_files)
                 title_char2 = "Ch" + chNum_char + ": "+freq ;
                 title_char = [title_char1, title_char2];
                 title(title_char,'Fontsize',20)
-         
-                if iroi == 1
-                    if contains(control.freq_list{iss_list}{ich_list}, '18.7GHzV-Pol') | contains(control.freq_list{iss_list}{ich_list},'19.35GHzV-Pol') | contains(control.freq_list{iss_list}{ich_list},'fcdr\_tb19v')
-                        save_dir = [control.output_dir+string(control.storm_phase)+'/BigROI/lf/'+string(DA_time)+'_ch'+chNum_char+'.png'];  
-                    else
-                        save_dir = [control.output_dir+string(control.storm_phase)+'/BigROI/hf/'+string(DA_time)+'_ch'+chNum_char+'.png'];
-                    end
+                
+                if iroi == 1  
+                    save_dir = [control.output_dir+string(control.storm_phase)+'/'+string(DA_time)+sensor_plf+'_Ch'+chNum_char+'_200km.png'];  
                 else
-                    if contains(control.freq_list{iss_list}{ich_list}, '18.7GHzV-Pol') | contains(control.freq_list{iss_list}{ich_list},'19.35GHzV-Pol') | contains(control.freq_list{iss_list}{ich_list},'fcdr\_tb19v')
-                        save_dir = [control.output_dir+string(control.storm_phase)+'/SmallROI/lf/'+string(DA_time)+'_ch'+chNum_char+'.png'];
-                    else
-                        save_dir = [control.output_dir+string(control.storm_phase)+'/SmallROI/hf/'+string(DA_time)+'_ch'+chNum_char+'.png'];
-                    end
+                    save_dir = [control.output_dir+string(control.storm_phase)+'/'+string(DA_time)+sensor_plf+'_Ch'+chNum_char+'_60km.png'];
                 end
-               saveas(gcf, save_dir); 
-            end
-        end
-    end    
+                saveas(gcf, save_dir); 
+            end % end the loop through channels on that sensor
+        end % end the loop over sensors
+    end % end the loop over ROIs 
 end

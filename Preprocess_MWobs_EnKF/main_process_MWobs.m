@@ -10,25 +10,27 @@
 
 control = struct;
 % ----Path
-control.obs_dir = '../../raw_Obs/Microwave/'; % directory into which MW L1C raw observations are downloaded using the script Download_MWobs/get_MWobs.sh
-control.obs_collect_dir = '../../raw_Obs/Collected_MW/'; % directory into which a subset of MW L1C MW raw files are collected/linked which are needed in this study 
-control.bestrack_dir = '../../raw_Obs/Bestrack/'; % directory where best-track files are
-control.output_dir = '../../toEnKFobs/MW/'; % directory into which the microwave-observation-preprocessing system (MOPS) outputs
-
+control.obs_dir = '../../Preprocess_Obs/raw_Obs/Microwave/'; % directory into which MW L1C raw observations are downloaded using the script Download_MWobs/get_MWobs.sh
+control.obs_collect_dir = '../../Preprocess_Obs/raw_Obs/Collected_MW/'; % directory into which a subset of MW L1C MW raw files are collected/linked which are needed in this study 
+control.bestrack_dir = '../../Preprocess_Obs/raw_Obs/Bestrack/'; % directory where best-track files are
+control.output_dir = '../../Preprocess_Obs/toEnKFobs/MW/'; % directory into which the microwave-observation-preprocessing system (MOPS) outputs
+control.geogrid_dir = '../../Preprocess_Domain/';
 % ---Storm information
-control.storm_phase = {'MariaRI',}; % !!! It is recommended to process ONE storm at a time in spite of MOPS's ability to process as many storms as possible.
-%control.storm_phase = ["Irma2ndRI",'JoseRI','MariaRI'};
+control.storm_phase = {'MARIA',}; % !!! It is recommended to process ONE storm at a time in spite of MOPS's ability to process as many storms as possible.
 control.period = {{'201709160000','201709180000'},}; % Date range of case study (yyyymmddHHMM)
-%control.period = {{'201709030600','201709050600'},{'201709050600','201709070600'},{'201709160000','201709180000'}}; %YYYYMMDDHHmm
 
 % --- WRF simulation setup
+control.domain = 'd03';
 control.nx = 297; % number of grid points along X direction
 control.ny = 297; % number of grid points along Y direction
 control.dx = 3; % WRF resolution: 3 km
 
 % ---Satellite informaiton
+%control.sensor = {'AMSR2','ATMS',};
 control.sensor = {'AMSR2','ATMS','GMI','MHS','SAPHIR','SSMI','SSMIS'}; % sensor name
+%control.platform = {{'GCOMW1'},{'NPP'}};
 control.platform = {{'GCOMW1'}, {'NPP'}, {'GPM'}, {'METOPA','METOPB','NOAA18','NOAA19'}, {'MT1'}, {'F15'}, {'F16','F17','F18'}}; % platform name (one sensor corresponds to at least one platform)
+%control.favFreq = {{'18.7GHzV-Pol','89GHzV-PolA-Scan','89GHzV-PolB-Scan'},{'183.31+-7GHzQH-Pol'}};
 control.favFreq = {{'18.7GHzV-Pol','89GHzV-PolA-Scan','89GHzV-PolB-Scan'},{'183.31+-7GHzQH-Pol'},{'18.7GHzV-Pol','183.31+/-7GHzV-Pol'},{'190.31GHzV-Pol'},{'183.31+/-6.8GHz'},{'fcdr_tb19v','fcdr_tb85v'},{'19.35GHzV-Pol','183.31+/-6.6GHzH-Pol'}}; % frequencies of interest to this study (one sensor corresponds to at least one frequency/channel)
 control.comnine_AMSR89GHz = true; % if combines two 89GHz channels on AMSR2 (89GHzV-PolA-Scan and 89GHzV-PolB-Scan)
 %------------ NO NEED TO CHANGE --------------------------
@@ -42,7 +44,7 @@ control.filter_reso = [36;24]; % filter resolution for ROI
 % !!! Trick: Decreases the resolution if you'd like to quickly find out if MOPS is working by executing the system.
 control.roi_oh = {[200,0]; [60,60]}; % ROI plans [other variables, hydrometeors]
 control.obsError = [3;3];
-
+control.random = true;
 
 
 % ===================================================== Begin the System =====================================================
@@ -120,7 +122,8 @@ for istorm = 1:length(control.storm_phase)
             [filepath,filename,filext] = fileparts(Tb_file);            
             if contains(filename,singlepass_t(is))
                 idx_collectedTb = find([filename,filext] == Tbfile_names);
-                Singlepass_write(idx_collectedTb,istorm,Swath_used,ChIdx_all,ChName_all,DAtime_all,loc_DAtime_all,Tb_file,control);
+                control.use8xGHz = true;
+                %Singlepass_write(idx_collectedTb,istorm,Swath_used,ChIdx_all,ChName_all,DAtime_all,loc_DAtime_all,Tb_file,control);
             else
                 continue;
             end

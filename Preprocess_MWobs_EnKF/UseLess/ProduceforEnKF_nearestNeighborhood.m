@@ -212,23 +212,17 @@ function [sat_name,myLat,myLon,myTb,mySat_lat,mySat_lon,mySat_alt,myAzimuth,mySc
 %  Select the raw obs for staggered grid point for EnKF assimilation (indicated by obs_index)
 % -----------------------------------------------------------------------------------------------
 
-    % initialize an empty container for indices of obs to be selected for ROI plans
-    obs_index = cell(length(control.roi_oh),length(Swath_used{iTb})); 
-    index_x = cell(size(control.roi_oh));
-    index_y = cell(size(control.roi_oh));
-
-    % identify the domain
     geo_file =  strcat(control.geogrid_dir,control.storm_phase{istorm},'/',DAtime_all{iTb(1)}(1),'/geo_em.',control.domain,'.nc');
     disp(strcat('Reading ', geo_file, '......'));
     xlat_m = ncread(geo_file,'XLAT_M');
     xlon_m = ncread(geo_file,'XLONG_M');
-    min_xlat = min(xlat_m,[],'all')-0.5;
-    max_xlat = max(xlat_m,[],'all')+0.5;
-    min_xlon = min(xlon_m,[],'all')-0.5;
-    max_xlon = max(xlon_m,[],'all')+0.5;
-    xlat_1d = linspace(min_xlat,max_xlat,control.ny);
-    xlon_1d = linspace(min_xlon,max_xlon,control.nx); 
-
+    min_xlat = min(xlat_m,[],'all')-1;
+    max_xlat = max(xlat_m,[],'all')+1;
+    min_xlon = min(xlon_m,[],'all')-1;
+    max_xlon = max(xlon_m,[],'all')+1;
+   
+    % initialize an empty container for indices of obs to be selected for ROI plans
+    obs_index = cell(length(control.roi_oh),length(Swath_used{iTb}));
     % locate the start point of model grid for each ROI plan
     filter_grid_step = control.filter_reso / control.dx;
     grid_start(2) = floor(filter_grid_step(2) / 2); % start point for ROI plan 1 
@@ -238,13 +232,35 @@ function [sat_name,myLat,myLon,myTb,mySat_lat,mySat_lon,mySat_alt,myAzimuth,mySc
     %parpool(48); % use 48 cores in a node
     % Note: for MW data, the (i,j) obs of different channels might have different location. Therefore, loop over channels is needed.
     % For each ROI plan, find the nearest obs for each WRF grid
-    for iroi = 1:length(control.roi_oh)
-        index_x{iroi} = grid_start(iroi):filter_grid_step(iroi):control.nx;
-        index_y{iroi} = grid_start(iroi):filter_grid_step(iroi):control.ny;
-        disp(['  Resolution to be filtered for this ROI is : ', num2str(control.filter_reso(iroi)), 'km ......']);
-        for it = 1:length(Swath_used{iTb})
-            disp(["    "+ChName_all{iTb}(it)+'...']);
-            obs_index{iroi,it} = PickRawforCRTM(lat{it},lon{it},Tb{it},min_xlon,max_xlon,min_xlat,max_xlat,xlon_1d,xlat_1d,index_x{iroi},index_y{iroi},control);
+    for it = 1:length(Swath_used{iTb})
+        disp(["  "+ChName_all{iTb}(it)+'...']);
+
+        % reduce workload by find the approximate area of interest
+        lat_col = reshape(lat{it},[],1);
+        lon_col = reshape(lon{it},[],1);
+        lg_Areaidx_inAll = (lat_col >= min_xlat) & (lat_col <= max_xlat) & (lon_col >= min_xlon) & (lon_col <= max_xlon);
+        lat_obs = lat_col(lg_Areaidx_inAll);
+        lon_obs = lon_col(lg_Areaidx_inAll);
+        Areaidx_inAll = find( lg_Areaidx_inAll );
+
+        for iroi = 1:length(control.roi_oh)
+            disp(['  Resolution to be filtered for this ROI is : ', num2str(control.filter_reso(iroi)), 'km ......']);
+            if iroi == 1
+                lat_obs_toPick = lat_obs; lon_obs_toPick = lon_obs;
+            end
+            [lat_obs_toPick, lon_obs_toPick, idx_PickObs] = PickRawforCRTM(lat_obs_toPick,lon_obs_toPick,xlat_m,xlon_m,grid_start(iroi),filter_grid_step(iroi),control);
+            idx_PickObs_inAll = Areaidx_inAll( idx_PickObs );
+            obs_index{iroi,it} =  idx_PickObs_inAll;
+            [v, w] = unique(obs_index{iroi,it},'stable' );
+            duplicate_idx = setdiff(1:numel(obs_index{iroi,it}),w );
+            if sum(duplicate_idx) ~= 0
+                warning(['  Number of repeated obs selected for this ROI selection: ', num2str(length(duplicate_idx))]);
+            end 
+        end
+        % find the possible repeated selected obs for all ROI plans
+        [Cdata] = intersect(obs_index{1,it},obs_index{2,it});
+        if sum(Cdata) ~= 0
+            disp(['Number of repeated obs across all ROI selections: ', num2str(length(Cdata))]);
         end
     end
     delete(gcp('nocreate')); % shut down current parallel pool
@@ -387,6 +403,31 @@ function [sat_name,myLat,myLon,myTb,mySat_lat,mySat_lon,mySat_alt,myAzimuth,mySc
         tem_ROI_hydro = cat(1,DA_ROI_hydro{:}); myRoi_hydro{ir} = tem_ROI_hydro(randOrder); %clear tem_ROI_hydro 
     end
 	
+
+    % -------------------------------------------------------------------------
+    % Function to find the nearest obs for filtered WRF grids    
+    % -------------------------------------------------------------------------
+    function [ obs_lat, obs_lon, idx_getObs ] = PickRawforCRTM(obs_lat,obs_lon,m_xlat,m_xlon,start_grid,step_grid,control)
+
+        % Filter lat and lon of WRF domain for each ROI
+        idx_step = start_grid:step_grid:size(m_xlat,1); % xlat_m/xlon_m has same dimension value along x and y axis 
+        xlat = m_xlat(idx_step, idx_step);
+        xlon = m_xlon(idx_step, idx_step);
+        xlat_col = xlat(:);
+        xlon_col = xlon(:);
+
+        % For each WRF grid of interest, select the nearest obs 
+        idx_getObs = nan(length(xlon_col),1);
+
+        for id =1:length(xlon_col)
+            dis_ig = distance(xlat_col(id),xlon_col(id),obs_lat,obs_lon);
+            idx = find( dis_ig == min(dis_ig) );
+            % Get the obs index 
+            idx_getObs(id,1) = idx;
+            % Mark the selected obs and gurantee it will be never used again
+            obs_lat(idx) = nan; obs_lon(idx) = nan;
+        end
+    end
 
 end
 % Ideas behind the algorithm
