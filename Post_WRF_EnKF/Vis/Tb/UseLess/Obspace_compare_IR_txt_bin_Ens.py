@@ -385,7 +385,7 @@ def read_wrf_domain( wrf_file ):
 def plot_Tb(Storm, Exper_name, ifile, DAtime, sensor, ch_list ):
 
     # Read WRF domain
-    wrf_file = '/scratch/06191/tg854905/Pro2_PSU_MW/'+Storm+'/'+Exper_name+'/fc/'+DAtime+'/wrf_enkf_output_d03_mean'
+    wrf_file = big_dir+Storm+'/'+Exper_name+'/fc/'+DAtime+'/wrf_enkf_output_d03_mean'
     d_wrf_d03 = read_wrf_domain( wrf_file )
 
     # Read Tbs of obs, Hxb, Hxa
@@ -463,8 +463,8 @@ def plot_Tb(Storm, Exper_name, ifile, DAtime, sensor, ch_list ):
         gl.ylabel_style = {'size': 6}
 
     head_tail = os.path.split( ifile )
-    mem = head_tail[1].replace('.txt','')
-    plt.savefig('/work2/06191/tg854905/stampede2/Pro2_PSU_MW/'+Storm+'/'+Exper_name+'/Vis_analyze/Tb/IR/60mem_201709160000/'+DAtime+'_'+sensor+'_'+mem+'.png', dpi=300)
+    mem = head_tail[1].replace('_d03_2017-08-22_12:00.txt','')
+    plt.savefig('/work2/06191/tg854905/stampede2/Pro2_PSU_MW/'+Storm+'/'+Exper_name+'/Vis_analyze/Tb/IR/obspace_60mem/'+DAtime+'_'+sensor+'_'+mem+'.png', dpi=300)
     #print('Saving the figure: ', '/work2/06191/tg854905/stampede2/Pro2_PSU_MW/'+Storm+'/'+Exper_name+'/Vis_analyze/Tb/IR/Obspace/'+DAtime+'_'+sensor+'_Obspace.png') 
 
 
@@ -574,8 +574,11 @@ def plot_Tb_diff(Storm, Exper_name, Hx_dir, DAtime, sensor, ch_list ):
 
 if __name__ == '__main__':
 
-    Storm = 'MARIA'
-    Exper_name = 'IR-J_DA+J_WRF+J_init-SP-intel17-THO-24hr-hroi900'
+    big_dir = '/scratch/06191/tg854905/Pro2_PSU_MW/'
+    small_dir =  '/work2/06191/tg854905/stampede2/Pro2_PSU_MW/'
+
+    Storm = 'HARVEY'
+    Exper_name = 'JerryRun/IR_THO'
     sensor = 'abi_gr'
     ch_list = ['8',]
     start_time_str = '201709160000' 
@@ -586,7 +589,7 @@ if __name__ == '__main__':
     num_ens = 60
 
     if not Consecutive_times:
-        IR_times = ['201709160000',]#'201708221800','201708230000','201708230600','201708231200']
+        IR_times = ['201708221200',]#'201708221800','201708230000','201708230600','201708231200']
     else:
         time_diff = datetime.strptime(end_time_str,"%Y%m%d%H%M") - datetime.strptime(start_time_str,"%Y%m%d%H%M")
         time_diff_hour = time_diff.total_seconds() / 3600

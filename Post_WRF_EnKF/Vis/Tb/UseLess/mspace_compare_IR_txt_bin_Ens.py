@@ -19,7 +19,7 @@ import Util_data as UD
 def plot_Tb( Storm, Exper_name, Hxb, Hxa, DAtime, sensor, ch_list, d_obs):
 
     # Read simulated data
-    d_simu = UD.read_simu_Tb_single( Hxb, Hxa, ch_list )
+    d_simu = UD.read_simu_IR_single( Hxb, Hxa, ch_list )
 
     # Read location from TCvitals
     if any( hh in DAtime[8:10] for hh in ['00','06','12','18']):
