@@ -1,1 +1,0 @@
-calc_domain_moves_morethan6hours.sh
