@@ -112,12 +112,13 @@ contains
     if (sensor == '' .or. channel <=0) return
     ! look for sensor
     i = 1
-    do while( i <= obs_info%nsensors .and. (sensor .NE. obs_info%sensors(i)) )
+    do while( i <= obs_info%nsensors .and. sensor > obs_info%sensors(i))
       i = i + 1
     end do
+    print *, 'i', i
     ! insert sensor if not found
-    if (i > obs_info%nsensors .or. (sensor .NE. obs_info%sensors(i)) ) then
-      !print *, 'add new sensor "', sensor, '" at location ', i
+    if (i > obs_info%nsensors .or. sensor < obs_info%sensors(i) ) then
+      print *, 'add new sensor "', sensor, '" at location ', i
       
       if (i >= obs_info%max_nsensors ) then
         call obs_info_grow( obs_info, obs_info%max_nsensors+5, obs_info%max_nchannels)
@@ -132,14 +133,16 @@ contains
       obs_info%nchannels(i)   = 1
       obs_info%channels (1,i) = channel
       obs_info%nsensors = obs_info%nsensors + 1
+      print *, 'obs_info%channels',obs_info%channels
     end if
     ! look for channel
     j = 1
-    do while( j <= obs_info%nchannels(i) .and. (channel .NE. obs_info%channels(j,i)) )
+    do while( j <= obs_info%nchannels(i) .and. channel > obs_info%channels(j,i))
       j = j + 1
     end do
+    print *, 'j', j
     ! insert channel if not found
-    if (j > obs_info%nchannels(i) .or. (channel .NE. obs_info%channels(j,i)) ) then
+    if (j > obs_info%nchannels(i) .or. channel < obs_info%channels(j,i) ) then
 
       if (j >= obs_info%max_nchannels) then
         call obs_info_grow( obs_info, obs_info%max_nsensors, obs_info%max_nchannels+5)
@@ -149,9 +152,9 @@ contains
         obs_info%channels (j+1:obs_info%nchannels(i)+1,i) = obs_info%channels (j:obs_info%nchannels(i),i)
       end if
       obs_info%channels(j,i) = channel
-      !print *, 'j,i',j,i
-      !print *, 'obs_info%channels(j,i)',obs_info%channels(j,i)
-      !obs_info%nchannels(i) = obs_info%nchannels(i) + 1
+      print *, 'j,i',j,i
+      print *, 'obs_info%channels(j,i)',obs_info%channels(j,i)
+      obs_info%nchannels(i) = obs_info%nchannels(i) + 1
     end if
     
 
@@ -191,7 +194,6 @@ contains
     do_get_raw_data_loop_read : do
       read(10, '(a12,a16,i12)', iostat = iost ) so_time, sat_id, ch_info
       if( iost .ne. 0 ) exit
-      write(*,*),  trim(adjustl(sat_id)), ch_info
       call obs_info_add(obs_info, trim(adjustl(sat_id)), ch_info)
     end do do_get_raw_data_loop_read
 

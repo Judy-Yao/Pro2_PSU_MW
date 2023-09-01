@@ -330,9 +330,10 @@ contains
         if ( obs_ch(iobs) == res%channels(ich) ) then
           obs_ii = obs_x(iobs)
           obs_jj = obs_y(iobs)
-!          print *, 'obs_ii, obs_jj', obs_ii, obs_jj
-          max_distance = (max(obs_efov_aScan(iobs), obs_efov_cScan(iobs))/state%dx * 2)
-
+          print *, 'obs_ii, obs_jj', obs_ii, obs_jj
+          ! max_distance = (max(obs_efov_aScan(iobs), obs_efov_cScan(iobs))/state%dx * 2)  # Yinghui's definition of max_distance
+          max_distance = ( ((obs_efov_aScan(iobs) + obs_efov_cScan(iobs)) / 2) / 1.8 ) / (state%dx * 2) ! # Scott's definition of max_distance
+    
           xmin = int(max(res%xbeg0,   floor(obs_ii) - ceiling(max_distance)))
           xmax = int(min(res%xend0, ceiling(obs_ii) + ceiling(max_distance)))
           ymin = int(max(res%ybeg0,   floor(obs_jj) - ceiling(max_distance)))
@@ -344,11 +345,20 @@ contains
               tb_conv_local(iobs) = NaN
             else
               w(:,:) = 0.
-              call gaussian_ellipse_weight(obs_ii, obs_jj, xmax-xmin+1, ymax-ymin+1, &
-                        xx(xmin:xmax,ymin:ymax), yy(xmin:xmax,ymin:ymax), &
-                        obs_efov_aScan(iobs), obs_efov_cScan(iobs), state%dx, obs_azimuth_angle(iobs), &
-                        w(xmin:xmax,ymin:ymax) )
+              print *, 'xmin, xmax, ymin, ymax', xmin, xmax, ymin, ymax
+              call beam_conv_gaussian_simple(obs_ii, obs_jj, xmax-xmin+1, ymax-ymin+1, &
+                      xx(xmin:xmax,ymin:ymax), yy(xmin:xmax,ymin:ymax), &
+                      obs_efov_aScan(iobs), obs_efov_cScan(iobs), state%dx, &
+                      w(xmin:xmax,ymin:ymax) )
+              write(*,*) 'weights: ', w(xmin:xmax,ymin:ymax)
+              write(*,*) 'sum of weights: ', sum( w(xmin:xmax,ymin:ymax) ) 
+              !call gaussian_ellipse_weight(obs_ii, obs_jj, xmax-xmin+1, ymax-ymin+1, &
+              !          xx(xmin:xmax,ymin:ymax), yy(xmin:xmax,ymin:ymax), &
+              !          obs_efov_aScan(iobs), obs_efov_cScan(iobs), state%dx, obs_azimuth_angle(iobs), &
+              !          w(xmin:xmax,ymin:ymax) )
               tb_conv_local(iobs) = sum(tb(xmin:xmax,ymin:ymax) * w(xmin:xmax,ymin:ymax) ) / sum( w(xmin:xmax,ymin:ymax) )
+              write(*,*) 'tb_conv_local: ', tb_conv_local(iobs)
+
   !            print *,obs_ch(iobs) ,tb_conv_local(iobs) , sum(tb(xmin:xmax,ymin:ymax) * w(xmin:xmax,ymin:ymax) ) , sum( w(xmin:xmax,ymin:ymax) )
             end if
           end if

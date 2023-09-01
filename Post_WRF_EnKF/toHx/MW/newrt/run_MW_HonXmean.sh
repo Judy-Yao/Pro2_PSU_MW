@@ -4,15 +4,15 @@
 # Author: Zhu (Judy) Yao. July 27 - 28, 2022
 
 #####header for stampede######
-#SBATCH -J crtm
+#SBATCH -J MW
 #SBATCH -N 3
 #SBATCH --ntasks-per-node 48
-#SBATCH -p development
-#SBATCH -t 00:10:00
+#SBATCH -p skx-dev
+#SBATCH -t 00:30:00
 #SBATCH -o out_mw
 #SBATCH -e error_mw
 #SBATCH --mail-type=ALL
-#SBATCH --mail-user=yao.zhu.91@gmail.com
+#SBATCH --mail-user=zuy121@psu.edu
 
 module purge
 module load intel/18.0.2
@@ -24,12 +24,14 @@ module load python3/3.7.0
 
 # Fill in the storm name and experiment name
 Storm=HARVEY
-Exper=newWRF_IR_only
+Exper=JerryRun/IR_THO/
+Exper_obs=JerryRun/IR_THO/
 
 # Parent paths
 Big_dir=/scratch/06191/tg854905/Pro2_PSU_MW/
 Small_dir=/work2/06191/tg854905/stampede2/Pro2_PSU_MW
-Code_dir=/home1/06191/tg854905/Pro2_PSU_MW/Post_WRF_EnKF/toHx/MW/newrt
+Code_dir=/work2/06191/tg854905/stampede2/Pro2_PSU_MW/SourceCode/Post_WRF_EnKF/toHx/MW/newrt #/home1/06191/tg854905/Pro2_PSU_MW/Post_WRF_EnKF/toHx/MW/newrt
+
 
 # DA times 
 Obs_files_str=microwave_d03_201708221200_so
@@ -44,13 +46,13 @@ done
 for DAtime in ${DAtimes[@]}; do
   # At the DAtime, get sensor information based on microwave_SO (obs)
   if [[ ! -f ${Big_dir}/${Storm}/${Exper}/Obs_Hx/MW/${DAtime}/${DAtime}_sensorCh ]]; then
-    $(python3 getSensorInfo.py ${Storm} ${Exper} ${DAtime})
+     $(python3 getSensorInfo.py ${Storm} ${Exper} ${Exper_obs} ${DAtime})
   fi
   
   Sensor_Info=${Big_dir}/${Storm}/${Exper}/Obs_Hx/MW/${DAtime}/${DAtime}_sensorCh 
 
   # Loop over each model file
-  for xfile in $(ls ${Big_dir}/${Storm}/${Exper}/fc/${DAtime}/*mean); do
+  for xfile in $(ls ${Big_dir}/${Storm}/${Exper}/fc/${DAtime}/*d03*mean); do
     
     cd ${Big_dir}/${Storm}/${Exper}/Obs_Hx/MW/
     if [[ ! -d ${DAtime} ]]; then mkdir -p ${DAtime}; fi
@@ -88,7 +90,8 @@ nml_s_crtm_graupelLUT='Thompson08_GraupelLUT_-109z-1.bin',
     
 \$rt_input
 nml_s_filename_input = '${xfile}'
-nml_s_filename_obs='${Small_dir}/${Storm}/Obs_y/MW/microwave_d03_${DAtime}_so' 
+nml_s_filename_obs='${Small_dir}/Preprocess_Obs/toEnKFobs/MW/${Storm}/microwave_d03_${DAtime}_so_wrong' 
+!nml_s_filename_obs='${Small_dir}/${Storm}/Obs_y/MW/microwave_d03_${DAtime}_so' 
 / 
             
 \$rt_output

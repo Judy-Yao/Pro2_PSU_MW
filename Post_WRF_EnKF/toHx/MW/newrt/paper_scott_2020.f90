@@ -25,8 +25,6 @@ program test
   type(microwave_data_type) :: obs_mw 
   
   real, allocatable :: tb_conv(:)
-  
-  
 
 
   type(obs_info_type) :: obs_info
@@ -44,8 +42,6 @@ program test
   if (should_print(1)) call print_namelist()
   filename_in = nml_s_filename_input
   filename_out = nml_s_filename_output
-  
-  
   
   call model_state_read_wrf(state, filename_in, 1, error_status, buffer=25)
   filename_obs = nml_s_filename_obs
@@ -75,14 +71,13 @@ program test
     call rt_result_alloc_from_state( res(isensor), state, n_channels, error_status)
     
     call calc_zenith_obs_microwave( state, res(isensor), obs_mw, obs_info%sensors(isensor), error_status, 'boxsearch')
-    call calc_slant_path(state, res(isensor), slant(isensor), error_status)
+
+    ! Forward calculate without slant path (vertical)
+    !###call calc_slant_path(state, res(isensor), slant(isensor), error_status)
+    !###call rt_crtm_main(isensor, state, res(isensor), error_status ) 
     
-    !slant(isensor)%qcloud = 0.0
-    !slant(isensor)%qice   = 0.0
-    !slant(isensor)%qrain  = 0.0
-    !slant(isensor)%qsnow  = 0.0
-    !slant(isensor)%qgraup = 0.0
-    
+    ! Forward calculate with slant path
+    call calc_slant_path(state, res(isensor), slant(isensor), error_status) 
     call rt_crtm_main(isensor, slant(isensor), res(isensor), error_status )
   end do
   !call calc_zenith_obs_microwave( state, res(1), obs_mw, 'gmi_gpm_hf', error_status, 'boxsearch')

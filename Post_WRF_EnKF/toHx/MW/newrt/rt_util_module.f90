@@ -76,6 +76,29 @@ contains
 !                                        2, RHRNGE)
   end subroutine nf_def_var_with_fill
 
+
+!---------
+  subroutine beam_conv_gaussian_simple(x0, y0, nx, ny, x, y, efov_a, efov_c, dx, weight)
+    real, intent(in) :: x0, y0 ! (x0,y0) for the center of ellipse
+    integer, intent(in) :: nx, ny
+    real, intent(in) :: x(nx,ny),  y(nx,ny)  ! (x, y)  for the location in consideration
+    real, intent(in) :: efov_a, efov_c ! effective FOV along/cross track in km
+    real, intent(in) :: dx ! model grid spacing in km
+    real, intent(inout) :: weight(nx,ny) ! weighting at the location
+
+    !real :: la, lc
+    real :: sigma, distance(nx,ny), distance_x(nx,ny), distance_y(nx,ny)
+
+    sigma = 0.5 * ((((efov_a+efov_c)/2) / 1.18) / dx)
+
+    distance_x = x-x0
+    distance_y = y-y0
+    distance = sqrt(distance_x**2 + distance_y**2)    
+
+    weight = exp(-1*(distance**2)) / (2*sigma**2)
+    
+  end subroutine beam_conv_gaussian_simple
+
 !---------
   subroutine gaussian_ellipse_weight(x0, y0, nx, ny, x, y, efov_a, efov_c, dx, azi, w)
     real, intent(in) :: x0, y0 ! (x0,y0) for the center of ellipse

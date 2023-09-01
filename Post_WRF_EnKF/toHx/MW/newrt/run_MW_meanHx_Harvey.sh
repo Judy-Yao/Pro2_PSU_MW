@@ -6,15 +6,15 @@
 # Author: Zhu (Judy) Yao. July 27 - 28, 2022
 
 #####header for stampede######
-#SBATCH -J toMW
+#SBATCH -J MW
 #SBATCH -N 4
-#SBATCH --ntasks-per-node 48
-#SBATCH -p skx-dev
+#SBATCH --ntasks-per-node 64
+#SBATCH -p icx-normal
 #SBATCH -t 00:30:00
 #SBATCH -o out_mw
 #SBATCH -e error_mw
 #SBATCH --mail-type=ALL
-#SBATCH --mail-user=zuy121@psu.edu
+#SBATCH --mail-user=yao.zhu.91@gmail.com
 
 module purge
 module load intel/18.0.2
@@ -25,38 +25,43 @@ module load libfabric/1.7.0
 module load python3/3.7.0 
 
 # Fill in the storm name and experiment name
-Storm=MARIA
-Exper=IR+MW-J_DA+J_WRF+J_init-SP-intel17-THO-24hr-hroi900
-Exper_obs=IR+MW-J_DA+J_WRF+J_init-SP-intel17-THO-24hr-hroi900
+Storm=HARVEY
+Exper=JerryRun/MW_THO/
+Exper_obs=JerryRun/MW_THO/
 
 
 # Parent paths
 Big_dir=/scratch/06191/tg854905/Pro2_PSU_MW/
 Small_dir=/work2/06191/tg854905/stampede2/Pro2_PSU_MW
-Code_dir=/work2/06191/tg854905/stampede2/Pro2_PSU_MW/SourceCode/Post_WRF_EnKF/toHx/MW/newrt 
+Code_dir=/work2/06191/tg854905/stampede2/Pro2_PSU_MW/SourceCode/Post_WRF_EnKF/toHx/MW/newrt #/home1/06191/tg854905/Pro2_PSU_MW/Post_WRF_EnKF/toHx/MW/newrt
 
 ############ User control parameters
-date_st=201709170700        # Start date  
-date_ed=201709170700        # End date (24 forecast hrs can be done in < 2 hr w/4 nodes on skx queues
-nE=1               # Number of ens members
+date_st=201708221200        # Start date  
+date_ed=201708221200        # End date (24 forecast hrs can be done in < 2 hr w/4 nodes on skx queues
+nE=60               # Number of ens members
 dom=3                           # Domain you are running it on 
 state=("input" "output") # Input or output or both
 
 # ------ DA times where MW obs exists ----------------------
 # ----------------------------------------------------------
-Obs_files_str=$(ls ${Small_dir}/${Storm}/Obs_y/MW/Processed_2nd_time/${Exper_obs})
+Obs_files_str=microwave_d03_201708221200_so
+#Obs_files_str=$(ls ${Small_dir}/${Storm}/Obs_y/MW/Processed_2nd_time/$Exper_obs)
 #Obs_files_str=$(ls ${Small_dir}/${Storm}/Obs_y/MW/Processed_1st_time)
 Obs_files_arr=($Obs_files_str) # String-to-array conversion gives you access to individual element
 DAtimes=()
 for obs_file in ${Obs_files_arr[@]}; do
-#  DAtimes+=($(echo $obs_file | cut -c15-26))
-  DAtimes+=($(echo $obs_file | cut -c11-22))
+  DAtimes+=($(echo $obs_file | cut -c15-26))
+#  DAtimes+=($(echo $obs_file | cut -c11-22))
 done
 
 # Iterate thru DAtimes
 for DAtime in ${DAtimes[@]}; do
   
   echo $DAtime
+  #if ! ls -l nofolder; then
+  #  echo "Folder doesn't exist"
+  #  exit 1
+  #fi
 
   # Determine if DAtime is of interest to this calculation
   if [[ $DAtime -lt $date_st ]] || [[ $DAtime -gt $date_ed ]]; then
@@ -113,7 +118,7 @@ nml_s_sensor_id = ${sensor_Chs[0]},
 nml_a_channels(:,1) = ${sensor_Chs[@]:1},
 nml_s_reff_method = 'mp_physics',
 nml_i_nicpu = 16,
-nml_i_njcpu = 12,
+nml_i_njcpu = 16,
 nml_s_crtm_rainLUT='Thompson08_RainLUT_-109z-1.bin',
 nml_s_crtm_snowLUT='Thompson08_SnowLUT_-109z-1.bin',
 nml_s_crtm_graupelLUT='Thompson08_GraupelLUT_-109z-1.bin',
@@ -121,8 +126,9 @@ nml_s_crtm_graupelLUT='Thompson08_GraupelLUT_-109z-1.bin',
     
 \$rt_input
 nml_s_filename_input = '${xfile}'
+nml_s_filename_obs='${Small_dir}/Preprocess_Obs/toEnKFobs/MW/${Storm}/microwave_d03_${DAtime}_so_correct_random' 
 !nml_s_filename_obs='${Small_dir}/${Storm}/Obs_y/MW/Processed_1st_time/microwave_d03_${DAtime}_so'
-nml_s_filename_obs='${Small_dir}/${Storm}/Obs_y/MW/Processed_2nd_time/${Exper_obs}/microwave_${DAtime}_so' 
+!nml_s_filename_obs='${Small_dir}/${Storm}/Obs_y/MW/Processed_2nd_time/${Exper_obs}/microwave_${DAtime}_so' 
 / 
             
 \$rt_output
@@ -133,7 +139,7 @@ EOF
 
           # Run the CRTM
           if [[ ! -f ${outfile}.tb.${sensor_Chs[0]}.crtm.nc ]]; then
-            ibrun -n 192 ./paper_scott_2020.mpi test_crtm_wrf.nml 
+            ibrun -n 256 ./paper_scott_2020.mpi test_crtm_wrf.nml
           fi
       
       done < "${Sensor_Info}" # End looping over overpass sensors
