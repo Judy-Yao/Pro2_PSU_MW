@@ -17,6 +17,7 @@ import time
 import subprocess
 from itertools import chain
 
+import Util_data as UD
 import Obspace_compare_IR_txt_bin as IR_obs
 
 # setting font size
@@ -33,7 +34,7 @@ def Bias(simu, obs):
 #           Operation: Read, process, and plot the evolution of IR metrics
 # ------------------------------------------------------------------------------------------------------
 
-def Plot_IR_metric( small_dir, Storm, Expers, DAtimes, IR_metric ):
+def Plot_two_metrics( IR_metric ):
 
     # ------ Define range of metrics -------------------
     rmse_min = 0#np.amin( [np.amin(IR_metric['xb_rmse']),np.amin(IR_metric['xa_rmse']) ])
@@ -136,46 +137,128 @@ def Plot_IR_metric( small_dir, Storm, Expers, DAtimes, IR_metric ):
     plt.close()
 
 
-def Gather_IR_metric( Storm, sensor, Expers, DAtimes, big_dir ):
+def Plot_one_metric( Tb_metric ):
 
-    xb_rmse = [[] for i in range(len(Expers))]
-    xa_rmse = [[] for i in range(len(Expers))]
-    xb_bias = [[] for i in range(len(Expers))]
-    xa_bias = [[] for i in range(len(Expers))]
+    # ------ Define range of metrics -------------------
+    rmse_min = 0
+    rmse_max = 15
+    bias_min = -3.5
+    bias_max = 4 
+
+    # ------ Plot Figure -------------------
+    fig,ax = plt.subplots(1, 1, figsize=(8,8), dpi=300 )
+    
+    dates = [datetime.strptime( it,"%Y%m%d%H%M") for it in DAtimes]
+    start_time = datetime.strptime( DAtimes[0],"%Y%m%d%H%M")
+    end_time = datetime.strptime( DAtimes[-1],"%Y%m%d%H%M")
+
+    for iexper in range(len(Expers)):
+        dates_zip = list( chain.from_iterable( zip(dates,dates)) )
+        if if_bias and not if_rmse:
+            bias_zip = list( chain.from_iterable( zip(Tb_metric['xb_bias'][iexper,:],Tb_metric['xa_bias'][iexper,:]) ))
+            len_seg = len(dates_zip)-1
+            for i in range(1,len_seg):
+                # specify which segment uses which color
+                if i % 2 == 0:
+                    color = 'red'
+                else:
+                    color = 'blue'
+                if i == 1:
+                    ax.plot(dates_zip[i-1:i+1],bias_zip[i-1:i+1],color,linewidth='6')
+                elif i == 2:
+                    ax.plot(dates_zip[i-1:i+1],bias_zip[i-1:i+1],color,linewidth='4',label='Forecast')
+                elif i == 3:
+                    ax.plot(dates_zip[i-1:i+1],bias_zip[i-1:i+1],color,linewidth='4',label='Assimilation')
+                else:
+                    ax.plot(dates_zip[i-1:i+1],bias_zip[i-1:i+1],color,linewidth='4')
+            ax.set_ylim( bias_min,bias_max )
+            ax.axhline(y=0.0,color='k',linestyle='-',linewidth='2') 
+
+        elif not if_bias and if_rmse:
+            rmse_zip = list( chain.from_iterable( zip(Tb_metric['xb_rmse'][iexper,:],Tb_metric['xa_rmse'][iexper,:]) ))
+    
+    ax.legend(frameon=True,loc='upper right',fontsize='15')
+
+    ax.set_xlim([dates[0],dates[-1]])
+    ax.tick_params(axis='x', labelrotation=30,labelsize=13)
+    ax.grid(True,linestyle='--',alpha=0.5)
+    ax.set_ylabel('Brightness Temperature (K)',fontsize=15)
+
+    if if_bias and not if_rmse:
+        ax.set_title( DA+'_'+MP+' Bias (Hx - Yo)',fontweight="bold",fontsize='15' )
+    if if_bias and if_rmse:
+        ax.set_title( DA+'_'+MP+' RMSE',fontweight="bold",fontsize='15' )
+    
+    fig.suptitle( Storm+': Metric of IR Tbs over '+str(len(DAtimes))+' Cycles', fontsize=15, fontweight='bold')
+
+    des_name = small_dir+Storm+'/'+Expers[0]+'/Vis_analyze/Tb/IR_Metric_'+DAtimes[0]+'_'+DAtimes[-1]+'.png'
+    plt.savefig( des_name )
+    print( 'Saving the figure to '+des_name+'!' )
+
+
+
+def IR_metric( ):
+
+    if if_bias:
+        xb_bias = [[] for i in range(len(Expers))]
+        xa_bias = [[] for i in range(len(Expers))]
+    if if_rmse:
+        xb_rmse = [[] for i in range(len(Expers))]
+        xa_rmse = [[] for i in range(len(Expers))]
 
     for DAtime in DAtimes:
         for idx in range(len(Expers)):
-            Tb_file = big_dir+Storm+'/'+Expers[idx]+'/Obs_Hx/IR/'+DAtime+"/mean_obs_res_d03"+DAtime+'_'+ sensor+'.txt'
+            Tb_file = big_dir+Storm+'/'+Expers[idx]+'/Obs_Hx/IR/'+DAtime+"/mean_obs_res_d03_"+DAtime+'_'+ sensor+'.txt'
             if os.path.isfile( Tb_file ):
-                d_all = IR_obs.read_allTb(Tb_file, sensor )
+                d_all = IR_obs.read_Tb_obsRes(Tb_file, sensor )
             else:
                 raise ValueError(Tb_file+' does not exist!')
             
-            xb_rmse[idx].append( RMSE(d_all['meanYb_obs'], d_all['Yo_obs'] ))
-            xa_rmse[idx].append( RMSE(d_all['meanYa_obs'], d_all['Yo_obs'] ))
-            xb_bias[idx].append( Bias(d_all['meanYb_obs'], d_all['Yo_obs'] ))
-            xa_bias[idx].append( Bias(d_all['meanYa_obs'], d_all['Yo_obs'] )) 
-    
-    dict_IR_metric = {'xb_rmse': np.array(xb_rmse),'xa_rmse':np.array(xa_rmse),'xb_bias': np.array(xb_bias),'xa_bias':np.array(xa_bias) }
+            if if_bias:
+                xb_bias[idx].append( Bias(d_all['meanYb_obs'], d_all['Yo_obs'] ))
+                xa_bias[idx].append( Bias(d_all['meanYa_obs'], d_all['Yo_obs'] ))
+            if if_rmse:     
+                xb_rmse[idx].append( RMSE(d_all['meanYb_obs'], d_all['Yo_obs'] ))
+                xa_rmse[idx].append( RMSE(d_all['meanYa_obs'], d_all['Yo_obs'] ))
+      
+    # Assemble the dictionary
+    if if_bias and not if_rmse:
+        dict_IR_metric = {'xb_bias': np.array(xb_bias),'xa_bias':np.array(xa_bias) }
+    elif not if_bias and if_rmse:
+        dict_IR_metric = {'xb_rmse': np.array(xb_rmse),'xa_rmse':np.array(xa_rmse)}
+    elif if_bias and if_rmse:   
+        dict_IR_metric = {'xb_rmse': np.array(xb_rmse),'xa_rmse':np.array(xa_rmse),'xb_bias': np.array(xb_bias),'xa_bias':np.array(xa_bias) }
     return dict_IR_metric
 
 
 
 if __name__ == '__main__':
 
-    Storm = 'JOSE'
-    #Expers = ['IR-J_DA+J_WRF+J_init-SP-intel17-THO-24hr-hroi900',]
-    Expers = ['J_DA+J_WRF+J_init-SP-intel17-THO-30hr-hroi900','IR-J_DA+J_WRF+J_init-SP-intel17-THO-30hr-hroi900']
-    big_dir = '/scratch/06191/tg854905/Pro2_PSU_MW/'
-    small_dir = '/work2/06191/tg854905/stampede2/Pro2_PSU_MW/'
 
+    big_dir = '/scratch/06191/tg854905/Pro2_PSU_MW/'
+    small_dir =  '/work2/06191/tg854905/stampede2/Pro2_PSU_MW/'
+
+    # ---------- Configuration -------------------------
+    Storm = 'IRMA'
+    DA = 'IR'
+    MP = 'THO'
+
+    sensor = 'abi_gr'
+    ch_list = ['8',]
+
+    start_time_str = '201709030000'
+    end_time_str = '201709031100'
+    Consecutive_times = True
+
+    if_bias = True
+    if_rmse = False
     Plot_IR = True
     Plot_MW = False
+    # ------------------------------------------------------   
 
-    # Time range set up
-    start_time_str = '201709050000'
-    end_time_str = '201709051500'
-    Consecutive_times = True
+    # Create experiment names
+    Expers = []
+    Expers.append( UD.generate_one_name( Storm,DA,MP ) )
 
     if not Consecutive_times:
         DAtimes = ['201708231200']
@@ -187,10 +270,10 @@ if __name__ == '__main__':
 
     # Plot the RMSE of IR Tb over time
     if Plot_IR:
-        sensor = 'abi_gr'
-        ch_list = ['8',]
-        IR_metric = Gather_IR_metric( Storm, sensor, Expers, DAtimes, big_dir )
-        Plot_IR_metric( small_dir, Storm, Expers, DAtimes, IR_metric )
-
+        IR_metric = IR_metric(  )
+        if if_bias and if_rmse:
+            Plot_two_metrics( IR_metric )
+        else:
+            Plot_one_metric( IR_metric  ) 
 
 
