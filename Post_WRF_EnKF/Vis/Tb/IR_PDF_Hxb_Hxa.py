@@ -21,8 +21,9 @@ import Diagnostics as Diag
 #    return np.histogram(v, b, r)[0]
     
 
-# Read variables at obs resolution/location
-def read_Tbs_obsRes(Tb_files, sensor ):
+# Read variables at obs resolution/location for one experiment AND
+# for each time and accumulated times
+def read_Tbs_obsRes_oneExper(Tb_files, sensor ):
 
     dict_allTb = {}
 
@@ -93,9 +94,56 @@ def read_Tbs_obsRes(Tb_files, sensor ):
 
     return dict_allTb
 
-# Plot histograms
-def Plot_IR_hist( d_hcount ):
 
+def read_Tbs_obsRes_multiExper( ):
+
+    dict_allTb = {}
+
+    for iexper in Expers:
+
+        if bin_Tbdiff:
+            diff_ob_all = []
+            diff_oa_all = []
+        else:
+            Yo_all = []
+            meanYb_all = []
+            meanYa_all = []
+
+        idx = Expers.index( iexper )
+        for DAtime in IR_times:
+            Tb_file = big_dir+Storm+'/'+iexper+'/Obs_Hx/IR/'+DAtime+'/mean_obs_res_d03_' + DAtime + '_' +  sensor + '.txt'
+            print('Reading ', Tb_file)
+            with open(Tb_file) as f:
+                next(f)
+                all_lines = f.readlines()
+
+            for line in all_lines:
+                split_line = line.split()
+                if bin_Tbdiff:
+                    diff_ob_all.append( float(split_line[4])-float(split_line[3]) ) # Hxb - Yo 
+                    diff_oa_all.append( float(split_line[5])-float(split_line[3]) ) # Hxa - Yo
+                else:
+                    Yo_all.append( float(split_line[3]) )
+                    meanYb_all.append( float(split_line[4]) )
+                    meanYa_all.append( float(split_line[5]) ) 
+
+        # convert list to array
+        if bin_Tbdiff:
+            diff_ob_all = np.array( diff_ob_all )
+            diff_oa_all = np.array( diff_oa_all )
+            dict_allTb[MP[idx]] = {'diff_ob':diff_ob_all, 'diff_oa':diff_oa_all}
+        else:
+            Yo_all = np.array( Yo_all )
+            meanYb_all = np.array( meanYb_all )
+            meanYa_all = np.array( meanYa_all )
+            dict_allTb[MP[idx]] = {'Yo_obs':Yo_all, 'meanYb_obs':meanYb_all, 'meanYa_obs':meanYa_all}
+
+    return dict_allTb
+
+
+
+# Plot histograms
+def Plot_hist_IRall( d_hcount ):
 
     fig,axs = plt.subplots(1,1, figsize=(8,8), dpi=300 )
 
@@ -147,9 +195,6 @@ def Plot_IR_hist( d_hcount ):
                         pass
                 idx = idx+1
 
-
-
-
     axs.legend(frameon=True,loc='upper right',fontsize='14')
     axs.grid(True,linestyle='--',alpha=0.5)
     axs.set_title( DA+'_'+MP,fontweight="bold",fontsize='15' )
@@ -176,6 +221,76 @@ def Plot_IR_hist( d_hcount ):
     print( 'Saving the figure to '+des_name+'!' )
 
 
+def Plot_hist_IRsum( d_hcount ):
+
+    fig,axs = plt.subplots(1,1, figsize=(8.3,8), dpi=300 )
+
+    x_axis = (range_bins[:-1]+range_bins[1:])/2
+    idx = 0
+
+    if bin_Tbdiff:
+        for outkey in d_hcount:
+            if outkey == 'WSM6':
+                for key in d_hcount[outkey]:
+                    if key == 'diff_ob':
+                        axs.plot(x_axis,d_hcount[outkey][key],color='red',linestyle='-',linewidth='4',label='WSM4:H(Xb)-Obs')
+                    elif key == 'diff_oa':
+                        axs.plot(x_axis,d_hcount[outkey][key],color='blue',linestyle='-',linewidth='4',label='WSM6:H(Xa)-Obs')
+            else:
+                for key in d_hcount[outkey]:
+                    if key == 'diff_ob':
+                        axs.plot(x_axis,d_hcount[outkey][key],color='grey',linestyle='-',linewidth='4',label='THO:H(Xb)-Obs')
+                    elif key == 'diff_oa':
+                        axs.plot(x_axis,d_hcount[outkey][key],color='grey',linestyle='--',linewidth='4',label='THO:H(Xa)-Obs')
+                idx = idx+1
+    else:
+        for outkey in d_hcount:
+            if outkey == 'WSM6':
+                for key in d_hcount[outkey]:
+                    if key == 'Yo_obs':
+                        axs.plot(x_axis,d_hcount[outkey][key],color='black',linestyle='-',linewidth='4',label='Obs')
+                    elif key == 'meanYb_obs':
+                        axs.plot(x_axis,d_hcount[outkey][key],color='red',linestyle='-',linewidth='4',label='WSM6:H(Xb)')
+                    elif key == 'meanYa_obs':
+                        axs.plot(x_axis,d_hcount[outkey][key],color='blue',linestyle='-',linewidth='4',label='WSM6:H(Xa)')
+            else:
+                for key in d_hcount[outkey]:
+                    if key == 'Yo_obs':
+                        pass
+                        #axs.plot(x_axis,d_hcount[outkey][key],color='black',linestyle='--',linewidth='0.5') 
+                    elif key == 'meanYb_obs':
+                        axs.plot(x_axis,d_hcount[outkey][key],color="grey",linestyle='-',linewidth='4',label='THO:H(Xb)')
+                    elif key == 'meanYa_obs':
+                        axs.plot(x_axis,d_hcount[outkey][key],color="grey",linestyle='--',linewidth='4',label='THO:H(Xa)')
+                    else:
+                        pass
+                idx = idx+1
+
+    axs.legend(frameon=True,loc='upper right',fontsize='22')
+    axs.grid(True,linestyle='--',alpha=0.5)
+    axs.set_title( 'IR',fontweight="bold",fontsize='15' )
+
+    axs.tick_params(axis='x', labelsize=24)
+    axs.tick_params(axis='y', labelsize=20)
+    if bin_Tbdiff:
+        axs.set_ylim(ymin=0,ymax=0.30)
+        axs.set_xlim(xmin=min_Tbdiff_rg ,xmax=max_Tbdiff_rg )
+    else:
+        axs.set_ylim(ymin=0,ymax=0.05)
+        axs.set_xlim(xmin=min_Tb_rg,xmax=max_Tb_rg)
+    axs.set_xlabel('Brightness Temperature (K)',fontsize=24)
+    axs.set_ylabel('Density',fontsize=24)
+
+    if bin_Tbdiff:
+        fig.suptitle( Storm+': PDF of Bias of IR Tb over '+str(len(IR_times))+' Cycles', fontsize=15, fontweight='bold')
+        des_name = small_dir+Storm+'/'+Expers[0]+'/Vis_analyze/Tb/IR_PDF_'+IR_times[0]+'_'+IR_times[-1]+'_bias_multi.png'
+    else:
+        fig.suptitle( Storm+': PDF of IR Tbs over '+str(len(IR_times))+' Cycles', fontsize=15, fontweight='bold')
+        des_name = small_dir+Storm+'/'+Expers[0]+'/Vis_analyze/Tb/IR_PDF_'+IR_times[0]+'_'+IR_times[-1]+'_multi.png'
+
+    plt.savefig( des_name )
+    print( 'Saving the figure to '+des_name+'!' )
+
 
 if __name__ == '__main__':
 
@@ -185,7 +300,7 @@ if __name__ == '__main__':
     # ---------- Configuration -------------------------
     Storm = 'IRMA'
     DA = 'IR'
-    MP = 'THO'
+    MP = ['THO','WSM6']
 
     sensor = 'abi_gr'
     ch_list = ['8',]
@@ -209,7 +324,9 @@ if __name__ == '__main__':
     # ------------------------------------------------------   
 
     # Create experiment names
-    Exper_name =  UD.generate_one_name( Storm,DA,MP )
+    Expers = []
+    for imp in MP:
+        Expers.append( UD.generate_one_name( Storm,DA,imp) )
 
     if not Consecutive_times:
         IR_times = ['201709030100',]
@@ -220,11 +337,11 @@ if __name__ == '__main__':
         IR_times = [time_dt.strftime("%Y%m%d%H%M") for time_dt in time_interest_dt]
 
 
-    # Make bins and count the number in bins
-    if Make_bins:
+    # Make bins and count the number in bins for ONE experimemt
+    if Make_bins and len(Expers) == 1:
         # Read obs, Hxb, and Hxa of all files 
-        Hx_dir = big_dir+Storm+'/'+Exper_name+'/Obs_Hx/IR/'
-        d_allTb =  read_Tbs_obsRes(Hx_dir, sensor )
+        Hx_dir = big_dir+Storm+'/'+Expers[0]+'/Obs_Hx/IR/'
+        d_allTb = read_Tbs_obsRes_oneExper(Hx_dir, sensor )
         # Make bins
         print('Counting number per bins...')
         start_time=time.process_time()
@@ -245,7 +362,33 @@ if __name__ == '__main__':
         print ('time needed: ', end_time-start_time, ' seconds') 
     
         if If_plot:
-             Plot_IR_hist( d_hcount )
+             Plot_hist_IRall( d_hcount )
+
+    # Make bins and count the number in bins for Multiple experimemt
+    if Make_bins and len(Expers) > 1:
+        # Read obs, Hxb, and Hxa of all files 
+        d_allTb = read_Tbs_obsRes_multiExper( )
+        # Make bins
+        print('Counting number per bins...')
+        start_time=time.process_time()
+        d_hcount = {}
+        for key in d_allTb: # initialize an empty nested dictionary
+            d_hcount[key] = {}
+
+        for outer_key in d_allTb:
+            print(outer_key)
+            for inner_key in d_allTb[outer_key]:
+                print(inner_key)
+                if bin_Tbdiff:
+                    hist,range_bins = np.histogram(d_allTb[outer_key][inner_key], number_bins, (min_Tbdiff_rg,max_Tbdiff_rg),density=True )
+                else:
+                    hist,range_bins = np.histogram(d_allTb[outer_key][inner_key], number_bins, (min_Tb_rg,max_Tb_rg),density=True )
+                d_hcount[outer_key][inner_key] = hist
+        end_time = time.process_time()
+        print ('time needed: ', end_time-start_time, ' seconds')
+   
+        if If_plot:
+             Plot_hist_IRsum( d_hcount )
 
 
 

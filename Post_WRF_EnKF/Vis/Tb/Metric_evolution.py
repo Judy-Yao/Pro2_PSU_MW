@@ -163,29 +163,46 @@ def Plot_one_metric( Tb_metric ):
                     color = 'red'
                 else:
                     color = 'blue'
-                if i == 1:
-                    ax.plot(dates_zip[i-1:i+1],bias_zip[i-1:i+1],color,linewidth='6')
-                elif i == 2:
-                    ax.plot(dates_zip[i-1:i+1],bias_zip[i-1:i+1],color,linewidth='4',label='Forecast')
-                elif i == 3:
-                    ax.plot(dates_zip[i-1:i+1],bias_zip[i-1:i+1],color,linewidth='4',label='Assimilation')
+
+                if MP[iexper] == 'WSM6':
+                    if i == 1:
+                        ax.plot(dates_zip[i-1:i+1],bias_zip[i-1:i+1],color,linewidth='6')
+                    elif i == 2:
+                        ax.plot(dates_zip[i-1:i+1],bias_zip[i-1:i+1],color,linewidth='4',label='WSM6_Forecast')
+                    elif i == 3:
+                        ax.plot(dates_zip[i-1:i+1],bias_zip[i-1:i+1],color,linewidth='4',label='WSM6_Assimilation')
+                    else:
+                        ax.plot(dates_zip[i-1:i+1],bias_zip[i-1:i+1],color,linewidth='4')
                 else:
-                    ax.plot(dates_zip[i-1:i+1],bias_zip[i-1:i+1],color,linewidth='4')
+                    if i == 1:
+                        ax.plot(dates_zip[i-1:i+1],bias_zip[i-1:i+1],'grey',linewidth='6',linestyle='--')
+                    elif i == 2:
+                        ax.plot(dates_zip[i-1:i+1],bias_zip[i-1:i+1],'grey',linewidth='4',label='THO_Forecast',linestyle='-')
+                    elif i == 3:
+                        ax.plot(dates_zip[i-1:i+1],bias_zip[i-1:i+1],'grey',linewidth='4',label='THO_Assimilation',linestyle='--')
+                    elif i % 2 == 0:
+                        ax.plot(dates_zip[i-1:i+1],bias_zip[i-1:i+1],'grey',linewidth='4',linestyle='--')
+                    else:
+                        ax.plot(dates_zip[i-1:i+1],bias_zip[i-1:i+1],'grey',linewidth='4',linestyle='-')
+
+
             ax.set_ylim( bias_min,bias_max )
             ax.axhline(y=0.0,color='k',linestyle='-',linewidth='2') 
 
         elif not if_bias and if_rmse:
             rmse_zip = list( chain.from_iterable( zip(Tb_metric['xb_rmse'][iexper,:],Tb_metric['xa_rmse'][iexper,:]) ))
     
-    ax.legend(frameon=True,loc='upper right',fontsize='15')
+    ax.legend(frameon=True,loc='upper right',fontsize='24')
 
     ax.set_xlim([dates[0],dates[-1]])
-    ax.tick_params(axis='x', labelrotation=30,labelsize=13)
+    ax.tick_params(axis='x', labelrotation=30,labelsize=20)
+    ax.tick_params(axis='y',labelsize=24)
     ax.grid(True,linestyle='--',alpha=0.5)
-    ax.set_ylabel('Brightness Temperature (K)',fontsize=15)
+    ax.set_ylabel('Brightness Temperature (K)',fontsize=24)
 
     if if_bias and not if_rmse:
-        ax.set_title( DA+'_'+MP+' Bias (Hx - Yo)',fontweight="bold",fontsize='15' )
+        pass
+        #ax.set_title( 'Bias: H(X) - Obs',fontweight="bold",fontsize='15' )
     if if_bias and if_rmse:
         ax.set_title( DA+'_'+MP+' RMSE',fontweight="bold",fontsize='15' )
     
@@ -241,7 +258,7 @@ if __name__ == '__main__':
     # ---------- Configuration -------------------------
     Storm = 'IRMA'
     DA = 'IR'
-    MP = 'THO'
+    MP = ['THO','WSM6']
 
     sensor = 'abi_gr'
     ch_list = ['8',]
@@ -258,7 +275,8 @@ if __name__ == '__main__':
 
     # Create experiment names
     Expers = []
-    Expers.append( UD.generate_one_name( Storm,DA,MP ) )
+    for imp in MP:
+        Expers.append( UD.generate_one_name( Storm,DA,imp ) )
 
     if not Consecutive_times:
         DAtimes = ['201708231200']
