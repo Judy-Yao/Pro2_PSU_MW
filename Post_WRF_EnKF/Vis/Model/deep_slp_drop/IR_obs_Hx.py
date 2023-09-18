@@ -368,114 +368,82 @@ def read_wrf_domain( wrf_file ):
     return d03_list
 
 
-def plot_Tb(Storm, Exper_name, Hx_dir, DAtime, sensor, ch_list, HPI_models, idx_t ):
+def plot_Tb(Storm, Exper_name, Hx_dir, DAtime, sensor, ch_list ):
 
     # Read WRF domain
-    output_file = big_dir+Storm+'/'+Exper_name+'/fc/'+DAtime+'/wrf_enkf_output_d03_mean'
+    output_file = '/scratch/06191/tg854905/Pro2_PSU_MW/'+Storm+'/'+Exper_name+'/fc/'+DAtime+'/wrf_enkf_output_d03_mean'
     d_wrf_d03 = read_wrf_domain( output_file )
 
     # Read Tbs of obs, Hxb, Hxa
     Tb_file = Hx_dir + "/mean_obs_res_d03_" + DAtime + '_' +  sensor + '.txt'
-    d_all = read_Tb_obsRes(Tb_file, sensor )
+    d_all = read_Tb_obsRes(Tb_file, sensor )  
 
     # Read location from TCvitals
     if any( hh in DAtime[8:10] for hh in ['00','06','12','18']):
-        tc_lon, tc_lat, tc_slp = UD.read_TCvitals(Storm, DAtime)
-        print( 'Location from TCvital: ', tc_lon, tc_lat )
-
-    # Prepare to calculate RMSE between the Hx and Yo
-    metric = np.full(2, fill_value=None) # default type: none
+        tc_lon, tc_lat, tc_slp = UD.read_TCvitals(Storm, DAtime )
 
     # ------------------ Plot -----------------------
-    fig, axs=plt.subplots(1, 3, subplot_kw={'projection': ccrs.PlateCarree()}, gridspec_kw = {'wspace':0, 'hspace':0}, linewidth=0.5, sharex='all', sharey='all',  figsize=(5,2.5), dpi=400)
+    f, ax=plt.subplots(1, 3, subplot_kw={'projection': ccrs.PlateCarree()}, gridspec_kw = {'wspace':0, 'hspace':0}, linewidth=0.5, sharex='all', sharey='all',  figsize=(5,2.5), dpi=400)
 
     # Define the domain
     lat_min = d_wrf_d03['lat_min']
     lat_max = d_wrf_d03['lat_max']
     lon_min = d_wrf_d03['lon_min']
     lon_max = d_wrf_d03['lon_max']
-
-    # Set the map
-    for i in range(3):
-        axs.flat[i].set_extent([lon_min,lon_max,lat_min,lat_max], crs=ccrs.PlateCarree())
-        axs.flat[i].coastlines(resolution='10m', color='black',linewidth=0.5)
-
-    # Find the min slp of wrf_enkf_output less than 900 
-    #path = [ [min_lonx,min_latx],[min_lonx,max_latx],[max_lonx,max_latx],[max_lonx,min_latx], ]
-
-    # Obs
+ 
+    #Define Tb threshold
     min_T = 185
     max_T = 325
     IRcmap = Util_Vis.IRcmap( 0.5 )
-    obs_s = axs.flat[0].scatter(d_all['lon_obs'],d_all['lat_obs'],1.5,c=d_all['Yo_obs'],edgecolors='none', cmap=IRcmap, vmin=min_T, vmax=max_T,transform=ccrs.PlateCarree())
-    if any( hh in DAtime[8:10] for hh in ['00','06','12','18'] ):
-        axs.flat[0].scatter(tc_lon, tc_lat, s=1, marker='*', edgecolors='darkviolet', transform=ccrs.PlateCarree())
 
-    # HXb  & HXa 
-    xb_s = axs.flat[1].scatter(d_all['lon_obs'], d_all['lat_obs'],1.5,c=d_all['meanYb_obs'],\
-                edgecolors='none', cmap=IRcmap, vmin=min_T, vmax=max_T, transform=ccrs.PlateCarree() )
-    xa_s = axs.flat[2].scatter(d_all['lon_obs'], d_all['lat_obs'],1.5,c=d_all['meanYa_obs'],\
-                edgecolors='none', cmap=IRcmap, vmin=min_T, vmax=max_T, transform=ccrs.PlateCarree() )
-    # add a reference point
+    ax[0].set_extent([lon_min,lon_max,lat_min,lat_max], crs=ccrs.PlateCarree())
+    ax[0].coastlines(resolution='10m', color='black',linewidth=0.5)
+    ax[0].scatter(d_all['lon_obs'],d_all['lat_obs'],1.5,c=d_all['Yo_obs'],edgecolors='none', cmap=IRcmap, vmin=min_T, vmax=max_T,transform=ccrs.PlateCarree())
+
+    ax[1].set_extent([lon_min, lon_max, lat_min, lat_max], crs=ccrs.PlateCarree())
+    ax[1].coastlines(resolution='10m', color='black',linewidth=0.5)
+    ax[1].scatter(d_all['lon_obs'], d_all['lat_obs'],1.5,c=d_all['meanYb_obs'],\
+                edgecolors='none', cmap=IRcmap, vmin=min_T, vmax=max_T, transform=ccrs.PlateCarree())
     if any( hh in DAtime[8:10] for hh in ['00','06','12','18'] ):
-        axs.flat[1].scatter(tc_lon, tc_lat, s=1, marker='*', edgecolors='black', transform=ccrs.PlateCarree())
-        axs.flat[2].scatter(tc_lon, tc_lat, s=1, marker='*', edgecolors='black', transform=ccrs.PlateCarree())
+        ax[1].scatter(tc_lon, tc_lat, s=3, marker='*', edgecolors='white', transform=ccrs.PlateCarree())
+
+    ax[2].set_extent([lon_min, lon_max, lat_min, lat_max], crs=ccrs.PlateCarree())
+    ax[2].coastlines(resolution='10m', color='black',linewidth=0.5)
+    cs = ax[2].scatter(d_all['lon_obs'], d_all['lat_obs'],1.5,c=d_all['meanYa_obs'],\
+                edgecolors='none', cmap=IRcmap, vmin=min_T, vmax=max_T, transform=ccrs.PlateCarree())
+    if any( hh in DAtime[8:10] for hh in ['00','06','12','18'] ):
+        ax[2].scatter(tc_lon, tc_lat, s=3, marker='*', edgecolors='white', transform=ccrs.PlateCarree())
 
     # Colorbar
-    caxes = fig.add_axes([0.2, 0.1, 0.6, 0.02])
-    cbar = fig.colorbar(obs_s, orientation="horizontal", cax=caxes)
+    caxes = f.add_axes([0.2, 0.1, 0.6, 0.02])
+    cbar = f.colorbar(cs, orientation="horizontal", cax=caxes)
     cbar.ax.tick_params(labelsize=6)
 
-    # add a cicle
-    if plot_circle:
-        radius_deg = km_to_deg( radius_th )
-        for i in range(3):
-            circle = plt.Circle((HPI_models['wrf_enkf_output_d03_mean']['lon'][idx_t],HPI_models['wrf_enkf_output_d03_mean']['lat'][idx_t]),radius_deg,\
-                            transform=ccrs.PlateCarree(),edgecolor='black',facecolor='none',linewidth=0.7)
-            axs.flat[i].add_patch( circle )
-
-    # mark the location of min slp of simulation
-    for ifile in file_kinds:
-        idx = file_kinds.index( ifile )
-        axs.flat[idx+1].scatter(HPI_models[ifile]['lon'][idx_t], HPI_models[ifile]['lat'][idx_t], s=1, marker='o', edgecolors='black', transform=ccrs.PlateCarree())
-
-    ## Colorbar
-    #caxes = fig.add_axes([0.4, 0.1, 0.5, 0.02])
-    #cb_diff_ticks = np.linspace(min_T, max_T, 5, endpoint=True)
-    #cbar = fig.colorbar(xa_s,ax=axs[1:],ticks=cb_diff_ticks, orientation="horizontal", cax=caxes)
-    #cbar.ax.tick_params(labelsize=6)
-
-    #Subplot title
-    font = {'size':6,}
-    axs.flat[0].set_title('Ch'+ch_list[0]+':Yo', font, fontweight='bold')
-    ## format the statistics
-    axs.flat[1].set_title('H(Xb)', font, fontweight='bold')
-    axs.flat[2].set_title('H(Xa)', font, fontweight='bold')
+    #subplot title
+    font = {'size':8,}
+    ax[0].set_title('Yo', font, fontweight='bold')
+    ax[1].set_title('H(Xb)', font, fontweight='bold')
+    ax[2].set_title('H(Xa)', font, fontweight='bold')
 
     #title for all
-    if deep_slp_incre:
-        title_name = Storm+': '+Exper_name+' ('+DAtime+')'+'\nAbs of min SLP increment > '+\
-                        str(incre_slp_th)+' hPa'+'\nCircle: center@min_slp of Xa, radius='+str(radius_th)+' km'
-        fig.suptitle( title_name, fontsize=5, fontweight='bold')
-    else:
-        fig.suptitle(Storm+': '+Exper_name+' ('+DAtime+')', fontsize=6, fontweight='bold')
+    f.suptitle(Storm+': '+Exper_name, fontsize=8, fontweight='bold')
+
     # Axis labels
     lon_ticks = list(range(math.ceil(lon_min)-2, math.ceil(lon_max)+2,2))
     lat_ticks = list(range(math.ceil(lat_min)-2, math.ceil(lat_max)+2,2))
 
     for j in range(3):
-        gl = axs.flat[j].gridlines(crs=ccrs.PlateCarree(),draw_labels=False,linewidth=0.5,alpha=0.7,color='gray',linestyle='--')
-
+        gl = ax[j].gridlines(crs=ccrs.PlateCarree(),draw_labels=False,linewidth=0.1, color='gray', alpha=0.5, linestyle='--')
+       
         gl.xlabels_top = False
         gl.xlabels_bottom = True
-
         if j==0:
             gl.ylabels_left = True
             gl.ylabels_right = False
         else:
             gl.ylabels_left = False
             gl.ylabels_right = False
-
+    
         gl.ylocator = mticker.FixedLocator(lat_ticks)
         gl.xlocator = mticker.FixedLocator(lon_ticks)
         gl.xformatter = LONGITUDE_FORMATTER
@@ -483,9 +451,9 @@ def plot_Tb(Storm, Exper_name, Hx_dir, DAtime, sensor, ch_list, HPI_models, idx_
         gl.xlabel_style = {'size': 4}
         gl.ylabel_style = {'size': 6}
 
-    figure_des=plot_dir+DAtime+'_'+sensor+'_Obspace_scatter.png'
-    plt.savefig(figure_des, dpi=400)
-    print('Saving the figure: ', figure_des)
+    des_name = small_dir+Storm+'/'+Exper_name+'/Vis_analyze/Tb/IR/Obspace/'+DAtime+'_'+sensor+'_Obspace.png'
+    plt.savefig(des_name,dpi=300)
+    print('Saving the figure: ',des_name)
 
 
 def plot_Tb_diff(Storm, Exper_name, Hx_dir, DAtime, sensor, ch_list, HPI_models, idx_t ):
@@ -497,6 +465,8 @@ def plot_Tb_diff(Storm, Exper_name, Hx_dir, DAtime, sensor, ch_list, HPI_models,
     # Read Tbs of obs, Hxb, Hxa
     Tb_file = Hx_dir + "/mean_obs_res_d03_" + DAtime + '_' +  sensor + '.txt'
     d_all = read_Tb_obsRes(Tb_file, sensor )
+    file_Diag = big_dir+Storm+'/'+Exper_name+'/run/'+DAtime+'/enkf/d03_kick2error/fort.10000' #!!!!!!!!!
+    d_obs = Diag.Find_IR( file_Diag, fort_v )
 
     # Read location from TCvitals
     if any( hh in DAtime[8:10] for hh in ['00','06','12','18']):
@@ -527,7 +497,8 @@ def plot_Tb_diff(Storm, Exper_name, Hx_dir, DAtime, sensor, ch_list, HPI_models,
     min_obs = 185
     max_obs = 325
     IRcmap = Util_Vis.IRcmap( 0.5 )
-    obs_s = axs.flat[0].scatter(d_all['lon_obs'],d_all['lat_obs'],1.5,c=d_all['Yo_obs'],edgecolors='none', cmap=IRcmap, vmin=min_obs, vmax=max_obs,transform=ccrs.PlateCarree())
+    obs_s = axs.flat[0].scatter(d_obs['lon'],d_obs['lat'],1.5,c=d_obs['obs'],edgecolors='none', cmap=IRcmap, vmin=min_obs, vmax=max_obs,transform=ccrs.PlateCarree())
+    #obs_s = axs.flat[0].scatter(d_all['lon_obs'],d_all['lat_obs'],1.5,c=d_all['Yo_obs'],edgecolors='none', cmap=IRcmap, vmin=min_obs, vmax=max_obs,transform=ccrs.PlateCarree())
     if any( hh in DAtime[8:10] for hh in ['00','06','12','18'] ):
         axs.flat[0].scatter(tc_lon, tc_lat, s=1, marker='*', edgecolors='darkviolet', transform=ccrs.PlateCarree())
     #axs.flat[0].add_patch(patches.Polygon(path,facecolor='none',edgecolor='white',linewidth=0.5 ))
@@ -604,9 +575,9 @@ def plot_Tb_diff(Storm, Exper_name, Hx_dir, DAtime, sensor, ch_list, HPI_models,
     axs.flat[2].set_title(suptitle, font, fontweight='bold')
     
     #title for all
-    if deep_slp_incre:
+    if incre_slp_th:
         title_name = Storm+': '+Exper_name+' ('+DAtime+')'+'\nAbs of min SLP increment > '+\
-                        str(incre_slp_th)+' hPa'+'\nCircle: center@min_slp of Xa, radius='+str(radius_th)+' km'
+                        str(incre_slp_th)+' hPa'+'\nCircle: center@min_slp of Xa, radius='+str(radius_th)+' km kick2error'
         fig.suptitle( title_name, fontsize=5, fontweight='bold')
     else:
         fig.suptitle(Storm+': '+Exper_name+' ('+DAtime+')', fontsize=6, fontweight='bold')
@@ -635,7 +606,7 @@ def plot_Tb_diff(Storm, Exper_name, Hx_dir, DAtime, sensor, ch_list, HPI_models,
         gl.ylabel_style = {'size': 6}
 
     if plot_scatter:
-        figure_des=plot_dir+DAtime+'_'+sensor+'_Obspace_Diff_scatter.png'
+        figure_des=plot_dir+DAtime+'_'+sensor+'_Obspace_Diff_scatter_kick2error.png'
     else:
         figure_des=plot_dir+DAtime+'_'+sensor+'_Obspace_Diff_contourf.png'
     plt.savefig(figure_des, dpi=400)
@@ -657,12 +628,12 @@ if __name__ == '__main__':
     ch_list = ['8',]
     fort_v = ['obs_type','lat','lon','obs']
 
-    start_time_str = '201709041800' 
-    end_time_str = '201709050000'
+    start_time_str = '201709041600' 
+    end_time_str = '201709041600'
     Consecutive_times = True
 
     deep_slp_incre = True
-    incre_slp_th = 0 # threshold of increment, unit:hpa
+    incre_slp_th = 1 # threshold of increment, unit:hpa
     plot_circle = True
     radius_th = 200 # km
 
@@ -706,7 +677,7 @@ if __name__ == '__main__':
     if If_plot and deep_slp_incre:
         start_time=time.process_time()
         # ------ Plot -------------------
-        plot_dir = small_dir+Storm+'/'+Exper_name+'/Vis_analyze/Model/deep_slp_incre/IR_Obspace/'
+        plot_dir = small_dir+Storm+'/'+Exper_name+'/Vis_analyze/Model/deep_slp_incre/IR_obs_Hx/'
         plotdir_exists = os.path.exists( plot_dir )
         if plotdir_exists == False:
             os.mkdir(plot_dir)
@@ -725,8 +696,8 @@ if __name__ == '__main__':
                 Hx_dir = big_dir+Storm+'/'+Exper_name+'/Obs_Hx/IR/'+DAtime+'/'
                 print('------------ Plot ----------------------')         
                 print('DAtime: '+ DAtime)
-                plot_Tb( Storm, Exper_name, Hx_dir, DAtime, sensor, ch_list, HPI_models, idx_t) 
-                #plot_Tb_diff( Storm, Exper_name, Hx_dir, DAtime, sensor, ch_list, HPI_models, idx_t) 
+                #plot_Tb( Storm, Exper_name, Hx_dir, DAtime, sensor, ch_list) 
+                plot_Tb_diff( Storm, Exper_name, Hx_dir, DAtime, sensor, ch_list, HPI_models, idx_t) 
         end_time = time.process_time()
         print ('time needed: ', end_time-start_time, ' seconds')
 

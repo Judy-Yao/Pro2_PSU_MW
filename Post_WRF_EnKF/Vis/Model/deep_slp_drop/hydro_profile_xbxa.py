@@ -57,7 +57,7 @@ def compute_hydro_area( wrf_files, hydros, HPI_models, idx_t):
     output_file = wrf_files[1]
     ncdir = nc.Dataset( output_file, 'r')
     anchor_ij = ll_to_xy(ncdir, HPI_models['wrf_enkf_output_d03_mean']['lat'][idx_t], HPI_models['wrf_enkf_output_d03_mean']['lon'][idx_t])
-    idx_area = UD.find_circle_area( output_file, anchor_ij.values[0], anchor_ij.values[1], radius_th, model_resolution/1000) # in km
+    idx_area = UD.find_circle_area_model_ij( output_file, anchor_ij.values[0], anchor_ij.values[1], radius_th, model_resolution/1000) # in km
     #print(len(idx_area))
 
     # calculate fields needed for mass of hydrometeors
@@ -103,6 +103,79 @@ def compute_hydro_area( wrf_files, hydros, HPI_models, idx_t):
     Height = (Height[:-1]+Height[1:])/2
     return d_hydro, Height
 
+def plot_each_multiTime(DAtime, plot_dir, var, d_hydro, Height ):
+
+    # Set up figure
+    fig = plt.figure( figsize=(8,8), dpi=300 )
+    ax = plt.subplot(1,1,1)
+
+    # Manually set discrete values on x and y axis and interpolate data to these values
+    ## x axis: correlation value
+    if Storm == 'IRMA' and MP == 'THO':
+        x_range = np.arange(0,4000.5,50)
+    else:
+        x_range = np.arange(0,3000.5,50) #2100.5
+    x_axis_rg = range(len(x_range))
+    f_xinterp = interpolate.interp1d( x_range, x_axis_rg)
+    ## y axis: model level height
+    y_range = np.arange(0,31,1)
+    y_axis_rg = range(len(y_range))
+    f_yinterp = interpolate.interp1d( y_range, y_axis_rg)
+    loc_iny = f_yinterp( Height )
+
+    labels = ['Xb_','Xa_']
+    lstyle = ['-','--']
+    Color = ['#f032e6','#911eb4','#4363d8','#f58231','#469990']
+
+    idx = hydros.index( var )
+    for key in d_hydro.keys():
+        for ifile in range( len(wrf_files) ):
+            PF_x = np.sum(d_hydro[key][var][ifile,:,:],axis=1)
+            loc_inx = f_xinterp( PF_x )
+            if key == DAtime:
+                ax.plot( loc_inx,loc_iny,Color[idx],linewidth=3,label=labels[ifile]+'t0',linestyle=lstyle[ifile] )
+            else:
+                ax.plot( loc_inx,loc_iny,'black',linewidth=3,label=labels[ifile]+'t1',linestyle=lstyle[ifile] )
+
+    ax.legend(loc='upper right',fontsize='16')
+    # subplot title and labels
+    ylabel_like = [0.0,5.0,10.0,15.0,20.0]
+    yticks = []
+    list_y_range = list(y_range)
+    for it in ylabel_like:
+        yticks.append( list_y_range.index(it) )
+    ax.set_title( var, fontsize = 15)
+    ax.set_yticks( yticks )
+    ax.set_yticklabels( [str(it) for it in ylabel_like],fontsize=15 )
+    ax.set_ylim(ymin=0,ymax=20.5) # cut off data above 25km        
+
+    # a common y label
+    fig.text(0.06,0.5,'Height (km)',ha='center',va='center',rotation='vertical',fontsize=20)
+    # set X label
+    ax.set_xticks( x_axis_rg[::10] )
+    if Storm == 'IRMA' and MP == 'THO':
+        ax.set_xticklabels(  ['0','500','1000','1500','2000','2500','3000','3500','4000',],fontsize=15 )
+    else:
+        ax.set_xticklabels(  ['0','500','1000','1500','2000','2500','3000',],fontsize=15 )
+        #ax.set_xticklabels(  ['0','500','1000','1500','2000',],fontsize=15 )
+    ax.set_xlabel('Mass (kg m-2)',fontsize=20)
+    ax.set_xlim(xmin=0)
+
+    # Set title
+    title_name = Storm+': '+Exper_name+' '+DAtime+'  \nProfile: hydrometeors in the circled area \n(center@min slp of Xa, radius=200km)'
+    fig.suptitle(title_name, fontsize=12, fontweight='bold')
+
+    # Save the figure
+    save_des = plot_dir+DAtime+'_VP_'+var+'_twotimes_area.png'
+    plt.savefig( save_des )
+    print( 'Saving the figure: ', save_des )
+    plt.close()
+
+
+    return None
+
+
+
 
 def plot_all_multiTime(DAtime, plot_dir, d_hydro, Height ):
 
@@ -110,7 +183,10 @@ def plot_all_multiTime(DAtime, plot_dir, d_hydro, Height ):
 
     # Manually set discrete values on x and y axis and interpolate data to these values
     ## x axis: correlation value
-    x_range = np.arange(0,3000.5,50) #2100.5
+    if Storm == 'IRMA' and MP == 'THO':
+        x_range = np.arange(0,5500.5,50)
+    else:
+        x_range = np.arange(0,3000.5,50) #2100.5
     x_axis_rg = range(len(x_range))
     f_xinterp = interpolate.interp1d( x_range, x_axis_rg)
     ## y axis: model level height
@@ -154,7 +230,10 @@ def plot_all_multiTime(DAtime, plot_dir, d_hydro, Height ):
     fig.text(0.06,0.5,'Height (km)',ha='center',va='center',rotation='vertical',fontsize=20)
     # set X label
     ax.flat[-1].set_xticks( x_axis_rg[::10] )
-    ax.flat[-1].set_xticklabels( ['0','500','1000','1500','2000','2500','3000'],fontsize=20 ) 
+    if Storm == 'IRMA' and MP == 'THO':
+        ax.flat[-1].set_xticklabels(  ['0','500','1000','1500','2000','2500','3000','3500','4000','4500','5000','5500'],fontsize=15 )
+    else:
+        ax.flat[-1].set_xticklabels(  ['0','500','1000','1500','2000','2500','3000'],fontsize=15 )
     ax.flat[-1].set_xlabel('Mass (kg m-2)',fontsize=20)
     ax.flat[-1].set_xlim(xmin=0)
 
@@ -183,7 +262,10 @@ def plot_all_oneTime(DAtime, plot_dir, d_hydro, Height):
 
     # Manually set discrete values on x and y axis and interpolate data to these values
     ## x axis: correlation value
-    x_range = np.arange(0,3000.5,50) #2100.5
+    if Storm == 'IRMA' and MP == 'THO':
+        x_range = np.arange(0,4000.5,50)
+    else:
+        x_range = np.arange(0,3000.5,50) #2100.5
     x_axis_rg = range(len(x_range))
     f_xinterp = interpolate.interp1d( x_range, x_axis_rg)
     ## y axis: model level height
@@ -207,7 +289,10 @@ def plot_all_oneTime(DAtime, plot_dir, d_hydro, Height):
     ax.legend(loc='upper right',fontsize='10')
     # set X label
     ax.set_xticks( x_axis_rg[::10] )
-    ax.set_xticklabels(  ['0','500','1000','1500','2000','2500','3000'],fontsize=15 ) 
+    if Storm == 'IRMA' and MP == 'THO':
+        ax.set_xticklabels(  ['0','500','1000','1500','2000','2500','3000','3500','4000',],fontsize=15 ) 
+    else:
+        ax.set_xticklabels(  ['0','500','1000','1500','2000','2500','3000'],fontsize=15 ) 
     ax.set_xlabel('Mass (kg m-2)',fontsize=15)
     ax.set_xlim(xmin=0) 
     # set Y label
@@ -244,22 +329,23 @@ if __name__ == '__main__':
     small_dir =  '/work2/06191/tg854905/stampede2/Pro2_PSU_MW/'
     model_resolution = 3000 #m
     # ---------- Configuration -------------------------
-    Storm = 'JOSE'
+    Storm = 'IRMA'
     DA = 'IR'
-    MP = 'WSM6'
-    hydros = ['QCLOUD','QRAIN','QICE','QSNOW','QGRAUP']
+    MP = 'THO'
+    hydros =  ['QCLOUD','QRAIN','QICE','QSNOW','QGRAUP']
 
     # Time range set up
-    start_time_str = '201709061200'
-    end_time_str = '201709070000'
+    start_time_str = '201709030000'
+    end_time_str = '201709050000'
     Consecutive_times = True
 
     deep_slp_incre = True
-    incre_slp_th = 10 # threshold of increment, unit:hpa
+    incre_slp_th = 0 # threshold of increment, unit:hpa
     radius_th = 200 #km
 
     each_water = True
     Plot_oneTime = False
+    Plot_individual = False
     # -------------------------------------------------------    
 
     # Create experiment names
@@ -280,7 +366,8 @@ if __name__ == '__main__':
     # Plot integrated column of hydrometeors
     if deep_slp_incre:
         # ------ Plot -------------------
-        plot_dir = small_dir+Storm+'/'+Exper_name+'/Vis_analyze/Model/deep_slp_incre/VProfile_Hydro/'
+        #plot_dir = small_dir+Storm+'/'+Exper_name+'/Vis_analyze/Model/deep_slp_incre/VProfile_Hydro/'
+        plot_dir = small_dir+Storm+'/'+Exper_name+'/Vis_analyze/Model/VProfile_Hydro/'
         plotdir_exists = os.path.exists( plot_dir )
         if plotdir_exists == False:
             os.mkdir(plot_dir)
@@ -307,7 +394,9 @@ if __name__ == '__main__':
                 if each_water:
                     v_interest = hydros
                     if Plot_oneTime:
-                        plot_all_oneTime(DAtime, plot_dir, d_hydro, Height )
+                        if not Plot_individual:
+                            plot_all_oneTime(DAtime, plot_dir, d_hydro, Height )
+                        else: pass
                     else:
                         d_hydro_times = {}
                         d_hydro_times[DAtime] = d_hydro
@@ -320,7 +409,15 @@ if __name__ == '__main__':
                         d_hydro_next,Height = compute_hydro_area( wrf_files, hydros, HPI_models, idx_t)
                         d_hydro_times[DAtime_next] = d_hydro_next
                         # plot
-                        plot_all_multiTime(DAtime, plot_dir, d_hydro_times, Height ) 
+                        if Plot_individual:
+                            plot_dir_time = plot_dir+'/'+DAtime+'/'
+                            plotdir_exists = os.path.exists( plot_dir_time )
+                            if plotdir_exists == False:
+                                os.mkdir(plot_dir_time)
+                            for var in v_interest:
+                                plot_each_multiTime(DAtime, plot_dir_time, var, d_hydro_times, Height )
+                        else:
+                            plot_all_multiTime(DAtime, plot_dir, d_hydro_times, Height )
                 else:
                     pass
                 #v_interest = ['liquid','ice','all_hydro']

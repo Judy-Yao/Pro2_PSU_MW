@@ -500,15 +500,15 @@ def plot_hcorr_Tb_SLPatPoint(DAtime,sensor,corr_xb_hxb,d_all,idx_hxb,HPI_models)
             cs = ax.scatter(d_all['lon_obs'][idx_hxb], d_all['lat_obs'][idx_hxb],2,c=corr_xb_hxb,\
                         edgecolors='none', cmap='bwr',vmin=min_corr,vmax=max_corr,transform=ccrs.PlateCarree())
         else:
-            bounds = np.linspace(min_corr,max_corr,6)
+            bounds = [-0.5,-0.4,-0.3,-0.2,-0.1,0,0.1,0.2,0.3,0.4,0.5]#np.linspace(min_corr,max_corr,9)
             cs = ax.tricontourf(d_all['lon_obs'][idx_hxb], d_all['lat_obs'][idx_hxb], corr_xb_hxb, cmap='bwr', \
                         vmin=min_corr, vmax=max_corr, levels=bounds, transform=ccrs.PlateCarree(), extend='both' )
 
-   # Colorbar
+    # Colorbar
     caxes = fig.add_axes([0.91, 0.1, 0.015, 0.8])
-    cb_diff_ticks = np.linspace(min_corr, max_corr, 6, endpoint=True)
-    cbar = fig.colorbar(cs, ticks=cb_diff_ticks , cax=caxes)
-    cbar.ax.tick_params(labelsize=11)
+    cb_diff_ticks = [-0.5,-0.4,-0.3,-0.2,-0.1,0,0.1,0.2,0.3,0.4,0.5]#np.linspace(min_corr, max_corr, 9, endpoint=True)
+    cbar = fig.colorbar(cs, ticks=cb_diff_ticks,orientation="vertical", cax=caxes)
+    cbar.ax.tick_params(labelsize=12)
 
     # mark the location of min slp of simulation
     idx_t = IR_times.index( DAtime )
@@ -562,17 +562,16 @@ if __name__ == '__main__':
     model_resolution = 3000 #m
 
     # ---------- Configuration -------------------------
-    Storm = 'JOSE'
+    Storm = 'IRMA'
     DA = 'IR'
-    MP = 'WSM6'
+    MP = 'THO'
 
-    v_interest = [ 'P',]
     sensor = 'abi_gr'
     ch_list = ['8',]
     fort_v = ['obs_type','lat','lon','obs']
 
-    start_time_str = '201709061700'
-    end_time_str = '201709061700'
+    start_time_str = '201709030000'
+    end_time_str = '201709050000'
     Consecutive_times = True
 
     # Number of ensemble members
@@ -582,14 +581,14 @@ if __name__ == '__main__':
     ymax = 297
 
     deep_slp_incre = True
-    incre_slp_th = 10
+    incre_slp_th = 20
     plot_circle = True
     radius_th = 200 # km
 
     to_obs_res = False
     If_save = True
     If_plot = True
-    plot_scatter = False
+    plot_scatter = True
     # -------------------------------------------------------    
 
     # Create experiment names

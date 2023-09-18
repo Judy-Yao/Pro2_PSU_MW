@@ -97,6 +97,7 @@ def plot_slp( Storm, Exper_name, DAtime, wrf_dir, plot_dir ):
     ax[1].set_title( 'Xa--min slp: '+str("{0:.3f}".format(np.min( slp[1,:,:] )))+' hPa',  fontweight='bold', fontsize=13)
     if deep_slp_incre:
         title_name = Storm+': '+Exper_name+' ('+DAtime+')'+'\nAbs of min SLP increment > '+str(incre_slp_th)+' hPa'
+        title_name = title_name + ' kick5error'
         fig.suptitle(title_name,fontsize=12, fontweight='bold')
     else:
         fig.suptitle(Storm+': '+Exper_name+' ('+DAtime+')', fontsize=12, fontweight='bold')
@@ -121,7 +122,7 @@ def plot_slp( Storm, Exper_name, DAtime, wrf_dir, plot_dir ):
         gl.xlabel_style = {'size': 12}
         gl.ylabel_style = {'size': 12}
 
-    des = plot_dir+DAtime+'_slp_deep_incre.png'
+    des = plot_dir+DAtime+'_slp_deep_incre_kick5error.png'
     plt.savefig( des, dpi=300 )
     print('Saving the figure: ', des)
     plt.close()
@@ -132,17 +133,17 @@ if __name__ == '__main__':
     big_dir = '/scratch/06191/tg854905/Pro2_PSU_MW/'
     small_dir =  '/work2/06191/tg854905/stampede2/Pro2_PSU_MW/'
     # ---------- Configuration -------------------------
-    Storm = 'JOSE'
+    Storm = 'IRMA'
     DA = 'IR'
     MP = 'WSM6'
 
     # Time range set up
-    start_time_str = '201709061200'
-    end_time_str = '201709070000'
+    start_time_str = '201709041600'
+    end_time_str = '201709041600'
     Consecutive_times = True
 
     deep_slp_incre = True
-    incre_slp_th = 10 # threshold of increment, unit:hpa 
+    incre_slp_th = 1 # threshold of increment, unit:hpa 
     Plot_slp = True
     # -------------------------------------------------------   
 
