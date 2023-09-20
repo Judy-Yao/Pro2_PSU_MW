@@ -414,7 +414,6 @@ def cal_pert_stddev_obsRes_Hxb( DAtime, sensor, Hx_dir, If_save, fort_v, wrf_dir
     # Calculate the perturbation of Hxb
     for im in range( num_ens ):
         hxb_ens_os_pert[im,:] = d_obspace['hxb_ens'][im,:] - meanYb
-       
  
     # May save the perturbations
     if If_save:
@@ -469,29 +468,29 @@ def cal_pert_stddev_xb( DAtime, wrf_dir, var_name, If_save ):
     print("Read the ensemble and calculate the perturbations for Xb...")
     start_time=time.process_time()
     
-    xb_ens = np.zeros( shape=[nLevel,num_ens+1,xmax*ymax] )
-    xb_ens[:] = np.nan
+    xb_ens_pert = np.zeros( shape=[nLevel,num_ens+1,xmax*ymax] )
+    xb_ens_pert[:] = np.nan
     # read the ensemble mean of xb
     mean_xb = wrf_dir + '/wrf_enkf_input_d03_mean'
     ncdir = nc.Dataset( mean_xb, 'r')
     var = ncdir.variables[var_name][0,:,:,:]
-    xb_ens[:,num_ens,:] = var.reshape(nLevel,xmax*ymax)
+    xb_ens_pert[:,num_ens,:] = var.reshape(nLevel,xmax*ymax)
     # read the ensemble of xb
     file_xb = sorted( glob.glob(wrf_dir + '/wrf_enkf_input_d03_0*') )
     for ifile in file_xb:
         idx = file_xb.index( ifile )
         ncdir = nc.Dataset( ifile, 'r')
         var = ncdir.variables[var_name][0,:,:,:]
-        xb_ens[:,idx,:] = var.reshape(nLevel,xmax*ymax) - xb_ens[:,num_ens,:]
+        xb_ens_pert[:,idx,:] = var.reshape(nLevel,xmax*ymax) - xb_ens_pert[:,num_ens,:]
     
     # Check if there are any NaN values using assert
-    assert not np.isnan(xb_ens).any()
+    assert not np.isnan(xb_ens_pert).any()
 
     # May save the perturbations
     if If_save:
         des_path = wrf_dir+ "xb_d03_3D_ensPert_" + DAtime + '_' + var_name + '.pickle'
         f = open( des_path, 'wb' )
-        pickle.dump( xb_ens, f )
+        pickle.dump( xb_ens_pert, f )
         f.close()
         print('Save '+des_path)
 
@@ -501,7 +500,7 @@ def cal_pert_stddev_xb( DAtime, wrf_dir, var_name, If_save ):
     ### ------------------------- Variance -------------------------
     print('Calculating the ensemble variance of model variable......' )
     start = time.perf_counter()
-    var_xb = var_3D( xb_ens[:,:num_ens,:] )
+    var_xb = var_3D( xb_ens_pert[:,:num_ens,:] ) # var_xb: nLevel,xmax*ymax
     end = time.perf_counter()
     print("Elapsed (after compilation) = {}s".format((end - start)))
     var_xb = var_xb / ( num_ens-1 )
