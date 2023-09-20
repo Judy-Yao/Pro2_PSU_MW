@@ -401,24 +401,26 @@ def cal_pert_stddev_obsRes_Hxb( DAtime, sensor, Hx_dir, If_save, fort_v, wrf_dir
         meanYb.append( float(split_line[4]) )
     meanYb = np.array( meanYb )
 
-    hxb_ens_os = np.zeros( shape=[num_ens+1,len(meanYb)] ) # the 0 to last - 1 rows are ensemble perturbations, the last row is mean value
-    hxb_ens_os[:] = np.nan
-    hxb_ens_os[num_ens,:] = meanYb
+    hxb_ens_os_pert = np.zeros( shape=[num_ens+1,len(meanYb)] ) # the 0 to last - 1 rows are ensemble perturbations, the last row is mean value
+    hxb_ens_os_pert[:] = np.nan
+    hxb_ens_os_pert[num_ens,:] = meanYb
     
     # Read the ensemble of Hxb at obs locations
     ens_Tb_file = Hx_dir + "/Hxb_ens_obs_res_d03_" + DAtime + '_' +  sensor + '.txt'
     print('Reading the ensemble of Hx: ', ens_Tb_file,'...')
     d_obspace = read_ens_obspace( ens_Tb_file, sensor )
-    hxb_ens_os = d_obspace['hxb_ens']
-    print('Shape of hxb_ens_obs: '+str(np.shape(hxb_ens_os)))
+    print('Shape of hxb_ens_obs: '+str(np.shape(d_obspace['hxb_ens'])))
+
+    # Calculate the perturbation of Hxb
     for im in range( num_ens ):
-        hxb_ens_os[im,:] = hxb_ens_os[im,:] - meanYb
-    
+        hxb_ens_os_pert[im,:] = d_obspace['hxb_ens'][im,:] - meanYb
+       
+ 
     # May save the perturbations
     if If_save:
         des_path = Hx_dir+ "Hxb_ensPert_obsRes_" + DAtime + '_' +  sensor + '.pickle'
         f = open( des_path, 'wb' )
-        pickle.dump( hxb_ens_os, f )
+        pickle.dump( hxb_ens_os_pert, f )
         f.close()
         print('Save '+des_path)
 
@@ -428,7 +430,7 @@ def cal_pert_stddev_obsRes_Hxb( DAtime, sensor, Hx_dir, If_save, fort_v, wrf_dir
     ### ------------------------- Variance -------------------------
     print('Calculating the ensemble variance of Hxb in obs space......' )
     start = time.perf_counter()
-    var_hxb = var_2D( hxb_ens_os[:num_ens,:] )
+    var_hxb = var_2D( hxb_ens_os_pert[:num_ens,:] )
     end = time.perf_counter()
     print("Elapsed (after compilation) = {}s".format((end - start)))
     var_hxb = var_hxb / ( num_ens-1 )
