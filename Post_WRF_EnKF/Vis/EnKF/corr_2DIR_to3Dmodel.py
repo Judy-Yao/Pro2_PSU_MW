@@ -141,7 +141,8 @@ def interp_simu_to_obs_matlab_ens( d_obs, Hx_dir, sensor, ch_list,  DAtime ):
             if sum(np.isnan(Yb_x)) != 0:
                 warnings.warn('NaN value exists in Yb_x!') 
             # interpolate simulated Tbs to obs location
-            mYb_obspace = eng.griddata(matlab.double(lon_x), matlab.double(lat_x), matlab.double(Yb_x), matlab.double(lon_obs), matlab.double(lat_obs) )
+            mYb_obspace = eng.griddata(matlab.double(lon_x), matlab.double(lat_x), matlab.double(Yb_x), matlab.double(lon_obs.tolist()), matlab.double(lat_obs.tolist()) )
+            #mYb_obspace = eng.griddata(matlab.double(lon_x), matlab.double(lat_x), matlab.double(Yb_x), matlab.double(lon_obs), matlab.double(lat_obs) )
             Yb_obspace = np.array(mYb_obspace._data)
             hxb_ens[idx,:] = ["{0:.4f}".format(item) for item in Yb_obspace]
     # end the matlab process
@@ -171,6 +172,13 @@ def interp_simu_to_obs_matlab_ens( d_obs, Hx_dir, sensor, ch_list,  DAtime ):
 # Read simulated Tb at obs locations for all members
 def read_ens_obspace( ens_Tb_file, sensor ):
 
+    # --------------------------------------------------------------------------------
+    # Data inside ens_Tb_file is like 
+    # each row (from left to right): at a location with one ch_num,
+    #      ch_num, lat, lon, Tb_obs, Tb_simu_mem1, Tb_simu_mem2, ..., Tb_simu_mem60
+    # each column (from top to down): iterate over all channels and all locations 
+    # --------------------------------------------------------------------------------
+
     # Number of ensemble members
     num_ens = 60
 
@@ -179,6 +187,7 @@ def read_ens_obspace( ens_Tb_file, sensor ):
     lon_obs = []
     Yo_obs = []
 
+    # Read member-invariate variables:ch_num, lat, lon, Tb_obs
     with open( ens_Tb_file ) as f:
         next(f)
         all_lines = f.readlines()
@@ -190,12 +199,13 @@ def read_ens_obspace( ens_Tb_file, sensor ):
         lon_obs.append( float(split_line[2]) )
         Yo_obs.append( float(split_line[3]) )
 
+    # Read member-variate variable: simulated Tb 
     hxb_ens = np.zeros( (num_ens,len(Yo_obs)) )
     hxb_ens[:] = np.nan
     il = 0
     for line in all_lines:
         split_line = line.split() #!!! the line didn't exist! Bug!!
-        tmp = [float(it) for it in split_line[4:]]
+        tmp = [float(it) for it in split_line[4:]] # for each line: read the content (Tb_ens of a sample) after ch_num, lat, lon, Tb_obs
         hxb_ens[:,il] = np.array( tmp )
         il = il+1
 
@@ -448,13 +458,14 @@ def cal_pert_stddev_xb( DAtime, wrf_dir, var_name, If_save ):
     # Dimension of the domain
     xmax = 297
     ymax = 297
-  
+    if 'Q' in var_name:
+        nLevel = 42
+    elif 'W' in var_name:
+        nLevel = 43
+
     ### ------------------------- Perturbation -------------------------
     print("Read the ensemble and calculate the perturbations for Xb...")
     start_time=time.process_time()
-    
-    if 'Q' in var_name:
-        nLevel = 42
     
     xb_ens = np.zeros( shape=[nLevel,num_ens+1,xmax*ymax] )
     xb_ens[:] = np.nan
@@ -469,7 +480,7 @@ def cal_pert_stddev_xb( DAtime, wrf_dir, var_name, If_save ):
         idx = file_xb.index( ifile )
         ncdir = nc.Dataset( ifile, 'r')
         var = ncdir.variables[var_name][0,:,:,:]
-        xb_ens[:,idx,:] = var.reshape(nLevel,xmax*ymax)
+        xb_ens[:,idx,:] = var.reshape(nLevel,xmax*ymax) - xb_ens[:,num_ens,:]
     
     # Check if there are any NaN values using assert
     assert not np.isnan(xb_ens).any()
@@ -798,16 +809,16 @@ if __name__ == '__main__':
     small_dir =  '/work2/06191/tg854905/stampede2/Pro2_PSU_MW/'
 
     # ---------- Configuration -------------------------
-    Storm = 'MARIA'
-    Exper_name = 'IR-J_DA+J_WRF+J_init-SP-intel17-WSM6-24hr-hroi900'
+    Storm = 'IRMA'
+    Exper_name = 'IR-J_DA+J_WRF+J_init-SP-intel17-WSM6-30hr-hroi900'
 
-    v_interest = [ 'QVAPOR',]
+    v_interest = [ 'P',]
     sensor = 'abi_gr'
     ch_list = ['8',]
     fort_v = ['obs_type','lat','lon','obs']
 
-    start_time_str = '201709160000'
-    end_time_str = '201709160000'
+    start_time_str = '201709041600'
+    end_time_str = '201709041600'
     Consecutive_times = True
 
     # Number of ensemble members
