@@ -2,6 +2,18 @@
 # Script to refresh the time stamp of each files under a certain directory to prevent it being purged 
 # Author: Zhu (Judy) Yao. Jan 2, 2023
 
+#####header for stampede######
+#SBATCH -J Fresh
+#SBATCH -N 1
+#SBATCH --ntasks-per-node 48
+#SBATCH -p development
+#SBATCH -t 02:00:00
+#SBATCH -o out_fresh
+#SBATCH -e error_fresh
+#SBATCH --mail-type=ALL
+#SBATCH --mail-user=yao.zhu.91@gmail.com
+
+
 source util.sh
 
 #---------------------------------------------------------

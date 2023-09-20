@@ -2,17 +2,29 @@
 # Script to refresh the time stamp of each files under a certain directory to prevent it being purged 
 # Author: Zhu (Judy) Yao. Jan 2, 2023
 
+#####header for stampede######
+#SBATCH -J Fresh
+#SBATCH -N 1
+#SBATCH --ntasks-per-node 48
+#SBATCH -p development
+#SBATCH -t 02:00:00
+#SBATCH -o out_fresh
+#SBATCH -e error_fresh
+#SBATCH --mail-type=ALL
+#SBATCH --mail-user=yao.zhu.91@gmail.com
+
+
 source util.sh
 
 #---------------------------------------------------------
 # Configuration
 #---------------------------------------------------------
-Storm=MARIA
-Exp_interest=("IR-J_DA+J_WRF+J_init-SP-intel17-THO-24hr-hroi900")
+Storm=JOSE
+Exp_interest=("J_DA+J_WRF+J_init-SP-intel17-THO-30hr-hroi900")
 #Exp_interest=("J_DA+J_WRF+J_init" "IR-J_DA+J_WRF+J_init" "J_DA+Y_WRF+J_init-IR+MW" "J_DA+Y_WRF+J_init-IR" "JerryRun") #IR+MW-J_DA+J_WRF+J_init-SP-intel19
-StartDate_spinup=201709151200
-StartDate_cycling=201709160000
-EndDate_cycling=201709180000
+StartDate_spinup=201709041200
+StartDate_cycling=201709050000
+EndDate_cycling=201709060000
 NUM_ENS=60
 MAX_DOM=3
 
