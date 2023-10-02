@@ -261,7 +261,7 @@ def plot_all_oneTime(DAtime, plot_dir, d_hydro, Height):
     ax = plt.subplot(1,1,1)
 
     # Manually set discrete values on x and y axis and interpolate data to these values
-    ## x axis: correlation value
+    ## x axis: range of accumulated water path value
     if Storm == 'IRMA' and MP == 'THO':
         x_range = np.arange(0,4000.5,50)
     else:

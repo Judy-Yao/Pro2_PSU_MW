@@ -73,7 +73,7 @@ def compute_hydro( wrf_files, each_var):
         geoHm[ifile,:,:] = tmp_geoHm.reshape( tmp_geoHm.shape[0],-1 )
         # temperature from potential temperature
         #theta = ncdir.variables['T'][0,:,:,:] # perturbation
-        #full_theta = theta + 290 # 290: T_base set in namelist.input for wrf forecast
+        #full_theta = theta + 300 # 290: T_base set in namelist.input is base state sea level temperature
         # virtual temperature
         tv = getvar(ncdir,'tv',units='K')
         tmp_tv = tv.values
@@ -247,13 +247,13 @@ if __name__ == '__main__':
     small_dir =  '/work2/06191/tg854905/stampede2/Pro2_PSU_MW/'
 
     # ---------- Configuration -------------------------
-    Storm = 'HARVEY'
-    Exper_name = 'JerryRun/IR_WSM6'
+    Storm = 'MARIA'
+    Exper_name = 'IR-J_DA+J_WRF+J_init-SP-intel17-THO-24hr-hroi900'
     each_var = ['QCLOUD','QRAIN','QICE','QSNOW','QGRAUP']
 
     # Time range set up
-    start_time_str = '201708221200'
-    end_time_str = '201708221200'
+    start_time_str = '201709160900'
+    end_time_str = '201709160900'
     Consecutive_times = True
 
     #Plot_layer = True

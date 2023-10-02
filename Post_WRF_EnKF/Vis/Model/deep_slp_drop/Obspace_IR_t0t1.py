@@ -552,8 +552,6 @@ if __name__ == '__main__':
 
     if not Consecutive_times:
         IR_times = ['201709180000',]
-        #['201709051200','201709051800','201709060000','201709060600','201709061200','201709061800','201709070000']
-        #['201709030000','201709030600','201709031200','201709031800','201709040000','201709040600','201709041200','201709041800','201709050000']
     else:
         time_diff = datetime.strptime(end_time_str,"%Y%m%d%H%M") - datetime.strptime(start_time_str,"%Y%m%d%H%M")
         time_diff_hour = time_diff.total_seconds() / 3600

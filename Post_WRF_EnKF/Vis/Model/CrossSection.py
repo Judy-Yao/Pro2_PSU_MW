@@ -1,0 +1,283 @@
+#!/work2/06191/tg854905/stampede2/opt/anaconda3/lib/python3.7
+
+import pyproj
+import os # functions for interacting with the operating system
+import numpy as np
+import xarray as xr
+from datetime import datetime, timedelta
+import glob
+import netCDF4 as nc
+from scipy import interpolate
+import scipy as sp
+import scipy.ndimage
+import matplotlib
+matplotlib.use("agg")
+import matplotlib.ticker as mticker
+from matplotlib import pyplot as plt
+import matplotlib.colors as mcolors
+from cartopy import crs as ccrs
+from cartopy.mpl.gridliner import LONGITUDE_FORMATTER, LATITUDE_FORMATTER
+from mpl_toolkits.axes_grid1 import make_axes_locatable
+import time
+import math
+import warnings
+from matplotlib.cm import get_cmap
+from wrf import to_np, interp2dxy, ll_to_xy, xy_to_ll
+
+import Util_wrfpython as UWP
+import Util_data as UD
+
+def var_cross( var_name,wrf_files ):
+
+    d_var = {}
+    d_var['input'] = {}
+    d_var['output'] = {}
+    
+    # ----- Create a cross line -------
+    # Find the storm center
+    ncdir = nc.Dataset(wrf_files[1], 'r') # enkf output
+    slp = UD.compute_slp( ncdir ) # from enkf output
+    min_slp = np.min( slp )
+    slp_smooth = sp.ndimage.filters.gaussian_filter(slp, [11, 11] )
+    idx = np.nanargmin( slp_smooth )
+    lat_c = ncdir.variables['XLAT'][:].flatten()[idx]
+    lon_c = ncdir.variables['XLONG'][:].flatten()[idx]
+    center = [lat_c,lon_c]
+    # Create the start point and end point in lon/lat for the cross section
+    st_lat = lat_c
+    ed_lat = lat_c
+    st_lon = lon_c-2
+    ed_lon = lon_c+2
+    # Create the  start point and end point in i/j
+    st_ij = ll_to_xy(ncdir, st_lat, st_lon) # What ll_to_xy returns is not the xy coordinate itself but the grid index starting from 0. 
+    st_i = st_ij.values[0]
+    st_j = st_ij.values[1]
+    ed_ij = ll_to_xy(ncdir, ed_lat, ed_lon)
+    ed_i = ed_ij.values[0]
+    ed_j = ed_ij.values[1]
+    st_p = (st_i,st_j)
+    ed_p = (ed_i,ed_j) 
+    #xlat = ncdir.variables['XLAT'][0,:,:].flatten()  #[0,:,0]
+    #xlon = ncdir.variables['XLONG'][0,:,:].flatten()
+
+    # loop thro enkf input and output
+    for wrf_file in wrf_files:
+        print('Reading '+wrf_file)
+        ncdir = nc.Dataset(wrf_file, 'r')
+    
+        # vertical coordinate
+        if use_pressure:
+            PB = ncdir.variables['PB'][0,:,:,:]
+            P = ncdir.variables['P'][0,:,:,:]
+            ver_coor_tmp = (PB + P)/100 # in hPa
+        else:
+            PHB = ncdir.variables['PHB'][0,:,:,:]
+            PH = ncdir.variables['PH'][0,:,:,:]
+            geoHkm = (PHB+PH)/9.8/1000 # in km
+            geoHkm_half = (geoHkm[:-1,:,:]+geoHkm[1:,:,:])/2
+            ver_coor_tmp = np.ma.getdata(geoHkm_half)
+
+        # Variable of interest
+        if var_name == 'hroi_wind':
+            u_tmp = ncdir.variables['U'][0,:,:,:]
+            u_var = (u_tmp[:,:,:-1]+u_tmp[:,:,1:])/2
+            v_tmp = ncdir.variables['V'][0,:,:,:]
+            v_var = (v_tmp[:,:-1,:]+v_tmp[:,1:,:])/2
+            var = (u_var ** 2 + v_var ** 2) ** 0.5
+        elif var_name == 'W':
+            tmp = ncdir.variables['W'][0,:,:,:]
+            var = (tmp[:-1,:,:]+tmp[1:,:,:])/2
+
+        # Get a line in ij space connecting the start and end point 
+        xy_line = UWP.xy_edit(var, start_point=st_p, end_point=ed_p) # return: [[i,j]]
+    
+        # Compute the vertical cross-section interpolation
+        var_cross = interp2dxy(var, xy_line)
+        ver_coor = interp2dxy(ver_coor_tmp, xy_line)
+        ver_coor = np.mean(ver_coor,axis=1)
+
+        # Transform from ij space to lat/lon space
+        ll_pair = [] #lat/lon
+        for it in xy_line:
+            lat_lon = xy_to_ll(ncdir, it[0], it[1])
+            ll_pair.append( to_np(lat_lon) )
+    
+        if 'input' in wrf_file:
+            d_var['input']= {var_name: var_cross, 'ver_coor':ver_coor, 'll_pair':ll_pair, 'center':center}
+        elif 'output' in wrf_file:
+            d_var['output']= {var_name: var_cross, 'ver_coor':ver_coor, 'll_pair':ll_pair, 'center':center}
+    
+    # Plot
+    if if_plot:
+        plot_var_cross( wrf_files,var_name,d_var )
+
+
+def plot_var_cross( wrf_files,var_name,d_var ):
+
+    # Create the figure
+    fig, ax=plt.subplots(1, 2, sharex='all', linewidth=0.5, figsize=(12,6), dpi=400)
+
+    # Make the contour plot
+    for wrf_file in wrf_files:
+        i = wrf_files.index(wrf_file)
+        # x axis
+        center = d_var['input']['center']
+        if 'input' in wrf_file:
+            ll_pair = d_var['input']['ll_pair']
+            ver_coor = d_var['input']['ver_coor']
+        else:
+            ll_pair = d_var['output']['ll_pair']
+            ver_coor = d_var['output']['ver_coor']
+        x_axis_rg = range(len(ll_pair))
+        dis_center = []
+        for it in ll_pair:
+            dis_center.append( (it[0]-center[0])**2+(it[1]-center[1])**2)
+        idx_center = np.argmin( dis_center )
+
+        # y axis: model vertical coordinate
+        if use_pressure:
+            y_range = np.arange(900,50,50)
+        else:
+            y_range = np.arange(0,31,1)
+        y_axis_rg = range(len(y_range))
+        f_yinterp = interpolate.interp1d( y_range, y_axis_rg)
+        yv = f_yinterp( ver_coor )
+        # Make a mesh grid
+        xcoor, ycoor = np.meshgrid( x_axis_rg, yv )
+
+        # Set colorbar
+        if 'radial_wind' in var_name:
+            bounds = np.linspace(-12,12,9)
+            cmap = 'PiYG_r'
+        elif 'tangential_wind' in var_name:
+            color_intervals = list(np.linspace(0,50,6))
+            color_intervals.insert(0,-10.0)
+            exist_cmap = plt.cm.jet
+            colors = exist_cmap(np.linspace(0,1,len(color_intervals)))
+            cmap = mcolors.LinearSegmentedColormap.from_list('custom_colormap',colors,N=len(color_intervals))
+            bounds = color_intervals
+        elif 'hroi_wind' in var_name:
+            bounds = np.linspace(10,70,7)
+            cmap = 'jet'
+        elif 'W' in var_name:
+            bounds = [-0.8,-0.6,-0.4,-0.2,0,0.2,0.4,0.6,0.8]
+            cmap = 'PiYG'
+        elif 'Q' in var_name:
+            bounds = 10.**np.arange(-6,0,1)
+            cmap = 'ocean_r'
+
+        # Plot
+        if 'input' in wrf_file:
+            value = d_var['input'][var_name]
+        else:
+            value = d_var['output'][var_name] 
+        xc = ax[i].contourf( xcoor,ycoor,to_np(value),cmap=cmap,levels=bounds,extend='both')
+        ax[i].axvline(x=idx_center,color='k',linestyle='-',linewidth=2)
+
+        # Set the x-ticks to use latitude and longitude labels.
+        x_ticks = x_axis_rg
+        fmt="{:.1f}, {:.1f}"
+        x_labels = [fmt.format(pair[0],pair[1]) for pair in np.array(ll_pair)]
+        ax[i].set_xticks(x_ticks[::20])
+        ax[i].set_xticklabels(x_labels[::20], rotation=15, fontsize=12)
+
+        f_yinterp = interpolate.interp1d( y_range, y_axis_rg)
+        y_ticks = f_yinterp( ver_coor )
+    
+        # Set the y-ticks
+        if use_pressure:
+            pass
+        else: 
+            ylabel_like = [0.0,5.0,10.0,15.0,20.0]
+        yticks = []
+        list_y_range = list(y_range)
+        for it in ylabel_like:
+            yticks.append( f_yinterp( it ) )
+        ax[i].set_yticks( yticks )
+        ax[i].set_yticklabels( [str(it) for it in ylabel_like],fontsize=15 )
+        ax[i].set_ylim(ymin=0,ymax=20) # cut off data above 25km   
+
+
+    # Add the color bar
+    cbaxes = fig.add_axes([0.92, 0.1, 0.03, 0.8])
+    cbar = fig.colorbar(xc,cax=cbaxes,fraction=0.046, pad=0.04)
+    cbar.ax.tick_params(labelsize=15)
+
+    if 'hroi_wind' in var_name:
+        xb_title = 'Xb:'+var_name+' (m/s)'
+        xa_title = 'Xa:'+var_name+' (m/s)'
+    elif 'W' in var_name:
+        xb_title = 'Xb: vertical velocity(m/s)'
+        xa_title = 'Xa: vertical velocity (m/s)'
+    elif 'Q' in var_name:
+        xb_title = 'Xb:'+var_name+' (kg/kg)'
+        xa_title = 'Xa:'+var_name+' (kg/kg)'
+
+    ax[0].set_title( xb_title, fontsize = 15, fontweight='bold')
+    ax[1].set_title( xa_title, fontsize = 15, fontweight='bold')
+
+    # Set the x-axis and  y-axis labels
+    fig.text(0.04,0.5,'Height (km)',ha='center',va='center',rotation='vertical',fontsize=20)
+    fig.text(0.5,0.02,"Latitude, Longitude (degree)",ha='center',va='center',rotation='horizontal', fontsize=13)
+
+    # title
+    title_name = Storm+': '+Exper_name+' '+DAtime
+    fig.suptitle(title_name, fontsize=15, fontweight='bold')
+
+    # Save figures
+    figure_des=plot_dir+DAtime+'_'+var_name+'_CrossSection.png'
+    plt.savefig(figure_des, dpi=400)
+    print('Saving the figure: ', figure_des)
+
+
+
+if __name__ == '__main__':
+
+    big_dir = '/work2/06191/tg854905/stampede2/Pro2_PSU_MW/' #'/scratch/06191/tg854905/Pro2_PSU_MW/'
+    small_dir = '/work2/06191/tg854905/stampede2/Pro2_PSU_MW/'
+
+    # ---------- Configuration -------------------------
+    Storm = 'MARIA'
+    MP = 'WSM6'
+    DA = 'IR'
+    v_interest = ['hroi_wind',]
+
+    start_time_str = '201709180000'
+    end_time_str = '201709180000'
+    Consecutive_times = True
+
+    # model dimension
+    xmax = 297
+    ymax = 297
+    nLevel = 42
+
+    use_pressure = False
+    if_plot = True
+    # ------------------------------------------------------- 
+    Exper_name = UD.generate_one_name( Storm,DA,MP )
+
+    # Identify DA times in the period of interest
+    if not Consecutive_times:
+        DAtimes = ['201709140000',]#'201708221800','201708230000','201708230600','201708231200']
+    else:
+        time_diff = datetime.strptime(end_time_str,"%Y%m%d%H%M") - datetime.strptime(start_time_str,"%Y%m%d%H%M")
+        time_diff_hour = time_diff.total_seconds() / 3600
+        time_interest_dt = [datetime.strptime(start_time_str,"%Y%m%d%H%M") + timedelta(hours=t) for t in list(range(0, int(time_diff_hour)+1, 1))]
+        DAtimes = [time_dt.strftime("%Y%m%d%H%M") for time_dt in time_interest_dt]
+
+    # create plot_dir
+    if if_plot:
+        plot_dir = small_dir+Storm+'/'+Exper_name+'/Vis_analyze/Model/CrossSection/'
+        plotdir_exists = os.path.exists( plot_dir )
+        if plotdir_exists == False:
+            os.mkdir(plot_dir)
+
+    # Plot cross section of a variable    
+    for DAtime in DAtimes:
+        wrf_dir = big_dir+Storm+'/'+Exper_name+'/fc/'+DAtime+'/'
+        wrf_files = [wrf_dir+'/wrf_enkf_input_d03_mean',wrf_dir+'/wrf_enkf_output_d03_mean']
+        start_time=time.process_time()
+        for var_name in v_interest:
+            var_cross( var_name,wrf_files ) 
+        end_time = time.process_time()
+        print ('time needed: ', end_time-start_time, ' seconds')

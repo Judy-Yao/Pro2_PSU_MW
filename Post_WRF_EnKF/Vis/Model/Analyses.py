@@ -359,9 +359,9 @@ def plot_UV10_slp( Storm, Exper_name, DAtime, wrf_dir, plot_dir ):
         ax[i].set_extent([lon_min,lon_max,lat_min,lat_max], crs=ccrs.PlateCarree())
         ax[i].coastlines (resolution='10m', color='black', linewidth=1)
         # sea level pressure
-        start_level = max( np.amin(slp_smooth[0,:,:]), np.amin(slp_smooth[1,:,:]) )+0.1
-        end_level = min( np.amax(slp_smooth[0,:,:]), np.amax(slp_smooth[1,:,:]) )
-        step = (end_level -start_level)/5
+        start_level = 1012.5 #max( np.amin(slp_smooth[0,:,:]), np.amin(slp_smooth[1,:,:]) )+0.1
+        end_level = 1016.5 #min( np.amax(slp_smooth[0,:,:]), np.amax(slp_smooth[1,:,:]) )
+        step = (end_level -start_level)/4
         level = np.arange(start_level, end_level,step)
         #slp_contour = ax[i].contour(lon,lat,slp_smooth[i,:,:],levels=level,cmap='Greys_r',vmin=min_slp,vmax=max_slp,transform=ccrs.PlateCarree())
         slp_contour = ax[i].contour(lon,lat,slp_smooth[i,:,:],levels=level,cmap='Greys_r',transform=ccrs.PlateCarree())
@@ -381,7 +381,7 @@ def plot_UV10_slp( Storm, Exper_name, DAtime, wrf_dir, plot_dir ):
     cbaxes = fig.add_axes([0.01, 0.1, 0.03, 0.8])
     wind_bar = fig.colorbar(wind_contourf,cax=cbaxes,fraction=0.046, pad=0.04) #Make a colorbar for the ContourSet returned by the contourf call.
     wind_bar.ax.set_ylabel('Wind Speed (m/s)')
-    wind_bar.ax.tick_params(labelsize='15')
+    wind_bar.ax.tick_params(labelsize='13')
 
     # Title
     ax[0].set_title( 'Xb--min slp: '+str("{0:.3f}".format(np.min( slp[0,:,:] )))+' hPa',  fontweight='bold') #, fontsize=12)
@@ -658,8 +658,8 @@ def plot_rt_vo( Storm, Exper_name, DAtime, wrf_dir, plot_dir ):
     #subplot title
     ax[0,0].set_title( 'Xb: '+str(P_of_interest[0])+' hPa', fontweight='bold')
     ax[0,1].set_title( 'Xb: '+str(P_of_interest[1])+' hPa', fontweight='bold')
-    ax[1,0].set_title( 'Xa: '+str(P_of_interest[0])+' hPa', fontweight='bold')
-    ax[1,1].set_title( 'Xa: '+str(P_of_interest[1])+' hPa', fontweight='bold')
+    #ax[1,0].set_title( 'Xa: '+str(P_of_interest[0])+' hPa', fontweight='bold')
+    #ax[1,1].set_title( 'Xa: '+str(P_of_interest[1])+' hPa', fontweight='bold')
 
     #title for all
     fig.suptitle(Storm+': '+Exper_name+'low level circulation', fontsize=8, fontweight='bold')
@@ -722,23 +722,23 @@ def relative_vo( Storm, Exper_name, DAtimes, big_dir, small_dir ):
 if __name__ == '__main__':
 
     Storm = 'MARIA'
-    Expers = ['IR-J_DA+J_WRF+J_init-SP-intel17-WSM6-24hr-hroi900',]
+    Expers = ['IR+MW-J_DA+J_WRF+J_init-SP-intel17-THO-24hr-hroi900',]
     big_dir = '/scratch/06191/tg854905/Pro2_PSU_MW/'
     small_dir = '/work2/06191/tg854905/stampede2/Pro2_PSU_MW/'
     
     Plot_UV10_slp = True
-    Plot_IC_water = False
+    Plot_IC_water = True
     Plot_minslp_evo = False
-    Plot_rtvo = False
+    Plot_rtvo = True
 
 
     # Time range set up
-    start_time_str = '201709171800'
-    end_time_str = '201709180000'
+    start_time_str = '201709160200'
+    end_time_str = '201709160200'
     Consecutive_times = True
 
     if not Consecutive_times:
-        DAtimes = ['201709050000',]
+        DAtimes = ['',]
         #DAtimes = ['201708230000','201708230600','201708231200','201708231800','201708240000','201708240600','201708241200']
         #DAtimes = ['201709031200','201709031800','201709040000','201709040600','201709041200','201709041800','201709050000']
         #DAtimes = ['201709161200','201709161800','201709170000','201709170600','201709171200','201709171800','201709180000']

@@ -40,17 +40,17 @@ matplotlib.rcParams['font.size'] = 15#6
 def read_HPI_analyses(Storm, Exper_name, wrf_dir, filename_analyses=None, force_reload=False):
   
 
-    #start_als = '201708221200'
-    #end_als = '201708241300'
-    #als_diff = datetime.strptime(end_als,"%Y%m%d%H%M") - datetime.strptime(start_als,"%Y%m%d%H%M")
-    #als_diff_hour = als_diff.total_seconds() / 3600
-    #time_interest_dt = [datetime.strptime(start_als,"%Y%m%d%H%M") + timedelta(hours=t) for t in list(range(0, int(als_diff_hour), 1))]
-    #DAtimes =  [time_dt.strftime("%Y%m%d%H%M") for time_dt in time_interest_dt]
-    #DAtimes_dir = [wrf_dir+Storm+'/'+Exper_name+'/fc/'+ it for it in DAtimes]
+    start_als = '201709030000'
+    end_als = '201709041200'
+    als_diff = datetime.strptime(end_als,"%Y%m%d%H%M") - datetime.strptime(start_als,"%Y%m%d%H%M")
+    als_diff_hour = als_diff.total_seconds() / 3600
+    time_interest_dt = [datetime.strptime(start_als,"%Y%m%d%H%M") + timedelta(hours=t) for t in list(range(0, int(als_diff_hour), 1))]
+    DAtimes =  [time_dt.strftime("%Y%m%d%H%M") for time_dt in time_interest_dt]
+    DAtimes_dir = [wrf_dir+Storm+'/'+Exper_name+'/fc/'+ it for it in DAtimes]
     
-    DAtimes_dir =  sorted(glob.glob(wrf_dir+Storm+'/'+Exper_name+'/fc/20*') )
-    # remove the first directory (spin-up)
-    DAtimes_dir.pop(0)
+    #DAtimes_dir =  sorted(glob.glob(wrf_dir+Storm+'/'+Exper_name+'/fc/20*') )
+    ## remove the first directory (spin-up)
+    #DAtimes_dir.pop(0)
 
     DAtime_str = []
     max_wind = []
@@ -328,6 +328,7 @@ def plot_hpi_df( Config, domain_range ):
     for iExper in Exper:
         if iExper is not None:
             if os.path.exists( wrf_dir+'/'+Storm+'/'+iExper+'/wrf_df/' ):
+                Exper_content_lbl[iExper] = ['201709030600','201709031200','201709031800','201709040000','201709040600']
                 Exper_content_lbl[iExper] = sorted(fnmatch.filter(os.listdir( wrf_dir+'/'+Storm+'/'+iExper+'/wrf_df/' ),'20*'))  
             else:
                 Exper_content_lbl[iExper] = None
@@ -404,7 +405,7 @@ def plot_hpi_df( Config, domain_range ):
                     print('Plotting ', it)
                     print(wrf_dir+'/'+Storm+'/'+key+'/wrf_df/'+it)
                     HPI_model = read_rsl_error(Storm, key, wrf_dir+'/'+Storm+'/'+key+'/wrf_df/'+it, it, DF_model_end)
-                    #plot_one( ax0, ax1, ax2, HPI_model, Color_set['c'+str(iExper)][ic], Line_types[iExper], 1.5, Labels[iExper]+it, steps=6 )
+                    plot_one( ax0, ax1, ax2, HPI_model, Color_set['c'+str(iExper)][ic], Line_types[iExper], 1.5, Labels[iExper]+it, steps=6 )
 
                     ic = ic + 1
             else:
@@ -438,23 +439,30 @@ def plot_hpi_df( Config, domain_range ):
     ax0.set_title( 'Track',fontsize = 15 )
     ax1.set_title( 'MSLP (hPa)',fontsize = 15 )
     ax2.set_title( 'Vmax ($\mathregular{ms^{-1}}$)',fontsize = 15 )
-    fig.suptitle('IR',fontsize = 15)
+    fig.suptitle('THO',fontsize = 15)
 
-    des_name = '/work2/06191/tg854905/stampede2/Pro2_PSU_MW/'+Storm+'/'+Exper[0]+'/Vis_analyze/Model/'+Storm+'_forecast_IR.png'
+    des_name = small_dir+Storm+'/'+Exper[0]+'/Vis_analyze/Model/'+Storm+'_forecast_THO_IR_IRMW.png'
     plt.savefig( des_name )
     print( 'Saving the figure to '+des_name+'!' )
 
 if __name__ == '__main__':
     
     big_dir = '/scratch/06191/tg854905/Pro2_PSU_MW/'
+    small_dir = '/work2/06191/tg854905/stampede2/Pro2_PSU_MW/'
 
     # configuration
-    Storm = 'HARVEY'
-    Exper_name = ['JerryRun/IR_THO','JerryRun/IR_WSM6']#['IR-J_DA+J_WRF+J_init-SP-intel17-THO-24hr-hroi900','IR-J_DA+J_WRF+J_init-SP-intel17-WSM6-24hr-hroi900',] 
+    Storm = 'IRMA'
+    MP = 'THO'
+    DA = ['IR+MW','IR']
     DF_model_start = '20170822180000' # Default value of DF_model_start. Especially useful when dealing with ensemble forecast
     mem_id = 'mean' # Default value of member id. Especially useful when dealing with deterministic forecast
     read_fc_wrfout = False # Feature that decides the way of reading HPI from model files
     Plot_analyses = True # Feature that plots the analyses of an experiment
+
+    # generate experiment names
+    Exper_name = []
+    for ida in DA:
+        Exper_name.append( UD.generate_one_name( Storm,ida,MP ) )
 
     Config = [big_dir, Storm, Exper_name, DF_model_start, mem_id, read_fc_wrfout, Plot_analyses]
 
