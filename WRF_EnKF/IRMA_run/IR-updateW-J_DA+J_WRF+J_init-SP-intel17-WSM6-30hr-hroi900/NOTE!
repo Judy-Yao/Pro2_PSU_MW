@@ -1,0 +1,10 @@
+Change 1: In the namelist_enkf.sh, W is updated!
+
+Change 2: 
+-FROM
+namelist_real.sh:use_input_w         = .true.,
+namelist_wrf_realtime.sh:use_input_w          = .false.,
+namelist_wrf.sh:use_input_w          = .false.,
+old_namelist_wrf_realtime.sh:use_input_w          = .false.,
+
+-TO:
