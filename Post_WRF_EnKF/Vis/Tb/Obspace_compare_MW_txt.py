@@ -5,6 +5,7 @@ import glob
 import numpy as np
 import Util_Vis
 import netCDF4 as nc
+import matplotlib
 from matplotlib import pyplot as plt
 import matplotlib.ticker as mticker
 import cartopy.crs as ccrs
@@ -23,6 +24,39 @@ def RMSE(simu, obs):
 
 def Bias(simu, obs):
     return  np.sum((simu - obs),0)/np.size(obs,0)
+
+
+def SensorCh_to_Freq( sensor, ch):
+
+    if 'amsr2_' in sensor:
+        if ch == '7' or ch == 7:
+            return '18.7GHzV' 
+        elif ch == '13' or ch == 13:
+             return '89GHzV'
+    elif 'atms_' in sensor:
+        if ch == '18' or ch == 18:
+            return '183.31+-7GHzH'
+    elif 'gmi_' in sensor:
+        if ch == '3' or ch == 3:
+            return '18.7GHzV'
+        elif ch == '13' or ch == 13:
+            return '183.31+/-7GHzV'
+    elif 'mhs_' in sensor:
+        if ch == '5' or ch == 5:
+            return '190.31GHzV' 
+    elif 'saphir_' in sensor:
+        if ch == '5' or ch == 5:
+            return '183.31+-6.8GHz'
+    elif 'ssmi_' in sensor:
+        if ch == '1' or ch == 1:
+            return 'fcdr_tb19v'
+        elif ch == '6' or ch == 6:
+            return 'fcdr_tb85v'
+    elif 'ssmis_' in sensor:
+        if ch == '13' or ch == 13:
+            return '19.35GHzV'
+        elif ch == '9' or ch == 9:
+            return '183.31+-6.6GHzH'
 
 def getSensor_Ch(obs_file):
 
@@ -67,7 +101,7 @@ def getSensor_Ch(obs_file):
     dict_ss_ch = {}
     for iss in sensor_uni:
         dict_ss_ch[sensor_uni[sensor_uni.index(iss)]] = Ch_perSS[sensor_uni.index(iss)]
-    
+
     # Special treatment to gmi_gpm sensor
     gmi_ch = [key_sensor for key_sensor in dict_ss_ch if 'gmi_gpm' in key_sensor]
     if len( gmi_ch ) >= 1: 
@@ -301,20 +335,35 @@ def plot_Tb(Storm, Exper_name, DAtime, sensor, dict_ss_len):
                 edgecolors='none', cmap=MWJet, vmin=min_T, vmax=max_T, transform=ccrs.PlateCarree())
         if any( hh in DAtime[8:10] for hh in ['00','06','12','18']):
             ax[i,2].scatter(tc_lon, tc_lat, s=3, marker='*', edgecolors='black', transform=ccrs.PlateCarree())
-    
+  
+        # Annotation
+        if len(ch_num) == 2:
+            if ch_num[input_it] == d_lowf[sensor]:
+                f.text( 0.03,0.6,SensorCh_to_Freq(sensor,ch_num[input_it]),rotation='vertical')
+            else:
+                f.text( 0.03,0.15,SensorCh_to_Freq(sensor,ch_num[input_it]),rotation='vertical')
+        else:
+            if ch_num[0] == d_lowf[sensor]:
+                f.text( 0.03,0.6,s=SensorCh_to_Freq(sensor,ch_num[0]),rotation='vertical',)
+            else:
+                f.text( 0.03,0.15,SensorCh_to_Freq(sensor,ch_num[0]),rotation='vertical',)
+
     # Colorbar
     caxes = f.add_axes([0.2, 0.05, 0.6, 0.02])
     cbar = f.colorbar(cs, orientation="horizontal", cax=caxes)
-    cbar.ax.tick_params(labelsize=6)
-    #plt.text( 0.8, 0.7, 'Brightness Temperature (K)', fontsize=6, transform=transAxes)
-    
-    #subplot title
-    font = {'size':8,}
-    ax[0,0].set_title('Yo', font, fontweight='bold')
-    ax[0,1].set_title('H(Xb)', font, fontweight='bold')
-    ax[0,2].set_title('H(Xa)', font, fontweight='bold')
+    cbar.ax.tick_params(labelsize=8)
+    #plt.text( 0.8, 0.7, 'Brightness Temperature (K)', fontsize=6,)
 
-    f.suptitle(Storm+': '+Exper_name, fontsize=8, fontweight='bold')
+    #subplot title
+    matplotlib.rcParams['mathtext.fontset'] = 'custom'
+    matplotlib.rcParams['mathtext.bf'] = 'STIXGeneral:italic:bold'
+    font = {'size':9,}
+    ax[0,0].set_title('Yo', font, fontweight='bold')
+    ax[0,1].set_title(r'$\mathbf{\overline{H(Xb)}}$', font, )
+    ax[0,2].set_title(r'$\mathbf{\overline{H(Xa)}}$', font) 
+
+    title = Storm+': '+Exper_name+'\n'+DAtime+'          ('+sensor+')'
+    f.suptitle(title, fontsize=7, fontweight='bold')
     # Axis labels
     lon_ticks = list(range(math.ceil(lon_min)-2, math.ceil(lon_max)+2,2))
     lat_ticks = list(range(math.ceil(lat_min)-2, math.ceil(lat_max)+2,2)) 
@@ -340,10 +389,10 @@ def plot_Tb(Storm, Exper_name, DAtime, sensor, dict_ss_len):
             gl.xlocator = mticker.FixedLocator(lon_ticks)
             gl.xformatter = LONGITUDE_FORMATTER
             gl.yformatter = LATITUDE_FORMATTER
-            gl.xlabel_style = {'size': 5}
+            gl.xlabel_style = {'size': 6}
             gl.ylabel_style = {'size': 6} 
    
-    figure_des=small_dir+Storm+'/'+Exper_name+'/Vis_analyze/Tb/MW/Obspace/'+DAtime+'_'+sensor+'_Obspace.png'
+    figure_des=small_dir+Storm+'/'+Exper_name+'/Vis_analyze/Tb/MW_Obspace/'+DAtime+'_'+sensor+'_Obspace.png'
     plt.savefig(figure_des, dpi=400)
     print('Saving the figure: ', figure_des) 
   
@@ -528,14 +577,16 @@ if __name__ == '__main__':
     small_dir =  '/work2/06191/tg854905/stampede2/Pro2_PSU_MW/'
 
     # ---------- Configuration -------------------------
-    Storm = 'IRMA'
+    Storm = 'JOSE'
     DA = 'IR+MW'
-    MP = 'THO'
+    MP = 'WSM6'
 
-    start_time_str = '201709030100'
-    end_time_str = '201709030800'
+    start_time_str = '201709050000'
+    end_time_str = '201709070000'
     Consecutive_times = True
 
+    plot_full = True
+    plot_diff = False
     plot_scatter = True 
     # ------------------------------------------------------ 
 
@@ -544,7 +595,7 @@ if __name__ == '__main__':
     Exper_obs =  UD.generate_one_name( Storm,'IR+MW',MP )
     # Create MW DA times
     if not Consecutive_times:
-        MW_times = ['201708221200',]
+        MW_times = ['201709062200',]
     else:
         MW_times = []
         exist_MW_times = sorted(fnmatch.filter(os.listdir( big_dir+Storm+'/'+Exper_name+'/Obs_Hx/MW/' ),'20*'))
@@ -554,6 +605,19 @@ if __name__ == '__main__':
                     continue
             else:
                 MW_times.append( it )
+
+    # Create plot dirs
+    if plot_full:
+        plot_dir = small_dir+Storm+'/'+Exper_name+'/Vis_analyze/Tb/MW_Obspace/'
+        plotdir_exists = os.path.exists( plot_dir )
+        if plotdir_exists == False:
+            os.mkdir(plot_dir)
+
+    if plot_diff:
+        plot_dir = small_dir+Storm+'/'+Exper_name+'/Vis_analyze/Tb/MW_Obspace_Diff/'
+        plotdir_exists = os.path.exists( plot_dir )
+        if plotdir_exists == False:
+            os.mkdir(plot_dir)
 
     # Iterate thru each DAtime and plot Tb field
     print( MW_times )
@@ -585,6 +649,8 @@ if __name__ == '__main__':
             print(sensor)
             print(dict_ss_ch[sensor])
             print('------------ Plot ----------------------')
-            plot_Tb( Storm, Exper_name, DAtime, sensor, dict_ss_len) 
-            #plot_Tb_diff( Storm, Exper_name, DAtime, sensor, dict_ss_len) 
+            if plot_full:
+                plot_Tb( Storm, Exper_name, DAtime, sensor, dict_ss_len) 
+            if plot_diff:
+                plot_Tb_diff( Storm, Exper_name, DAtime, sensor, dict_ss_len) 
 

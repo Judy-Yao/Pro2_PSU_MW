@@ -69,7 +69,7 @@ def read_allTb( Expers,wrf_dirs, DAtime, sensor ):
     d_IR_all = {}
     for iExper in Expers:
         idx_exper = Expers.index( iExper )
-        Tb_file = wrf_dirs[idx_exper]+"/mean_obs_res_d03" + DAtime + '_' +  sensor + '.txt' 
+        Tb_file = wrf_dirs[idx_exper]+"/mean_obs_res_d03_" + DAtime + '_' +  sensor + '.txt' 
 
         lat_obs = []
         lon_obs = []
@@ -157,8 +157,8 @@ def plot_Tb(Storm, Expers, DAtime, sensor, ch_list, big_dir ):
     xwv_bar.ax.tick_params()
 
     # Exper 1 - Exper 2
-    min_incre = -20
-    max_incre = 20
+    min_incre = -6
+    max_incre = 6
     axs.flat[2].set_extent([lon_min, lon_max, lat_min, lat_max], crs=ccrs.PlateCarree())
     axs.flat[2].coastlines(resolution='10m', color='black',linewidth=0.5)
     cs = axs.flat[2].scatter(d_all[Expers[0]]['lon_obs'], d_all[Expers[0]]['lat_obs'],1.5,c=d_all[Expers[0]]['meanYb_obs']-d_all[Expers[1]]['meanYb_obs'],\
@@ -173,12 +173,12 @@ def plot_Tb(Storm, Expers, DAtime, sensor, ch_list, big_dir ):
 
     #subplot title
     font = {'size':8,}
-    axs.flat[0].set_title('Yo', font, fontweight='bold')
-    axs.flat[1].set_title('H(Xb)', font, fontweight='bold')
-    axs.flat[2].set_title('H(Xa)', font, fontweight='bold')
+    axs.flat[0].set_title('updateW', font, fontweight='bold')
+    axs.flat[1].set_title('NotupdateW', font, fontweight='bold')
+    axs.flat[2].set_title('updateW-NotupdateW', font, fontweight='bold')
 
     #title for all
-    fig.suptitle(Storm+': '+DAtime, fontsize=8, fontweight='bold')
+    fig.suptitle(Storm+': '+DAtime+' H(Xb)', fontsize=8, fontweight='bold')
 
     # Axis labels
     lon_ticks = list(range(math.ceil(lon_min)-2, math.ceil(lon_max)+2,2))
@@ -203,19 +203,16 @@ def plot_Tb(Storm, Expers, DAtime, sensor, ch_list, big_dir ):
         gl.xlabel_style = {'size': 4}
         gl.ylabel_style = {'size': 6}
 
-    des_name = '/work2/06191/tg854905/stampede2/Pro2_PSU_MW/'+Storm+'/'+Expers[0]+'/Vis_analyze/Tb/IR/Obspace/'+DAtime+'_'+sensor+'_Obspace_expers.png'
+    des_name = '/work2/06191/tg854905/stampede2/Pro2_PSU_MW/'+Storm+'/'+Expers[0]+'/Vis_analyze/Tb/IR/Obspace/'+DAtime+'_'+sensor+'_Obspace_expers_Hxb.png'
     plt.savefig( des_name, dpi=300)
     print('Saving the figure: ', des_name)
 
 
 
-
-
-
 if __name__ == '__main__':
 
-    Storm = 'JOSE'
-    Expers = ['J_DA+J_WRF+J_init-SP-intel17-THO-30hr-hroi900','IR-J_DA+J_WRF+J_init-SP-intel17-WSM6-30hr-hroi900',]
+    Storm = 'IRMA'
+    Expers = ['IR-updateW-J_DA+J_WRF+J_init-SP-intel17-WSM6-30hr-hroi900','IR-J_DA+J_WRF+J_init-SP-intel17-WSM6-30hr-hroi900']
     big_dir = '/scratch/06191/tg854905/Pro2_PSU_MW/'
     small_dir = '/work2/06191/tg854905/stampede2/Pro2_PSU_MW/'
     sensor = 'abi_gr'
@@ -223,9 +220,9 @@ if __name__ == '__main__':
     Plot_IR = True
 
     # Time range set up
-    start_time_str = '201709160000'
-    end_time_str = '201709160000'
-    Consecutive_times = False
+    start_time_str = '201709031300'
+    end_time_str = '201709040000'
+    Consecutive_times = True
 
     if not Consecutive_times:
         DAtimes = ['201709050000','201709050600','201709051200']

@@ -212,10 +212,10 @@ def Plot_hist_IRall( d_hcount ):
     
     if bin_Tbdiff:
         fig.suptitle( Storm+': PDF of Bias of IR Tb over '+str(len(IR_times))+' Cycles', fontsize=15, fontweight='bold')
-        des_name = small_dir+Storm+'/'+Exper_name+'/Vis_analyze/Tb/IR_PDF_'+IR_times[0]+'_'+IR_times[-1]+'_bias.png'
+        des_name = small_dir+Storm+'/'+Expers[0]+'/Vis_analyze/Tb/IR_PDF_'+IR_times[0]+'_'+IR_times[-1]+'_bias.png'
     else:
         fig.suptitle( Storm+': PDF of IR Tbs over '+str(len(IR_times))+' Cycles', fontsize=15, fontweight='bold')
-        des_name = small_dir+Storm+'/'+Exper_name+'/Vis_analyze/Tb/IR_PDF_'+IR_times[0]+'_'+IR_times[-1]+'.png'
+        des_name = small_dir+Storm+'/'+Expers[0]+'/Vis_analyze/Tb/IR_PDF_'+IR_times[0]+'_'+IR_times[-1]+'.png'
     
     plt.savefig( des_name )
     print( 'Saving the figure to '+des_name+'!' )
@@ -230,45 +230,45 @@ def Plot_hist_IRsum( d_hcount ):
 
     if bin_Tbdiff:
         for outkey in d_hcount:
-            if outkey == 'WSM6':
+            if outkey == 'updateW':
                 for key in d_hcount[outkey]:
                     if key == 'diff_ob':
-                        axs.plot(x_axis,d_hcount[outkey][key],color='red',linestyle='-',linewidth='4',label='WSM4:H(Xb)-Obs')
+                        axs.plot(x_axis,d_hcount[outkey][key],color='red',linestyle='-',linewidth='4',label='YES:H(Xb)-Obs')
                     elif key == 'diff_oa':
-                        axs.plot(x_axis,d_hcount[outkey][key],color='blue',linestyle='-',linewidth='4',label='WSM6:H(Xa)-Obs')
+                        axs.plot(x_axis,d_hcount[outkey][key],color='blue',linestyle='-',linewidth='4',label='YES:H(Xa)-Obs')
             else:
                 for key in d_hcount[outkey]:
                     if key == 'diff_ob':
-                        axs.plot(x_axis,d_hcount[outkey][key],color='grey',linestyle='-',linewidth='4',label='THO:H(Xb)-Obs')
+                        axs.plot(x_axis,d_hcount[outkey][key],color='grey',linestyle='-',linewidth='4',label='NO:H(Xb)-Obs')
                     elif key == 'diff_oa':
-                        axs.plot(x_axis,d_hcount[outkey][key],color='grey',linestyle='--',linewidth='4',label='THO:H(Xa)-Obs')
+                        axs.plot(x_axis,d_hcount[outkey][key],color='grey',linestyle='--',linewidth='4',label='NO:H(Xa)-Obs')
                 idx = idx+1
     else:
         for outkey in d_hcount:
-            if outkey == 'WSM6':
+            if outkey == 'updateW':
                 for key in d_hcount[outkey]:
                     if key == 'Yo_obs':
                         axs.plot(x_axis,d_hcount[outkey][key],color='black',linestyle='-',linewidth='4',label='Obs')
                     elif key == 'meanYb_obs':
-                        axs.plot(x_axis,d_hcount[outkey][key],color='red',linestyle='-',linewidth='4',label='WSM6:H(Xb)')
+                        axs.plot(x_axis,d_hcount[outkey][key],color='red',linestyle='-',linewidth='4',label='YES:H(Xb)')
                     elif key == 'meanYa_obs':
-                        axs.plot(x_axis,d_hcount[outkey][key],color='blue',linestyle='-',linewidth='4',label='WSM6:H(Xa)')
+                        axs.plot(x_axis,d_hcount[outkey][key],color='blue',linestyle='-',linewidth='4',label='YES:H(Xa)')
             else:
                 for key in d_hcount[outkey]:
                     if key == 'Yo_obs':
                         pass
                         #axs.plot(x_axis,d_hcount[outkey][key],color='black',linestyle='--',linewidth='0.5') 
                     elif key == 'meanYb_obs':
-                        axs.plot(x_axis,d_hcount[outkey][key],color="grey",linestyle='-',linewidth='4',label='THO:H(Xb)')
+                        axs.plot(x_axis,d_hcount[outkey][key],color="grey",linestyle='-',linewidth='4',label='NO:H(Xb)')
                     elif key == 'meanYa_obs':
-                        axs.plot(x_axis,d_hcount[outkey][key],color="grey",linestyle='--',linewidth='4',label='THO:H(Xa)')
+                        axs.plot(x_axis,d_hcount[outkey][key],color="grey",linestyle='--',linewidth='4',label='NO:H(Xa)')
                     else:
                         pass
                 idx = idx+1
 
     axs.legend(frameon=True,loc='upper right',fontsize='22')
     axs.grid(True,linestyle='--',alpha=0.5)
-    axs.set_title( 'IR',fontweight="bold",fontsize='15' )
+    axs.set_title( 'IR: if update W or not',fontweight="bold",fontsize='15' )
 
     axs.tick_params(axis='x', labelsize=24)
     axs.tick_params(axis='y', labelsize=20)
@@ -300,14 +300,14 @@ if __name__ == '__main__':
     # ---------- Configuration -------------------------
     Storm = 'IRMA'
     DA = 'IR'
-    MP = ['THO','WSM6']
+    MP = ['updateW','']#['THO','WSM6']
 
     sensor = 'abi_gr'
     ch_list = ['8',]
     fort_v = ['obs_type','lat','lon','obs']
 
     start_time_str = '201709030000'
-    end_time_str = '201709031100'
+    end_time_str = '201709031200'
     Consecutive_times = True
 
     number_bins = 50
@@ -324,9 +324,10 @@ if __name__ == '__main__':
     # ------------------------------------------------------   
 
     # Create experiment names
-    Expers = []
-    for imp in MP:
-        Expers.append( UD.generate_one_name( Storm,DA,imp) )
+    Expers = ['IR-updateW-J_DA+J_WRF+J_init-SP-intel17-WSM6-30hr-hroi900','IR-J_DA+J_WRF+J_init-SP-intel17-WSM6-30hr-hroi900']#[]
+    #Expers.append( UD.generate_one_name( Storm,DA,MP))
+    #for imp in MP:
+    #    Expers.append( UD.generate_one_name( Storm,DA,imp) )
 
     if not Consecutive_times:
         IR_times = ['201709030100',]

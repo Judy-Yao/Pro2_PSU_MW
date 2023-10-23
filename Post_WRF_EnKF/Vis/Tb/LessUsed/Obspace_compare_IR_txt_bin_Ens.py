@@ -15,6 +15,9 @@ from datetime import datetime, timedelta
 import matlab.engine
 import time
 
+import Diagnostics as Diag
+
+
 def RMSE(simu, obs):
     return np.sqrt( ((simu - obs) ** 2).mean() )
 
@@ -206,14 +209,11 @@ def read_Hx_mean( Hx_file ):
 
 
 # Interpolate IR Tbs in model resolution to obs locations and Write it to a txt file
-def interp_simu_to_obs_matlab( Hxb, sensor, DAtime, obs_file_dir, d_wrf_d03 ):
+def interp_simu_to_obs_matlab( Hxb, sensor, DAtime, d_obs, d_wrf_d03 ):
 
     print("Initiate the function to interpolate simulated Tbs to obs locations...")
     start_time=time.process_time()
 
-    # Read obs data
-    d_obs = read_obs( obs_file_dir,d_wrf_d03 )
-    
     # Load simulated Tbs
     Hxa = Hxb.replace( 'input','output') 
     print('Reading the Hxb: ' + Hxb)
@@ -233,10 +233,12 @@ def interp_simu_to_obs_matlab( Hxb, sensor, DAtime, obs_file_dir, d_wrf_d03 ):
     for ich in ch_list:
 
         print('Channel number: ', ich)
-        Ch_idx_obs = d_obs['Ch_obs'] == ich
-        Lat_obs_ch = d_obs['Lat_obs'][Ch_idx_obs]
-        Lon_obs_ch = d_obs['Lon_obs'][Ch_idx_obs]
-        Yo_obs_ch = d_obs['Yo_obs'][Ch_idx_obs]
+
+        
+        #Ch_idx_obs = d_obs['Ch_obs'] == ich
+        Lat_obs_ch = d_obs['lat']
+        Lon_obs_ch = d_obs['lon']
+        Yo_obs_ch = d_obs['obs']
 
         Ch_idx_x = d_simu['Ch_x'] == ich
         Lat_x_ch = d_simu['Lat_x'][Ch_idx_x]
@@ -577,14 +579,17 @@ if __name__ == '__main__':
     big_dir = '/scratch/06191/tg854905/Pro2_PSU_MW/'
     small_dir =  '/work2/06191/tg854905/stampede2/Pro2_PSU_MW/'
 
-    Storm = 'HARVEY'
-    Exper_name = 'JerryRun/IR_THO'
+    Storm = 'IRMA'
+    Exper_name = 'IR-J_DA+J_WRF+J_init-SP-intel17-WSM6-30hr-hroi900'
+
     sensor = 'abi_gr'
     ch_list = ['8',]
-    start_time_str = '201709160000' 
-    end_time_str = '201709160000'
-    Interp_to_obs = False
-    Consecutive_times = False
+    fort_v = ['obs_type','lat','lon','obs']
+
+    start_time_str = '201709030600' 
+    end_time_str = '201709030600'
+    Interp_to_obs = True
+    Consecutive_times = True
     If_plot = True
     num_ens = 60
 
@@ -601,12 +606,12 @@ if __name__ == '__main__':
     if Interp_to_obs:
         for DAtime in IR_times:
             # Get obs's sensor/channel info
-            obs_file_name = 'radiance_d03_' + DAtime + '_so'
-            obs_file_dir = '/work2/06191/tg854905/stampede2/Pro2_PSU_MW/'+Storm+'/Obs_y/IR/'+obs_file_name
+            file_Diag = big_dir+Storm+'/'+Exper_name+'/run/'+DAtime+'/enkf/d03/fort.10000'
+            d_obs = Diag.Find_IR( file_Diag, fort_v )
 
             Hx_dir = '/scratch/06191/tg854905/Pro2_PSU_MW/'+Storm+'/'+Exper_name+'/Obs_Hx/IR/'+DAtime+'/'
             # List the Yb and Ya files
-            file_yb = sorted( glob.glob(Hx_dir + '/TB_GOES_CRTM_input_mem0*.bin') ) 
+            file_yb = ['/scratch/06191/tg854905/Pro2_PSU_MW/IRMA/IR-J_DA+J_WRF+J_init-SP-intel17-WSM6-30hr-hroi900/Obs_Hx/IR/201709030600/TB_GOES_CRTM_input_mem055_d03_2017-09-03_06:00.bin',]#sorted( glob.glob(Hx_dir + '/TB_GOES_CRTM_input_mem055.bin') ) 
             for Hxb in file_yb:
                 print('Reading the Hxb: ' + Hxb)
                 Hxa = Hxb.replace( 'input','output')
@@ -615,7 +620,7 @@ if __name__ == '__main__':
                 # Read WRF domain
                 wrf_file = '/scratch/06191/tg854905/Pro2_PSU_MW/'+Storm+'/'+Exper_name+'/fc/'+DAtime+'/wrf_enkf_output_d03_mean'
                 d_wrf_d03 = read_wrf_domain( wrf_file )
-                interp_simu_to_obs_matlab( Hxb, sensor, DAtime, obs_file_dir, d_wrf_d03 )
+                interp_simu_to_obs_matlab( Hxb, sensor, DAtime, d_obs, d_wrf_d03 )
                 #time.sleep(60)
 
     # Plot

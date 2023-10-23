@@ -164,26 +164,27 @@ def Plot_one_metric( Tb_metric ):
                 else:
                     color = 'blue'
 
-                if MP[iexper] == 'WSM6':
+                #if MP[iexper] == 'WSM6':
+                if 'update' in Expers[iexper]:
                     if i == 1:
                         ax.plot(dates_zip[i-1:i+1],bias_zip[i-1:i+1],color,linewidth='6')
                     elif i == 2:
-                        ax.plot(dates_zip[i-1:i+1],bias_zip[i-1:i+1],color,linewidth='4',label='WSM6_Forecast')
+                        ax.plot(dates_zip[i-1:i+1],bias_zip[i-1:i+1],color,linewidth='4',label='YES_Forecast') #WSM6_Forecast
                     elif i == 3:
-                        ax.plot(dates_zip[i-1:i+1],bias_zip[i-1:i+1],color,linewidth='4',label='WSM6_Assimilation')
+                        ax.plot(dates_zip[i-1:i+1],bias_zip[i-1:i+1],color,linewidth='4',label='YES_Assimilation') #WSM6_Assimilation
                     else:
                         ax.plot(dates_zip[i-1:i+1],bias_zip[i-1:i+1],color,linewidth='4')
                 else:
                     if i == 1:
                         ax.plot(dates_zip[i-1:i+1],bias_zip[i-1:i+1],'grey',linewidth='6',linestyle='--')
                     elif i == 2:
-                        ax.plot(dates_zip[i-1:i+1],bias_zip[i-1:i+1],'grey',linewidth='4',label='THO_Forecast',linestyle='-')
+                        ax.plot(dates_zip[i-1:i+1],bias_zip[i-1:i+1],'grey',linewidth='2.5',label='NO_Forecast',linestyle='-')
                     elif i == 3:
-                        ax.plot(dates_zip[i-1:i+1],bias_zip[i-1:i+1],'grey',linewidth='4',label='THO_Assimilation',linestyle='--')
-                    elif i % 2 == 0:
-                        ax.plot(dates_zip[i-1:i+1],bias_zip[i-1:i+1],'grey',linewidth='4',linestyle='--')
+                        ax.plot(dates_zip[i-1:i+1],bias_zip[i-1:i+1],'grey',linewidth='2.5',label='NO_Assimilation',linestyle='--')
+                    elif i % 2 != 0:
+                        ax.plot(dates_zip[i-1:i+1],bias_zip[i-1:i+1],'grey',linewidth='2.5',linestyle='--')
                     else:
-                        ax.plot(dates_zip[i-1:i+1],bias_zip[i-1:i+1],'grey',linewidth='4',linestyle='-')
+                        ax.plot(dates_zip[i-1:i+1],bias_zip[i-1:i+1],'grey',linewidth='2.5',linestyle='-')
 
 
             ax.set_ylim( bias_min,bias_max )
@@ -191,8 +192,38 @@ def Plot_one_metric( Tb_metric ):
 
         elif not if_bias and if_rmse:
             rmse_zip = list( chain.from_iterable( zip(Tb_metric['xb_rmse'][iexper,:],Tb_metric['xa_rmse'][iexper,:]) ))
-    
-    ax.legend(frameon=True,loc='upper right',fontsize='24')
+            len_seg = len(dates_zip)-1
+            for i in range(1,len_seg):
+                # specify which segment uses which color
+                if i % 2 == 0:
+                    color = 'red'
+                else:
+                    color = 'blue'
+
+                #if MP[iexper] == 'WSM6':
+                if 'update' in Expers[iexper]:
+                    if i == 1:
+                        ax.plot(dates_zip[i-1:i+1],rmse_zip[i-1:i+1],color,linewidth='6')
+                    elif i == 2:
+                        ax.plot(dates_zip[i-1:i+1],rmse_zip[i-1:i+1],color,linewidth='4',label='YES_Forecast') #WSM6_Forecast
+                    elif i == 3:
+                        ax.plot(dates_zip[i-1:i+1],rmse_zip[i-1:i+1],color,linewidth='4',label='YES_Assimilation') #WSM6_Assimilation
+                    else:
+                        ax.plot(dates_zip[i-1:i+1],rmse_zip[i-1:i+1],color,linewidth='4')
+                else:
+                    if i == 1:
+                        ax.plot(dates_zip[i-1:i+1],rmse_zip[i-1:i+1],'grey',linewidth='6',linestyle='--')
+                    elif i == 2:
+                        ax.plot(dates_zip[i-1:i+1],rmse_zip[i-1:i+1],'grey',linewidth='2.5',label='NO_Forecast',linestyle='-')
+                    elif i == 3:
+                        ax.plot(dates_zip[i-1:i+1],rmse_zip[i-1:i+1],'grey',linewidth='2.5',label='NO_Assimilation',linestyle='--')
+                    elif i % 2 != 0:
+                        ax.plot(dates_zip[i-1:i+1],rmse_zip[i-1:i+1],'grey',linewidth='2.5',linestyle='--')
+                    else:
+                        ax.plot(dates_zip[i-1:i+1],rmse_zip[i-1:i+1],'grey',linewidth='2.5',linestyle='-')
+
+ 
+    ax.legend(frameon=True,loc='upper right',fontsize='18') #24
 
     ax.set_xlim([dates[0],dates[-1]])
     ax.tick_params(axis='x', labelrotation=30,labelsize=20)
@@ -204,9 +235,11 @@ def Plot_one_metric( Tb_metric ):
         pass
         #ax.set_title( 'Bias: H(X) - Obs',fontweight="bold",fontsize='15' )
     if if_bias and if_rmse:
-        ax.set_title( DA+'_'+MP+' RMSE',fontweight="bold",fontsize='15' )
-    
-    fig.suptitle( Storm+': Metric of IR Tbs over '+str(len(DAtimes))+' Cycles', fontsize=15, fontweight='bold')
+        pass
+        #ax.set_title( DA+'_'+MP+' RMSE',fontweight="bold",fontsize='15' )
+
+    #fig.suptitle( Storm+': Metric of IR Tbs over '+str(len(DAtimes))+' Cycles', fontsize=15, fontweight='bold')
+    fig.suptitle( Storm+' IR_WSM6: if update W or not', fontsize=15, fontweight='bold')
 
     des_name = small_dir+Storm+'/'+Expers[0]+'/Vis_analyze/Tb/IR_Metric_'+DAtimes[0]+'_'+DAtimes[-1]+'.png'
     plt.savefig( des_name )
@@ -264,19 +297,21 @@ if __name__ == '__main__':
     ch_list = ['8',]
 
     start_time_str = '201709030000'
-    end_time_str = '201709031100'
+    end_time_str = '201709040000'
     Consecutive_times = True
 
-    if_bias = True
-    if_rmse = False
+    if_bias = False
+    if_rmse = True
     Plot_IR = True
     Plot_MW = False
     # ------------------------------------------------------   
 
     # Create experiment names
-    Expers = []
-    for imp in MP:
-        Expers.append( UD.generate_one_name( Storm,DA,imp ) )
+    #Expers = []
+    #for imp in MP:
+    #    Expers.append( UD.generate_one_name( Storm,DA,imp ) )
+    Expers = ['IR-updateW-J_DA+J_WRF+J_init-SP-intel17-WSM6-30hr-hroi900','IR-J_DA+J_WRF+J_init-SP-intel17-WSM6-30hr-hroi900']
+
 
     if not Consecutive_times:
         DAtimes = ['201708231200']
