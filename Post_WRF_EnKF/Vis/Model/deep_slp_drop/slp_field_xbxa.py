@@ -96,8 +96,8 @@ def plot_slp( Storm, Exper_name, DAtime, wrf_dir, plot_dir ):
     ax[0].set_title( 'Xb--min slp: '+str("{0:.3f}".format(np.min( slp[0,:,:] )))+' hPa',  fontweight='bold', fontsize=13)
     ax[1].set_title( 'Xa--min slp: '+str("{0:.3f}".format(np.min( slp[1,:,:] )))+' hPa',  fontweight='bold', fontsize=13)
     if deep_slp_incre:
-        title_name = Storm+': '+Exper_name+' ('+DAtime+')'+'\nAbs of min SLP increment > '+str(incre_slp_th)+' hPa'
-        title_name = title_name + ' kick5error'
+        title_name = Storm+': '+Exper_name+' ('+DAtime+')'+'\nAbs of min SLP increment > '+str(incre_slp_th)+' hPa~200km_circle (yo-Hxb<0)'
+        title_name = title_name #+ ' kick5error'
         fig.suptitle(title_name,fontsize=12, fontweight='bold')
     else:
         fig.suptitle(Storm+': '+Exper_name+' ('+DAtime+')', fontsize=12, fontweight='bold')
@@ -122,7 +122,7 @@ def plot_slp( Storm, Exper_name, DAtime, wrf_dir, plot_dir ):
         gl.xlabel_style = {'size': 12}
         gl.ylabel_style = {'size': 12}
 
-    des = plot_dir+DAtime+'_slp_deep_incre_kick5error.png'
+    des = plot_dir+DAtime+'_slp_deep_incre_200km_circle_colderObs.png'
     plt.savefig( des, dpi=300 )
     print('Saving the figure: ', des)
     plt.close()
@@ -134,21 +134,21 @@ if __name__ == '__main__':
     small_dir =  '/work2/06191/tg854905/stampede2/Pro2_PSU_MW/'
     # ---------- Configuration -------------------------
     Storm = 'IRMA'
-    DA = 'IR'
+    DA = 'IR+MW'
     MP = 'WSM6'
 
     # Time range set up
-    start_time_str = '201709041600'
-    end_time_str = '201709041600'
+    start_time_str = '201709030600'
+    end_time_str = '201709030700'
     Consecutive_times = True
 
     deep_slp_incre = True
-    incre_slp_th = 1 # threshold of increment, unit:hpa 
+    incre_slp_th = 10 # threshold of increment, unit:hpa 
     Plot_slp = True
     # -------------------------------------------------------   
 
     # Create experiment names
-    Exper_name =  UD.generate_one_name( Storm,DA,MP )
+    Exper_name = 'IR-TuneWSM6-J_DA+J_WRF+J_init-SP-intel17-WSM6-30hr-hroi900' #UD.generate_one_name( Storm,DA,MP )
 
     if not Consecutive_times:
         DAtimes = ['201708251200',]

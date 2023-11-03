@@ -95,9 +95,6 @@ def read_Tb_modelRes(Tb_file, sensor ):
     return dict_Tb_all
 
 
-
-
-
 # ------------------------------------------------------------------------------------------------------
 #           Operation: Calculate accumulated hydro mass
 # ------------------------------------------------------------------------------------------------------
@@ -187,10 +184,13 @@ def Plot_DM_all_oneTime( DAtime,v_interest,d_hydro,ver_coor ):
 
     # Manually set discrete values on x and y axis and interpolate data to these values
     ## x axis: range of accumulated water path value
-    if Storm == 'IRMA' and MP == 'THO':
-        x_range = np.arange(0,500.5,50)
-    else:
-        x_range = np.arange(0,290.5,50) #2100.5
+    #if Storm == 'IRMA' and MP == 'THO':
+    #    x_range = np.arange(0,500.5,50)
+    #else:
+    #    x_range = np.arange(0,500.5,50) #2100.5
+   
+    x_range = list(np.logspace(0,3,num=50)) # start: 10**0, end:10**3
+    x_range.insert(0,0)
     x_axis_rg = range(len(x_range))
     f_xinterp = interpolate.interp1d( x_range, x_axis_rg)
     ## y axis: model vertical coordinate
@@ -226,19 +226,26 @@ def Plot_DM_all_oneTime( DAtime,v_interest,d_hydro,ver_coor ):
 
     # set lables
     ax.legend(loc='upper right',fontsize='10')
+
     # set X label
-    if Storm == 'IRMA' and MP == 'THO':
-        xticks_loc = list(x_axis_rg[::2])
-        xlabel_like = list(x_range[::2])
-        ax.set_xlim(xmin=0,xmax=f_xinterp(500.5))
-    else:
-        xticks_loc = list(x_axis_rg[::1])
-        xlabel_like = list(x_range[::1])
-        ax.set_xlim(xmin=0,xmax=f_xinterp(250))
-    xticks_loc.insert(0,th_loc)
-    xlabel_like.insert(0,accu_th)
+    xlabel_like = [0,1,10,30,100,1000]
+    xticks_loc = []
+    for it in xlabel_like:
+        xticks_loc.append( f_xinterp(it) )
+    ax.set_xlim(xmin=f_xinterp(0),xmax=f_xinterp(1e3))
+    #if Storm == 'IRMA' and MP == 'THO':
+    #    xticks_loc = list(x_axis_rg[::2])
+    #    xlabel_like = list(x_range[::2])
+    #    ax.set_xlim(xmin=0,xmax=f_xinterp(500.5))
+    #else:
+    #    xticks_loc = list(x_axis_rg[::1])
+    #    xlabel_like = list(x_range[::1])
+    #    ax.set_xlim(xmin=0,xmax=f_xinterp(250))
+    #xticks_loc.insert(0,th_loc)
+    #xlabel_like.insert(0,accu_th)
     ax.set_xticks( xticks_loc )
-    ax.set_xticklabels( [str(it) for it in xlabel_like],fontsize=15 )
+    ax.set_xticklabels( ['0',r'$10^{0}$',r'$10^{1}$','30',r'$10^{2}$',r'$10^{3}$',],fontsize=15 )
+    #ax.set_xticklabels( [str(it) for it in xlabel_like],fontsize=15 )
     ax.set_xlabel('Accumulated Mass (gram m-2)',fontsize=15)
     ax.set_xlim(xmin=0)
     # set Y label
@@ -412,8 +419,8 @@ if __name__ == '__main__':
     ch_list = ['8',]
     fort_v = ['obs_type','lat','lon','obs']
 
-    start_time_str = '201709040700'
-    end_time_str = '201709040700'
+    start_time_str = '201709030000'
+    end_time_str = '201709030000'
     Consecutive_times = True
 
     deep_slp_incre = False
@@ -435,7 +442,7 @@ if __name__ == '__main__':
     ymax = 297
 
     # Create experiment names
-    Exper_name =  UD.generate_one_name( Storm,DA,MP )
+    Exper_name = UD.generate_one_name( Storm,DA,MP )
 
     # Times
     if not Consecutive_times:

@@ -657,8 +657,8 @@ if __name__ == '__main__':
     ch_list = ['8',]
     fort_v = ['obs_type','lat','lon','obs']
 
-    start_time_str = '201709041800' 
-    end_time_str = '201709050000'
+    start_time_str = '201709030100' 
+    end_time_str = '201709030100'
     Consecutive_times = True
 
     deep_slp_incre = True
@@ -666,13 +666,13 @@ if __name__ == '__main__':
     plot_circle = True
     radius_th = 200 # km
 
-    Interp_to_obs = False
-    If_plot = True
+    Interp_to_obs = True
+    If_plot = False
     plot_scatter = True
     # ------------------------------------------------------   
 
     # Create experiment names
-    Exper_name =  UD.generate_one_name( Storm,DA,MP )
+    Exper_name =  'IR-updateW-J_DA+J_WRF+J_init-SP-intel17-WSM6-30hr-hroi900'#UD.generate_one_name( Storm,DA,MP )
 
     if not Consecutive_times:
         IR_times = ['201709180000',]

@@ -44,11 +44,67 @@ def hist2d_numba_seq(tracks, bins, ranges):
 
     return H
 
+# Calculate hydro mass at any grid point
+@njit(parallel=True)
+def hydro_mass( full_p, tv, geoHm, q ):
+    R = 287.06
+    res = np.zeros( (q.shape[0],q.shape[1]), )
+    res[:] = np.nan
+    for im in prange( q.shape[1] ):
+        for il in range( q.shape[0] ):
+            zdiff = geoHm[il+1,im] - geoHm[il,im]
+            res[il,im] = (full_p[il,im]/(R * tv[il,im])) * q[il,im] * zdiff #* model_resolution**2
+    # make sure all values are reasonable
+    assert res.any() != np.nan
+    return res
+
+# ------------------------------------------------------------------------------------------------------
+#           Operation: Read and process data
+# ------------------------------------------------------------------------------------------------------
+
+# Read fields needed for mass of hydrometeors
+def Read_for_hydromass( DAtimes ):
+
+    d_forHydro = {}
+    for DAtime in DAtimes:
+        d_forHydro[DAtime] = {}
+
+    for DAtime in DAtimes:
+        wrf_dir = big_dir+Storm+'/'+Exper_name+'/fc/'+DAtime
+        wrf_files = [wrf_dir+'/wrf_enkf_input_d03_mean',wrf_dir+'/wrf_enkf_output_d03_mean']
+        full_p = np.zeros( [len(wrf_files), nLevel, xmax*ymax] )
+        tv_k = np.zeros( [len(wrf_files), nLevel, xmax*ymax] )
+        geoHm = np.zeros( [len(wrf_files), nLevel+1, xmax*ymax] )
+
+        for wrf_file in wrf_files:
+            ifile = wrf_files.index(wrf_file)
+            ncdir = nc.Dataset( wrf_file, 'r')
+            # full pressure
+            p = ncdir.variables['P'][0,:,:,:] # perturbation
+            pb = ncdir.variables['PB'][0,:,:,:]
+            tmp_p = p + pb
+            full_p[ifile,:,:] = tmp_p.reshape( tmp_p.shape[0],-1 )
+            # geopotential height
+            ph = ncdir.variables['PH'][0,:,:,:] # perturbation
+            phb = ncdir.variables['PHB'][0,:,:,:]
+            tmp_geoHm = (ph+phb)/9.81 # in meter
+            geoHm[ifile,:,:] = tmp_geoHm.reshape( tmp_geoHm.shape[0],-1 )
+            # virtual temperature
+            tv = getvar(ncdir,'tv',units='K')
+            tmp_tv = tv.values
+            tv_k[ifile,:,:] = tmp_tv.reshape( tmp_tv.shape[0],-1 )
+
+        # Assemble a dictionary
+        d_forHydro[DAtime]['full_p'] = full_p
+        d_forHydro[DAtime]['geoHm'] = geoHm
+        d_forHydro[DAtime]['tv_k'] = tv_k
+
+    return d_forHydro
 
 # Process data 
 # 1.interpolate model data to vertical coordinate of interest
 # 2.collect over time
-def read_modelatObsRes( var_name ):
+def read_modelatObsRes( var_name,DAtimes,d_forHydro=None ):
 
     d_allx = {}
     for DAtime in DAtimes:
@@ -71,7 +127,7 @@ def read_modelatObsRes( var_name ):
             Hx_dir = big_dir+Storm+'/'+Exper_name+'/Obs_Hx/IR/'+DAtime+'/'
             Tb_file = Hx_dir + "/mean_obs_res_d03_" + DAtime + '_' +  sensor + '.txt'
             d_all = ROIR.read_Tb_obsRes(Tb_file, sensor )
-            condi1 = d_all['meanYb_obs'] - d_all['Yo_obs'] >= 15 #d_all['Yo_obs'] <= 210
+            condi1 = d_all['meanYb_obs'] - d_all['Yo_obs'] > 3 #d_all['Yo_obs'] <= 210
             idx_a = np.where( condi1 )[0]
             condi2 = d_all['Yo_obs'] <= 220 #d_all['meanYb_obs'] <= 210
             idx_b = np.where( condi2 )[0]
@@ -82,11 +138,19 @@ def read_modelatObsRes( var_name ):
             ncdir = nc.Dataset( wrf_file, 'r')
             # Read variable of interest
             var_tmp = ncdir.variables[var_name][0,:,:,:]
-            if 'W' in var_name:
+            if var_name == 'W':
                 var_tmp = var_tmp.reshape(nLevel+1,xmax*ymax)
                 var_half = (var_tmp[:-1]+var_tmp[1:])
                 var_tmp = np.ma.getdata( var_half )
                 var = var_tmp[:, idx_x]
+                if limit:
+                    var = var[:,idx_xx]
+            elif 'Q' in var_name:
+                var_tmp = ncdir.variables[var_name][0,:,:,:]
+                var_tmp = var_tmp.reshape( var_tmp.shape[0],-1 )
+                # calculate the mass of hydrometeor at any given point for a file
+                ifile = wrf_files.index(wrf_file)
+                var = hydro_mass( d_forHydro[DAtime]['full_p'][ifile,:,idx_x], d_forHydro[DAtime]['tv_k'][ifile,:,idx_x], d_forHydro[DAtime]['geoHm'][ifile,:,idx_x], var_tmp[:,idx_x] )*1000 # to gram/m2
                 if limit:
                     var = var[:,idx_xx]
             else:
@@ -149,7 +213,12 @@ def plot_hist( var,key,H_all ):
     # ------ Plot Figure -------------------
     fig, ax=plt.subplots(1, 2,figsize=(12,6), dpi=400)
     
-    ## x axis: value range of variable 
+    ## x axis: value range of variable
+    #if 'Q' in var:
+    #    x_range = list(np.logspace(0,1,num=100))
+    #    x_range.insert(0,0)
+    #else:
+    #    x_range = var_rg
     x_range = var_rg
     x_axis_rg = range(len(x_range ))
     f_xinterp = interpolate.interp1d( x_range, x_axis_rg)
@@ -167,16 +236,26 @@ def plot_hist( var,key,H_all ):
     # Set colorbar
     if key == 'AllTimes':
         vmax = 1e7
-    else:
+    elif key != 'AllTimes' and not limit:
         vmax = 1e4
+    elif key is not 'AllTimes' and limit:
+        vmax = 1e3
 
+    # Plot
     for i in range(2):
-        # Plot 
-        im = ax[i].imshow(H_all[key][i,:,:],cmap='rainbow_r',extent=(0,len(x_range),len(y_range),0),vmax=vmax,norm=mcolors.LogNorm())
-        ax[i].invert_yaxis()
+        x = x_axis_rg 
+        y = y_axis_rg
+        X,Y=np.meshgrid(x,y)
+
+        im = ax[i].pcolor(X,Y,H_all[key][i,:,:], cmap='rainbow_r', vmax=vmax, norm=mcolors.LogNorm())
+#        im = ax[i].imshow(H_all[key][i,:,:],cmap='rainbow_r',extent=(0,len(x_range),len(y_range),0),vmax=vmax,norm=mcolors.LogNorm())
+#        ax[i].invert_yaxis()
 
         # Set the x-ticks
-        xlabel_like = [-1.5,-1,-0.5,0,0.5,1,1.5,2,0,2.5,3.0]
+        if var == 'W':
+            xlabel_like = [-1.5,-1,-0.5,0,0.5,1,1.5,2,0,2.5,3.0]
+        elif 'Q' in var:
+            xlabel_like = [0,1,2,3,4,5]
         xticks = []
         for it in xlabel_like:
             xticks.append( f_xinterp( it ) )
@@ -184,6 +263,13 @@ def plot_hist( var,key,H_all ):
         ax[i].set_xticklabels( [str(it) for it in xlabel_like],fontsize=15 )
         if var == 'W':
             ax[i].set_xlabel(var+' (m s-1)',fontsize=20)
+        elif 'Q' in var:
+            ax[i].set_xlabel(var+' (gram m-2)',fontsize=20)
+
+        # Plot a line indicating the threshold value
+        if var == 'W':
+            th_loc = f_xinterp(0)
+            ax[i].axvline(x=th_loc,color='black',linestyle='-',linewidth=2)
 
         # Set the y-ticks
         if interp_P:
@@ -210,8 +296,11 @@ def plot_hist( var,key,H_all ):
     # title
     ax[0].set_title( 'Xb', fontsize = 15, fontweight='bold')
     ax[1].set_title( 'Xa', fontsize = 15, fontweight='bold')
-    title_name = Storm+': '+Exper_name+' '+key+'\n @Obs_location'
-    fig.suptitle(title_name, fontsize=15, fontweight='bold')
+    if to_obs_res and limit:
+        title_name = Storm+': '+Exper_name+' '+key+'\n @Obs_location: H(Xb)-obs > 3K (obs<=220K)'
+    if to_obs_res and not limit:
+        title_name = Storm+': '+Exper_name+' '+key+'\n @Obs_location'
+    fig.suptitle(title_name, fontsize=12, fontweight='bold')
 
     if to_obs_res and limit:
         save_des = plot_dir+key+'_'+var+'overH_PDF_obsRes_limit.png'
@@ -230,6 +319,9 @@ def set_range( var ):
     if var == 'W':
         min_var_rg = -1.5
         max_var_rg = 3.5
+    elif 'Q' in var:
+        min_var_rg = 0
+        max_var_rg = 5
 
     return min_var_rg, max_var_rg
 
@@ -241,9 +333,9 @@ if __name__ == '__main__':
     # ---------- Configuration -------------------------
     Storm = 'IRMA'
     DA = 'IR'
-    MP = 'THO'
+    MP = 'WSM6'
 
-    v_interest = [ 'W',]
+    v_interest = [ 'W','QICE','QCLOUD','QRAIN','QSNOW','QGRAUP','QVAPOR',]
     sensor = 'abi_gr'
     ch_list = ['8',]
     fort_v = ['obs_type','lat','lon','obs']
@@ -263,20 +355,20 @@ if __name__ == '__main__':
     to_obs_res = True 
 
     # number of bins
-    number_bins = 50
+    number_bins = 100
     # vertical coordinate of interest
     interp_P = False
     P_like = np.linspace(900,10,number_bins)
     interp_H = True 
     H_like = np.linspace(0.5,21,number_bins)
     # limitations
-    limit = False
+    limit = True
 
     if_plot = True
 
     # ------------------------------------------------------- 
 
-    Exper_name = UD.generate_one_name( Storm,DA,MP )
+    Exper_name = UD.generate_one_name( Storm,DA,MP )#'IR-updateW-J_DA+J_WRF+J_init-SP-intel17-WSM6-30hr-hroi900'#UD.generate_one_name( Storm,DA,MP )
 
     if not Consecutive_times:
         DAtimes = ['201709030000','201709030600','201709031200','201709031800','201709040000','201709040600','201709041200','201709041800','201709050000']
@@ -292,10 +384,22 @@ if __name__ == '__main__':
     if plotdir_exists == False:
         os.mkdir(plot_dir)
 
+    # Calculate fields needed for mass of hydrometeors
+    d_forHydro = None
+    for var in v_interest:
+        if 'Q' in var:
+             d_forHydro = Read_for_hydromass( DAtimes )
+             break
+ 
     # Loop
     for var in v_interest:
+        # Make plot dir
+        plot_dir = small_dir+Storm+'/'+Exper_name+'/Vis_analyze/Model/PDF_'+var+'/'
+        plotdir_exists = os.path.exists( plot_dir )
+        if plotdir_exists == False:
+            os.mkdir(plot_dir)
         # Read and process model data
-        d_allx = read_modelatObsRes( var )
+        d_allx = read_modelatObsRes( var, DAtimes, d_forHydro)
         # ---- Make bin counts -----
         if interp_P and not interp_H:
             Level_of_interest = P_like
