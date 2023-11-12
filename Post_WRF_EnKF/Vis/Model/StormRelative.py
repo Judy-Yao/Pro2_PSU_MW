@@ -216,9 +216,12 @@ def var_geodetic_to_polar( var_name,d_coor,wrf_files ):
             u_polar = np.zeros((nLevel,len(azimuths),len(radius)))
             v_polar = np.zeros((nLevel,len(azimuths),len(radius)))
             for il in range(nLevel):
-                #u_out = eng.griddata(matlab.double(grid_geo[].tolist()), matlab.double(Lat_x_ch.tolist()), matlab.double(Yb_x_ch.tolist()), matlab.double(Lon_obs_ch.tolist()), matlab.double(Lat_obs_ch.tolist()) )   #interpolate.griddata(grid_geo,u_w[il,:],grid_polar,method='linear')
+                Mu_out = eng.griddata(matlab.double(lon_geo), matlab.double(lat_geo), matlab.double(u_w[il,:].tolist()), matlab.double(lon_polar), matlab.double(lat_polar) )
+                u_out = np.array(Mu_out._data)
                 u_polar[il,:,:] = u_out.reshape((len(azimuths),len(radius)))
-                v_out = interpolate.griddata(grid_geo,v_w[il,:],grid_polar,method='linear')
+                Mv_out = eng.griddata(matlab.double(lon_geo), matlab.double(lat_geo), matlab.double(v_w[il,:].tolist()), matlab.double(lon_polar), matlab.double(lat_polar) )
+                v_out = np.array(Mv_out._data)
+                #v_out = interpolate.griddata(grid_geo,v_w[il,:],grid_polar,method='linear')
                 v_polar[il,:,:] = v_out.reshape((len(azimuths),len(radius)))
             # Calculate tangential wind and radial wind
             vt = np.zeros((nLevel,len(azimuths),len(radius)))
@@ -403,10 +406,10 @@ if __name__ == '__main__':
     Storm = 'IRMA'
     MP = 'WSM6'
     DA = 'IR'
-    v_interest = ['W',] #hor_wind
+    v_interest = ['hor_wind','W',] #hor_wind
 
-    start_time_str = '201709030000'
-    end_time_str = '201709030000'
+    start_time_str = '201709030300'
+    end_time_str = '201709030600'
     Consecutive_times = True
 
     # model dimension
@@ -419,7 +422,7 @@ if __name__ == '__main__':
     radius = np.linspace(0,300,100) # units: km
     Plot_azmean = True
     # -------------------------------------------------------  
-    Exper_name = UD.generate_one_name( Storm,DA,MP )
+    Exper_name = 'IR-updateW-J_DA+J_WRF+J_init-SP-intel17-WSM6-30hr-hroi900'#UD.generate_one_name( Storm,DA,MP )
 
     # Identify DA times in the period of interest
     if not Consecutive_times:

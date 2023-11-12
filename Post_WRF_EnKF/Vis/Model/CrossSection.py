@@ -233,17 +233,17 @@ def plot_var_cross( wrf_files,var_name,d_var ):
 
 if __name__ == '__main__':
 
-    big_dir = '/work2/06191/tg854905/stampede2/Pro2_PSU_MW/' #'/scratch/06191/tg854905/Pro2_PSU_MW/'
+    big_dir = '/scratch/06191/tg854905/Pro2_PSU_MW/'
     small_dir = '/work2/06191/tg854905/stampede2/Pro2_PSU_MW/'
 
     # ---------- Configuration -------------------------
-    Storm = 'MARIA'
+    Storm = 'IRMA'
     MP = 'WSM6'
     DA = 'IR'
-    v_interest = ['hroi_wind',]
+    v_interest = ['hroi_wind','W']
 
-    start_time_str = '201709180000'
-    end_time_str = '201709180000'
+    start_time_str = '201709030000'
+    end_time_str = '201709030600'
     Consecutive_times = True
 
     # model dimension
@@ -254,7 +254,7 @@ if __name__ == '__main__':
     use_pressure = False
     if_plot = True
     # ------------------------------------------------------- 
-    Exper_name = UD.generate_one_name( Storm,DA,MP )
+    Exper_name = 'IR-updateW-J_DA+J_WRF+J_init-SP-intel17-WSM6-30hr-hroi900' #UD.generate_one_name( Storm,DA,MP )
 
     # Identify DA times in the period of interest
     if not Consecutive_times:

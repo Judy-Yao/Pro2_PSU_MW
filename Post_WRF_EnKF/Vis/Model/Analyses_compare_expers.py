@@ -20,10 +20,11 @@ import matplotlib.ticker as mticker
 from matplotlib import pyplot as plt
 from cartopy import crs as ccrs
 from cartopy.mpl.gridliner import LONGITUDE_FORMATTER, LATITUDE_FORMATTER
-from Track_intensity import read_bestrack
+from Util_data import read_bestrack
 from mpl_toolkits.axes_grid1 import make_axes_locatable
 import time
 import subprocess
+from itertools import chain
 
 # setting font sizeto 30
 plt.rcParams.update({'font.size': 15})
@@ -223,26 +224,48 @@ def plot_slp_timeseries( small_dir, Storm, Expers, DAtimes, Evo_slp ):
     ax = plt.subplot(1,1,1)
     dates = [datetime.strptime( it,"%Y%m%d%H%M") for it in DAtimes]
     # Plot obs and mean
-    print(Evo_slp['obs_slp'])
-    ax.plot_date(dates, Evo_slp['obs_slp'], 'black', label='TCvital', linestyle='-')
-    ax.plot_date(dates, Evo_slp['xa_slp'][0,:], 'red', label='conv_THO', linestyle='--')
-    ax.plot_date(dates, Evo_slp['xa_slp'][1,:], 'blue', label='IR_THO', linestyle='--')
-    #ax.plot_date(dates, Evo_slp['xa_slp'][2,:], 'red', label='IR_THO', linestyle='-')
-    #ax.plot_date(dates, Evo_slp['xa_slp'][3,:], 'blue', label='IR_WSM6', linestyle='-')
+    ax.plot_date(dates, Evo_slp['obs_slp'], 'black', label='TCvital', linestyle='-',linewidth='4',)
+    if slp_xa and not slp_xb: 
+        ax.plot_date(dates, Evo_slp['xa_slp'][0,:], 'red', label='YES', linestyle='-',linewidth='4',)
+        #ax.plot_date(dates, Evo_slp['xa_slp'][1,:], 'red', label='IR+MW-THO', linestyle='--',linewidth='4',)
+        ax.plot_date(dates, Evo_slp['xa_slp'][1,:], 'blue', label='NO', linestyle='-',linewidth='4',)
+        #ax.plot_date(dates, Evo_slp['xa_slp'][3,:], 'blue', label='IR+MW-WSM6', linestyle='--',linewidth='4',)
+    if slp_xb and not slp_xa:
+        ax.plot_date(dates, Evo_slp['xb_slp'][0,:], 'red', label='YES', linestyle='-',linewidth='4',)
+        ax.plot_date(dates, Evo_slp['xb_slp'][1,:], 'blue', label='NO', linestyle='-',linewidth='4',)
+    if slp_xa and slp_xb: # plot saw-tooth lines
+        dates_zip = list( chain.from_iterable( zip(dates,dates)) )
+        len_seg = len(dates_zip)-1
+        colors = ['red','blue']
+        labels = ['YES','NO']
+        for iexper in range(len(Expers)):
+            slp_zip = list( chain.from_iterable( zip(Evo_slp['xb_slp'][iexper,:],Evo_slp['xa_slp'][iexper,:]) ) )
+            for i in range(1,len_seg):
+                # specify which segment uses which line style
+                if i % 2 == 0:
+                    style = '-'
+                else:
+                    style = '--'  
+                
+                if i == 2:
+                    ax.plot(dates_zip[i-1:i+1],slp_zip[i-1:i+1],linestyle=style,color=colors[iexper],linewidth='4',label=labels[iexper]) 
+                else:
+                    ax.plot(dates_zip[i-1:i+1],slp_zip[i-1:i+1],linestyle=style,color=colors[iexper],linewidth='4')
 
-    leg = plt.legend(loc='lower left',fontsize=15)
+
+    leg = plt.legend(loc='lower left',fontsize=22)
     # Set X/Y labels
     start_time = datetime.strptime( DAtimes[0],"%Y%m%d%H%M")
     end_time = datetime.strptime( DAtimes[-1],"%Y%m%d%H%M")
     ax.set_xlim( start_time, end_time)
     ax.tick_params(axis='x', labelrotation=45,labelsize=15)
-    ax.set_ylabel('Minimum Sea Level Pressure (hPa)',fontsize=15)
-    ax.set_ylim( 1000,1020 )
+    ax.set_ylabel('Minimum Sea Level Pressure (hPa)',fontsize=24)
+    ax.set_ylim(900,990) #( 920,1020 ) #(970,1020)
 
     #title_name = Storm+'('+Exper_name+')'+': mim SLP'
-    title_name = Storm+': mim SLP'
-    ax.set_title( title_name,fontweight="bold",fontsize='15' )
-    #fig.suptitle('conv+HPI', fontsize=15, fontweight='bold')
+    title_name = Storm+': mim SLP (hPa)'
+    ax.set_title( title_name,fontweight="bold",fontsize='24' )
+    #fig.suptitle('WSM6', fontsize=24, fontweight='bold')
 
     # Save the figure
     save_des = small_dir+Storm+'/'+Expers[0]+'/Vis_analyze/Model/minslp_'+DAtimes[0]+'_'+DAtimes[-1]+'.png'
@@ -253,25 +276,42 @@ def plot_slp_timeseries( small_dir, Storm, Expers, DAtimes, Evo_slp ):
 
 def Gather_slp( Storm, Expers, DAtimes, big_dir ):
 
+    # Initialize container
     obs_minslp_lat = []
     obs_minslp_lon = []
     obs_minslp_value = []
+   
+    if slp_xa:
+        xa_minslp_lat = [[] for i in range(len(Expers))]
+        xa_minslp_lon = [[] for i in range(len(Expers))]
+        xa_minslp_value = [[] for i in range(len(Expers))]
 
-    xa_minslp_lat = [[] for i in range(len(Expers))]
-    xa_minslp_lon = [[] for i in range(len(Expers))]
-    xa_minslp_value = [[] for i in range(len(Expers))]
+    if slp_xb:
+        xb_minslp_lat = [[] for i in range(len(Expers))]
+        xb_minslp_lon = [[] for i in range(len(Expers))]
+        xb_minslp_value = [[] for i in range(len(Expers))]
 
+    # Obtain min slp
     for DAtime in DAtimes:
 
         # collect min slp found from WRF output
         for Exper in Expers:
-            wrf_dir = big_dir+Storm+'/'+Exper+'/fc/'+DAtime+'/wrf_enkf_output_d03_mean'
-            print('Reading the EnKF posterior mean from ', wrf_dir)
-            list_wrfout = find_minSLP( wrf_dir )
             idx = Expers.index( Exper )
-            xa_minslp_lat[idx].append( list_wrfout[0] )
-            xa_minslp_lon[idx].append( list_wrfout[1] )
-            xa_minslp_value[idx].append( list_wrfout[2] )
+            if slp_xa:
+                xa_dir = big_dir+Storm+'/'+Exper+'/fc/'+DAtime+'/wrf_enkf_output_d03_mean'
+                print('Reading the EnKF posterior mean from ', xa_dir)
+                list_xa = find_minSLP( xa_dir )
+                xa_minslp_lat[idx].append( list_xa[0] )
+                xa_minslp_lon[idx].append( list_xa[1] )
+                xa_minslp_value[idx].append( list_xa[2] )
+
+            if slp_xb:
+                xb_dir = big_dir+Storm+'/'+Exper+'/fc/'+DAtime+'/wrf_enkf_input_d03_mean'
+                print('Reading the EnKF prior mean from ', xb_dir)
+                list_xb = find_minSLP( xb_dir )
+                xb_minslp_lat[idx].append( list_xb[0] )
+                xb_minslp_lon[idx].append( list_xb[1] )
+                xb_minslp_value[idx].append( list_xb[2] )
 
         # collect assimilated min slp obs from TCvital record in fort.10000
         diag_enkf = big_dir+Storm+'/'+Expers[0]+'/run/'+DAtime+'/enkf/d03/fort.10000'
@@ -304,15 +344,26 @@ def Gather_slp( Storm, Expers, DAtimes, big_dir ):
             obs_minslp_lon.append( float(list_enkf_minSlp[indices[idx_coor]+2]) )
             obs_minslp_value.append( float(list_enkf_minSlp[indices[idx_coor]+9])/100 )
 
-    dict_minSLP = {'obs_slp':np.array(obs_minslp_value),'obs_lat':np.array(obs_minslp_lat),'obs_lon':np.array(obs_minslp_lon),'xa_slp':np.array(xa_minslp_value),'xa_lat':np.array(xa_minslp_lat), 'xa_lon':np.array(xa_minslp_lon)}
+    # Assemble the dictionary
+    dict_minSLP = {'obs_slp':np.array(obs_minslp_value),}
+    if slp_xa:
+        dict_minSLP['xa_slp'] = np.array(xa_minslp_value)
+        dict_minSLP['xa_lat'] = np.array(xa_minslp_lat)
+        dict_minSLP['xa_lon'] = np.array(xa_minslp_lon)
+    if slp_xb:
+        dict_minSLP['xb_slp'] = np.array(xb_minslp_value)
+        dict_minSLP['xb_lat'] = np.array(xb_minslp_lat)
+        dict_minSLP['xb_lon'] = np.array(xb_minslp_lon) 
+
     return dict_minSLP
 
 
 
 if __name__ == '__main__':
 
-    Storm = 'JOSE'
-    Expers = ['J_DA+J_WRF+J_init-SP-intel17-THO-30hr-hroi900','IR-J_DA+J_WRF+J_init-SP-intel17-THO-30hr-hroi900',]
+    Storm = 'IRMA'
+    Expers = ['IR-TuneWSM6-J_DA+J_WRF+J_init-SP-intel17-WSM6-30hr-hroi900','IR-J_DA+J_WRF+J_init-SP-intel17-WSM6-30hr-hroi900']
+    #Expers = ['IR-J_DA+J_WRF+J_init-SP-intel17-THO-30hr-hroi900','IR+MW-J_DA+J_WRF+J_init-SP-intel17-THO-30hr-hroi900','IR-J_DA+J_WRF+J_init-SP-intel17-WSM6-30hr-hroi900','IR+MW-J_DA+J_WRF+J_init-SP-intel17-WSM6-30hr-hroi900',]
     big_dir = '/scratch/06191/tg854905/Pro2_PSU_MW/'
     small_dir = '/work2/06191/tg854905/stampede2/Pro2_PSU_MW/'
 
@@ -320,9 +371,12 @@ if __name__ == '__main__':
     Com_IC_water = False
     Com_minslp_evo = True
 
+    slp_xa = True
+    slp_xb = True
+
     # Time range set up
-    start_time_str = '201709050000'
-    end_time_str = '201709051600'
+    start_time_str = '201709030000'
+    end_time_str = '201709050000'
     Consecutive_times = True
 
     if not Consecutive_times:

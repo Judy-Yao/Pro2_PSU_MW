@@ -842,8 +842,8 @@ if __name__ == '__main__':
     ch_list = ['8',]
     fort_v = ['obs_type','lat','lon','obs']
 
-    start_time_str = '201709031700'
-    end_time_str = '201709031700'
+    start_time_str = '201709030000'
+    end_time_str = '201709040000'
     Consecutive_times = True
 
     # Number of ensemble members
@@ -853,7 +853,7 @@ if __name__ == '__main__':
     ymax = 297
 
     deep_slp_incre = True
-    incre_slp_th = 15
+    incre_slp_th = 10
     plot_circle = True
     radius_th = 200 # km
 

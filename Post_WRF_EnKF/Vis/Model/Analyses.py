@@ -359,17 +359,17 @@ def plot_UV10_slp( Storm, Exper_name, DAtime, wrf_dir, plot_dir ):
         ax[i].set_extent([lon_min,lon_max,lat_min,lat_max], crs=ccrs.PlateCarree())
         ax[i].coastlines (resolution='10m', color='black', linewidth=1)
         # sea level pressure
-        start_level = 1012.5 #max( np.amin(slp_smooth[0,:,:]), np.amin(slp_smooth[1,:,:]) )+0.1
-        end_level = 1016.5 #min( np.amax(slp_smooth[0,:,:]), np.amax(slp_smooth[1,:,:]) )
+        start_level = max( np.amin(slp_smooth[0,:,:]), np.amin(slp_smooth[1,:,:]) )+0.1
+        end_level = min( np.amax(slp_smooth[0,:,:]), np.amax(slp_smooth[1,:,:]) )
         step = (end_level -start_level)/4
         level = np.arange(start_level, end_level,step)
         #slp_contour = ax[i].contour(lon,lat,slp_smooth[i,:,:],levels=level,cmap='Greys_r',vmin=min_slp,vmax=max_slp,transform=ccrs.PlateCarree())
-        slp_contour = ax[i].contour(lon,lat,slp_smooth[i,:,:],levels=level,cmap='Greys_r',transform=ccrs.PlateCarree())
-        plt.clabel(slp_contour,level,inline=True, fmt="%.3f", use_clabeltext=True) #, fontsize=12)
+        slp_contour = ax[i].contour(lon,lat,slp_smooth[i,:,:],levels=level,cmap='winter',transform=ccrs.PlateCarree())
+        plt.clabel(slp_contour,level,inline=True, fmt="%i", use_clabeltext=True, fontsize=13)
         # Wind at 10 meters
         wind_smooth = sp.ndimage.gaussian_filter( d_field['windspeed'][i,:,:], [2,2])
-        min_wind = 0
-        max_wind = 35
+        min_wind = 10
+        max_wind = 60
         bounds = np.linspace(min_wind, max_wind, 6)
         wind_contourf = ax[i].contourf(lon,lat,wind_smooth,cmap='hot_r',vmin=min_wind,vmax=max_wind,levels=bounds,extend='both',transform=ccrs.PlateCarree())
         ax[i].barbs(lon.flatten(), lat.flatten(), d_field['U10'][i,:,:].flatten(), d_field['V10'][i,:,:].flatten(), length=5, pivot='middle', color='royalblue', regrid_shape=20, transform=ccrs.PlateCarree())
@@ -386,7 +386,7 @@ def plot_UV10_slp( Storm, Exper_name, DAtime, wrf_dir, plot_dir ):
     # Title
     ax[0].set_title( 'Xb--min slp: '+str("{0:.3f}".format(np.min( slp[0,:,:] )))+' hPa',  fontweight='bold') #, fontsize=12)
     ax[1].set_title( 'Xa--min slp: '+str("{0:.3f}".format(np.min( slp[1,:,:] )))+' hPa',  fontweight='bold') #, fontsize=12)
-    fig.suptitle(Storm+': '+Exper_name+'('+DAtime+')', fontsize=12, fontweight='bold')
+    fig.suptitle(Storm+': '+Exper_name+'('+DAtime+') ~ convention only', fontsize=12, fontweight='bold')
 
     # Axis labels
     lon_ticks = list(range(math.ceil(lon_min), math.ceil(lon_max),2))
@@ -408,7 +408,7 @@ def plot_UV10_slp( Storm, Exper_name, DAtime, wrf_dir, plot_dir ):
         gl.xlabel_style = {'size': 12}
         gl.ylabel_style = {'size': 12}
 
-    plt.savefig( plot_dir+DAtime+'_UV10_slp.png', dpi=300 )
+    plt.savefig( plot_dir+DAtime+'_UV10_slp_convention_only', dpi=300 )
     print('Saving the figure: ', plot_dir+DAtime+'_UV10_slp.png')
     plt.close()
 
@@ -721,24 +721,27 @@ def relative_vo( Storm, Exper_name, DAtimes, big_dir, small_dir ):
 
 if __name__ == '__main__':
 
-    Storm = 'MARIA'
-    Expers = ['IR+MW-J_DA+J_WRF+J_init-SP-intel17-THO-24hr-hroi900',]
     big_dir = '/scratch/06191/tg854905/Pro2_PSU_MW/'
     small_dir = '/work2/06191/tg854905/stampede2/Pro2_PSU_MW/'
-    
-    Plot_UV10_slp = True
-    Plot_IC_water = True
-    Plot_minslp_evo = False
-    Plot_rtvo = True
 
+    # -------- Configuration -----------------
+    Storm = 'IRMA'
+    DA = ['IR+MW']   
+    MP = 'WSM6' 
+
+    Plot_UV10_slp = True
+    Plot_IC_water = False
+    Plot_minslp_evo = False
+    Plot_rtvo = False
+    # -----------------------------------------
 
     # Time range set up
-    start_time_str = '201709160200'
-    end_time_str = '201709160200'
+    start_time_str = '201709030700'
+    end_time_str = '201709030700'
     Consecutive_times = True
 
     if not Consecutive_times:
-        DAtimes = ['',]
+        DAtimes = ['201709180000']
         #DAtimes = ['201708230000','201708230600','201708231200','201708231800','201708240000','201708240600','201708241200']
         #DAtimes = ['201709031200','201709031800','201709040000','201709040600','201709041200','201709041800','201709050000']
         #DAtimes = ['201709161200','201709161800','201709170000','201709170600','201709171200','201709171800','201709180000']
@@ -747,6 +750,12 @@ if __name__ == '__main__':
         time_diff_hour = time_diff.total_seconds() / 3600
         time_interest_dt = [datetime.strptime(start_time_str,"%Y%m%d%H%M") + timedelta(hours=t) for t in list(range(0, int(time_diff_hour)+1, 1))]
         DAtimes = [time_dt.strftime("%Y%m%d%H%M") for time_dt in time_interest_dt]
+
+    ## Experiment name
+    #Expers= []
+    #for ida in DA:
+    #    Expers.append( UD.generate_one_name( Storm,ida,MP ) )
+    Expers= ['IR-TuneWSM6-J_DA+J_WRF+J_init-SP-intel17-WSM6-30hr-hroi900',]
 
     # Plot low-level circulation
     if Plot_UV10_slp:
