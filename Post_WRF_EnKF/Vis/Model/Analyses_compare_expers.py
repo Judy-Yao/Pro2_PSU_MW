@@ -6,10 +6,6 @@ from datetime import datetime, timedelta
 import glob
 import netCDF4 as nc
 from wrf import getvar
-# It might be possible that you are not able to conda install wrf-var with a pretty new python version
-# Solution:
-# 1. conda create -n $PYTHON34_ENV_NAME python=3.4 anaconda 
-# 2. conda activate python=3.4 (use wrf-python in this python environment)
 import math
 import matlab.engine
 import scipy as sp
@@ -20,11 +16,13 @@ import matplotlib.ticker as mticker
 from matplotlib import pyplot as plt
 from cartopy import crs as ccrs
 from cartopy.mpl.gridliner import LONGITUDE_FORMATTER, LATITUDE_FORMATTER
-from Util_data import read_bestrack
 from mpl_toolkits.axes_grid1 import make_axes_locatable
 import time
 import subprocess
 from itertools import chain
+
+from Util_data import read_bestrack
+import Util_data as UD
 
 # setting font sizeto 30
 plt.rcParams.update({'font.size': 15})
@@ -214,8 +212,8 @@ def find_minSLP( wrfout ):
     lat_minslp = ncdir.variables['XLAT'][:].flatten()[idx]
     lon_minslp = ncdir.variables['XLONG'][:].flatten()[idx]
 
-    minSLP = [lat_minslp,lon_minslp,min_slp.values]
-    return minSLP
+    min_slp = [lat_minslp,lon_minslp,min_slp.values]
+    return min_slp
 
 def plot_slp_timeseries( small_dir, Storm, Expers, DAtimes, Evo_slp ):
 
@@ -226,10 +224,10 @@ def plot_slp_timeseries( small_dir, Storm, Expers, DAtimes, Evo_slp ):
     # Plot obs and mean
     ax.plot_date(dates, Evo_slp['obs_slp'], 'black', label='TCvital', linestyle='-',linewidth='4',)
     if slp_xa and not slp_xb: 
-        ax.plot_date(dates, Evo_slp['xa_slp'][0,:], 'red', label='YES', linestyle='-',linewidth='4',)
-        #ax.plot_date(dates, Evo_slp['xa_slp'][1,:], 'red', label='IR+MW-THO', linestyle='--',linewidth='4',)
-        ax.plot_date(dates, Evo_slp['xa_slp'][1,:], 'blue', label='NO', linestyle='-',linewidth='4',)
-        #ax.plot_date(dates, Evo_slp['xa_slp'][3,:], 'blue', label='IR+MW-WSM6', linestyle='--',linewidth='4',)
+        ax.plot_date(dates, Evo_slp['xa_slp'][0,:], 'red', label='IR-THO', linestyle='-',linewidth='4',)
+        ax.plot_date(dates, Evo_slp['xa_slp'][1,:], 'red', label='IR+MW-THO', linestyle='--',linewidth='4',)
+        ax.plot_date(dates, Evo_slp['xa_slp'][2,:], 'blue', label='IR-WSM6', linestyle='-',linewidth='4',)
+        ax.plot_date(dates, Evo_slp['xa_slp'][3,:], 'blue', label='IR+MW-WSM6', linestyle='--',linewidth='4',)
     if slp_xb and not slp_xa:
         ax.plot_date(dates, Evo_slp['xb_slp'][0,:], 'red', label='YES', linestyle='-',linewidth='4',)
         ax.plot_date(dates, Evo_slp['xb_slp'][1,:], 'blue', label='NO', linestyle='-',linewidth='4',)
@@ -260,7 +258,7 @@ def plot_slp_timeseries( small_dir, Storm, Expers, DAtimes, Evo_slp ):
     ax.set_xlim( start_time, end_time)
     ax.tick_params(axis='x', labelrotation=45,labelsize=15)
     ax.set_ylabel('Minimum Sea Level Pressure (hPa)',fontsize=24)
-    ax.set_ylim(900,990) #( 920,1020 ) #(970,1020)
+    ax.set_ylim(970,1020) #( 920,1020 ) #(970,1020)
 
     #title_name = Storm+'('+Exper_name+')'+': mim SLP'
     title_name = Storm+': mim SLP (hPa)'
@@ -277,6 +275,8 @@ def plot_slp_timeseries( small_dir, Storm, Expers, DAtimes, Evo_slp ):
 def Gather_slp( Storm, Expers, DAtimes, big_dir ):
 
     # Initialize container
+    dict_minSLP = {}
+
     obs_minslp_lat = []
     obs_minslp_lon = []
     obs_minslp_value = []
@@ -291,12 +291,11 @@ def Gather_slp( Storm, Expers, DAtimes, big_dir ):
         xb_minslp_lon = [[] for i in range(len(Expers))]
         xb_minslp_value = [[] for i in range(len(Expers))]
 
-    # Obtain min slp
+    # Obtain min slp from WRF output
     for DAtime in DAtimes:
-
-        # collect min slp found from WRF output
         for Exper in Expers:
             idx = Expers.index( Exper )
+        #for DAtime in DAtimes:
             if slp_xa:
                 xa_dir = big_dir+Storm+'/'+Exper+'/fc/'+DAtime+'/wrf_enkf_output_d03_mean'
                 print('Reading the EnKF posterior mean from ', xa_dir)
@@ -304,7 +303,7 @@ def Gather_slp( Storm, Expers, DAtimes, big_dir ):
                 xa_minslp_lat[idx].append( list_xa[0] )
                 xa_minslp_lon[idx].append( list_xa[1] )
                 xa_minslp_value[idx].append( list_xa[2] )
-
+    
             if slp_xb:
                 xb_dir = big_dir+Storm+'/'+Exper+'/fc/'+DAtime+'/wrf_enkf_input_d03_mean'
                 print('Reading the EnKF prior mean from ', xb_dir)
@@ -313,6 +312,17 @@ def Gather_slp( Storm, Expers, DAtimes, big_dir ):
                 xb_minslp_lon[idx].append( list_xb[1] )
                 xb_minslp_value[idx].append( list_xb[2] )
 
+    if slp_xa:
+        dict_minSLP['xa_slp'] = np.array(xa_minslp_value)
+        dict_minSLP['xa_lat'] = np.array(xa_minslp_lat)
+        dict_minSLP['xa_lon'] = np.array(xa_minslp_lon)
+    if slp_xb:
+        dict_minSLP['xb_slp'] = np.array(xb_minslp_value)
+        dict_minSLP['xb_lat'] = np.array(xb_minslp_lat)
+        dict_minSLP['xb_lon'] = np.array(xb_minslp_lon)
+
+    # Obtain assimilated min slp
+    for DAtime in DAtimes:
         # collect assimilated min slp obs from TCvital record in fort.10000
         diag_enkf = big_dir+Storm+'/'+Expers[0]+'/run/'+DAtime+'/enkf/d03/fort.10000'
         print('Reading the EnKF diagnostics from ', diag_enkf)
@@ -327,33 +337,42 @@ def Gather_slp( Storm, Expers, DAtimes, big_dir ):
             obs_minslp_value.append( float(list_enkf_minSlp[9])/100 )
         else : # at least two min slp records are assimilated
             print('At least two min slp obs are assimilated!')
-            # find the index/location of 'slp' in fort.10000
-            indices = [i for i ,e in enumerate(list_enkf_minSlp) if e == 'slp']
-            # assemble a pair of coordinate for each 'slp'
-            coor_pair = [ np.array([float(list_enkf_minSlp[it+1]),float(list_enkf_minSlp[it+2])]) for it in indices]
             # find the index of the current time
             idx_time = DAtimes.index( DAtime )
             # assemble the diagnosed min slp from an analysis
-            model_minslp = np.array([xa_minslp_lat[0][idx_time],xa_minslp_lon[0][idx_time]] )
-            # find the nearest TCvital min slp from the analysis
-            distances = [ np.sum(np.square(coor_pair[it], model_minslp )) for it in range(len(coor_pair))]
+            xa_ms_lat = xa_minslp_lat[0][idx_time]
+            xa_ms_lon = xa_minslp_lon[0][idx_time]
+            # ---condition 1: find the nearest TCvital min slp from the analysis
+            # find the index/location of 'slp' in fort.10000
+            indices = [i for i ,e in enumerate(list_enkf_minSlp) if e == 'slp']
+            # assemble a pair of coordinate for each 'slp'
+            distances = []
+            obs_slp = []
+            for it in indices:
+                obs_slp.append( float(list_enkf_minSlp[it+9]) )
+                lon1 = float(list_enkf_minSlp[it+2])
+                lat1 = float(list_enkf_minSlp[it+1])
+                distances.append( UD.mercator_distance(lon1, lat1, xa_ms_lon, xa_ms_lat) )
             min_distances = [np.amin(distances) == it for it in distances]
-            idx_coor = min_distances.index(True)
+            idx_nearest = min_distances.index(True)
+            # ---condition 2: the min slp
+            min_obs_slp = [np.amin(obs_slp) == it for it in obs_slp]
+            idx_min = min_obs_slp.index(True)
+            # ---combine the two conditions
+            if idx_min == idx_nearest:
+                idx_coor = idx_min
+                print('Storm center is choosed with two condtions met!')
+            else:
+                print('Not sure which obs is the storm center. Go with the min value one!')
+                idx_coor = idx_min
+            
             # gather this TCvital min slp
             obs_minslp_lat.append( float(list_enkf_minSlp[indices[idx_coor]+1]) )
             obs_minslp_lon.append( float(list_enkf_minSlp[indices[idx_coor]+2]) )
             obs_minslp_value.append( float(list_enkf_minSlp[indices[idx_coor]+9])/100 )
 
     # Assemble the dictionary
-    dict_minSLP = {'obs_slp':np.array(obs_minslp_value),}
-    if slp_xa:
-        dict_minSLP['xa_slp'] = np.array(xa_minslp_value)
-        dict_minSLP['xa_lat'] = np.array(xa_minslp_lat)
-        dict_minSLP['xa_lon'] = np.array(xa_minslp_lon)
-    if slp_xb:
-        dict_minSLP['xb_slp'] = np.array(xb_minslp_value)
-        dict_minSLP['xb_lat'] = np.array(xb_minslp_lat)
-        dict_minSLP['xb_lon'] = np.array(xb_minslp_lon) 
+    dict_minSLP['obs_slp'] = np.array(obs_minslp_value)
 
     return dict_minSLP
 
@@ -361,8 +380,9 @@ def Gather_slp( Storm, Expers, DAtimes, big_dir ):
 
 if __name__ == '__main__':
 
-    Storm = 'IRMA'
-    Expers = ['IR-TuneWSM6-J_DA+J_WRF+J_init-SP-intel17-WSM6-30hr-hroi900','IR-J_DA+J_WRF+J_init-SP-intel17-WSM6-30hr-hroi900']
+    Storm = 'HARVEY'
+    Expers = ['JerryRun/IR_THO','JerryRun/MW_THO','JerryRun/IR_WSM6','JerryRun/MW_WSM6']
+    #Expers = ['IR-TuneWSM6-J_DA+J_WRF+J_init-SP-intel17-WSM6-30hr-hroi900','IR-J_DA+J_WRF+J_init-SP-intel17-WSM6-30hr-hroi900']
     #Expers = ['IR-J_DA+J_WRF+J_init-SP-intel17-THO-30hr-hroi900','IR+MW-J_DA+J_WRF+J_init-SP-intel17-THO-30hr-hroi900','IR-J_DA+J_WRF+J_init-SP-intel17-WSM6-30hr-hroi900','IR+MW-J_DA+J_WRF+J_init-SP-intel17-WSM6-30hr-hroi900',]
     big_dir = '/scratch/06191/tg854905/Pro2_PSU_MW/'
     small_dir = '/work2/06191/tg854905/stampede2/Pro2_PSU_MW/'
@@ -372,11 +392,11 @@ if __name__ == '__main__':
     Com_minslp_evo = True
 
     slp_xa = True
-    slp_xb = True
+    slp_xb = False
 
     # Time range set up
-    start_time_str = '201709030000'
-    end_time_str = '201709050000'
+    start_time_str = '201708221200'
+    end_time_str = '201708241200'
     Consecutive_times = True
 
     if not Consecutive_times:
