@@ -23,33 +23,6 @@ from Util_Vis import HydroIncre
 import Diagnostics as Diag
 
 
-# Create experiment names 
-def generate_names( MP,Storms ):
-    
-    Exper_names = {}
-    for istorm in Storms:
-        if MP == 'THO':
-            if istorm == 'HARVEY':
-                Exper_names[istorm] = 'JerryRun/IR_THO' 
-            elif istorm == 'IRMA' or istorm == 'JOSE':
-                Exper_names[istorm] = 'IR-J_DA+J_WRF+J_init-SP-intel17-THO-30hr-hroi900' 
-            elif istorm == 'MARIA':
-                Exper_names[istorm] = 'IR-J_DA+J_WRF+J_init-SP-intel17-THO-24hr-hroi900' 
-            else:
-                raise ValueError('No corresponding name!')
-        elif MP == 'WSM6': 
-            if istorm == 'HARVEY':
-                Exper_names[istorm] = 'JerryRun/IR_WSM6' 
-            elif istorm == 'IRMA' or istorm == 'JOSE':
-                Exper_names[istorm] = 'IR-J_DA+J_WRF+J_init-SP-intel17-WSM6-30hr-hroi900' 
-            elif istorm == 'MARIA':
-                Exper_names[istorm] = 'IR-J_DA+J_WRF+J_init-SP-intel17-WSM6-24hr-hroi900' 
-            else:
-                raise ValueError('No corresponding name!')
-
-    return Exper_names
-
-
 # Generate time series
 def generate_times( Storms, start_time_str, end_time_str ):
 
@@ -141,7 +114,7 @@ def plot_var_incre_timeseries( ave_var_overT,N_times,geoHkm=None ):
 
     # Set title
     if 'rt_vo' in var_name:
-        title_name = 'EnKF Increment: relative vorticity ($10^-5$ s-1) in a circle with R='+str(radius_threshold)+' KM'
+        title_name = 'EnKF Increment: relative vorticity ($10^-5$ s-1) in the circle area (center@best-track) with R='+str(radius_threshold)+' KM'
     else:
         pass
     ax.set_title( title_name,fontweight="bold",fontsize='11' )
@@ -223,7 +196,7 @@ if __name__ == '__main__':
 
     # ---------- Configuration -------------------------
     Storms = ['HARVEY','IRMA','JOSE','MARIA']
-    MP = 'WSM6'
+    MP = 'THO'
     v_interest = ['rt_vo']
     fort_v = ['obs_type','lat','lon','obs']
 
