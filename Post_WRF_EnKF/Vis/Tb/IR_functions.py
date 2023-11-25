@@ -19,10 +19,13 @@ def read_GOES16(filename, lonlat=True):
     Tb_dict = {}
     print(filename)
     ncfile = Dataset(filename)
+    # cloud and moisture imagery TB
     tb = ncfile.variables['CMI'][:]
-    Tb_dict['tb'] = tb[::-1,:]
+    Tb_dict['Yo'] = tb[::-1,:]
     if lonlat:
+        # GOES fixed grid projection x-coordinate (units: rad)
         x = ncfile.variables['x'][:]
+        # GOES fixed grid projection y-coordinate (units: rad) 
         y = ncfile.variables['y'][:]
         xx, yy = np.meshgrid(x,y)
         a = np.sin(xx)**2 + np.cos(xx)**2 * (np.cos(yy)**2 + Req**2/Rpol**2 * np.sin(yy)**2)
@@ -34,8 +37,8 @@ def read_GOES16(filename, lonlat=True):
         Sz = Rs * np.cos(xx) * np.sin(yy)
         lats = np.arctan( Req**2/Rpol**2 * Sz / np.sqrt((H - Sx)**2 + Sy**2))
         lons = ramda_o - np.arctan(Sy / (H - Sx))
-        Tb_dict['lons'] = lons[::-1,:]/pi*180.
-        Tb_dict['lats'] = lats[::-1,:]/pi*180.
+        Tb_dict['lon'] = lons[::-1,:]/pi*180.
+        Tb_dict['lat'] = lats[::-1,:]/pi*180.
 
     ncfile.close()
     return Tb_dict

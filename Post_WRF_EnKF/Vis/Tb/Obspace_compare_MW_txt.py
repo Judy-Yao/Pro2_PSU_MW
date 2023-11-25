@@ -578,7 +578,7 @@ if __name__ == '__main__':
 
     # ---------- Configuration -------------------------
     Storm = 'JOSE'
-    DA = 'IR+MW'
+    DA = 'IR'
     MP = 'WSM6'
 
     start_time_str = '201709050000'

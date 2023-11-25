@@ -51,7 +51,7 @@ def plot_Tb( Storm, Exper_name, Hxb, FCtime):
     #    print( 'Location from TCvital: ', tc_lon, tc_lat )
 
     # ------------------ Plot -----------------------
-    f, ax=plt.subplots(1, 3, subplot_kw={'projection': ccrs.PlateCarree()}, gridspec_kw = {'wspace':0, 'hspace':0}, linewidth=0.5, sharex='all', sharey='all',  figsize=(5,2.5), dpi=400)
+    f, ax=plt.subplots(1, 3, subplot_kw={'projection': ccrs.PlateCarree()}, gridspec_kw = {'wspace':0, 'hspace':0}, linewidth=0.5, sharex='all', sharey='all',  figsize=(12,5), dpi=400) #
 
     # Define the domain
     lat_min = np.amin(d_simu['Lat_x'])
@@ -100,7 +100,7 @@ def plot_Tb( Storm, Exper_name, Hxb, FCtime):
     lon_ticks = list(range(math.ceil(lon_min)-2, math.ceil(lon_max)+2,2))
     lat_ticks = list(range(math.ceil(lat_min)-2, math.ceil(lat_max)+2,2))
     for j in range(3):
-        gl = ax[j].gridlines(crs=ccrs.PlateCarree(),draw_labels=False,linewidth=0.1, color='gray', alpha=0.5, linestyle='--')
+        gl = ax[j].gridlines(crs=ccrs.PlateCarree(),draw_labels=False,linewidth=0.5, color='gray', alpha=0.5, linestyle='--')
        
         gl.xlabels_top = False
         gl.xlabels_bottom = True
@@ -115,15 +115,15 @@ def plot_Tb( Storm, Exper_name, Hxb, FCtime):
         gl.xlocator = mticker.FixedLocator(lon_ticks)
         gl.xformatter = LONGITUDE_FORMATTER
         gl.yformatter = LATITUDE_FORMATTER
-        gl.xlabel_style = {'size': 4}
-        gl.ylabel_style = {'size': 6}
+        gl.xlabel_style = {'size': 12}
+        gl.ylabel_style = {'size': 18}
 
     head_tail = os.path.split( Hxb )
     mem = head_tail[1].replace('TB_GOES_CRTM_','')
     #mem = mem.replace('_d03_2017-08-22_12:00.bin','')
     #des_name = small_dir+Storm+'/'+Exper_name+'/Vis_analyze/Tb/IR/60mem/'+FCtime+'_'+mem+'_mspace.png'
     des_name = Exper_name+'.png'
-    plt.savefig( des_name, dpi=300)
+    plt.savefig( des_name, dpi=400)
     print('Saving the figure: ', des_name)
  
 
@@ -163,7 +163,7 @@ if __name__ == '__main__':
             #file_Diag = big_dir+Storm+'/'+Exper_name+'/run/'+FCtime+'/enkf/d03/fort.10000'
             #d_obs = Diag.Find_IR( file_Diag, fort_v )
 
-            Hx_dir = '/scratch/06191/tg854905/Pro2_PSU_MW/IRMA/IR-J_DA+J_WRF+J_init-SP-intel17-WSM6-30hr-hroi900/forecast_modify_wsm6/wsm6_atvs6_alpha05_n0smax1e12/'#big_dir+Storm+'/'+Exper_name+'/Obs_Hx/IR/'+FCtime+'/'
+            Hx_dir = '/scratch/06191/tg854905/Pro2_PSU_MW/IRMA/IR-J_DA+J_WRF+J_init-SP-intel17-WSM6-30hr-hroi900/forecast_modify_wsm6/wsm6_atvs6_alpha05_n0smax1e12'
             file_y = sorted( glob.glob(Hx_dir + '/TB_GOES_CRTM_*.bin') )
             print('------------ Plot ----------------------')
             for ifile in file_y:

@@ -223,29 +223,29 @@ def Plot_hist_IRall( d_hcount ):
 
 def Plot_hist_IRsum( d_hcount ):
 
-    fig,axs = plt.subplots(1,1, figsize=(8.3,8), dpi=300 )
+    fig,axs = plt.subplots(1,1, figsize=(9.3,9), dpi=300 )
 
     x_axis = (range_bins[:-1]+range_bins[1:])/2
     idx = 0
 
     if bin_Tbdiff:
         for outkey in d_hcount:
-            if outkey == 'updateW':
+            if outkey == 'Tune':
                 for key in d_hcount[outkey]:
                     if key == 'diff_ob':
-                        axs.plot(x_axis,d_hcount[outkey][key],color='red',linestyle='-',linewidth='4',label='YES:H(Xb)-Obs')
+                        axs.plot(x_axis,d_hcount[outkey][key],color='blue',linestyle='-',linewidth='4',label='MD:'+r'$\mathbf{\overline{H(Xb)}}$'+'-Obs')
                     elif key == 'diff_oa':
-                        axs.plot(x_axis,d_hcount[outkey][key],color='blue',linestyle='-',linewidth='4',label='YES:H(Xa)-Obs')
+                        axs.plot(x_axis,d_hcount[outkey][key],color='blue',linestyle='--',linewidth='4',label='MD:'+r'$\mathbf{\overline{H(Xa)}}$'+'-Obs')
             else:
                 for key in d_hcount[outkey]:
                     if key == 'diff_ob':
-                        axs.plot(x_axis,d_hcount[outkey][key],color='grey',linestyle='-',linewidth='4',label='NO:H(Xb)-Obs')
+                        axs.plot(x_axis,d_hcount[outkey][key],color='red',linestyle='-',linewidth='4',label='Ref:'+r'$\mathbf{\overline{H(Xb)}}$'+'-Obs')
                     elif key == 'diff_oa':
-                        axs.plot(x_axis,d_hcount[outkey][key],color='grey',linestyle='--',linewidth='4',label='NO:H(Xa)-Obs')
+                        axs.plot(x_axis,d_hcount[outkey][key],color='red',linestyle='--',linewidth='4',label='Ref:'+r'$\mathbf{\overline{H(Xa)}}$'+'-Obs')
                 idx = idx+1
     else:
         for outkey in d_hcount:
-            if outkey == 'updateW':
+            if outkey == 'Tune':
                 for key in d_hcount[outkey]:
                     if key == 'Yo_obs':
                         axs.plot(x_axis,d_hcount[outkey][key],color='black',linestyle='-',linewidth='4',label='Obs')
@@ -266,9 +266,9 @@ def Plot_hist_IRsum( d_hcount ):
                         pass
                 idx = idx+1
 
-    axs.legend(frameon=True,loc='upper right',fontsize='22')
+    axs.legend(frameon=True,loc='upper right',fontsize='18')
     axs.grid(True,linestyle='--',alpha=0.5)
-    axs.set_title( 'IR: if update W or not',fontweight="bold",fontsize='15' )
+    axs.set_title( 'IR_WSM6',fontweight="bold",fontsize='15' )
 
     axs.tick_params(axis='x', labelsize=24)
     axs.tick_params(axis='y', labelsize=20)
@@ -300,14 +300,14 @@ if __name__ == '__main__':
     # ---------- Configuration -------------------------
     Storm = 'IRMA'
     DA = 'IR'
-    MP = ['updateW','']#['THO','WSM6']
+    MP = ['','Tune']#['THO','WSM6']
 
     sensor = 'abi_gr'
     ch_list = ['8',]
     fort_v = ['obs_type','lat','lon','obs']
 
-    start_time_str = '201709030000'
-    end_time_str = '201709031200'
+    start_time_str = '201709030100'
+    end_time_str = '201709040000'
     Consecutive_times = True
 
     number_bins = 50
@@ -324,7 +324,7 @@ if __name__ == '__main__':
     # ------------------------------------------------------   
 
     # Create experiment names
-    Expers = ['IR-updateW-J_DA+J_WRF+J_init-SP-intel17-WSM6-30hr-hroi900','IR-J_DA+J_WRF+J_init-SP-intel17-WSM6-30hr-hroi900']#[]
+    Expers = ['IR-J_DA+J_WRF+J_init-SP-intel17-WSM6-30hr-hroi900','IR-TuneWSM6-J_DA+J_WRF+J_init-SP-intel17-WSM6-30hr-hroi900',]#[]
     #Expers.append( UD.generate_one_name( Storm,DA,MP))
     #for imp in MP:
     #    Expers.append( UD.generate_one_name( Storm,DA,imp) )

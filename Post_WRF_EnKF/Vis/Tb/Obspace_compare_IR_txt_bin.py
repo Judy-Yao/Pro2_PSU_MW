@@ -336,9 +336,9 @@ def read_Tb_modelRes(Tb_file, sensor ):
     ch_obs = np.array( ch_obs )
     meanYb_obs = np.array( meanYb_obs )
     meanYa_obs = np.array( meanYa_obs )
-    print('Number of NaN in meanYa_obs', sum(np.isnan(meanYa_obs)))
+    print('Number of NaN in meanYa_model', sum(np.isnan(meanYa_obs)))
 
-    dict_Tb_all = {'lat_obs':lat_obs, 'lon_obs':lon_obs, 'ch_obs':ch_obs,'meanYb_obs':meanYb_obs, 'meanYa_obs':meanYa_obs}
+    dict_Tb_all = {'lat_model':lat_obs, 'lon_model':lon_obs, 'ch_model':ch_obs,'meanYb_model':meanYb_obs, 'meanYa_model':meanYa_obs}
     return dict_Tb_all
 
 # ------------------------------------------------------------------------------------------------------
@@ -611,31 +611,31 @@ if __name__ == '__main__':
     small_dir =  '/work2/06191/tg854905/stampede2/Pro2_PSU_MW/'
 
     # ---------- Configuration -------------------------
-    Storm = 'IRMA'
+    Storm = 'JOSE'
     DA = 'IR'
-    MP = 'THO'
+    MP = 'WSM6'
  
     sensor = 'abi_gr'
     ch_list = ['8',]
     fort_v = ['obs_type','lat','lon','obs']
 
-    start_time_str = '201709030000' 
-    end_time_str = '201709050000'
+    start_time_str = '201709052100' 
+    end_time_str = '201709052100'
     Consecutive_times = True
     
     # limitations
     limit = False
 
-    Interp_to_obs = False
+    Interp_to_obs = True
     plot_full = True
-    plot_diff = True
+    plot_diff = False
     plot_scatter = True
     # ------------------------------------------------------   
 
     # Create experiment names
 
-    Exper_name = UD.generate_one_name( Storm,DA,MP )#'IR-updateW-J_DA+J_WRF+J_init-SP-intel17-WSM6-30hr-hroi900'#UD.generate_one_name( Storm,DA,MP )
-
+    Exper_name = UD.generate_one_name( Storm,DA,MP )
+    Exper_obs =  UD.generate_one_name( Storm,'IR',MP )
     
     if not Consecutive_times:
         IR_times = ['201709030100',]
@@ -651,7 +651,7 @@ if __name__ == '__main__':
     if Interp_to_obs:
         for DAtime in IR_times:
             # Read assimilated obs 
-            file_Diag = big_dir+Storm+'/'+Exper_name+'/run/'+DAtime+'/enkf/d03/fort.10000'
+            file_Diag = big_dir+Storm+'/'+Exper_obs+'/run/'+DAtime+'/enkf/d03/fort.10000'
             d_obs = Diag.Find_IR( file_Diag, fort_v )
 
             Hx_dir = big_dir+Storm+'/'+Exper_name+'/Obs_Hx/IR/'+DAtime+'/'
