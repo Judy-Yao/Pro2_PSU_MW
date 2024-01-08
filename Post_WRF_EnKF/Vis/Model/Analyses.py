@@ -22,6 +22,7 @@ from cartopy import crs as ccrs
 from cartopy.mpl.gridliner import LONGITUDE_FORMATTER, LATITUDE_FORMATTER
 from mpl_toolkits.axes_grid1 import make_axes_locatable
 import time
+import subprocess
 
 import Util_data as UD
 
@@ -224,7 +225,7 @@ def plot_slp_timeseries( small_dir, Storm, Expers, DAtimes, Evo_slp ):
     ax.set_xlim( start_time, end_time)
     ax.tick_params(axis='x', labelrotation=45,labelsize=15)
     ax.set_ylabel('Minimum Sea Level Pressure (hPa)',fontsize=15)
-    ax.set_ylim( 900,980 ) #1010,1012
+    ax.set_ylim( 980,1020)
 
     #title_name = Storm+'('+Exper_name+')'+': mim SLP'
     title_name = Storm+': mim SLP'
@@ -274,23 +275,39 @@ def Gather_slp( Storm, Expers, DAtimes, big_dir ):
             obs_minslp_value.append( float(list_enkf_minSlp[9])/100 )
         else : # at least two min slp records are assimilated
             print('At least two min slp obs are assimilated!')
-            # find the index/location of 'slp' in fort.10000
-            indices = [i for i ,e in enumerate(list_enkf_minSlp) if e == 'slp']
-            # assemble a pair of coordinate for each 'slp'
-            coor_pair = [ np.array([float(list_enkf_minSlp[it+1]),float(list_enkf_minSlp[it+2])]) for it in indices]
             # find the index of the current time
             idx_time = DAtimes.index( DAtime )
             # assemble the diagnosed min slp from an analysis
-            model_minslp = np.array([xa_minslp_lat[0][idx_time],xa_minslp_lon[0][idx_time]] )
-            # find the nearest TCvital min slp from the analysis
-            distances = [ np.sum(np.square(coor_pair[it], model_minslp )) for it in range(len(coor_pair))]
+            xa_ms_lat = xa_minslp_lat[0][idx_time]
+            xa_ms_lon = xa_minslp_lon[0][idx_time]
+            # ---condition 1: find the nearest TCvital min slp from the analysis
+            # find the index/location of 'slp' in fort.10000
+            indices = [i for i ,e in enumerate(list_enkf_minSlp) if e == 'slp']
+            # assemble a pair of coordinate for each 'slp'
+            distances = []
+            obs_slp = []
+            for it in indices:
+                obs_slp.append( float(list_enkf_minSlp[it+9]) )
+                lon1 = float(list_enkf_minSlp[it+2])
+                lat1 = float(list_enkf_minSlp[it+1])
+                distances.append( UD.mercator_distance(lon1, lat1, xa_ms_lon, xa_ms_lat) )
             min_distances = [np.amin(distances) == it for it in distances]
-            idx_coor = min_distances.index(True)
+            idx_nearest = min_distances.index(True)
+            # ---condition 2: the min slp
+            min_obs_slp = [np.amin(obs_slp) == it for it in obs_slp]
+            idx_min = min_obs_slp.index(True)
+            # ---combine the two conditions
+            if idx_min == idx_nearest:
+                idx_coor = idx_min
+                print('Storm center is choosed with two condtions met!')
+            else:
+                print('Not sure which obs is the storm center. Go with the min value one!')
+                idx_coor = idx_min
+
             # gather this TCvital min slp
             obs_minslp_lat.append( float(list_enkf_minSlp[indices[idx_coor]+1]) )
             obs_minslp_lon.append( float(list_enkf_minSlp[indices[idx_coor]+2]) )
-            obs_minslp_value.append( float(list_enkf_minSlp[indices[idx_coor]+9])/100 )
- 
+            obs_minslp_value.append( float(list_enkf_minSlp[indices[idx_coor]+9])/100 ) 
 
     dict_minSLP = {'obs_slp':np.array(obs_minslp_value),'obs_lat':np.array(obs_minslp_lat),'obs_lon':np.array(obs_minslp_lon),'xa_slp':np.array(xa_minslp_value),'xa_lat':np.array(xa_minslp_lat), 'xa_lon':np.array(xa_minslp_lon)}
     return dict_minSLP
@@ -622,7 +639,7 @@ def plot_rt_vo( Storm, Exper_name, DAtime, wrf_dir, plot_dir ):
     fig, ax=plt.subplots(2, 2, subplot_kw={'projection': ccrs.PlateCarree()}, gridspec_kw = {'wspace':0, 'hspace':0}, linewidth=0.5, sharex='all', sharey='all',  figsize=(6.8,6.5), dpi=400)
     
     # customize the colormap
-    color_intervals = [-5,-2.5,0.0,2.0,4.0,6.0,8.0,10.0]
+    color_intervals = [-5,-2.5,0.0,5.0,7.5,10.0,12.5,15.0,]
     exist_cmap = plt.cm.rainbow
     colors = exist_cmap(np.linspace(0,1,len(color_intervals)))
     new_map = mcolors.LinearSegmentedColormap.from_list('custom_colormap',colors,N=len(color_intervals))
@@ -658,8 +675,8 @@ def plot_rt_vo( Storm, Exper_name, DAtime, wrf_dir, plot_dir ):
     #subplot title
     ax[0,0].set_title( 'Xb: '+str(P_of_interest[0])+' hPa', fontweight='bold')
     ax[0,1].set_title( 'Xb: '+str(P_of_interest[1])+' hPa', fontweight='bold')
-    #ax[1,0].set_title( 'Xa: '+str(P_of_interest[0])+' hPa', fontweight='bold')
-    #ax[1,1].set_title( 'Xa: '+str(P_of_interest[1])+' hPa', fontweight='bold')
+    ax[1,0].set_title( 'Xa: '+str(P_of_interest[0])+' hPa', fontweight='bold')
+    ax[1,1].set_title( 'Xa: '+str(P_of_interest[1])+' hPa', fontweight='bold')
 
     #title for all
     fig.suptitle(Storm+': '+Exper_name+'low level circulation', fontsize=8, fontweight='bold')
@@ -725,8 +742,8 @@ if __name__ == '__main__':
     small_dir = '/work2/06191/tg854905/stampede2/Pro2_PSU_MW/'
 
     # -------- Configuration -----------------
-    Storm = 'IRMA'
-    DA = ['IR+MW']   
+    Storm = 'HARVEY'
+    DA = ['IR']   
     MP = 'WSM6' 
 
     Plot_UV10_slp = True
@@ -736,12 +753,12 @@ if __name__ == '__main__':
     # -----------------------------------------
 
     # Time range set up
-    start_time_str = '201709030700'
-    end_time_str = '201709030700'
-    Consecutive_times = True
+    start_time_str = '201708221200'
+    end_time_str = '201708241200'
+    Consecutive_times = False
 
     if not Consecutive_times:
-        DAtimes = ['201709180000']
+        DAtimes = ['201708221500','201708221800']
         #DAtimes = ['201708230000','201708230600','201708231200','201708231800','201708240000','201708240600','201708241200']
         #DAtimes = ['201709031200','201709031800','201709040000','201709040600','201709041200','201709041800','201709050000']
         #DAtimes = ['201709161200','201709161800','201709170000','201709170600','201709171200','201709171800','201709180000']
@@ -752,10 +769,10 @@ if __name__ == '__main__':
         DAtimes = [time_dt.strftime("%Y%m%d%H%M") for time_dt in time_interest_dt]
 
     ## Experiment name
-    #Expers= []
-    #for ida in DA:
-    #    Expers.append( UD.generate_one_name( Storm,ida,MP ) )
-    Expers= ['IR-TuneWSM6-J_DA+J_WRF+J_init-SP-intel17-WSM6-30hr-hroi900',]
+    Expers= []
+    for ida in DA:
+        Expers.append( UD.generate_one_name( Storm,ida,MP ) )
+    #Expers= ['IR-TuneWSM6-J_DA+J_WRF+J_init-SP-intel17-WSM6-30hr-hroi900',]
 
     # Plot low-level circulation
     if Plot_UV10_slp:
