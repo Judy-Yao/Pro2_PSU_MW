@@ -240,10 +240,12 @@ def ijk_obs(lon_x, lat_x, H_x, lon_f, lat_f, H_f ):
     #print('The location of the obs in the jth direction is: ', j_prime)
 
     # --- interpolate the height profile of model points to the obs location ---
-    H_left_bot = H_x[:,j_PlusOne,i_MinusOne]
+    #H_left_bot = H_x[:,j_PlusOne,i_MinusOne]
+    H_left_bot = H_x[:,j_MinusOne,i_MinusOne]
     H_left_up = H_x[:,j_PlusOne,i_MinusOne]
+    #H_right_bot = H_x[:,j_PlusOne,i_PlusOne]
     H_right_bot = H_x[:,j_PlusOne,i_PlusOne]
-    H_right_up = H_x[:,j_PlusOne,i_PlusOne]
+    H_right_up = H_x[:,j_MinusOne,i_PlusOne]
     
     # perform the bilinear interpolation over an unit area
     area = (i_PlusOne-i_MinusOne)*(j_PlusOne-j_MinusOne)
@@ -302,7 +304,7 @@ def interp_v_to_obs_matlab( wrf_out, dict_AF_hour ):
 
     PHB = ncdir.variables['PHB'][0,:,:,:]
     PH = ncdir.variables['PH'][0,:,:,:]
-    GP = PHB+PH
+    GP = PHB+PH #bottom_top, south_north, west_east
     GP_mass = (GP[0:-1:1,:,:] + GP[1::1,:,:])/2 # interpolate staggered point to the mass grid 
     Height_mass_x = (GP_mass/9.8)#[::4,::10,::10] # Convert the geopotential to height
 

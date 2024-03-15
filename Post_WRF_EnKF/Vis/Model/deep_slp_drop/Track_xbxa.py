@@ -1,5 +1,3 @@
-#!/work2/06191/tg854905/stampede2/opt/anaconda3/lib/python3.7
-
 import os,fnmatch # functions for interacting with the operating system
 import numpy as np
 from datetime import datetime, timedelta
@@ -35,7 +33,7 @@ matplotlib.rcParams['lines.markeredgewidth'] = 0
 matplotlib.rcParams['font.size'] = 20#6
 
 
-big_dir = '/scratch/06191/tg854905/Pro2_PSU_MW/'
+big_dir = '/scratch_S2/06191/tg854905/Pro2_PSU_MW/'
 small_dir =  '/work2/06191/tg854905/stampede2/Pro2_PSU_MW/'
 
 
@@ -67,8 +65,10 @@ def read_HPI_model( Storm, Exper_name, file_kind, DAtimes ):
             ws = np.sqrt( ncid.variables['U10'][:]**2 + ncid.variables['V10'][:]**2 )
             max_wind.append( np.max( ws ))
             # minimum sea level pressure
-            slp = UD.compute_slp( ncid )
-            min_slp.append( np.min( slp )) 
+            slp =  np.array(getvar(ncid, 'slp')) #UD.compute_slp( ncid )
+            min_slp_value = np.amin( slp )
+            min_slp.append( np.amin( slp ) )
+            #min_slp.append( np.min( slp )) 
             slp_smooth = sp.ndimage.filters.gaussian_filter(slp, [11, 11] )
             idx = np.nanargmin( slp_smooth )
             idx_location.append( idx )

@@ -16,6 +16,7 @@ import time
 import pickle
 from numpy.ma import masked_array
 import matplotlib.dates as mdates
+from matplotlib.dates import date2num
 
 import Util_data as UD
 
@@ -71,7 +72,7 @@ def plot_twoVarincre_timeseries( ave_var1, ave_var2, geoHkm=None):
     twoVars_nega = np.copy(ave_twoVars) # Deep copy!!!!!
     twoVars_nega[~condition1] = np.nan
     twoV_nega = ax.imshow(twoVars_nega,cmap='Blues_r',origin='lower',aspect='auto',
-                            vmin=-1,vmax=0,extent=[start_time, end_time, yv[0], yv[-1]])
+                            vmin=-1,vmax=0,extent=None) #start_time, end_time, yv[0], yv[-1]])
     cax1 = fig.add_subplot(gs[2, 0])
     cba1 = fig.colorbar(twoV_nega,cax=cax1,orientation='horizontal',pad=0.1)
     cba1.set_ticks(np.linspace(-1,0,6))
@@ -83,7 +84,7 @@ def plot_twoVarincre_timeseries( ave_var1, ave_var2, geoHkm=None):
     twoVars_posi = np.copy(ave_twoVars)
     twoVars_posi[~condition2] = np.nan
     twoV_posi = ax.imshow(twoVars_posi,cmap='Reds',origin='lower',aspect='auto',
-                            vmin=0,vmax=1,extent=[start_time, end_time, yv[0], yv[-1]])
+                            vmin=0,vmax=1,extent=None)#start_time, end_time, yv[0], yv[-1]])
     cax2 = fig.add_subplot(gs[2, -1])
     cba2 = fig.colorbar(twoV_posi,cax=cax2,orientation='horizontal',pad=0.1)
     cba2.set_ticks(np.linspace(0,1,6))
@@ -96,7 +97,7 @@ def plot_twoVarincre_timeseries( ave_var1, ave_var2, geoHkm=None):
     twoVars_disAgree[condition3] = 1.2
     twoVars_disAgree[~condition3] = np.nan
     twoV_disAgree = ax.imshow(twoVars_disAgree,cmap=plt.cm.binary,origin='lower',aspect='auto',
-                            vmin=1.1,vmax=2,extent=[start_time, end_time, yv[0], yv[-1]])
+                            vmin=1.1,vmax=2,extent=None)#start_time, end_time, yv[0], yv[-1]])
 
     # Set X/Y labels
     # set Y label
@@ -115,25 +116,19 @@ def plot_twoVarincre_timeseries( ave_var1, ave_var2, geoHkm=None):
         ax.set_yticklabels( [str(it) for it in P_of_interest[::10]],fontsize=15 )
         ax.set_ylabel('Pressure (hPa)',fontsize=15)
     # set X label
-    ax.xaxis_date()
-    date_format = mdates.DateFormatter('%m-%d %H')
-    ax.xaxis.set_major_formatter(date_format)
+    ax.xaxis.set_major_locator(plt.FixedLocator(np.arange(0,len(DAtimes),6)))
+    x_label = [time_dt.strftime("%m-%d %H") for time_dt in time_interest_dt[::6]]
+    ax.xaxis.set_ticklabels( x_label )
     ax.tick_params(axis='x', labelrotation=45, labelsize=10)
 
    # Set title
     if specify_area:
         title_name = 'Scaled-EnKF-Increment Agreement: Qvapor and rt_vo in the circle with R='+str(radius_threshold)+' KM'
     else:
-        if 'Q' in var_name:
-            title_name = 'EnKF Increment: '+var_name+' (KG/KG)'
-        elif var_name == 'T':
-            title_name = 'EnKF Increment: '+var_name+' (K)'
-        else:
-            title_name = 'EnKF Increment: '+var_name+' (M/S)'
+        pass
 
     ax.set_title( title_name,fontweight="bold",fontsize='12' )
     fig.suptitle(Storm+': '+Exper_name, fontsize=10, fontweight='bold')
-
 
     # Save the figure
     if not interp_P:
@@ -157,20 +152,20 @@ if __name__ == '__main__':
     small_dir =  '/work2/06191/tg854905/stampede2/Pro2_PSU_MW/'
 
     # ---------- Configuration -------------------------
-    Storm = 'MARIA'
-    MP = 'WSM6'
+    Storm = 'HARVEY'
+    MP = 'THO'
     DA = 'IR'
     v_interest = [['QVAPOR','rt_vo'],]
 
-    start_time_str = '201709160000'
-    end_time_str = '201709180000'
+    start_time_str = '201708221200'
+    end_time_str = '201708241200'
     Consecutive_times = True
 
     interp_P = True
     P_of_interest = list(range( 900,10,-20 ))
     interp_H = False
     specify_area = True
-    radius_threshold = 250 #km
+    radius_threshold = 300 #km
 
     If_plot_series = True
     # -------------------------------------------------------    

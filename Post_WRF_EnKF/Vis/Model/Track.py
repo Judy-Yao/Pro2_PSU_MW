@@ -289,11 +289,11 @@ def plot_one_hpi( ax0, ax1, ax2,  state, color, line, line_width, label, steps=6
             x_min_slp = state['min_slp'][idx_next6x::steps]
             x_max_ws = state['max_ws'][idx_next6x::steps]
             
-            times.insert(0,state['time'][0])
-            lon.insert(0,state['lon'][0])
-            lat.insert(0,state['lat'][0])
-            x_min_slp.insert(0,state['min_slp'][0])
-            x_max_ws.insert(0,state['max_ws'][0])
+            times = np.insert(times,0,state['time'][0])
+            lon = np.insert(lon,0,state['lon'][0])
+            lat = np.insert(lat,0,state['lat'][0])
+            x_min_slp = np.insert(x_min_slp,0,state['min_slp'][0])
+            x_max_ws = np.insert(x_max_ws,0,state['max_ws'][0])
         else:
             times = state['time'][::steps]
             lon = state['lon'][::steps]
@@ -313,11 +313,11 @@ def plot_one_hpi( ax0, ax1, ax2,  state, color, line, line_width, label, steps=6
 
         # intensity
         dates = [datetime.strptime(i,"%Y%m%d%H%M") for i in times]
-        ax1.plot_date(dates, x_min_slp, color=color, label=label, linestyle=line)
-        ax2.plot_date(dates, x_max_ws, color=color, label=label, linestyle=line)
+        ax1.plot_date(dates, x_min_slp, color=color, label=label, linestyle=line, linewidth=line_width,)
+        ax2.plot_date(dates, x_max_ws, color=color, label=label, linestyle=line, linewidth=line_width,)
 
 
-def plot_hpi_df( Config, domain_range ):
+def plot_hpi_df( Config ):
 
     wrf_dir = Config[0]
     Storm = Config[1]
@@ -342,6 +342,7 @@ def plot_hpi_df( Config, domain_range ):
     Exper_content_lbl = {}
     for iExper in Exper:
         if iExper is not None:
+            #Exper_content_lbl[iExper] = sorted(fnmatch.filter(os.listdir( wrf_dir+'/'+Storm+'/'+iExper+'/' ),'20*input')) 
             if os.path.exists( wrf_dir+'/'+Storm+'/'+iExper+'/wrf_df/' ):
                 Exper_content_lbl[iExper] = sorted(fnmatch.filter(os.listdir( wrf_dir+'/'+Storm+'/'+iExper+'/wrf_df/' ),'20*'))  
             else:
@@ -376,7 +377,7 @@ def plot_hpi_df( Config, domain_range ):
     
     # Plot HPI from post-storm analysis
     best_track = UD.btk_in_duration(Storm, Btk_start, Btk_end, hour_step=6)
-    plot_one_hpi( ax0, ax1, ax2, best_track,  'black', '-', 3, 'Best track')
+    plot_one_hpi( ax0, ax1, ax2, best_track,  'black', '-', 5, 'Best track')
 
     # Customize color maps
     if distinct_colors:
@@ -396,9 +397,9 @@ def plot_hpi_df( Config, domain_range ):
     
     # Customize labels ###### Chnage it every time !!!!!!!!!!!!!!! 
     #Labels = ['GTS+HPI(hroi:300km): ']
-    Labels = ['WSM6:','THO:']
+    Labels = ['MD_mem:','MD_mean:']
     #Labels = ['Stp2-Intel17 ','Eps-Intel19 ']
-    Ana_labels = ['WSM6 Ans','THO Ans' ]
+    Ana_labels = ['Ref Ans','MD Ans' ]
     #Ana_labels = ['Stampede2 Analysis', 'Expanse Analysis']
 
     # Plot HPI for each deterministic forecasts
@@ -418,24 +419,29 @@ def plot_hpi_df( Config, domain_range ):
                 if Plot_analyses == True:
                     print('Plotting the analyses...')
                     HPI_analyses = read_HPI_analyses(Storm, key, wrf_dir)
-                    plot_one_hpi( ax0, ax1, ax2, HPI_analyses, Ana_color[iExper], '--', 1.5, Ana_labels[iExper], steps=1 )
+                    plot_one_hpi( ax0, ax1, ax2, HPI_analyses, Ana_color[iExper], '--', 2.5, Ana_labels[iExper], steps=1 )
                 for it in Exper_content_lbl[key]:
                     print('Plotting ', it)
-                    print(wrf_dir+'/'+Storm+'/'+key+'/wrf_df/'+it)
+                    #HPI_model = read_rsl_error(Storm, key, wrf_dir+'/'+Storm+'/'+key+'/'+it, '201709030000', DF_model_end)
+                    #print(wrf_dir+'/'+Storm+'/'+key+'/wrf_df/'+it)
+                    print('lala')
                     HPI_model = read_rsl_error(Storm, key, wrf_dir+'/'+Storm+'/'+key+'/wrf_df/'+it, it, DF_model_end)
-                    plot_one_hpi( ax0, ax1, ax2, HPI_model, Color_set['c'+str(iExper)][ic], Line_types[iExper], 1.5, Labels[iExper]+it, steps=6 )
+                    plot_one_hpi( ax0, ax1, ax2, HPI_model, Color_set['c'+str(iExper)][ic], Line_types[iExper], 2.5, Labels[iExper]+it, steps=6 )
+                    #if 'THO' in it:
+                    #    plot_one_hpi( ax0, ax1, ax2, HPI_model,'#B1D866', '-', 5, 'conv_THO', steps=1 )
+                    #else:
+                    #    plot_one_hpi( ax0, ax1, ax2, HPI_model,'#FFED13', '-', 5, 'conv_WSM6', steps=1 )
                     ic = ic + 1
             else:
                 print('No available data!')
             iExper = iExper + 1
 
-
     # Set ticks/labels for track subplot
     lon_ticks = list(range(math.ceil(domain_range[0])-2, math.ceil(domain_range[1])+3, 4))
     lat_ticks = list(range(math.ceil(domain_range[2])-2, math.ceil(domain_range[3])+2, 2))
     gl = ax0.gridlines(crs=ccrs.PlateCarree(), draw_labels=False,linewidth=1, color='gray', alpha=0.5, linestyle='-')
-    gl.ylabels_left = True
-    gl.xlabels_bottom = True
+    gl.left_labels = True
+    gl.bottom_labels = True
     gl.ylocator = mticker.FixedLocator(lat_ticks)
     gl.xlocator = mticker.FixedLocator(lon_ticks)
     gl.yformatter = LATITUDE_FORMATTER
@@ -450,7 +456,7 @@ def plot_hpi_df( Config, domain_range ):
     ax2.set_ylim([10,80])   #([10,60])
     ax1.tick_params(axis='x', labelrotation=30,labelsize=12)
     ax2.tick_params(axis='x', labelrotation=30,labelsize=12)
-    ax2.legend(bbox_to_anchor=(1.5, 1.0),frameon=True,loc='upper right',fontsize='10')
+    ax2.legend(bbox_to_anchor=(1.5, 1.0),frameon=True,loc='upper right',fontsize='10') #10
     ax1.grid(True,linewidth=1, color='gray', alpha=0.5, linestyle='-')
     ax2.grid(True,linewidth=1, color='gray', alpha=0.5, linestyle='-')
 
@@ -458,10 +464,10 @@ def plot_hpi_df( Config, domain_range ):
     ax0.set_title( 'Track',fontsize = 15 )
     ax1.set_title( 'MSLP (hPa)',fontsize = 15 )
     ax2.set_title( 'Vmax ($\mathregular{ms^{-1}}$)',fontsize = 15 )
-    fig.suptitle('IRMW',fontsize = 15)
+    fig.suptitle('WSM6',fontsize = 15)
 
     # Save figure
-    des_name = small_dir+Storm+'/'+Exper[0]+'/Vis_analyze/Model/'+Storm+'_forecast_IRMW_WSM6_THO.png'
+    des_name = small_dir+Storm+'/'+Exper[1]+'/Vis_analyze/Model/'+Storm+'_forecast_IR_TuneWSM6_mem_mean.png'
     plt.savefig( des_name )
     print( 'Saving the figure to '+des_name+'!' )
 
@@ -469,7 +475,7 @@ def plot_hpi_df( Config, domain_range ):
 # ------------------------------------------------------------------------------------------------------
 #            Operation: Plot absolute errors and their mean
 # ------------------------------------------------------------------------------------------------------
-def error_eachInit(exper,best_track,exper_inits,DF_model_end,run_hrs):
+def error_eachInit(Storm,wrf_dir,exper,best_track,exper_inits,DF_model_end,run_hrs):
     
     dict_Error = {}
     run_times = list(range(0, run_hrs+1, 6))
@@ -582,8 +588,9 @@ def plot_abs_err( Config ):
     # Calculate the error with lead times 
     Exper_absError_lbl = {}
     for iExper in Exper:
+        print(iExper)
         if Exper_content_lbl[iExper] is not None:
-            Exper_absError_lbl[iExper] = error_eachInit(iExper,best_track,Exper_content_lbl[iExper],DF_model_end,run_hrs=fc_run_hrs)
+            Exper_absError_lbl[iExper] = error_eachInit(Storm,wrf_dir,iExper,best_track,Exper_content_lbl[iExper],DF_model_end,run_hrs=fc_run_hrs)
         else:
              Exper_absError_lbl[iExper] = None 
 
@@ -597,15 +604,19 @@ def plot_abs_err( Config ):
     else:
         red_cm = cm.Reds
         blue_cm = cm.Blues
+        green_cm = cm.Greens
         num_colors = 14
         discretize_red = ListedColormap(red_cm(np.linspace(0,1,num_colors)))
         discretize_blue = ListedColormap(blue_cm(np.linspace(0,1,num_colors)))
+        discretize_green = ListedColormap(green_cm(np.linspace(0,1,num_colors)))
         Color1 = discretize_red.colors[5:]
         Color2 = discretize_blue.colors[5:]
-    Color_set = {'c0':Color1, 'c1':Color2}
-    mean_color = ['#D70040','#0F52BA'] 
-    Line_types = ['-','-']
-    mean_labels = ['WSM6 mean','THO mean']
+        Color3 = discretize_green.colors[5:]
+    Color_set = {'c0':Color1, 'c1':Color2,'c2':Color3}
+    mean_color = ['#D70040','#0F52BA','#26580F'] 
+    Line_types = ['-','-',]
+    mean_labels = ['MD_mem','MD_mean']
+    #mean_labels = ['IC:Ref;FC:Ref','IC:MD;FC:MD','IC:MD;FC:Ref']
     # X axis: leading times
     lead_t = list(range(0, fc_run_hrs+1, 6))
 
@@ -615,9 +626,9 @@ def plot_abs_err( Config ):
         # loop thru each forecast
         ic = 0
         for init_t in Exper_content_lbl[exper]:   
-            ax[0].plot(lead_t,err[init_t][0,:],color=Color_set['c'+str(iE)][ic], linestyle=Line_types[iE],alpha=0.5)
-            ax[1].plot(lead_t,abs(err[init_t][1,:]),color=Color_set['c'+str(iE)][ic], linestyle=Line_types[iE],alpha=0.5)
-            ax[2].plot(lead_t,abs(err[init_t][2,:]),color=Color_set['c'+str(iE)][ic], linestyle=Line_types[iE],alpha=0.5)
+            ax[0].plot(lead_t,err[init_t][0,:],color=Color_set['c'+str(iE)][ic], linestyle=Line_types[iE],alpha=0.6)
+            ax[1].plot(lead_t,abs(err[init_t][1,:]),color=Color_set['c'+str(iE)][ic], linestyle=Line_types[iE],alpha=0.6)
+            ax[2].plot(lead_t,abs(err[init_t][2,:]),color=Color_set['c'+str(iE)][ic], linestyle=Line_types[iE],alpha=0.6)
             ic = ic + 1
         # plot the mean
         ax[0].plot(lead_t,err['mean_abs_error'][0,:],color=mean_color[iE],linestyle='-',linewidth=6)
@@ -625,7 +636,7 @@ def plot_abs_err( Config ):
         ax[2].plot(lead_t,err['mean_abs_error'][2,:],color=mean_color[iE],linestyle='-',linewidth=6,label=mean_labels[iE])
     
     # Details
-    ax[2].legend(frameon=True,loc='upper right',fontsize='20')
+    ax[2].legend(frameon=True,loc='upper right',fontsize='17')
     ax[0].set_ylim([0,200])
     ax[1].set_ylim([0,50])
     ax[2].set_ylim([0,50])
@@ -646,19 +657,19 @@ def plot_abs_err( Config ):
     fig.suptitle(Storm+'~'+DA+': Mean Absolute Error',fontsize = 20)
 
     # Save figure
-    des_name = small_dir+Storm+'/'+Exper[0]+'/Vis_analyze/Model/'+Storm+'_forecast_abs_error_IR_WSM6_THO.png'
+    des_name = small_dir+Storm+'/'+Exper[1]+'/Vis_analyze/Model/'+Storm+'_forecast_abs_error_IR_TuneWSM6_mem_mean.png'
     plt.savefig( des_name )
     print( 'Saving the figure to '+des_name+'!' )
 
 
 if __name__ == '__main__':
     
-    big_dir = '/scratch/06191/tg854905/Pro2_PSU_MW/'
+    big_dir = '/scratch_S2/06191/tg854905/Pro2_PSU_MW/'
     small_dir = '/work2/06191/tg854905/stampede2/Pro2_PSU_MW/'
 
     # Configuration
-    Storm = 'IRMA'
-    MP = ['WSM6','THO']
+    Storm = 'MARIA'
+    MP = ['WSM6','TuneWSM6']
     DA = 'IR'
     DF_model_start = '20170822180000' # Default value of DF_model_start. Especially useful when dealing with ensemble forecast
     mem_id = 'mean' # Default value of member id. Especially useful when dealing with deterministic forecast
@@ -666,16 +677,15 @@ if __name__ == '__main__':
 
     distinct_colors = False
     Plot_analyses = False # Feature that plots the analyses of an experiment
-    Plot_HPI = False
-    Plot_abs_error = True
+    Plot_HPI = True
+    Plot_abs_error = False
     fc_run_hrs = 60
     
     # Generate experiment names
-    #Exper_name = ['IR-TuneWSM6-J_DA+J_WRF+J_init-SP-intel17-WSM6-30hr-hroi900','IR-J_DA+J_WRF+J_init-SP-intel17-WSM6-30hr-hroi900']
-    #Exper_name = ['IR-TuneWSM6-J_DA+J_WRF+J_init-SP-intel17-WSM6-30hr-hroi900','IR-TuneWSM6-J_DA+J_WRF+J_init-SP-intel17-WSM6-30hr-hroi900_origin']
     Exper_name = []
-    for imp in MP:
-        Exper_name.append( UD.generate_one_name( Storm,DA,imp ) )
+    #for imp in MP:
+    #    Exper_name.append( UD.generate_one_name( Storm,DA,imp ) )
+    Exper_name = ['IR-TuneWSM6-J_DA+J_WRF+J_init-SP-intel17-WSM6-24hr-hroi900_origin','IR-TuneWSM6-J_DA+J_WRF+J_init-SP-intel17-WSM6-24hr-hroi900']
 
     wrf_dir = big_dir
     Config = [wrf_dir, Storm, Exper_name, DF_model_start, mem_id, read_fc_wrfout, Plot_analyses]
@@ -688,7 +698,7 @@ if __name__ == '__main__':
         lat_max = 31
     elif Storm == 'IRMA':
         lon_min = -72
-        lon_max = -44
+        lon_max = -45
         lat_min = 10
         lat_max = 30
     elif Storm == 'MARIA':

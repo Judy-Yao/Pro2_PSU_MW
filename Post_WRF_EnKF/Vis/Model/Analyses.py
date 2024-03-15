@@ -1,15 +1,11 @@
-#!/work2/06191/tg854905/stampede2/opt/anaconda3/lib/python3.7
 
 import os # functions for interacting with the operating system
 import numpy as np
+import xarray as xr
 from datetime import datetime, timedelta
 import glob
 import netCDF4 as nc
 from wrf import getvar, interplevel
-# It might be possible that you are not able to conda install wrf-var with a pretty new python version
-# Solution:
-# 1. conda create -n $PYTHON34_ENV_NAME python=3.4 anaconda 
-# 2. conda activate python=3.4 (use wrf-python in this python environment)
 import math
 import scipy as sp
 import scipy.ndimage
@@ -23,6 +19,8 @@ from cartopy.mpl.gridliner import LONGITUDE_FORMATTER, LATITUDE_FORMATTER
 from mpl_toolkits.axes_grid1 import make_axes_locatable
 import time
 import subprocess
+import metpy.calc as mpcalc
+from metpy.units import units
 
 import Util_data as UD
 
@@ -156,14 +154,14 @@ def plot_IC_water( Storm, Exper_name, DAtime, wrf_dir, plot_dir ):
     lat_ticks = list(range(math.ceil(lat_min), math.ceil(lat_max),2))
     for j in range(3):
         gl = axs.flat[j].gridlines(crs=ccrs.PlateCarree(),draw_labels=False,linewidth=0.1, color='gray', alpha=0.5, linestyle='--')
-        gl.xlabels_top = False
-        gl.xlabels_bottom = True
+        gl.top_labels = False
+        gl.bottom_labels = True
         if j==0:
-            gl.ylabels_left = True
-            gl.ylabels_right = False
+            gl.left_labels = True
+            gl.right_labels = False
         else:
-            gl.ylabels_left = False
-            gl.ylabels_right = False
+            gl.left_labels = False
+            gl.right_labels = False
         gl.ylocator = mticker.FixedLocator(lat_ticks)
         gl.xlocator = mticker.FixedLocator(lon_ticks)
         gl.xformatter = LONGITUDE_FORMATTER
@@ -191,127 +189,6 @@ def IC_water( Storm, Exper_name, DAtimes, big_dir, small_dir ):
             plot_IC_water( Storm, Exper_name, DAtime, wrf_dir, plot_dir )
         else:
             plot_IC_water( Storm, Exper_name, DAtime, wrf_dir, plot_dir )
-
-# ------------------------------------------------------------------------------------------------------
-#           Operation: Read, process, and plot the evolution of min slp
-# ------------------------------------------------------------------------------------------------------
-def find_minSLP( wrfout ):
-    ncdir = nc.Dataset( wrfout )
-    slp = getvar(ncdir, 'slp')
-    min_slp = np.amin( slp )
-    slp_smooth = sp.ndimage.gaussian_filter(slp, [11,11])
-    idx = np.nanargmin( slp_smooth )
-    lat_minslp = ncdir.variables['XLAT'][:].flatten()[idx]
-    lon_minslp = ncdir.variables['XLONG'][:].flatten()[idx]
-
-    minSLP = [lat_minslp,lon_minslp,min_slp.values]
-    return minSLP
-
-def plot_slp_timeseries( small_dir, Storm, Expers, DAtimes, Evo_slp ):
-
-    # Set up figure
-    fig = plt.figure( figsize=(12,9), dpi=300 )
-    ax = plt.subplot(1,1,1)
-    dates = [datetime.strptime( it,"%Y%m%d%H%M") for it in DAtimes]
-    # Plot obs and mean
-    print(Evo_slp['obs_slp'])
-    ax.plot_date(dates, Evo_slp['obs_slp'], 'black', label='TCvital', linestyle='-')
-    ax.plot_date(dates, Evo_slp['xa_slp'][0,:], 'red', label='conv_THO', linestyle='--')
-
-    leg = plt.legend(loc='lower left',fontsize=15)
-    # Set X/Y labels
-    start_time = datetime.strptime( DAtimes[0],"%Y%m%d%H%M")
-    end_time = datetime.strptime( DAtimes[-1],"%Y%m%d%H%M")
-    ax.set_xlim( start_time, end_time)
-    ax.tick_params(axis='x', labelrotation=45,labelsize=15)
-    ax.set_ylabel('Minimum Sea Level Pressure (hPa)',fontsize=15)
-    ax.set_ylim( 980,1020)
-
-    #title_name = Storm+'('+Exper_name+')'+': mim SLP'
-    title_name = Storm+': mim SLP'
-    ax.set_title( title_name,fontweight="bold",fontsize='15' )
-    #fig.suptitle('conv+HPI', fontsize=15, fontweight='bold')
-
-
-    # Save the figure
-    save_des = small_dir+Storm+'/'+Expers[0]+'/Vis_analyze/Model/minslp_'+DAtimes[0]+'_'+DAtimes[-1]+'.png'
-    plt.savefig( save_des )
-    print( 'Saving the figure: ', save_des )
-    plt.close()
-
-def Gather_slp( Storm, Expers, DAtimes, big_dir ):
-    
-    obs_minslp_lat = []
-    obs_minslp_lon = []
-    obs_minslp_value = []
-    
-    xa_minslp_lat = [[] for i in range(len(Expers))]
-    xa_minslp_lon = [[] for i in range(len(Expers))]
-    xa_minslp_value = [[] for i in range(len(Expers))]
-
-    for DAtime in DAtimes:
-
-        # collect min slp found from WRF output
-        for Exper in Expers:
-            wrf_dir = big_dir+Storm+'/'+Exper+'/fc/'+DAtime+'/wrf_enkf_output_d03_mean'
-            print('Reading the EnKF posterior mean from ', wrf_dir)
-            list_wrfout = find_minSLP( wrf_dir )
-            idx = Expers.index( Exper )
-            xa_minslp_lat[idx].append( list_wrfout[0] )
-            xa_minslp_lon[idx].append( list_wrfout[1] )
-            xa_minslp_value[idx].append( list_wrfout[2] )
-
-        # collect assimilated min slp obs from TCvital record in fort.10000
-        diag_enkf = big_dir+Storm+'/'+Expers[0]+'/run/'+DAtime+'/enkf/d03/fort.10000'
-        print('Reading the EnKF diagnostics from ', diag_enkf)
-        enkf_minSlp = subprocess.run(["grep","slp",diag_enkf],stdout=subprocess.PIPE,text=True)
-        list_enkf_minSlp = enkf_minSlp.stdout.split()
-        # condition on the number of assimilated min slp
-        if list_enkf_minSlp.count('slp') == 0 :
-            raise ValueError('No min slp is assimilated!')
-        elif list_enkf_minSlp.count('slp') == 1 :
-            obs_minslp_lat.append( float(list_enkf_minSlp[1]) )    
-            obs_minslp_lon.append( float(list_enkf_minSlp[2]) )  
-            obs_minslp_value.append( float(list_enkf_minSlp[9])/100 )
-        else : # at least two min slp records are assimilated
-            print('At least two min slp obs are assimilated!')
-            # find the index of the current time
-            idx_time = DAtimes.index( DAtime )
-            # assemble the diagnosed min slp from an analysis
-            xa_ms_lat = xa_minslp_lat[0][idx_time]
-            xa_ms_lon = xa_minslp_lon[0][idx_time]
-            # ---condition 1: find the nearest TCvital min slp from the analysis
-            # find the index/location of 'slp' in fort.10000
-            indices = [i for i ,e in enumerate(list_enkf_minSlp) if e == 'slp']
-            # assemble a pair of coordinate for each 'slp'
-            distances = []
-            obs_slp = []
-            for it in indices:
-                obs_slp.append( float(list_enkf_minSlp[it+9]) )
-                lon1 = float(list_enkf_minSlp[it+2])
-                lat1 = float(list_enkf_minSlp[it+1])
-                distances.append( UD.mercator_distance(lon1, lat1, xa_ms_lon, xa_ms_lat) )
-            min_distances = [np.amin(distances) == it for it in distances]
-            idx_nearest = min_distances.index(True)
-            # ---condition 2: the min slp
-            min_obs_slp = [np.amin(obs_slp) == it for it in obs_slp]
-            idx_min = min_obs_slp.index(True)
-            # ---combine the two conditions
-            if idx_min == idx_nearest:
-                idx_coor = idx_min
-                print('Storm center is choosed with two condtions met!')
-            else:
-                print('Not sure which obs is the storm center. Go with the min value one!')
-                idx_coor = idx_min
-
-            # gather this TCvital min slp
-            obs_minslp_lat.append( float(list_enkf_minSlp[indices[idx_coor]+1]) )
-            obs_minslp_lon.append( float(list_enkf_minSlp[indices[idx_coor]+2]) )
-            obs_minslp_value.append( float(list_enkf_minSlp[indices[idx_coor]+9])/100 ) 
-
-    dict_minSLP = {'obs_slp':np.array(obs_minslp_value),'obs_lat':np.array(obs_minslp_lat),'obs_lon':np.array(obs_minslp_lon),'xa_slp':np.array(xa_minslp_value),'xa_lat':np.array(xa_minslp_lat), 'xa_lon':np.array(xa_minslp_lon)}
-    return dict_minSLP
-    
 
 # ------------------------------------------------------------------------------------------------------
 #           Operation: Read, process, and plot UV10_slp per snapshot
@@ -403,21 +280,21 @@ def plot_UV10_slp( Storm, Exper_name, DAtime, wrf_dir, plot_dir ):
     # Title
     ax[0].set_title( 'Xb--min slp: '+str("{0:.3f}".format(np.min( slp[0,:,:] )))+' hPa',  fontweight='bold') #, fontsize=12)
     ax[1].set_title( 'Xa--min slp: '+str("{0:.3f}".format(np.min( slp[1,:,:] )))+' hPa',  fontweight='bold') #, fontsize=12)
-    fig.suptitle(Storm+': '+Exper_name+'('+DAtime+') ~ convention only', fontsize=12, fontweight='bold')
+    fig.suptitle(Storm+': '+Exper_name+'('+DAtime+')', fontsize=12, fontweight='bold')
 
     # Axis labels
     lon_ticks = list(range(math.ceil(lon_min), math.ceil(lon_max),2))
     lat_ticks = list(range(math.ceil(lat_min), math.ceil(lat_max),2))
     for j in range(2):
         gl = ax[j].gridlines(crs=ccrs.PlateCarree(),draw_labels=False,linewidth=0.1, color='gray', alpha=0.5, linestyle='--')
-        gl.xlabels_top = False
-        gl.xlabels_bottom = True
+        gl.top_labels = False
+        gl.bottom_labels = True
         if j==0:
-            gl.ylabels_left = True
-            gl.ylabels_right = False
+            gl.left_labels = True
+            gl.right_labels = False
         else:
-            gl.ylabels_left = False
-            gl.ylabels_right = False
+            gl.left_labels = False
+            gl.right_labels = False
         gl.ylocator = mticker.FixedLocator(lat_ticks)
         gl.xlocator = mticker.FixedLocator(lon_ticks)
         gl.xformatter = LONGITUDE_FORMATTER
@@ -425,7 +302,7 @@ def plot_UV10_slp( Storm, Exper_name, DAtime, wrf_dir, plot_dir ):
         gl.xlabel_style = {'size': 12}
         gl.ylabel_style = {'size': 12}
 
-    plt.savefig( plot_dir+DAtime+'_UV10_slp_convention_only', dpi=300 )
+    plt.savefig( plot_dir+DAtime+'_UV10_slp', dpi=300 )
     print('Saving the figure: ', plot_dir+DAtime+'_UV10_slp.png')
     plt.close()
 
@@ -537,14 +414,14 @@ def plot_IC_water( Storm, Exper_name, DAtime, wrf_dir, plot_dir ):
     lat_ticks = list(range(math.ceil(lat_min), math.ceil(lat_max),2))
     for j in range(3):
         gl = axs.flat[j].gridlines(crs=ccrs.PlateCarree(),draw_labels=False,linewidth=0.1, color='gray', alpha=0.5, linestyle='--')
-        gl.xlabels_top = False
-        gl.xlabels_bottom = True
+        gl.top_labels = False
+        gl.bottom_labels = True
         if j==0:
-            gl.ylabels_left = True
-            gl.ylabels_right = False
+            gl.left_labels = True
+            gl.right_labels = False
         else:
-            gl.ylabels_left = False
-            gl.ylabels_right = False
+            gl.left_labels = False
+            gl.right_labels = False
         gl.ylocator = mticker.FixedLocator(lat_ticks)
         gl.xlocator = mticker.FixedLocator(lon_ticks)
         gl.xformatter = LONGITUDE_FORMATTER
@@ -612,7 +489,6 @@ def read_rt_vo( wrf_dir ):
     return d_field
 
 def plot_rt_vo( Storm, Exper_name, DAtime, wrf_dir, plot_dir ):
-
 
     # Read storm center
     dict_btk = UD.read_bestrack(Storm)
@@ -688,21 +564,21 @@ def plot_rt_vo( Storm, Exper_name, DAtime, wrf_dir, plot_dir ):
     for j in range(4):
         gl = ax.flat[j].gridlines(crs=ccrs.PlateCarree(),draw_labels=False,linewidth=0.1, color='gray', alpha=0.5, linestyle='--')
 
-        gl.xlabels_top = False
-        gl.xlabels_bottom = True
+        gl.top_labels = False
+        gl.bottom_labels = True
         if j==0 or j==2:
-            gl.ylabels_left = True
-            gl.ylabels_right = False
+            gl.left_labels = True
+            gl.right_labels = False
         else:
-            gl.ylabels_left = False
-            gl.ylabels_right = False
+            gl.left_labels = False
+            gl.right_labels = False
 
         if j==2 or j==3:
-            gl.xlabels_bottom = True
-            gl.xlabels_top = False
+            gl.bottom_labels = True
+            gl.top_labels = False
         else:
-            gl.xlabels_bottom = False
-            gl.xlabels_top = False
+            gl.bottom_labels = False
+            gl.top_labels = False
 
 
         gl.ylocator = mticker.FixedLocator(lat_ticks)
@@ -736,30 +612,189 @@ def relative_vo( Storm, Exper_name, DAtimes, big_dir, small_dir ):
             plot_rt_vo( Storm, Exper_name, DAtime, wrf_dir, plot_dir )
 
 
+# ------------------------------------------------------------------------------------------------------
+#           Operation: Read, process, and plot divergence per snapshot
+# ------------------------------------------------------------------------------------------------------
+def read_diver( wrf_dir ):
+
+    P_of_interest = [850,700,]
+    # set file names for background and analysis
+    mean_dir = [wrf_dir+'/wrf_enkf_input_d03_mean',wrf_dir+'/wrf_enkf_output_d03_mean']
+    # read the shared variables: lat/lon
+    ncdir = nc.Dataset( mean_dir[0] )
+    lat = ncdir.variables['XLAT'][0,:,:]
+    lon = ncdir.variables['XLONG'][0,:,:]
+    # calculate relative vorticity and wind
+    dvg_p = np.zeros( [len(mean_dir), len(P_of_interest), np.size(lat,0), np.size(lat,1)] )
+    U_p = np.zeros( [len(mean_dir), len(P_of_interest), np.size(lat,0), np.size(lat,1)] )
+    V_p = np.zeros( [len(mean_dir), len(P_of_interest), np.size(lat,0), np.size(lat,1)] )
+    for i in range(len(mean_dir)):
+        file_name = mean_dir[i]
+        ncdir = nc.Dataset( file_name )
+        # pressure
+        press = getvar( ncdir, 'pressure')
+        # Wind at levels of interest
+        Um = getvar( ncdir, 'ua') # U-component of wind on mass points
+        Vm = getvar( ncdir, 'va') # V-component of wind on mass points
+        Um = Um* units("m/s")
+        Vm = Vm* units("m/s")
+        # divergence
+        dvg = mpcalc.divergence(Um, Vm, dx=3000* units("m"), dy=3000* units("m"))
+        # Perform interpolation
+        for ip in range(len(P_of_interest)):
+            U_p[i,ip,:,:] = interplevel( Um,press,P_of_interest[ip] )
+            V_p[i,ip,:,:] = interplevel( Vm,press,P_of_interest[ip] )
+            dvg_p[i,ip,:,:] = interplevel( dvg,press,P_of_interest[ip] )
+    d_field = {'lat':lat,'lon':lon,'U':U_p,'V':V_p,'dvg':dvg_p*1e5,'P':P_of_interest}
+    return d_field
+
+def plot_diver( Storm, Exper_name, DAtime, wrf_dir, plot_dir ):
+
+    # Read storm center
+    dict_btk = UD.read_bestrack(Storm)
+    # Find the best-track position
+    btk_dt = [it_str for it_str in dict_btk['time'] ]#[datetime.strptime(it_str,"%Y%m%d%H%M") for it_str in dict_btk['time']]
+    bool_match = [DAtime == it for it in btk_dt]
+    if True in bool_match:
+        if_btk_exist = True
+        idx_btk = np.where( bool_match )[0][0] # the second[0] is due to the possibility of multiple records at the same time
+    else:
+        if_btk_exist = False
+
+    #------ Read WRFout -------------------
+    d_field = read_diver( wrf_dir )
+    P_of_interest = d_field['P']
+    lat = d_field['lat']
+    lon = d_field['lon']
+    lat_min = np.amin( lat )
+    lon_min = np.amin( lon )
+    lat_max = np.amax( lat )
+    lon_max = np.amax( lon )
+
+    # ------------------ Plot -----------------------
+    fig, ax=plt.subplots(2, 2, subplot_kw={'projection': ccrs.PlateCarree()}, gridspec_kw = {'wspace':0, 'hspace':0}, linewidth=0.5, sharex='all', sharey='all',  figsize=(6.8,6.5), dpi=400)
+
+    # customize the colormap
+    color_intervals = [-10,-5,0.0,5,10]
+    #exist_cmap = plt.cm.rainbow
+    #colors = exist_cmap(np.linspace(0,1,len(color_intervals)))
+    #new_map = mcolors.LinearSegmentedColormap.from_list('custom_colormap',colors,N=len(color_intervals))
+
+    for i in range(d_field['dvg'].shape[0]): # files of interest
+        for ip in range(d_field['dvg'].shape[1]): # levels of interest
+            ax[i,ip].set_extent([lon_min,lon_max,lat_min,lat_max], crs=ccrs.PlateCarree())
+            ax[i,ip].coastlines (resolution='10m', color='black', linewidth=1)
+            # divergence (shades)
+            #dvg_smooth = d_field['dvg'][i,ip,:,:]
+            dvg_smooth = sp.ndimage.gaussian_filter( d_field['dvg'][i,ip,:,:], [2,2])
+            min_dvg = min(color_intervals)
+            max_dvg = max(color_intervals)
+            bounds = color_intervals
+            dvg_contourf = ax[i,ip].contourf(lon,lat,dvg_smooth,cmap='bwr',vmin=min_dvg,vmax=max_dvg,levels=bounds,extend='both',transform=ccrs.PlateCarree())
+            # wind barbs
+            lon_b = lon.flatten()
+            lat_b = lat.flatten()
+            U_b = d_field['U'][i,ip,:,:].flatten()
+            V_b = d_field['V'][i,ip,:,:].flatten()
+            ax[i,ip].barbs(lon_b, lat_b, U_b, V_b, length=5, pivot='middle', color='black', regrid_shape=13, transform=ccrs.PlateCarree())
+            #ax[i,ip].barbs(lon_b[::20], lat_b[::20], U_b[::5], V_b[::5], length=5, pivot='middle', color='royalblue', regrid_shape=20, transform=ccrs.PlateCarree())
+            # Mark the best track
+            if if_btk_exist:
+                ax[i,ip].scatter(dict_btk['lon'][idx_btk],dict_btk['lat'][idx_btk], 20, 'green', marker='*',transform=ccrs.PlateCarree())
+
+    # Adding the colorbar
+    caxes = fig.add_axes([0.2, 0.05, 0.6, 0.02])
+    dvg_bar = fig.colorbar(dvg_contourf,  orientation="horizontal", cax=caxes)
+    dvg_bar.ax.set_xlabel('Divergence (10-5 s-1)',fontsize=8)
+    dvg_bar.ax.tick_params(labelsize='8')
+
+    #subplot title
+    ax[0,0].set_title( 'Xb: '+str(P_of_interest[0])+' hPa', fontweight='bold')
+    ax[0,1].set_title( 'Xb: '+str(P_of_interest[1])+' hPa', fontweight='bold')
+    ax[1,0].set_title( 'Xa: '+str(P_of_interest[0])+' hPa', fontweight='bold')
+    ax[1,1].set_title( 'Xa: '+str(P_of_interest[1])+' hPa', fontweight='bold')
+
+    #title for all
+    fig.suptitle(Storm+': '+Exper_name+'low level divergence', fontsize=8, fontweight='bold')
+
+    # Axis labels
+    lon_ticks = list(range(math.ceil(lon_min)-2, math.ceil(lon_max)+2,2))
+    lat_ticks = list(range(math.ceil(lat_min)-2, math.ceil(lat_max)+2,2))
+
+    for j in range(4):
+        gl = ax.flat[j].gridlines(crs=ccrs.PlateCarree(),draw_labels=False,linewidth=0.1, color='gray', alpha=0.5, linestyle='--')
+
+        gl.top_labels = False
+        gl.bottom_labels = True
+        if j==0 or j==2:
+            gl.left_labels = True
+            gl.right_labels = False
+        else:
+            gl.left_labels = False
+            gl.right_labels = False
+
+        if j==2 or j==3:
+            gl.bottom_labels = True
+            gl.top_labels = False
+        else:
+            gl.bottom_labels = False
+            gl.top_labels = False
+
+
+        gl.ylocator = mticker.FixedLocator(lat_ticks)
+        gl.xlocator = mticker.FixedLocator(lon_ticks)
+        gl.xformatter = LONGITUDE_FORMATTER
+        gl.yformatter = LATITUDE_FORMATTER
+        gl.xlabel_style = {'size': 8}
+        gl.ylabel_style = {'size': 8}
+
+    # Save figures
+    des_name = plot_dir + DAtime+'_divergence.png'
+    plt.savefig( des_name, dpi=300)
+    print('Saving the figure: ', des_name)
+    plt.close()
+
+
+def diver( Storm, Exper_name, DAtimes, big_dir, small_dir ):
+
+    # Loop through each DAtime/analysis
+    for DAtime in DAtimes:
+        wrf_dir = big_dir+Storm+'/'+Exper_name+'/fc/'+DAtime
+        print('Reading WRF background and analysis: ', wrf_dir)
+        DAtime_dt = datetime.strptime( DAtime, '%Y%m%d%H%M' )
+        # ------ Plot -------------------
+        plot_dir = small_dir+Storm+'/'+Exper_name+'/Vis_analyze/Model/divergence/'
+        plotdir_exists = os.path.exists( plot_dir )
+        if plotdir_exists == False:
+            os.mkdir(plot_dir)
+        plot_diver( Storm, Exper_name, DAtime, wrf_dir, plot_dir )
+
+
 if __name__ == '__main__':
 
-    big_dir = '/scratch/06191/tg854905/Pro2_PSU_MW/'
+    big_dir = '/scratch_S2/06191/tg854905/Pro2_PSU_MW/'
     small_dir = '/work2/06191/tg854905/stampede2/Pro2_PSU_MW/'
 
     # -------- Configuration -----------------
     Storm = 'HARVEY'
     DA = ['IR']   
-    MP = 'WSM6' 
+    MP = 'THO' 
 
     Plot_UV10_slp = True
     Plot_IC_water = False
     Plot_minslp_evo = False
     Plot_rtvo = False
+    Plot_divergence = False
     # -----------------------------------------
 
     # Time range set up
     start_time_str = '201708221200'
     end_time_str = '201708241200'
-    Consecutive_times = False
+    Consecutive_times = True
 
     if not Consecutive_times:
-        DAtimes = ['201708221500','201708221800']
-        #DAtimes = ['201708230000','201708230600','201708231200','201708231800','201708240000','201708240600','201708241200']
+        #DAtimes = ['201709041400','201709041600']
+        DAtimes = ['201708221200','201708221800','201708230000','201708230600','201708231200','201708231800','201708240000','201708240600','201708241200']
         #DAtimes = ['201709031200','201709031800','201709040000','201709040600','201709041200','201709041800','201709050000']
         #DAtimes = ['201709161200','201709161800','201709170000','201709170600','201709171200','201709171800','201709180000']
     else:
@@ -789,6 +824,15 @@ if __name__ == '__main__':
             relative_vo( Storm, iExper, DAtimes, big_dir, small_dir )
             end_time = time.process_time()
             print ('time needed: ', end_time-start_time, ' seconds')
+
+    # Plot divergence
+    if Plot_divergence:
+        for iExper in Expers:
+            start_time=time.process_time()
+            diver( Storm, iExper, DAtimes, big_dir, small_dir )
+            end_time = time.process_time()
+            print ('time needed: ', end_time-start_time, ' seconds')
+
 
     # Plot precipitable water (integral column of water vapor)
     if Plot_IC_water:

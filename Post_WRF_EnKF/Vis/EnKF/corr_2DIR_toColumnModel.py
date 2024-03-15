@@ -19,13 +19,12 @@ from mpl_toolkits.axes_grid1 import make_axes_locatable
 import time
 import pickle
 import warnings
+import random
 
 import Util_Vis
 import Util_data as UD
 import Read_Obspace_IR as ROIR
-import corr_2DIR_to3Dmodel as stat_3D
 import Diagnostics as Diag
-import matlab.engine
 
 # ------------------------------------------------------------------------------------------------------
 #           Operation: Perform Operations
@@ -85,10 +84,19 @@ def Find_nearest_col( Hx_dir, wrf_dir, DAtime, sensor):
     start_time=time.process_time()
     print('------- Search for the nearest model grid for each obs ------')
     # Read the obs locations
-    ens_file = Hx_dir + "/Hxb_ens_obs_res_d03_" + DAtime + '_' +  sensor + '.txt'
-    d_obs = stat_3D.read_ens_obspace( ens_file, sensor ) 
-    lon_obs = d_obs['lon_obs']
-    lat_obs = d_obs['lat_obs']
+    lat_obs = []
+    lon_obs = []
+    mean_hxb = Hx_dir + "mean_obs_res_d03_" + DAtime + '_' +  sensor + '.txt'
+    with open(mean_hxb) as f:
+        next(f)
+        all_lines = f.readlines()
+    for line in all_lines:
+        split_line = line.split()
+        lat_obs.append( float(split_line[0]) )
+        lon_obs.append( float(split_line[1]) ) 
+    lat_obs = np.array( lat_obs )
+    lon_obs = np.array( lon_obs )
+
     # Read model lon and lat
     mean_xb = wrf_dir + '/wrf_enkf_input_d03_mean'
     ncdir = nc.Dataset( mean_xb, 'r')
@@ -106,9 +114,9 @@ def Find_nearest_col( Hx_dir, wrf_dir, DAtime, sensor):
     Idx_nearest = []
     for io in range(len(lon_obs)):
         Idx_nearest.append( int(Idx_j[io]*len(lon_x1d)+Idx_i[io]) )
-    
+
     # check 
-    check_idx = 3000
+    check_idx = random.randint(0, len(lon_obs))
     print('Checking the '+str(check_idx)+'th obs... lon: '+str(lon_obs[check_idx])+' lat: '+str(lat_obs[check_idx]))
     print('Its nearest model grid -- lon: '+str( lon_x[Idx_nearest[check_idx]] )+' lat: '+str( lat_x[Idx_nearest[check_idx]] ))
 
@@ -124,9 +132,6 @@ def Find_nearest_col( Hx_dir, wrf_dir, DAtime, sensor):
 
 
 def cal_2Dcorr_IR_ColVar( DAtime, var_name):
-
-    if 'Q' in var_name:
-        nLevel = 42
 
     # Read ensemble perturbations of xb
     des_path = wrf_dir+ "xb_d03_3D_ensPert_" + DAtime + '_' + var_name +  '.pickle'
@@ -180,7 +185,7 @@ def cal_2Dcorr_IR_ColVar( DAtime, var_name):
     print("Elapsed (after compilation) = {}s".format((end - start)))
 
     # sanity check
-    assert  0 <= abs(corr_xb_hxb).all() and abs(corr_xb_hxb).all() <= 1
+    assert  0 <= abs(corr_xb_hxb).any() and abs(corr_xb_hxb).any() <= 1
 
     # May save the correlation
     if If_save:
@@ -214,8 +219,7 @@ def plot_corr_snapshot( lat,lon,Interp_corr,ver_coor ):
 
     # Read location from TCvitals
     if any( hh in DAtime[8:10] for hh in ['00','06','12','18']):
-        tc_lon, tc_lat = UD.read_TCvitals(small_dir+Storm+'/TCvitals/'+Storm+'_tcvitals', DAtime)
-        print( 'Location from TCvital: ', tc_lon, tc_lat )
+        tc_lon, tc_lat, tc_slp = UD.read_TCvitals(Storm, DAtime)
 
     # ------------------ Plot -----------------------
     fig, ax=plt.subplots(2, 3, subplot_kw={'projection': ccrs.PlateCarree()}, gridspec_kw = {'wspace':0, 'hspace':0}, linewidth=0.5, sharex='all', sharey='all',  figsize=(9.75,6.5), dpi=400)
@@ -250,7 +254,8 @@ def plot_corr_snapshot( lat,lon,Interp_corr,ver_coor ):
         ax.flat[isub].set_title( str(ver_coor[isub])+' KM', font, fontweight='bold')
 
     #title for all
-    fig.suptitle(Storm+': '+Exper_name+'(ver_corr of Qvapor&Tb)', fontsize=10, fontweight='bold')
+    title_name = Storm+': '+Exper_name+'(ver_corr of '+var_name+'&IR)'
+    fig.suptitle(title_name, fontsize=10, fontweight='bold')
 
     # Axis labels
     lon_ticks = list(range(math.ceil(lon_min)-2, math.ceil(lon_max)+2,2))
@@ -293,8 +298,7 @@ def plot_corr_snapshot( lat,lon,Interp_corr,ver_coor ):
 
 def corr_snapshot( DAtime,var_name ):
 
-    if 'Q' in var_name:
-        nLevel = 42
+    nLevel = 42
 
     # Read correlations between a Tb and a column of model var
     if to_obs_res:
@@ -316,7 +320,7 @@ def corr_snapshot( DAtime,var_name ):
     mean_xb = wrf_dir + '/wrf_enkf_input_d03_mean'
     ncdir = nc.Dataset( mean_xb, 'r')
    # Make interpolation
-    if interp_H:
+    if interp_H and not interp_P:
         ncdir = nc.Dataset( mean_xb, 'r')
         H_of_interest = [1.0,3.0,5.0,7.0,9.0,11.0]
         #H_of_interest = [3.5,4.0,5.0,7.0,9.0,11.0]
@@ -342,7 +346,7 @@ def corr_snapshot( DAtime,var_name ):
         if If_plot_corr_snapshot:
             plot_corr_snapshot( xlat[idx_xb],xlon[idx_xb],Interp_corr_xb_hxb,H_of_interest )
     
-    elif interp_P:
+    elif interp_P and not interp_H:
         # pressure levels
         PB = ncdir.variables['PB'][0,:,:,:]
         P = ncdir.variables['P'][0,:,:,:]
@@ -454,56 +458,99 @@ def plot_var_incre_timeseries( ave_corr_overT,geoHkm=None ):
     print( 'Saving the figure: ', save_des )
     plt.close()
 
-# Plot the time-averaged domain-mean correlation
-def plot_Tmean_VD_corr( ave_corr_overT,geoHkm=None ):
+# Plot the time-averaged area-mean correlation
+def plot_Tmean_VD_corr( ave_corr_overT, ver_coor ):
 
-    # Calculate the time-averaged domain-averaged corr
-    ave_corr = np.mean( ave_corr_overT, axis=0 )   
+    # Calculate the time-averaged area-averaged corr
+    if limit:
+        ave_corr = np.mean( ave_corr_overT, axis=1 )
+    else:
+        ave_corr = np.mean( ave_corr_overT, axis=0 )   
 
     # Set up figure
     fig = plt.figure( figsize=(12,6), dpi=300 )
     ax = plt.subplot(1,1,1)
 
-    # Manually set discrete values on x and y axis and interpolate data to these values
     ## x axis: correlation value
     x_range = np.arange(-1,1.05,0.05)
     x_axis_rg = range(len(x_range))
-    f_interp = interpolate.interp1d( x_range, x_axis_rg)
-    loc_inx = f_interp( ave_corr )
-    ## y axis: model level height
-    if not interp_P:
-        y_bottom = np.arange(0,10,1)
-        y_middle = np.arange(10,15,0.5)
-        y_top = np.arange(15,31,1)
-        y_range = np.concatenate( (y_bottom,y_middle,y_top),axis=0 ) # control the scale
-        y_axis_rg = range(len(y_range))
-        f_interp = interpolate.interp1d( y_range, y_axis_rg)
-        loc_iny = f_interp( geoHkm )
-
-        ax.plot( loc_inx,loc_iny )
+    fx_interp = interpolate.interp1d( x_range, x_axis_rg)
+    ## y axis: vertical coordinate
+    if interp_H and not interp_P:
+        y_range = H_range
+        #y_bottom = np.arange(0,10,1)
+        #y_middle = np.arange(10,15,0.5)
+        #y_top = np.arange(15,31,1)
+        #y_range = np.concatenate( (y_bottom,y_middle,y_top),axis=0 ) # control the scale
     else:
-        pass 
-    
+        y_range = P_range
+    y_axis_rg = range(len(y_range))
+    fy_interp = interpolate.interp1d( y_range, y_axis_rg)
+    loc_iny = fy_interp( ver_coor)
+
+    # Plot
+    if limit:
+        loc_inx = fx_interp( ave_corr[0,:] )
+        ax.plot( loc_inx,loc_iny,linewidth=5,color='#A9A9A9',label='all-sky')
+        loc_inx = fx_interp( ave_corr[1,:] )
+        ax.plot( loc_inx,loc_iny,linewidth=5,color='#097969',label='cloud_goodX') 
+        loc_inx = fx_interp( ave_corr[2,:] )
+        ax.plot( loc_inx,loc_iny,linewidth=5,color='#BF565A',label='cloud_badX')
+    else:
+        loc_inx = fx_interp( ave_corr )
+        ax.plot( loc_inx,loc_iny,linewidth=5,color='#9A96CC')
+    nocorr_loc = fx_interp(0)
+    ax.axvline(x=nocorr_loc,color='black',linestyle='-',linewidth=3)
+
+    # Legend
+    ax.legend(loc='upper right',fontsize='16')
+
     # set X label
-    ax.set_xticks( x_axis_rg[::5] )
-    ax.set_xticklabels( ['-1.0','-0.75','-0.50','-0.25','0.0','0.25','0.50','0.75','1.0'],fontsize=15 )    
+    if 'Q' in var_name:
+        xlabel_like = [-0.8,-0.4,0.0,0.2,0.4]
+    else:
+        xlabel_like = [-0.4,-0.2,0.0,0.2,0.4]
+    xticks = []
+    for it in xlabel_like:
+        xticks.append( fx_interp( it ) )
+    ax.set_xticks( xticks )
+    ax.set_xticklabels( [str(it) for it in xlabel_like],fontsize=20 )
+    # small ticks
+    if 'Q' in var_name:
+        xlabel_like = [-0.8,-0.7,-0.6,-0.5,-0.4,-0.3,-0.2,-0.1,0.0,0.1,0.2,0.3,0.4]
+    else:
+        xlabel_like = [-0.4,-0.3,-0.2,-0.1,0.0,0.1,0.2,0.3,0.4]
+    xticks_minor = []
+    for it in xlabel_like:
+        xticks_minor.append( fx_interp( it ) )
+    ax.xaxis.set_minor_locator(mticker.FixedLocator(xticks_minor))
+    ax.set_xlabel('Correlation',fontsize=20)
+    #ax.set_xlim(xmin=-0.5,xmax=0.5) 
+    # grids
+    ax.grid(which='both',axis='x',linewidth=1,alpha=0.5)
     # set Y label
-    if not interp_P:
-        ylabel_like = [0.0,5.0,10.0,11.0,12.0,13.0,14.0,15.0,20.0]
+    if interp_H and not interp_P:
+        ylabel_like = [0.0,5.0,10.0,15.0,20.0,25.0]
         yticks = []
-        list_y_range = list(y_range)
         for it in ylabel_like:
-            yticks.append( list_y_range.index(it) ) 
+            yticks.append( fy_interp( it ) ) 
         ax.set_yticks( yticks )
-        ax.set_yticklabels( [str(it) for it in ylabel_like],fontsize=15 )
-        ax.set_ylabel('Height (KM)',fontsize=15)
+        ax.set_yticklabels( [str(it) for it in ylabel_like],fontsize=20 )
+        # small ticks
+        ylabel_like = np.arange(0,25.5,1)
+        yticks_minor = []
+        for it in ylabel_like:
+            yticks_minor.append( fy_interp( it ) )
+        ax.yaxis.set_minor_locator(mticker.FixedLocator(yticks_minor)) 
+        ax.set_ylabel('Height (KM)',fontsize=20)
         ax.set_ylim(ymin=0,ymax=25) # cut off data above 25km
     else:
         pass
+    # grids
+    ax.grid(which='both',linewidth=1,alpha=0.7,axis='y')
 
     # Set title
-    if 'Q' in var_name:
-        title_name = 'Vertical Corr: '+var_name+' - IR Ch'+ch_list[0]
+    title_name = 'Tmean_Dmean_Vertical Corr: '+var_name+'&IR Ch'+ch_list[0] +'\n Cloud:obs<220K;goodX:abs(H(Xb)-obs)<=3K;badX:H(Xb)-obs>=3K'
     ax.set_title( title_name,fontweight="bold",fontsize='12' )
     fig.suptitle(Storm+': '+Exper_name, fontsize=10, fontweight='bold')
 
@@ -520,20 +567,16 @@ def plot_Tmean_VD_corr( ave_corr_overT,geoHkm=None ):
 # Calculate domain-averaged correlation
 def Domain_ave_corr( var_name ):
 
-    if 'Q' in var_name:
-        nLevel = 42
+    nLevel = 42
 
-    # Construct a new array 
-    if interp_P and to_obs_res:
-        #idx_xb = Find_nearest_col( Hx_dir, wrf_dir, DAtime, sensor)
-        corr_overT = np.zeros( [len(DAtimes),len(P_of_interest),xmax*ymax] )
-    elif not interp_P and to_obs_res:
-        pass
-    elif interp_P and not to_obs_res: 
-        pass
-    else: # at model level
-        corr_overT = np.zeros( [len(DAtimes),nLevel] )
-        
+    # Construct array
+    vercoor_overT = np.zeros( [len(DAtimes),nLevel] )
+    if limit:
+        ave_corr_overT = np.zeros( [num_limit,len(DAtimes),nLevel] ) 
+    else:
+        ave_corr_overT = np.zeros( [len(DAtimes),nLevel] )
+    ave_corr_overT[:] = np.nan
+
     # Load correlation over time and interpolate if necessary
     for DAtime in DAtimes:
 
@@ -549,12 +592,10 @@ def Domain_ave_corr( var_name ):
             corr_colxb_hxb = pickle.load( f )
         print('Shape of corr_colxb_hxb: '+ str(np.shape(corr_colxb_hxb)))
 
+        # Read domain-mean vertical coordinate 
         mean_xb = wrf_dir + '/wrf_enkf_input_d03_mean'
         ncdir = nc.Dataset( mean_xb, 'r')
-        # ---------- at model level (geo height) ------------------
         if interp_H:
-            H_of_interest = [1.0,3.0,5.0,7.0,9.0,11.0]
-
             PHB = ncdir.variables['PHB'][0,:,:,:]
             PH = ncdir.variables['PH'][0,:,:,:]
             geoHkm = (PHB+PH)/9.8/1000 # in km
@@ -562,34 +603,48 @@ def Domain_ave_corr( var_name ):
             geoHkm_Dmean = np.mean( geoHkm, axis=1 )
             geoHkm_half_eta = (geoHkm_Dmean[:-1]+geoHkm_Dmean[1:])/2
             geoHkm_half_eta = np.ma.getdata(geoHkm_half_eta)
-            corr_overT[t_idx,:] = np.mean( corr_colxb_hxb, axis=1 )                         
-        # ---------- at interpolated levels ----------
+            ver_coor = geoHkm_half_eta
         else:
             PB = ncdir.variables['PB'][0,:,:,:]
             P = ncdir.variables['P'][0,:,:,:]
             P_hpa = ((PB + P)/100)
             P_hpa = P_hpa.reshape( P_hpa.shape[0],-1) # 0 dimension: bottom to top
-            # Interpolate to P level of interest
-            start_time=time.process_time()
-            for im in range( corr_colxb_hxb.shape[1] ):
-                f_interp = interpolate.interp1d( P_hpa[:,im], corr_colxb_hxb[:,im])
-                corr_overT[t_idx,:,im] = f_interp( P_of_interest )
-            end_time = time.process_time()
-            print ('time needed for the interpolation: ', end_time-start_time, ' seconds') 
-    
-    # Average the domain
-    if not interp_P:
-        ave_corr_overT = corr_overT
-    else:
-        ave_corr_overT = np.mean( corr_overT, axis=2 )  
+            P_hpa = np.mean( P_hpa, axis=1 )
+            ver_coor = P_hpa
+        vercoor_overT[t_idx,:] = ver_coor
 
-    # Plot the time-averaged and time-evolution of vertical distribution of corr 
-    if not interp_P:
-        #plot_Tmean_VD_corr( ave_corr_overT,geoHkm_half_eta )
-        plot_var_incre_timeseries( ave_corr_overT,geoHkm_half_eta )
-    else:
-        #plot_Tmean_VD_corr( ave_corr_overT )
-        plot_var_incre_timeseries( ave_corr_overT )
+        # Impose limitations
+        if limit:
+            d_idx = {}
+            Hx_dir = big_dir+Storm+'/'+Exper_name+'/Obs_Hx/IR/'+DAtime+'/'
+            Tb_file = Hx_dir + "/mean_obs_res_d03_" + DAtime + '_' +  sensor + '.txt'
+            d_all = ROIR.read_Tb_obsRes(Tb_file, sensor )
+            condi1 = d_all['Yo_obs'] <= 220
+            idx_1 = np.where( condi1 )[0]
+            condi2 = abs(d_all['meanYb_obs'] - d_all['Yo_obs']) <= 3 #d_all['Yo_obs'] <= 210
+            idx_2 = np.where( condi2 )[0]
+            idx_x1 = list(set(idx_1)&set(idx_2))
+            d_idx['limit0'] = range(corr_colxb_hxb.shape[1]) # all points
+            d_idx['limit1'] = idx_x1
+            condi3 = d_all['meanYb_obs'] - d_all['Yo_obs'] > 3
+            idx_3 = np.where( condi3 )[0]
+            idx_x2 = list(set(idx_1)&set(idx_3))
+            d_idx['limit2'] = idx_x2
+        else:
+            idx_x = range(corr_colxb_hxb.shape[1])      
+            d_idx = idx_x
+ 
+        # Calculate the domain-mean or time-mean 
+        ave_vercoor_overT = np.mean( vercoor_overT, axis=0 )
+        if limit:
+            for i in range(num_limit):
+                ave_corr_overT[i,t_idx,:] = np.nanmean( corr_colxb_hxb[:,d_idx['limit'+str(i)]], axis=1 )
+        else: 
+            ave_corr_overT[t_idx,:] = np.nanmean( corr_colxb_hxb[:,idx_x], axis=1 )
+
+    # Plot the time-averaged and time-evolution of vertical distribution of corr
+    plot_Tmean_VD_corr( ave_corr_overT, ave_vercoor_overT )
+    #plot_var_incre_timeseries( ave_corr_overT,ver_coor )
 
     return None
 
@@ -600,16 +655,17 @@ if __name__ == '__main__':
     small_dir =  '/work2/06191/tg854905/stampede2/Pro2_PSU_MW/'
 
     # ---------- Configuration -------------------------
-    Storm = 'MARIA'
-    Exper_name = 'IR-J_DA+J_WRF+J_init-SP-intel17-WSM6-24hr-hroi900'
+    Storm = 'IRMA'
+    DA = 'IR'
+    MP = 'WSM6'
 
-    v_interest = [ 'QVAPOR',]
+    v_interest = [ 'QCLOUD','QICE','QRAIN','QSNOW','QGRAUP','QVAPOR','W',]#'rt_vo']
     sensor = 'abi_gr'
     ch_list = ['8',]
     fort_v = ['obs_type','lat','lon','obs']
 
-    start_time_str = '201709160000'
-    end_time_str = '201709160000'
+    start_time_str = '201709030000'
+    end_time_str = '201709031200'
     Consecutive_times = True
 
     # Number of ensemble members
@@ -617,21 +673,29 @@ if __name__ == '__main__':
     # Dimension of the domain
     xmax = 297
     ymax = 297
-    
+   
+    # field on model/obs locations 
     to_obs_res = True
-    ens_Interp_to_obs = False
-    
-    interp_P = False
-    P_of_interest = list(range( 995,49,-20 ))
-    interp_H = True
 
-    If_cal_pert_stddev = False
-    If_cal_corr = True
+    interp_P = False
+    P_range = np.arange( 995,49,-20 )
+    interp_H = True
+    H_range = np.arange(0,31,1)
+
+    # limitations
+    limit = True
+    if limit:  
+        num_limit = 3
+
+    If_cal_corr = False
     If_save = True
 
-    If_plot_corr_snapshot = True
-    If_plot_meanCorr = False
+    If_plot_corr_snapshot = False
+    If_plot_meanCorr = True
     # -------------------------------------------------------    
+    
+    Exper_name = 'IR-updateW-J_DA+J_WRF+J_init-SP-intel17-WSM6-30hr-hroi900'#UD.generate_one_name( Storm,DA,MP )
+    # 'IR-updateW-J_DA+J_WRF+J_init-SP-intel17-WSM6-30hr-hroi900'
 
     if not Consecutive_times:
         DAtimes = ['201709160600','201709161200','201709161800','201709170000','201709170600','201709171200','201709171800','201709180000']
@@ -642,34 +706,34 @@ if __name__ == '__main__':
         DAtimes = [time_dt.strftime("%Y%m%d%H%M") for time_dt in time_interest_dt]
 
 
-    # Interpolate simulated Tb at model resolution to obs resolution
-    if ens_Interp_to_obs:
-        print('------- For all members, interpolate Hx in model resolution to obs location ------')
-        for DAtime in DAtimes:
-            # Read assimilated obs 
-            file_Diag = big_dir+Storm+'/'+Exper_name+'/run/'+DAtime+'/enkf/d03/fort.10000'
-            d_obs = Diag.Find_IR( file_Diag, fort_v )
-            # Interpolate
-            Hx_dir = big_dir+Storm+'/'+Exper_name+'/Obs_Hx/IR/'+DAtime+'/'
-            stat_3D.interp_simu_to_obs_matlab_ens( d_obs, Hx_dir, sensor, ch_list,  DAtime )
+    ## Interpolate simulated Tb at model resolution to obs resolution
+    #if ens_Interp_to_obs:
+    #    print('------- For all members, interpolate Hx in model resolution to obs location ------')
+    #    for DAtime in DAtimes:
+    #        # Read assimilated obs 
+    #        file_Diag = big_dir+Storm+'/'+Exper_name+'/run/'+DAtime+'/enkf/d03/fort.10000'
+    #        d_obs = Diag.Find_IR( file_Diag, fort_v )
+    #        # Interpolate
+    #        Hx_dir = big_dir+Storm+'/'+Exper_name+'/Obs_Hx/IR/'+DAtime+'/'
+    #        stat_3D.interp_simu_to_obs_matlab_ens( d_obs, Hx_dir, sensor, ch_list,  DAtime )
 
-    # Calculate ensemble perturbations and variances
-    if If_cal_pert_stddev:
-        print('------------ Calculate the ensemble perturbations --------------')
-        for DAtime in DAtimes:
-            # Hxb
-            Hx_dir = big_dir+Storm+'/'+Exper_name+'/Obs_Hx/IR/'+DAtime+'/'
-            wrf_dir = big_dir+Storm+'/'+Exper_name+'/fc/'+DAtime+'/'
-            if to_obs_res:
-                print('At obs space...')
-                stat_3D.cal_pert_stddev_obsRes_Hxb( DAtime, sensor, Hx_dir, If_save, fort_v, wrf_dir)
-            else:
-                print('At model space...')
-                stat_3D.cal_pert_stddev_modelRes_Hxb( DAtime, sensor, Hx_dir, If_save, wrf_dir)
-            # Xb
-            wrf_dir = big_dir+Storm+'/'+Exper_name+'/fc/'+DAtime+'/'
-            for var_name in v_interest:
-                stat_3D.cal_pert_stddev_xb( DAtime, wrf_dir, var_name, If_save )
+    ## Calculate ensemble perturbations and variances
+    #if If_cal_pert_stddev:
+    #    print('------------ Calculate the ensemble perturbations --------------')
+    #    for DAtime in DAtimes:
+    #        # Hxb
+    #        Hx_dir = big_dir+Storm+'/'+Exper_name+'/Obs_Hx/IR/'+DAtime+'/'
+    #        wrf_dir = big_dir+Storm+'/'+Exper_name+'/fc/'+DAtime+'/'
+    #        if to_obs_res:
+    #            print('At obs space...')
+    #            stat_3D.cal_pert_stddev_obsRes_Hxb( DAtime, sensor, Hx_dir, If_save, fort_v, to_obs_res, wrf_dir)
+    #        else:
+    #            print('At model space...')
+    #            stat_3D.cal_pert_stddev_modelRes_Hxb( DAtime, sensor, Hx_dir, If_save, wrf_dir)
+    #        # Xb
+    #        wrf_dir = big_dir+Storm+'/'+Exper_name+'/fc/'+DAtime+'/'
+    #        for var_name in v_interest:
+    #            stat_3D.cal_pert_stddev_xb( DAtime, wrf_dir, var_name, If_save )
 
 
     # Calculate correlations between obs and their nearest model columns

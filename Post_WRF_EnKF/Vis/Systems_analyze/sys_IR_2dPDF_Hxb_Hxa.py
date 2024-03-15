@@ -4,6 +4,7 @@ import numba
 import numpy as np
 import netCDF4 as nc
 from matplotlib import pyplot as plt
+from matplotlib import ticker
 import math
 from datetime import datetime, timedelta
 import time
@@ -14,6 +15,7 @@ import matplotlib.colors as mcolors
 import Util_data as UD
 import Util_Vis
 import Diagnostics as Diag
+
 
 # Read variables at obs resolution/location for one experiment 
 def read_Tbs_obsRes_oneExper(istorm,imp,ida,Exper_names,d_times,sensor):
@@ -99,8 +101,8 @@ def Plot_2Dhist( d_hcount ):
     # Add color bar below the plot
     caxes = fig.add_axes([0.12, 0.88, 0.78, 0.03])
     color_bar = fig.colorbar(show,cax=caxes,orientation='horizontal')#ticks=bounds)
-    color_bar.ax.xaxis.set_major_locator(plt.FixedLocator([0,1,2,3,4]))
-    #color_bar.ax.set_xticklabels( bounds_str, rotation=45)
+    color_bar.ax.xaxis.set_major_locator(ticker.FixedLocator([0,1,2,3,4]))
+    color_bar.ax.xaxis.set_major_formatter(ticker.FixedFormatter(['$10^0$', '$10^1$', '$10^2$', '$10^3$','$10^4$']))
     color_bar.ax.tick_params(labelsize=15)
     #color_bar.ax.set_xlabel('Domain-mean Increment',fontsize=15)
 
@@ -138,7 +140,7 @@ def Plot_2Dhist( d_hcount ):
     fig.suptitle( 'Density scatterplots of IR Tbs over '+str(len(dict_times[Storms[0]]))+' Cycles', fontsize=15, fontweight='bold')
 
     # Save
-    des_name = small_dir+'SYSTEMS/Vis_analyze/Tb/IR_2dPDF_'+str(len(dict_times[Storms[0]]))+'cycles.png'
+    des_name = small_dir+'SYSTEMS/Vis_analyze/Tb/IR_2dPDF_'+str(len(dict_times[Storms[0]]))+'cycles_'+DA+'_'+MP+'.png'
     plt.savefig( des_name )
     print( 'Saving the figure: ', des_name )
     plt.close()
@@ -149,13 +151,13 @@ def Plot_2Dhist( d_hcount ):
 
 if __name__ == '__main__':
 
-    big_dir = '/scratch_S2/06191/tg854905/Pro2_PSU_MW/'
+    big_dir = '/scratch/06191/tg854905/Pro2_PSU_MW/'
     small_dir = '/work2/06191/tg854905/stampede2/Pro2_PSU_MW/'
 
     #--------Configuration------------
     Storms = ['IRMA','JOSE','MARIA','HARVEY']#['HARVEY','IRMA','JOSE','MARIA']
     DA = 'IR'
-    MP = 'WSM6'
+    MP = 'TuneWSM6'
     sensor = 'abi_gr'
 
     start_time_str = {'HARVEY':'201708221200','IRMA':'201709030000','JOSE':'201709050000','MARIA':'201709160000'}

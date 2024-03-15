@@ -20,17 +20,70 @@ from matplotlib import colors
 from cartopy import crs as ccrs
 from cartopy.mpl.gridliner import LONGITUDE_FORMATTER, LATITUDE_FORMATTER
 from mpl_toolkits.axes_grid1 import make_axes_locatable
+import scipy as sp
+import scipy.ndimage
 import time
 import subprocess
 import pickle
 
-from Track import read_bestrack
+import metpy.calc as mpcalc
+from metpy.units import units
+
 import Read_Obspace_IR as ROIR
 import Util_data as UD
 import Diagnostics as Diag
 
+def find_minSLP( wrfout ):
+    ncdir = nc.Dataset( wrfout )
+    slp = getvar(ncdir, 'slp')
+    min_slp = np.amin( slp )
+    slp_smooth = sp.ndimage.gaussian_filter(slp, [11,11])
+    idx = np.nanargmin( slp_smooth )
+    lat_minslp = ncdir.variables['XLAT'][:].flatten()[idx]
+    lon_minslp = ncdir.variables['XLONG'][:].flatten()[idx]
 
-def plot_var_incre_timeseries( ave_var_overT, geoHkm=None ):
+    min_slp = [lat_minslp,lon_minslp,min_slp.values]
+    return min_slp
+
+def plot_2Dvar_incre_timeseries( ave_var_overT):
+
+    # Set up figure
+    fig = plt.figure( figsize=(12,6), dpi=300 )
+    ax = plt.subplot(1,1,1)
+
+    # Plot the figure
+    xv = [datetime.strptime( it,"%Y%m%d%H%M") for it in DAtimes]
+    ax.plot( xv,ave_var_overT,marker='o',linewidth=4,color='black' )
+    
+    ax.axhspan(0, max(ave_var_overT), color='blue', alpha=0.2)
+    ax.axhspan(min(ave_var_overT), 0, color='red', alpha=0.2)
+    # Set X/Y labels
+    ax.set_ylim([min(ave_var_overT),max(ave_var_overT)])
+    # set X label
+    start_time = datetime.strptime( DAtimes[0],"%Y%m%d%H%M")
+    end_time = datetime.strptime( DAtimes[-1],"%Y%m%d%H%M")
+    ax.set_xlim( start_time, end_time)
+    ax.tick_params(axis='x', labelrotation=45, labelsize=10)
+
+    # Set title
+    if 'min_slp' in var_name:
+        title_name = 'EnKF Increment: value of min SLP'
+    else:
+        pass
+    ax.set_title( title_name,fontweight="bold",fontsize='11' )
+    fig.suptitle(Storm+': '+Exper_name, fontsize=10, fontweight='bold')
+
+    # Save the figure
+    save_des = small_dir+Storm+'/'+Exper_name+'/Vis_analyze/EnKF/'+var_name+'_'+DAtimes[0]+'_'+DAtimes[-1]+'.png'
+    plt.savefig( save_des )
+    print( 'Saving the figure: ', save_des )
+    plt.close()
+
+
+    return None
+
+
+def plot_3Dvar_incre_timeseries( ave_var_overT, geoHkm=None ):
 
     # Set up figure
     fig = plt.figure( figsize=(12,6), dpi=300 )
@@ -62,7 +115,7 @@ def plot_var_incre_timeseries( ave_var_overT, geoHkm=None ):
     else:
         cmap = 'bwr'
     
-    bounds = np.linspace(-0.3,0.3,7)
+    bounds = np.linspace(-0.2,0.2,11) #np.linspace(-0.3,0.3,7)
     #bounds = np.linspace( np.floor(ave_var_overT.min()),np.ceil(ave_var_overT.max()),10 )
     bounds_format = [ "{0:.2f}".format( item ) for item in bounds]
     #incre_contourf = ax.contourf( xcoor, ycoor, np.transpose( ave_var_overT ), cmap=cmap, vmin=ave_var_overT.min(), vmax=ave_var_overT.max(),levels=bounds_format,extend='both')
@@ -97,8 +150,11 @@ def plot_var_incre_timeseries( ave_var_overT, geoHkm=None ):
         ax.set_ylabel('Pressure (hPa)',fontsize=15)
 
     # Set title
-    if 'rt_vo' in var_name:
-        title_name = 'EnKF Increment: relative vorticity ($10^-5$ s-1) in a circle with R='+str(radius_threshold)+' KM'
+    if specify_area:
+        if 'rt_vo' in var_name:
+            title_name = 'EnKF Increment: relative vorticity ($10^-5$ s-1) in a circle with R='+str(radius_threshold)+' KM'
+        elif 'diver' in var_name:
+            title_name = 'EnKF Increment: divergence ($10^-5$ s-1) in a circle with R='+str(radius_threshold)+' KM'
     else:
         pass
     ax.set_title( title_name,fontweight="bold",fontsize='11' )
@@ -116,7 +172,97 @@ def plot_var_incre_timeseries( ave_var_overT, geoHkm=None ):
 
     return None
 
-def eachVar_timeSeries_cal( ):
+# Area-mean calculation of 2D variable
+def each2DVar_timeSeries( ):
+
+    # Dimension
+    xmax = 297
+    ymax = 297
+    nLevel = 1
+
+    # Initiate a new array 
+    ave_var_overT = np.zeros( [len(DAtimes),] )
+
+    if specify_area:
+        # Read the best track position every 6 hours
+        d_btk = UD.read_bestrack(Storm)
+        # Read the hourly best track position 
+        dict_btk = UD.interpolate_locations( DAtimes, d_btk)
+
+    for DAtime in DAtimes:
+        print('At ', DAtime)
+
+        # Get the time index
+        t_idx = np.where([DAtime == it for it in DAtimes])[0]
+
+        # Read increment of variable of interest
+        wrf_dir = big_dir+Storm+'/'+Exper_name+'/fc/'+DAtime
+
+        # might only use data in a specified area
+        if specify_area:
+            # Find the best-track position 
+            btk_dt = [it_str for it_str in dict_btk['time'] ]#[datetime.strptime(it_str,"%Y%m%d%H%M") for it_str in dict_btk['time']]
+            bool_match = [DAtime == it for it in btk_dt]
+            if True in bool_match:
+                idx_btk = np.where( bool_match )[0][0] # the second[0] is due to the possibility of multiple records at the same time
+            else:
+                idx_btk  = None
+            # convert from ll to xy
+            wrf_file = wrf_dir+'/wrf_enkf_input_d03_mean'
+            ncdir = nc.Dataset( wrf_file )
+            tc_ij = ll_to_xy(ncdir, dict_btk['lat'][idx_btk], dict_btk['lon'][idx_btk])
+            # What ll_to_xy returns is not the xy coordinate itself but the grid index starting from 0. 
+            # (https://forum.mmm.ucar.edu/threads/what-does-wrf-python-function-ll_to_xy-returns.12248/)
+            tc_i = tc_ij.values[0]
+            tc_j = tc_ij.values[1]
+            idx_x = UD.find_circle_area_model_ij( wrf_file, tc_i, tc_j, radius_threshold, 3)
+        else:
+            idx_x = np.arange(xmax*ymax)
+
+        # variable increment
+        if var_name == 'min_slp': # sea level pressure
+            # analysis
+            xa_file = wrf_dir+'/wrf_enkf_output_d03_mean'
+            xa_minSLP = find_minSLP( xa_file )
+            # background
+            xb_file = wrf_dir+'/wrf_enkf_input_d03_mean'
+            xb_minSLP = find_minSLP( xb_file )
+            # increment
+            var = xa_minSLP[2] - xb_minSLP[2]
+        else:
+            pass
+
+        # area-mean calculation
+        if var_name == 'min_slp':
+            ave_var_overT[t_idx] = var
+        else:
+            var_mean = np.nanmean( var )
+            ave_var_overT[t_idx] = var_mean
+    
+    # May save the data
+    if If_save:
+        # Metadata
+        current_datetime = datetime.now()
+        formatted_datetime = current_datetime.strftime('%Y-%m-%d %H:%M:%S')
+        metadata = {'created_at':formatted_datetime}
+        save_des = small_dir+Storm+'/'+Exper_name+'/Data_analyze/EnKF/'+var_name+'_'+DAtimes[0]+'_'+DAtimes[-1]+'.pickle'
+        # create a dictionary with metadata and data
+        meta_and_data = {'metadata':metadata,'ave_var_overT':ave_var_overT}
+        # Write the dictionary to a pickle file
+        with open(save_des,'wb') as file:
+            pickle.dump( meta_and_data, file )
+        print( 'Saving the data: ', save_des )
+
+
+    # Plot the time series of increment     
+    if If_plot_series:
+        plot_2Dvar_incre_timeseries( ave_var_overT )
+
+    return None
+
+
+# Area-mean calculation of 3D variable
+def each3DVar_timeSeries_cal( ):
 
     # Dimension
     xmax = 297
@@ -130,6 +276,12 @@ def eachVar_timeSeries_cal( ):
         # Construct a new array at model level
         ave_var_overT = np.zeros( [len(DAtimes),nLevel] )
 
+    if specify_area:
+        # Read the best track position every 6 hours
+        d_btk = UD.read_bestrack(Storm)
+        # Read the hourly best track position 
+        dict_btk = UD.interpolate_locations( DAtimes, d_btk)
+
     for DAtime in DAtimes:
         print('At ', DAtime)
 
@@ -141,15 +293,13 @@ def eachVar_timeSeries_cal( ):
 
         # might only use data in a specified area
         if specify_area:
-            # Read storm center
-            dict_btk = read_bestrack(Storm)
-            # Find the best-track position
+            # Find the best-track position 
             btk_dt = [it_str for it_str in dict_btk['time'] ]#[datetime.strptime(it_str,"%Y%m%d%H%M") for it_str in dict_btk['time']]
             bool_match = [DAtime == it for it in btk_dt]
             if True in bool_match:
                 idx_btk = np.where( bool_match )[0][0] # the second[0] is due to the possibility of multiple records at the same time
             else:
-                if_btk_exist = None
+                idx_btk  = None
             # convert from ll to xy
             wrf_file = wrf_dir+'/wrf_enkf_input_d03_mean'
             ncdir = nc.Dataset( wrf_file )
@@ -158,7 +308,7 @@ def eachVar_timeSeries_cal( ):
             # (https://forum.mmm.ucar.edu/threads/what-does-wrf-python-function-ll_to_xy-returns.12248/)
             tc_i = tc_ij.values[0]
             tc_j = tc_ij.values[1]
-            idx_x = UD.find_circle_area( wrf_file, tc_i, tc_j, radius_threshold, 3)     
+            idx_x = UD.find_circle_area_model_ij( wrf_file, tc_i, tc_j, radius_threshold, 3)     
         else:
             idx_x = np.arange(xmax*ymax)
 
@@ -177,6 +327,28 @@ def eachVar_timeSeries_cal( ):
             xb_rtvo = xb_avo - xb_coriolis_sin #relative vorticity, units: 10-5 s-1 
             # increment
             var = xa_rtvo - xb_rtvo
+            var = np.array( var )
+            var = var.reshape( var.shape[0],-1) # n_level, n_points
+            var = var[:,idx_x]
+        elif var_name == 'diver':
+            # analysis
+            xa_file = wrf_dir+'/wrf_enkf_output_d03_mean'
+            xa_ncdir = nc.Dataset(xa_file, 'r')
+            Um_xa = getvar( xa_ncdir, 'ua') # U-component of wind on mass points
+            Vm_xa = getvar( xa_ncdir, 'va') # V-component of wind on mass points
+            Um_xa = Um_xa* units("m/s")
+            Vm_xa = Vm_xa* units("m/s")
+            dvg_xa = mpcalc.divergence(Um_xa, Vm_xa, dx=3000* units("m"), dy=3000* units("m"))
+            # background
+            xb_file = wrf_dir+'/wrf_enkf_input_d03_mean'
+            xb_ncdir = nc.Dataset(xb_file, 'r')
+            Um_xb = getvar( xb_ncdir, 'ua') # U-component of wind on mass points
+            Vm_xb = getvar( xb_ncdir, 'va') # V-component of wind on mass points
+            Um_xb = Um_xb* units("m/s")
+            Vm_xb = Vm_xb* units("m/s")
+            dvg_xb = mpcalc.divergence(Um_xb, Vm_xb, dx=3000* units("m"), dy=3000* units("m"))
+            # increment
+            var = (dvg_xa - dvg_xb)*1e5 # unit: 10-5 s-1
             var = np.array( var )
             var = var.reshape( var.shape[0],-1) # n_level, n_points
             var = var[:,idx_x]
@@ -209,7 +381,7 @@ def eachVar_timeSeries_cal( ):
             end_time = time.process_time()
             print ('time needed for the interpolation: ', end_time-start_time, ' seconds')
             # Process for mixing ratio
-            var_mean = np.mean( var_interp,axis=1 )
+            var_mean = np.nanmean( var_interp,axis=1 )
             # Perform domain mean
             ave_var_overT[t_idx,:] = var_mean
         else:
@@ -221,11 +393,11 @@ def eachVar_timeSeries_cal( ):
             geoHkm = (PHB+PH)/9.8/1000 # in km
             geoHkm = geoHkm.reshape( geoHkm.shape[0],-1)
             geoHkm = geoHkm[:,idx_x]
-            geoHkm_Dmean = np.mean( geoHkm, axis=1 )
+            geoHkm_Dmean = np.nanmean( geoHkm, axis=1 )
             geoHkm_half_eta = (geoHkm_Dmean[:-1]+geoHkm_Dmean[1:])/2
             geoHkm_half_eta = np.ma.getdata(geoHkm_half_eta)
             # Perform domain mean
-            var_mean = np.mean( var,axis=1 )
+            var_mean = np.nanmean( var,axis=1 )
             ave_var_overT[t_idx,:] = var_mean
 
     # May save the data
@@ -251,9 +423,9 @@ def eachVar_timeSeries_cal( ):
     # Plot the increament in a time series
     if If_plot_series:
         if interp_P:
-            plot_var_incre_timeseries( ave_var_overT )
+            plot_3Dvar_incre_timeseries( ave_var_overT )
         else:
-            plot_var_incre_timeseries( ave_var_overT, geoHkm_half_eta )
+            plot_3Dvar_incre_timeseries( ave_var_overT, geoHkm_half_eta )
 
     return None
 
@@ -261,30 +433,33 @@ def eachVar_timeSeries_cal( ):
 
 if __name__ == '__main__':
 
-    big_dir = '/scratch/06191/tg854905/Pro2_PSU_MW/'
+    big_dir = '/scratch_S2/06191/tg854905/Pro2_PSU_MW/'
     small_dir =  '/work2/06191/tg854905/stampede2/Pro2_PSU_MW/'
 
     # ---------- Configuration -------------------------
-    Storm = 'JOSE'
-    Exper_name = 'IR-J_DA+J_WRF+J_init-SP-intel17-WSM6-30hr-hroi900'
+    Storm = 'IRMA'
+    MP = 'TuneWSM6'
+    DA = 'IR'
     v_interest = ['rt_vo',]
     fort_v = ['obs_type','lat','lon','obs']
 
-    start_time_str = '201709050000'
-    end_time_str = '201709060000'
+    start_time_str = '201709030000'
+    end_time_str = '201709050000'
     Consecutive_times = True
 
     interp_P = True
     P_of_interest = list(range( 900,10,-20 ))
     interp_H = False
     specify_area = True
-    radius_threshold = 250 #km
+    radius_threshold = 300 #km
 
     If_ncdiff = False
     If_cal_series = True
     If_save = True
     If_plot_series = True
     # -------------------------------------------------------    
+    Exper_name = UD.generate_one_name( Storm,DA,MP )
+
 
     # Identify DA times in the period of interest
     if not Consecutive_times:
@@ -300,9 +475,43 @@ if __name__ == '__main__':
         start_time=time.process_time()
         for var_name in v_interest:
             print('Calculate '+var_name+'...')
-            eachVar_timeSeries_cal( )
+            if var_name == 'min_slp':
+                each2DVar_timeSeries( )
+            else:
+                each3DVar_timeSeries_cal( )
         end_time = time.process_time()
         print ('time needed: ', end_time-start_time, ' seconds')
+
+    # Plot the time evolution of domain-averaged increments
+    if If_plot_series:
+        for var_name in v_interest:
+            print('Plot '+var_name+'...')
+
+            if var_name == 'min_slp':
+                save_des = small_dir+Storm+'/'+Exper_name+'/Data_analyze/EnKF/'+var_name+'_'+DAtimes[0]+'_'+DAtimes[-1]+'.pickle'
+                with open(save_des,'rb') as file:
+                    meta_and_data = pickle.load( file )
+                ave_var_overT = meta_and_data['ave_var_overT']
+                plot_2Dvar_incre_timeseries( ave_var_overT )
+            else:
+                # for 3D var only
+                if interp_P:
+                    save_des = small_dir+Storm+'/'+Exper_name+'/Data_analyze/EnKF/Interp_increment_'+var_name+'_'+DAtimes[0]+'_'+DAtimes[-1]+'.pickle'
+                    with open(save_des,'rb') as file:
+                        meta_and_data = pickle.load( file )
+                    ave_var_overT = meta_and_data['ave_var_overT']
+                    #ave_T_profile = meta_and_data['ave_T_profile']
+                    plot_3Dvar_incre_timeseries( ave_var_overT )
+                else:
+                    save_des = small_dir+Storm+'/'+Exper_name+'/Data_analyze/EnKF/ML_increment_'+var_name+'_'+DAtimes[0]+'_'+DAtimes[-1]+'.pickle'
+                    with open(save_des,'rb') as file:
+                        meta_and_data = pickle.load( file )
+                    ave_var_overT = meta_and_data['ave_var_overT']
+                    #ave_T_profile = meta_and_data['ave_T_profile']
+                    geoHkm_half_eta = meta_and_data['geoHkm_half_eta']
+                    plot_3Dvar_incre_timeseries( ave_var_overT,geoHkm_half_eta )
+
+
 
 
 

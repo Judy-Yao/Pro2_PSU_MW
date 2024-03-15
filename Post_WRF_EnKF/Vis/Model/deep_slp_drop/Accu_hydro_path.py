@@ -1,4 +1,3 @@
-#!/work2/06191/tg854905/stampede2/opt/anaconda3/lib/python3.7
 
 from numba import njit, prange
 import os # functions for interacting with the operating system
@@ -8,8 +7,6 @@ import glob
 import netCDF4 as nc
 from wrf import getvar, ll_to_xy
 import math
-import scipy as sp
-import scipy.ndimage
 import matplotlib
 matplotlib.use("agg")
 import matplotlib.ticker as mticker
@@ -62,7 +59,6 @@ def cal_cdir(get_cdir,ver_coor,accu_qhydro,accu_th):
                 ip_valid[ip] = ip_seq[ip]
                 break
     return cd_ir,ip_valid
-
 
 # Read variables at model resolution/location
 def read_Tb_modelRes(Tb_file, sensor ):
@@ -148,7 +144,7 @@ def compute_accu_hydromass( wrf_files, hydros, idx_t, HPI_models=None):
             var = ncdir.variables[var_name][0,:,:,:]
             var = var.reshape( var.shape[0],-1 )
             # calculate the mass of hydrometeor at any given point for a file
-            tmp = hydro_mass( full_p[ifile,:,:], tv_k[ifile,:,:], geoHm[ifile,:,:], var[:,idx_area] )
+            tmp = hydro_mass( full_p[ifile,:,:], tv_k[ifile,:,:], geoHm[ifile,:,:], var.data[:,idx_area] )
             # accumulate
             if path_from_top:
                 accu_tmp = np.zeros( [len(idx_area)] )
@@ -303,7 +299,7 @@ def Plot_depth_IRsee( DAtime, wrf_files, d_hydro, ver_coor ):
             cdirs[idx,:] = cdir/1000 # conver to km
 
     # ------------------ Plot -----------------------
-    fig, ax=plt.subplots(2, 2, subplot_kw={'projection': ccrs.PlateCarree()}, gridspec_kw = {'wspace':0, 'hspace':0}, linewidth=0.5, sharex='all', sharey='all',  figsize=(8.5,8), dpi=400)
+    fig, ax=plt.subplots(2, 2, subplot_kw={'projection': ccrs.PlateCarree()}, gridspec_kw = {'wspace':0, 'hspace':0}, linewidth=0.5, sharex='all', sharey='all',  figsize=(10.5,10), dpi=400)
 
     # domain area
     lat_min = d_wrf_d03['lat_min']
@@ -327,7 +323,7 @@ def Plot_depth_IRsee( DAtime, wrf_files, d_hydro, ver_coor ):
     tb_range = np.linspace(min_obs,max_obs,8)
     IR_bar = fig.colorbar(ir_f,cax=cbaxes,ticks=tb_range,fraction=0.046, pad=0.04)
     #IR_bar.ax.set_ylabel('Brightness Temperature (K)')
-    IR_bar.ax.tick_params(labelsize=12)
+    IR_bar.ax.tick_params(labelsize=15)
  
     # cloud depth that IR can see
     if ver_use_press:
@@ -335,15 +331,15 @@ def Plot_depth_IRsee( DAtime, wrf_files, d_hydro, ver_coor ):
         max_vc = 850
         bounds = [100,200,300,400,500,600,700,800,900]
     else:
-        min_vc = 0
-        max_vc = 21
-        bounds = np.linspace(min_vc,max_vc,8)
+        min_vc = 10
+        max_vc = 18
+        bounds = np.linspace(min_vc,max_vc,9)
     if plot_scatter:
         ax[0,1].scatter(xlon,xlat,s=2,c=cdirs[0,:], edgecolors='none', cmap='magma_r', vmin=min_vc, vmax=max_vc, transform=ccrs.PlateCarree())
         cdir_f = ax[1,1].scatter(xlon,xlat,s=2,c=cdirs[1,:], edgecolors='none', cmap='magma_r', vmin=min_vc, vmax=max_vc, transform=ccrs.PlateCarree())
         cbaxes = fig.add_axes([0.91, 0.1, 0.03, 0.8])
         cdir_bar = fig.colorbar(ticks=range(min_vc,max_vc+50,100),cax=cbaxes,fraction=0.046, pad=0.04)
-        cdir_bar.ax.tick_params(labelsize=12)
+        cdir_bar.ax.tick_params(labelsize=15)
     else:
         ax[0,1].contourf(xlon.reshape(xmax,ymax),xlat.reshape(xmax,ymax),cdirs[0,:].reshape(xmax,ymax),cmap='magma_r',levels=bounds,extend='both',transform=ccrs.PlateCarree())
         cdir_f = ax[1,1].contourf(xlon.reshape(xmax,ymax),xlat.reshape(xmax,ymax),cdirs[1,:].reshape(xmax,ymax),cmap='magma_r',levels=bounds,extend='both',transform=ccrs.PlateCarree()) 
@@ -352,12 +348,12 @@ def Plot_depth_IRsee( DAtime, wrf_files, d_hydro, ver_coor ):
         cdir_bar = fig.colorbar(cdir_f,cax=cbaxes,fraction=0.046, pad=0.04)
         bounds_str =  [ str(item) for item in color_ticks ]
         cdir_bar.ax.set_yticklabels( bounds_str)
-        cdir_bar.ax.tick_params(labelsize=12)
+        cdir_bar.ax.tick_params(labelsize=16)
 
 
     # Set title
-    title_name = Storm+': '+Exper_name+' '+DAtime+' \n Cloud Depth IR can See, TH='+str(accu_th)+' gram m-2'
-    fig.suptitle(title_name, fontsize=12, fontweight='bold')
+    title_name = Storm+': '+Exper_name+' '+DAtime+' \n IR-most-sensitive-to Cloud Depth, TH='+str(accu_th)+' gram m-2'
+    fig.suptitle(title_name, fontsize=15, fontweight='bold')
 
     # Axis labels
     lon_ticks = list(range(math.ceil(lon_min)-2, math.ceil(lon_max)+2,2))
@@ -368,25 +364,25 @@ def Plot_depth_IRsee( DAtime, wrf_files, d_hydro, ver_coor ):
             gl = ax[i,j].gridlines(crs=ccrs.PlateCarree(),draw_labels=False,linewidth=0.5, color='gray', alpha=0.5, linestyle='--')
 
             if j==0:
-                gl.ylabels_left = True
-                gl.ylabels_right = False
+                gl.left_labels = True
+                gl.right_labels = False
             else:
-                gl.ylabels_left = False
-                gl.ylabels_right = False
+                gl.left_labels = False
+                gl.right_labels = False
 
             if i == 1:
-                gl.xlabels_top = False
-                gl.xlabels_bottom = True
+                gl.top_labels = False
+                gl.bottom_labels = True
             else:
-                gl.xlabels_top = False
-                gl.xlabels_bottom = False
+                gl.top_labels = False
+                gl.bottom_labels = False
 
             gl.ylocator = mticker.FixedLocator(lat_ticks)
             gl.xlocator = mticker.FixedLocator(lon_ticks)
             gl.xformatter = LONGITUDE_FORMATTER
             gl.yformatter = LATITUDE_FORMATTER
-            gl.xlabel_style = {'size': 10}
-            gl.ylabel_style = {'size': 10}
+            gl.xlabel_style = {'size': 13}
+            gl.ylabel_style = {'size': 13}
 
 
     # Save the figure
@@ -410,17 +406,17 @@ if __name__ == '__main__':
     model_resolution = 3000 #m
 
     # ---------- Configuration -------------------------
-    Storm = 'IRMA'
+    Storm = 'HARVEY'
     DA = 'IR'
-    MP = 'WSM6'
+    MP = 'THO'
     hydros =  ['QCLOUD','QRAIN','QICE','QSNOW','QGRAUP']
     
     sensor = 'abi_gr'
     ch_list = ['8',]
     fort_v = ['obs_type','lat','lon','obs']
 
-    start_time_str = '201709030000'
-    end_time_str = '201709030000'
+    start_time_str = '201708221200'
+    end_time_str = '201708241200'
     Consecutive_times = True
 
     deep_slp_incre = False
@@ -432,8 +428,8 @@ if __name__ == '__main__':
     accu_th = 30.0 
     ver_use_press = False
     each_water = True
-    domain_mean = True
-    depth_IR_see = False
+    domain_mean = False
+    depth_IR_see = True
     plot_scatter = False
     # ------------------------------------------------------  
     # Dimension of the domain
@@ -446,7 +442,7 @@ if __name__ == '__main__':
 
     # Times
     if not Consecutive_times:
-        DAtimes = ['201709180000',]
+        DAtimes = ['201709040600']
     else:
         time_diff = datetime.strptime(end_time_str,"%Y%m%d%H%M") - datetime.strptime(start_time_str,"%Y%m%d%H%M")
         time_diff_hour = time_diff.total_seconds() / 3600

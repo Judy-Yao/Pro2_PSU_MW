@@ -1,4 +1,3 @@
-#!/work2/06191/tg854905/stampede2/opt/anaconda3/lib/python3.7
 
 from numba import njit, prange
 import os,sys,stat # functions for interacting with the operating system
@@ -133,8 +132,8 @@ def interp_simu_to_obs_matlab_ens( d_obs, Hx_dir, sensor, ch_list,  DAtime ):
     tmp_control = np.fromfile( file_hxb[0],dtype='<f4')
     n_ch = int( len(tmp_control)/(xmax*ymax) - 2 )
     tmp_data = tmp_control[:].reshape(n_ch+2,ymax,xmax)
-    lon_x =  list(tmp_data[0,:,:].flatten()) #longitude
-    lat_x = list(tmp_data[1,:,:].flatten())  #latitude
+    lon_x =  np.float64(list(tmp_data[0,:,:].flatten())) #longitude; added np.float64 bc eng.griddata returns error without it
+    lat_x = np.float64(list(tmp_data[1,:,:].flatten()))  #latitude
     ## Interpolate to obs location
     # start a matlab process
     eng = matlab.engine.start_matlab() 
@@ -144,7 +143,7 @@ def interp_simu_to_obs_matlab_ens( d_obs, Hx_dir, sensor, ch_list,  DAtime ):
         tmp_control = np.fromfile( ifile,dtype='<f4') # <: little endian; f: float; 4: 4 bytes
         n_ch = int( len(tmp_control)/(xmax*ymax) - 2 )
         tmp_data = tmp_control[:].reshape(n_ch+2,ymax,xmax)
-        Yb_x = list(tmp_data[2,:,:].flatten())
+        Yb_x = np.float64(list(tmp_data[2,:,:].flatten()))
         
         for ich in ch_list:
             if ifile == file_hxb[0]:
@@ -152,9 +151,9 @@ def interp_simu_to_obs_matlab_ens( d_obs, Hx_dir, sensor, ch_list,  DAtime ):
             if sum(np.isnan(Yb_x)) != 0:
                 warnings.warn('NaN value exists in Yb_x!') 
             # interpolate simulated Tbs to obs location
-            mYb_obspace = eng.griddata(matlab.double(lon_x), matlab.double(lat_x), matlab.double(Yb_x), matlab.double(lon_obs), matlab.double(lat_obs) )
+            mYb_obspace = eng.griddata(matlab.double(lon_x),matlab.double(lat_x),matlab.double(Yb_x),matlab.double(lon_obs),matlab.double(lat_obs))
             Yb_obspace = np.array(mYb_obspace._data)
-            hxb_ens[idx,:] = ["{0:.4f}".format(item) for item in Yb_obspace]
+            hxb_ens[idx,:] = np.around(Yb_obspace, decimals=4) #["{0:.4f}".format(item) for item in Yb_obspace]
     # end the matlab process
     eng.quit()
 
@@ -267,14 +266,14 @@ def verify_hxb( var, wrf_dir=None ):
     for j in range(1):
         gl = ax.gridlines(crs=ccrs.PlateCarree(),draw_labels=False,linewidth=0.1, color='gray', alpha=0.5, linestyle='--')
 
-        gl.xlabels_top = False
-        gl.xlabels_bottom = True
+        gl.top_labels = False
+        gl.bottom_labels = True
         if j==0:
-            gl.ylabels_left = True
-            gl.ylabels_right = False
+            gl.left_labels = True
+            gl.right_labels = False
         else:
-            gl.ylabels_left = False
-            gl.ylabels_right = False
+            gl.left_labels = False
+            gl.right_labels = False
 
         gl.ylocator = mticker.FixedLocator(lat_ticks)
         gl.xlocator = mticker.FixedLocator(lon_ticks)
@@ -598,14 +597,14 @@ def plot_hcorr_Tb_SLPatPoint(DAtime,sensor,corr_xb_hxb,d_all,idx_hxb,HPI_models)
     for j in range(1):
         gl = ax.gridlines(crs=ccrs.PlateCarree(),draw_labels=False,linewidth=1, color='gray', alpha=0.7, linestyle='--')
 
-        gl.xlabels_top = False
-        gl.xlabels_bottom = True
+        gl.top_labels = False
+        gl.bottom_labels = True
         if j==0:
-            gl.ylabels_left = True
-            gl.ylabels_right = False
+            gl.left_labels = True
+            gl.right_labels = False
         else:
-            gl.ylabels_left = False
-            gl.ylabels_right = False
+            gl.left_labels = False
+            gl.right_labels = False
 
         gl.ylocator = mticker.FixedLocator(lat_ticks)
         gl.xlocator = mticker.FixedLocator(lon_ticks)
@@ -722,14 +721,14 @@ def plot_enkf_ic_Tb_SLPatPoint(DAtime,sensor,enkf_ic,d_all,idx_hxb,HPI_models):
     for j in range(1):
         gl = ax.gridlines(crs=ccrs.PlateCarree(),draw_labels=False,linewidth=1, color='gray', alpha=0.7, linestyle='--')
 
-        gl.xlabels_top = False
-        gl.xlabels_bottom = True
+        gl.top_labels = False
+        gl.bottom_labels = True
         if j==0:
-            gl.ylabels_left = True
-            gl.ylabels_right = False
+            gl.left_labels = True
+            gl.right_labels = False
         else:
-            gl.ylabels_left = False
-            gl.ylabels_right = False
+            gl.left_labels = False
+            gl.right_labels = False
 
         gl.ylocator = mticker.FixedLocator(lat_ticks)
         gl.xlocator = mticker.FixedLocator(lon_ticks)
@@ -771,20 +770,20 @@ def plot_y_Hxb_SLPatPoint(DAtime,sensor,d_all,idx_hxb,HPI_models):
     ax.set_extent([lon_min,lon_max,lat_min,lat_max], crs=ccrs.PlateCarree())
     ax.coastlines(resolution='10m', color='black',linewidth=0.5)
 
-    min_ic = -20
-    max_ic = 20
+    min_ic = -10
+    max_ic = 10
     cs = ax.scatter(d_all['lon_obs'][idx_hxb], d_all['lat_obs'][idx_hxb],8,c=d_all['Yo_obs'][idx_hxb]-d_all['meanYb_obs'][idx_hxb],\
                 edgecolors='none', cmap='bwr',vmin=min_ic,vmax=max_ic,transform=ccrs.PlateCarree())
 
     # Colorbar
     caxes = fig.add_axes([0.91, 0.1, 0.015, 0.8])
-    cb_diff_ticks = np.linspace(min_ic, max_ic, 9, endpoint=True)
+    cb_diff_ticks = [-10,-5,0,5,10] #np.linspace(min_ic, max_ic, 9, endpoint=True)
     cbar = fig.colorbar(cs, ticks=cb_diff_ticks,orientation="vertical",cax=caxes,extend='both')
     cbar.ax.tick_params(labelsize=12)
 
     # mark the location of min slp of simulation
     idx_t = IR_times.index( DAtime )
-    ax.scatter(HPI_models['wrf_enkf_output_d03_mean']['lon'][idx_t], HPI_models['wrf_enkf_output_d03_mean']['lat'][idx_t], s=5, marker='o', facecolor='black',edgecolors='black', transform=ccrs.PlateCarree())
+    ax.scatter(HPI_models['wrf_enkf_output_d03_mean']['lon'][idx_t], HPI_models['wrf_enkf_output_d03_mean']['lat'][idx_t], s=30, marker='o', facecolor='black',edgecolors='black', transform=ccrs.PlateCarree()) #s=5
 
     # Axis labels
     lon_ticks = list(range(math.ceil(lon_min)-2, math.ceil(lon_max)+2,2))
@@ -793,14 +792,14 @@ def plot_y_Hxb_SLPatPoint(DAtime,sensor,d_all,idx_hxb,HPI_models):
     for j in range(1):
         gl = ax.gridlines(crs=ccrs.PlateCarree(),draw_labels=False,linewidth=1, color='gray', alpha=0.7, linestyle='--')
 
-        gl.xlabels_top = False
-        gl.xlabels_bottom = True
+        gl.top_labels = False
+        gl.bottom_labels = True
         if j==0:
-            gl.ylabels_left = True
-            gl.ylabels_right = False
+            gl.left_labels = True
+            gl.right_labels = False
         else:
-            gl.ylabels_left = False
-            gl.ylabels_right = False
+            gl.left_labels = False
+            gl.right_labels = False
 
         gl.ylocator = mticker.FixedLocator(lat_ticks)
         gl.xlocator = mticker.FixedLocator(lon_ticks)
@@ -842,8 +841,8 @@ if __name__ == '__main__':
     ch_list = ['8',]
     fort_v = ['obs_type','lat','lon','obs']
 
-    start_time_str = '201709030000'
-    end_time_str = '201709040000'
+    start_time_str = '201709041600'
+    end_time_str = '201709041600'
     Consecutive_times = True
 
     # Number of ensemble members
@@ -860,17 +859,18 @@ if __name__ == '__main__':
     to_obs_res = True
     ens_Interp_to_obs = False
 
-    If_save = True
+
+    If_save = False
     If_plot = True
     plot_inno = True
-    plot_corr = True
+    plot_corr = False
     plot_incre = False
     plot_scatter = True
     # -------------------------------------------------------    
 
     # Create experiment names
-    #Exper_name = UD.generate_one_name( Storm,DA,MP )
-    Exper_name = 'IR-TuneWSM6-J_DA+J_WRF+J_init-SP-intel17-WSM6-30hr-hroi900'
+    Exper_name = UD.generate_one_name( Storm,DA,MP )
+    #Exper_name = 'IR-TuneWSM6-J_DA+J_WRF+J_init-SP-intel17-WSM6-30hr-hroi900'
 
     if not Consecutive_times:
         IR_times = []
@@ -889,7 +889,7 @@ if __name__ == '__main__':
         for ifk in file_kinds:
             idx = file_kinds.index( ifk )
             HPI_models[ifk] = read_HPI_model( Storm, Exper_name, ifk, DAtimes_dir )
-        incre_slp = np.array(HPI_models['wrf_enkf_output_d03_mean']['min_slp']) - np.array(HPI_models['wrf_enkf_input_d03_mean']['min_slp']) 
+        incre_slp = np.array(HPI_models['wrf_enkf_output_d03_mean']['min_slp']) - np.array(HPI_models['wrf_enkf_input_d03_mean']['min_slp'])
     
     # Calculate the IR Tbs at obs locations for the whole ensemble
     if ens_Interp_to_obs:

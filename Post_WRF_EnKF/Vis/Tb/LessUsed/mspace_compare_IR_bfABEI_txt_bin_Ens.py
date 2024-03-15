@@ -16,10 +16,11 @@ import Util_Vis
 import Diagnostics as Diag
 import Util_data as UD
 
-def plot_Tb( Storm, Exper_name, Hxb, Hxa, DAtime, sensor, ch_list, d_obs):
+def plot_Tb( Storm, Exper_name, Hxb,DAtime, sensor, ch_list, d_obs):
+#def plot_Tb( Storm, Exper_name, Hxb, Hxa, DAtime, sensor, ch_list, d_obs):
 
     # Read simulated data
-    d_simu = UD.read_simu_IR_single( Hxb, Hxa, ch_list )
+    d_simu = UD.read_simu_IR_single( Hxb,ch_list )#UD.read_simu_IR_single( Hxb, Hxa, ch_list )
 
     # Read location from TCvitals
     if any( hh in DAtime[8:10] for hh in ['00','06','12','18']):
@@ -53,8 +54,8 @@ def plot_Tb( Storm, Exper_name, Hxb, Hxa, DAtime, sensor, ch_list, d_obs):
 
     ax[2].set_extent([lon_min, lon_max, lat_min, lat_max], crs=ccrs.PlateCarree())
     ax[2].coastlines(resolution='10m', color='black',linewidth=0.5)
-    cs = ax[2].scatter(d_simu['Lon_x'], d_simu['Lat_x'],1,c=d_simu['Ya_x'],\
-                edgecolors='none', cmap=IRcmap, vmin=min_T, vmax=max_T, transform=ccrs.PlateCarree())
+    #cs = ax[2].scatter(d_simu['Lon_x'], d_simu['Lat_x'],1,c=d_simu['Ya_x'],\
+    #            edgecolors='none', cmap=IRcmap, vmin=min_T, vmax=max_T, transform=ccrs.PlateCarree())
     if any( hh in DAtime[8:10] for hh in ['00','06','12','18'] ):
         ax[2].scatter(tc_lon, tc_lat, s=3, marker='*', edgecolors='white', transform=ccrs.PlateCarree())
 
@@ -78,14 +79,14 @@ def plot_Tb( Storm, Exper_name, Hxb, Hxa, DAtime, sensor, ch_list, d_obs):
     for j in range(3):
         gl = ax[j].gridlines(crs=ccrs.PlateCarree(),draw_labels=False,linewidth=0.1, color='gray', alpha=0.5, linestyle='--')
        
-        gl.top_labels = False
-        gl.bottom_labels = True
+        gl.xlabels_top = False
+        gl.xlabels_bottom = True
         if j==0:
-            gl.left_labels = True
-            gl.right_labels = False
+            gl.ylabels_left = True
+            gl.ylabels_right = False
         else:
-            gl.left_labels = False
-            gl.right_labels = False
+            gl.ylabels_left = False
+            gl.ylabels_right = False
     
         gl.ylocator = mticker.FixedLocator(lat_ticks)
         gl.xlocator = mticker.FixedLocator(lon_ticks)
@@ -97,7 +98,7 @@ def plot_Tb( Storm, Exper_name, Hxb, Hxa, DAtime, sensor, ch_list, d_obs):
     head_tail = os.path.split( Hxb )
     mem = head_tail[1].replace('TB_GOES_CRTM_input_mem','')
     mem = mem.replace('_d03_2017-08-22_12:00.bin','')
-    des_name = small_dir+Storm+'/'+Exper_name+'/Vis_analyze/Tb/IR_60mem/'+DAtime+'_'+mem+'_mspace.png'
+    des_name = small_dir+Storm+'/'+Exper_name+'/Vis_analyze/Tb/IR_60mem/'+DAtime+'_bfABEI_'+mem+'_mspace.png'
     plt.savefig( des_name, dpi=300)
     plt.close()
     print('Saving the figure: ', des_name)
@@ -110,15 +111,15 @@ if __name__ == '__main__':
 
     # ---------- Configuration -------------------------
     Storm = 'HARVEY'
-    Exper_name = UD.generate_one_name( Storm,'IR','WSM6' )
-    Exper_obs =  UD.generate_one_name( Storm,'IR','WSM6' )
+    Exper_name = 'IR-TuneWSM6-J_DA+J_WRF+J_init-SP-intel17-WSM6-24hr-hroi300'
+    Exper_obs =  UD.generate_one_name( Storm,'IR','TuneWSM6' )
     sensor = 'abi_gr'
     ch_list = ['8',]
     fort_v = ['obs_type','lat','lon','obs']
     num_ens = 60
 
-    start_time_str = '201708242000'
-    end_time_str = '201708242000'
+    start_time_str = '201708221200'
+    end_time_str = '201708221200'
     Consecutive_times = True
 
     If_plot = True
@@ -140,10 +141,11 @@ if __name__ == '__main__':
             file_Diag = big_dir+Storm+'/'+Exper_obs+'/run/'+DAtime+'/enkf/d03/fort.10000'
             d_obs = Diag.Find_IR( file_Diag, fort_v )
 
-            Hx_dir = big_dir+Storm+'/'+Exper_name+'/Obs_Hx/IR/'+DAtime+'/'
+            Hx_dir = big_dir+Storm+'/'+Exper_name+'/Obs_Hx/IR/'+DAtime+'_bfABEI/'
             file_yb = sorted( glob.glob(Hx_dir + '/TB_GOES_CRTM_input_mem0*.bin') )
-            file_ya = sorted( glob.glob(Hx_dir + '/TB_GOES_CRTM_output_mem0*.bin') )
+            #file_ya = sorted( glob.glob(Hx_dir + '/TB_GOES_CRTM_output_mem0*.bin') )
             print('------------ Plot ----------------------')
             for i in range(len(file_yb)):
-                plot_Tb( Storm, Exper_name, file_yb[i], file_ya[i], DAtime, sensor, ch_list, d_obs)
+                plot_Tb( Storm, Exper_name, file_yb[i], DAtime, sensor, ch_list, d_obs)
+                #plot_Tb( Storm, Exper_name, file_yb[i], file_ya[i], DAtime, sensor, ch_list, d_obs)
         

@@ -1,4 +1,3 @@
-#!/work2/06191/tg854905/stampede2/opt/anaconda3/lib/python3.7
 
 from numba import njit, prange
 import os # functions for interacting with the operating system
@@ -21,7 +20,7 @@ from mpl_toolkits.axes_grid1 import make_axes_locatable
 import time
 from scipy import interpolate
 
-from Track_xbxa import read_HPI_model
+#from Track_xbxa import read_HPI_model
 import Util_data as UD
 import Util_Vis
 
@@ -101,7 +100,6 @@ def read_Tb_modelRes(Tb_file, sensor ):
 def compute_accu_hydromass( wrf_files, hydros, idx_t, HPI_models=None):
 
     d_hydro = {}
-
     # Find points of interest
     if deep_slp_incre:
         # Find the min slp in enkf input as the anchor point
@@ -112,11 +110,11 @@ def compute_accu_hydromass( wrf_files, hydros, idx_t, HPI_models=None):
         idx_area = UD.find_circle_area_model_ij( output_file, anchor_ij.values[0], anchor_ij.values[1], radius_th, model_resolution/1000) # in km
     else:
         idx_area = range(xmax*ymax)
-        
+
     # Calculate fields needed for mass of hydrometeors
     full_p = np.zeros( [len(wrf_files), nLevel, len(idx_area)] )
     tv_k = np.zeros( [len(wrf_files), nLevel, len(idx_area)] )
-    geoHm = np.zeros( [len(wrf_files), nLevel+1, len(idx_area)] )
+    geoHm = np.zeros( [len(wrf_files), nLevel, len(idx_area)] )
     for wrf_file in wrf_files:
         ifile = wrf_files.index(wrf_file)
         ncdir = nc.Dataset( wrf_file, 'r')
@@ -131,7 +129,8 @@ def compute_accu_hydromass( wrf_files, hydros, idx_t, HPI_models=None):
         phb = ncdir.variables['PHB'][0,:,:,:]
         tmp_geoHm = (ph+phb)/9.81 # in meter
         tmp_geoHm = tmp_geoHm.reshape( tmp_geoHm.shape[0],-1 )
-        geoHm[ifile,:,:] = tmp_geoHm[:,idx_area]
+        geoHkm_half_eta = (tmp_geoHm[:-1,:]+tmp_geoHm[1:,:])/2
+        geoHm[ifile,:,:] = geoHkm_half_eta[:,idx_area]
         # virtual temperature
         tv = getvar(ncdir,'tv',units='K')
         tmp_tv = tv.values
@@ -148,7 +147,7 @@ def compute_accu_hydromass( wrf_files, hydros, idx_t, HPI_models=None):
             var = ncdir.variables[var_name][0,:,:,:]
             var = var.reshape( var.shape[0],-1 )
             # calculate the mass of hydrometeor at any given point for a file
-            tmp = hydro_mass( full_p[ifile,:,:], tv_k[ifile,:,:], geoHm[ifile,:,:], var[:,idx_area] )
+            tmp = hydro_mass( full_p[ifile,:,:], tv_k[ifile,:,:], geoHm[ifile,:,:], var.data[:,idx_area] )
             # accumulate
             if path_from_top:
                 accu_tmp = np.zeros( [len(idx_area)] )
@@ -368,18 +367,18 @@ def Plot_depth_IRsee( FCtime, wrf_files, d_hydro, ver_coor ):
             gl = ax[i,j].gridlines(crs=ccrs.PlateCarree(),draw_labels=False,linewidth=0.5, color='gray', alpha=0.5, linestyle='--')
 
             if j==0:
-                gl.ylabels_left = True
-                gl.ylabels_right = False
+                gl.left_labels = True
+                gl.right_labels = False
             else:
-                gl.ylabels_left = False
-                gl.ylabels_right = False
+                gl.left_labels = False
+                gl.right_labels = False
 
             if i == 1:
-                gl.xlabels_top = False
-                gl.xlabels_bottom = True
+                gl.top_labels = False
+                gl.bottom_labels = True
             else:
-                gl.xlabels_top = False
-                gl.xlabels_bottom = False
+                gl.top_labels = False
+                gl.bottom_labels = False
 
             gl.ylocator = mticker.FixedLocator(lat_ticks)
             gl.xlocator = mticker.FixedLocator(lon_ticks)
@@ -398,8 +397,104 @@ def Plot_depth_IRsee( FCtime, wrf_files, d_hydro, ver_coor ):
     print( 'Saving the figure: ', save_des )
     plt.close()
 
-
     return None
+
+def Plot_depth_IRsee_OneScene( FCtime, wrf_files, d_hydro, ver_coor ):
+
+    # Read WRF domain
+    domain = UD.read_wrf_domain( wrf_files[0] )
+    ncdir = nc.Dataset(wrf_files[0], 'r')
+    xlat = ncdir.variables['XLAT'][0,:,:].flatten()
+    xlon = ncdir.variables['XLONG'][0,:,:].flatten()
+
+    # Calculate the vertical coordinate where IR can see the furthest depth of cloud 
+    tmp = d_hydro['QCLOUD']+d_hydro['QRAIN']+d_hydro['QICE']+d_hydro['QSNOW']+d_hydro['QGRAUP']
+    cdirs = np.zeros( (len(wrf_files),xmax*ymax) )
+    for ifile in wrf_files:
+        get_cdir = np.zeros( (xmax*ymax,) )
+        idx = wrf_files.index( ifile )
+        cdir,idx_p = cal_cdir(get_cdir,ver_coor[idx,:,:],tmp[idx,:,:]*1000,accu_th)
+        if ver_use_press:
+            cdirs[idx,:] = cdir/100 # convert to hPa
+        else:
+            cdirs[idx,:] = cdir/1000 # conver to km
+
+    # ------------------ Plot -----------------------
+    f, ax=plt.subplots(1, 1, subplot_kw={'projection': ccrs.PlateCarree()}, gridspec_kw = {'wspace':0, 'hspace':0}, linewidth=0.5, sharex='all', sharey='all',  figsize=(5,5), dpi=400)
+
+    # Define the domain
+    lat_min = domain['lat_min']
+    lat_max = domain['lat_max']
+    lon_min = domain['lon_min']
+    lon_max = domain['lon_max']
+
+    # cloud depth that IR can see
+    if ver_use_press:
+        min_vc = 50
+        max_vc = 850
+        bounds = [100,200,300,400,500,600,700,800,900]
+    else:
+        bounds = [0,5,10,12,14,15,17,18,20]
+        min_vc = np.amin(bounds)
+        max_vc = np.amax(bounds)
+        exist_cmap = plt.cm.magma.reversed()
+        colors = exist_cmap(np.linspace(0,1,len(bounds)))
+        new_map = mcolors.LinearSegmentedColormap.from_list('custom_colormap',colors,N=len(bounds))
+        #min_vc = 0
+        #max_vc = 21
+        #bounds = np.linspace(min_vc,max_vc,8)
+    if plot_scatter:
+        cdir_f = ax.scatter(xlon,xlat,s=2,c=cdirs[0,:], edgecolors='none', cmap=new_map, vmin=min_vc,vmax=max_vc,levels=bounds, transform=ccrs.PlateCarree())
+        cbaxes = f.add_axes([0.125, 0.05, 0.775, 0.02])
+        #cdir_bar = fig.colorbar(ticks=range(min_vc,max_vc+50,100),cax=cbaxes,fraction=0.046, pad=0.04)
+        #cdir_bar.ax.tick_params(labelsize=12)
+    else:
+        cdir_f = ax.contourf(xlon.reshape(xmax,ymax),xlat.reshape(xmax,ymax),cdirs[0,:].reshape(xmax,ymax),cmap='magma_r',levels=bounds,extend='max',transform=ccrs.PlateCarree())
+        caxes = f.add_axes([0.125, 0.05, 0.775, 0.02])
+        color_ticks = bounds
+        cdir_bar = f.colorbar(cdir_f,orientation="horizontal", cax=caxes,ticks=color_ticks)
+        bounds_str =  [ str(item) for item in color_ticks ]
+        cdir_bar.ax.set_xticklabels( bounds_str)
+        cdir_bar.ax.tick_params(labelsize=10)
+
+    # Mark the slp 
+    #ax.scatter(lon_storm,lat_storm,20,'blue',marker='*',transform=ccrs.PlateCarree())
+
+    #title for all
+    f.suptitle(Storm+':'+Exper_name+'\n@'+FCtime,fontsize=11, fontweight='bold')
+    #f.suptitle(Storm+' IC:Ref;FC:Ref \n@'+fctime,fontsize=11, fontweight='bold')
+
+    #subplot title
+    font = {'size':8,}
+    #ax.set_title('Forecast--min slp: '+str("{0:.3f}".format(min_slp.values))+' hPa',font,fontweight='bold',fontsize=13)
+
+    # Axis labels
+    lon_ticks = list(range(math.ceil(lon_min)-2, math.ceil(lon_max)+2,2))
+    lat_ticks = list(range(math.ceil(lat_min)-2, math.ceil(lat_max)+2,2))
+    for j in range(1):
+        gl = ax.gridlines(crs=ccrs.PlateCarree(),draw_labels=False,linewidth=0.5, color='gray', alpha=0.7, linestyle='--')
+
+        gl.top_labels = False
+        gl.bottom_labels = True
+        if j==0:
+            gl.left_labels = True
+            gl.right_labels = False
+        else:
+            gl.left_labels = False
+            gl.right_labels = False
+
+        gl.ylocator = mticker.FixedLocator(lat_ticks)
+        gl.xlocator = mticker.FixedLocator(lon_ticks)
+        gl.xformatter = LONGITUDE_FORMATTER
+        gl.yformatter = LATITUDE_FORMATTER
+        gl.xlabel_style = {'size': 10}
+        gl.ylabel_style = {'size': 10}
+
+    des_name = '/scratch/06191/tg854905/Pro2_PSU_MW/HARVEY/JerryRun/IR_THO/wrf_df/201708241200/cloud_top_height_'+FCtime+'.png' #big_dir+Storm+'/'+Exper_name+'/cloud_top_height_'+MP+'_'+FCtime+'.png'
+    plt.savefig( des_name, dpi=200)
+    print('Saving the figure: ', des_name)
+
+
 
 
 
@@ -410,17 +505,17 @@ if __name__ == '__main__':
     model_resolution = 3000 #m
 
     # ---------- Configuration -------------------------
-    Storm = 'IRMA'
+    Storm = 'HARVEY'
     DA = 'IR'
-    MP = 'WSM6'
+    MP = 'THO'
     hydros =  ['QCLOUD','QRAIN','QICE','QSNOW','QGRAUP']
     
     sensor = 'abi_gr'
     ch_list = ['8',]
     fort_v = ['obs_type','lat','lon','obs']
 
-    start_time_str = '201709030600'
-    end_time_str = '201709030700'
+    start_time_str = '201708251200'
+    end_time_str = '201708251200'
     time_step = 3600 # seconds
     Consecutive_times = True
 
@@ -433,9 +528,11 @@ if __name__ == '__main__':
     accu_th = 30.0 
     ver_use_press = False
     each_water = True
-    domain_mean = True
-    depth_IR_see = False
+    domain_mean = False
+    depth_IR_see = True
     plot_scatter = False
+
+    oneScene = True
     # ------------------------------------------------------  
     # Dimension of the domain
     nLevel = 42
@@ -443,31 +540,34 @@ if __name__ == '__main__':
     ymax = 297
 
     # Create experiment names
-    Exper_name = UD.generate_one_name( Storm,DA,MP )
+    Exper_name = 'JerryRun/IR_THO/wrf_df/201708241200'#UD.generate_one_name( Storm,DA,MP )
 
     # Times
     if not Consecutive_times:
         FCtimes = ['201709180000',]
     else:
         time_diff = datetime.strptime(end_time_str,"%Y%m%d%H%M") - datetime.strptime(start_time_str,"%Y%m%d%H%M")
-        time_diff_hour = time_diff.total_seconds() / timestep
-        time_interest_dt = [datetime.strptime(start_time_str,"%Y%m%d%H%M") + timedelta(hours=t) for t in list(range(0, int(time_diff_hour)+1, 1))]
+        time_diff_hour = time_diff.total_seconds() / time_step
+        time_interest_dt = [datetime.strptime(start_time_str,"%Y%m%d%H%M") + timedelta(hours=t) for t in list(range(0, int(time_diff_hour)+1, 3))]
         FCtimes = [time_dt.strftime("%Y%m%d%H%M") for time_dt in time_interest_dt]
 
 
     if not deep_slp_incre:
         # ------ Plot -------------------
-        plot_dir = small_dir+Storm+'/'+Exper_name+'/Vis_analyze/Model/Accu_HydroPath/'
-        plotdir_exists = os.path.exists( plot_dir )
-        if plotdir_exists == False:
-            os.mkdir(plot_dir)
+        #plot_dir = '/work2/06191/tg854905/stampede2/Pro2_PSU_MW/HARVEY/JerryRun/IR_THO/wrf_df/201708241200/'
+        #plot_dir = small_dir+Storm+'/'+Exper_name+'/Vis_analyze/Model/Accu_HydroPath/'
+        #plotdir_exists = os.path.exists( plot_dir )
+        #if plotdir_exists == False:
+        #    os.mkdir(plot_dir)
 
         start_time=time.process_time()
         for FCtime in FCtimes:
             idx_t = FCtimes.index( FCtime )
             print('At '+FCtime)
-            wrf_dir = big_dir+Storm+'/'+Exper_name+'/fc/'+FCtime+'/'
-            wrf_files = [wrf_dir+'/wrf_enkf_input_d03_mean',wrf_dir+'/wrf_enkf_output_d03_mean']
+            wrfname = 'wrfout_d03_'+str(FCtime[0:4])+'-'+str(FCtime[4:6])+'-'+str(FCtime[6:8])+'_'+str(FCtime[8:10])+':00:00'
+            #wrf_dir = big_dir+Storm+'/'+Exper_name+'/fc/'+FCtime+'/'
+            wrf_files = ['/scratch/06191/tg854905/Pro2_PSU_MW/HARVEY/JerryRun/IR_THO/wrf_df/201708241200/'+wrfname,]
+            #wrf_files = [wrf_dir+'/wrf_enkf_input_d03_mean',wrf_dir+'/wrf_enkf_output_d03_mean']
             d_hydro,ver_coor = compute_accu_hydromass( wrf_files, hydros, idx_t) # hydro mass at any grid point
 
             # --- Condition
@@ -480,7 +580,10 @@ if __name__ == '__main__':
                 Plot_DM_all_oneTime( FCtime,v_interest,d_hydro,ver_coor ) 
 
             if depth_IR_see:
-                Plot_depth_IRsee( FCtime, wrf_files, d_hydro, ver_coor )
+                if not oneScene:
+                    Plot_depth_IRsee( FCtime, wrf_files, d_hydro, ver_coor )
+                else:
+                    Plot_depth_IRsee_OneScene( FCtime, wrf_files, d_hydro, ver_coor )
 
         end_time = time.process_time()
         print ('time needed: ', end_time-start_time, ' seconds')

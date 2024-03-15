@@ -21,7 +21,7 @@ import pickle
 import Read_Obspace_IR as ROIR
 from Util_Vis import HydroIncre
 import Diagnostics as Diag
-
+import Util_data as UD
 
 # Generate time series
 def generate_times( Storms, start_time_str, end_time_str ):
@@ -68,7 +68,7 @@ def plot_var_incre_timeseries( ave_var_overT,N_times,geoHkm=None ):
         cmap = 'jet'
     else:
         cmap = 'bwr'
-    bounds = np.linspace(-0.2,0.2,5)
+    bounds = np.linspace(-0.15,0.15,7)
     bounds_format = [ "{0:.2f}".format( item ) for item in bounds]
     incre_contourf = ax.contourf( xcoor, ycoor, np.transpose( ave_var_overT ), cmap=cmap,levels=bounds_format,extend='both')
     # Add color bar below the plot
@@ -88,13 +88,11 @@ def plot_var_incre_timeseries( ave_var_overT,N_times,geoHkm=None ):
 
     # Set X/Y labels
     # set X label
-    range_xtick = np.linspace(0,N_times,6)
-    #range_xtick_label = range_xtick+1
-    ax.set_xticks( range_xtick )
-    ax.set_xticklabels( [str(int(it)) for it in range_xtick],fontsize=15 )
-    ax.set_xlabel('WRF-EnKF Cycles',fontsize=15)
-    ax.set_xlim(xmin=0,xmax=N_times-1) 
-    #ax.tick_params(axis='x', labelrotation=45)
+    ax.set_xticks( xv[::4] )
+    #ax.set_xticklabels( [str(int(it)) for it in range_xtick],fontsize=15 )
+    ax.set_xlabel('EnKF Cycle',fontsize=15)
+    #ax.set_xlim(xmin=0,xmax=N_times-1) 
+    ax.tick_params(axis='x', labelsize=15)
     # set Y label
     if not interp_P:
         ylabel_like = [0.0,1.0,2.0,3.0,4.0,5.0,10.0,15.0,20.0]
@@ -104,7 +102,7 @@ def plot_var_incre_timeseries( ave_var_overT,N_times,geoHkm=None ):
             yticks.append( list_y_range.index(it) )
         ax.set_yticks( yticks )
         ax.set_yticklabels( [str(it) for it in ylabel_like],fontsize=15 )
-        ax.set_ylabel('Height (KM)',fontsize=15)
+        ax.set_ylabel('Height (km)',fontsize=15)
         ax.set_ylim(ymin=0,ymax=25) # cut off data above 25km
     else:
         ax.set_yticks( yv[::10] )
@@ -114,17 +112,17 @@ def plot_var_incre_timeseries( ave_var_overT,N_times,geoHkm=None ):
 
     # Set title
     if 'rt_vo' in var_name:
-        title_name = 'EnKF Increment: relative vorticity ($10^-5$ s-1) in the circle area (center@best-track) with R='+str(radius_threshold)+' KM'
+        title_name = 'EnKF Increment: relative vorticity ($10^-5$ s-1) in the circle area (center@best-track) with R='+str(radius_threshold)+' km'
     else:
         pass
     ax.set_title( title_name,fontweight="bold",fontsize='11' )
-    fig.suptitle('Storms: '+MP, fontsize=15, fontweight='bold')
+    fig.suptitle('Storms: '+DA[0]+'_'+MP[0], fontsize=15, fontweight='bold')
 
     # Save the figure
     if not interp_P:
-        save_des = small_dir+'/SYSTEMS/Vis_analyze/'+MP+'_ML_increment_'+var_name+'_'+str(N_times)+'cycles.png'
+        save_des = small_dir+'/SYSTEMS/Vis_analyze/EnKF/'+DA[0]+'_'+MP[0]+'_ML_increment_'+var_name+'_'+str(N_times)+'cycles.png'
     else:
-        save_des = small_dir+'/SYSTEMS/Vis_analyze/'+MP+'_Interp_increment_'+var_name+'_'+str(N_times)+'cycles.png'
+        save_des = small_dir+'/SYSTEMS/Vis_analyze/EnKF/'+DA[0]+'_'+MP[0]+'_Interp_increment_'+var_name+'_'+str(N_times)+'cycles.png'
     plt.savefig( save_des )
     print( 'Saving the figure: ', save_des )
     plt.close()
@@ -152,29 +150,33 @@ def eachVar_timeSeries( Exper_names,dict_times,var_name ):
         geoHkm = np.zeros( [N_times,nLevel] )        
 
     # Loop thru storms
-    for ist in Storms:
-        print('Loading data for '+ ist)
-        if interp_P:
-            save_des = small_dir+ist+'/'+Exper_names[ist]+'/Data_analyze/EnKF/Interp_increment_'+var_name+'_'+start_time_str[ist]+'_'+end_time_str[ist]+'.pickle'
-            print(save_des)
-            # Read data from a pickle file
-            with open(save_des,'rb') as file:
-                load_data = pickle.load( file )
-            ave_var = ave_var + load_data['ave_var_overT'] 
-            # Make average over storms
-            ave_var = ave_var/len(Storms)
-            #ave_T = ave_T/len(Storms)
-        else:
-            save_des = small_dir+ist+'/'+Exper_names[ist]+'/Data_analyze/EnKF/ML_increment_'+var_name+'_'+start_time_str[ist]+'_'+end_time_str[ist]+'.pickle'
-            # Read data from a pickle file
-            with open(save_des,'r') as file:
-                load_data = pickle.load( file )
-            ave_var = ave_var + load_data['ave_var_overT'] 
-            geoHkm = geoHkm + load_data['geoHkm_half_eta'] 
-            # Make average over storms
-            ave_var = ave_var/len(Storms)
-            #ave_T = ave_T/len(Storms)
-            geoHkm = geoHkm/len(Storms)
+    for imp in MP:
+        for ida in DA:
+            for ist in Storms:
+                print('Loading data for '+ ist)
+                if interp_P:
+                    if not specify_area:
+                        save_des = small_dir+ist+'/'+Exper_names[ist][imp][ida]+'/Data_analyze/EnKF/DomainMean/Interp_increment_'+var_name+'_'+start_time_str[ist]+'_'+end_time_str[ist]+'.pickle'
+                    else:
+                        save_des = small_dir+ist+'/'+Exper_names[ist][imp][ida]+'/Data_analyze/EnKF/CircleMean/Interp_increment_'+var_name+'_'+start_time_str[ist]+'_'+end_time_str[ist]+'.pickle'
+                    print(save_des)
+                    # Read data from a pickle file
+                    with open(save_des,'rb') as file:
+                        load_data = pickle.load( file )
+                    ave_var = ave_var + load_data['ave_var_overT']
+                    # Make average over storms
+                    ave_var = ave_var/len(Storms)
+                else:
+                    save_des = small_dir+ist+'/'+Exper_names[ist][imp][ida]+'/Data_analyze/EnKF/ML_increment_'+var_name+'_'+start_time_str[ist]+'_'+end_time_str[ist]+'.pickle'
+                    # Read data from a pickle file
+                    with open(save_des,'r') as file:
+                        load_data = pickle.load( file )
+                    ave_var = ave_var + load_data['ave_var_overT']
+                    geoHkm = geoHkm + load_data['geoHkm_half_eta']
+                    # Make average over storms
+                    ave_var = ave_var/len(Storms)
+                    geoHkm = geoHkm/len(Storms)
+
 
     # Plot the increament in a time series
     if If_plot_series:
@@ -186,34 +188,39 @@ def eachVar_timeSeries( Exper_names,dict_times,var_name ):
     return None
 
 
-
-
-
 if __name__ == '__main__':
 
     big_dir = '/scratch/06191/tg854905/Pro2_PSU_MW/'
     small_dir =  '/work2/06191/tg854905/stampede2/Pro2_PSU_MW/'
 
     # ---------- Configuration -------------------------
-    Storms = ['HARVEY','IRMA','JOSE','MARIA']
-    MP = 'THO'
+    Storms = ['IRMA','JOSE','MARIA','HARVEY']
+    MP = ['TuneWSM6',]
+    DA = ['IR',] 
     v_interest = ['rt_vo']
     fort_v = ['obs_type','lat','lon','obs']
 
     start_time_str = {'HARVEY':'201708221200','IRMA':'201709030000','JOSE':'201709050000','MARIA':'201709160000'}
-    end_time_str = {'HARVEY':'201708231200','IRMA':'201709040000','JOSE':'201709060000','MARIA':'201709170000'}
+    end_time_str = {'HARVEY':'201708241200','IRMA':'201709050000','JOSE':'201709070000','MARIA':'201709180000'}
     Consecutive_times = True
 
     interp_P = True
     P_of_interest = list(range( 900,10,-20 ))
     interp_H = False
-    radius_threshold = 250 
+    specify_area = True
+    radius_threshold = 300 
 
     If_plot_series = True
     # -------------------------------------------------------    
 
     # Create experiment names
-    Exper_names = generate_names( MP,Storms )        
+    Exper_names = {}
+    for istorm in Storms:
+        Exper_names[istorm] = {}
+        for imp in MP:
+            Exper_names[istorm][imp] = {}
+            for ida in DA:
+                Exper_names[istorm][imp][ida] = UD.generate_one_name( istorm,ida,imp )
 
     # Identify DA times in the period of interest
     dict_times = generate_times( Storms, start_time_str, end_time_str )

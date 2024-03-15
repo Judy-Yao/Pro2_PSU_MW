@@ -112,7 +112,7 @@ def plot_twoTimes_IR( Exper_Tb ):
     # Colorbar
     cbaxes = fig.add_axes([0.90, 0.1, 0.03, 0.78])
     cbar = fig.colorbar(cs,cax=cbaxes,fraction=0.046, pad=0.04)
-    cbar.ax.tick_params(labelsize=15)
+    cbar.ax.tick_params(labelsize=18)
 
     # subplot title
     for istorm in Storms:

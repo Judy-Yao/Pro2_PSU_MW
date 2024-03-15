@@ -24,8 +24,14 @@ from itertools import chain
 from Util_data import read_bestrack
 import Util_data as UD
 
-# setting font sizeto 30
+# setting font size to 15
 plt.rcParams.update({'font.size': 15})
+
+def RMSE(simu, obs):
+    return np.sqrt( ((simu - obs) ** 2).mean() )
+
+def Bias(simu, obs):
+    return  np.sum((simu - obs),0)/np.size(obs,0)
 
 def d03_domain( wrfout_d03 ):
     ncdir = nc.Dataset(wrfout_d03, 'r')
@@ -218,11 +224,11 @@ def find_minSLP( wrfout ):
 def plot_slp_timeseries( small_dir, Storm, Expers, DAtimes, Evo_slp ):
 
     # Set up figure
-    fig = plt.figure( figsize=(12,9), dpi=300 )
+    fig = plt.figure( figsize=(10,9), dpi=300 )
     ax = plt.subplot(1,1,1)
     dates = [datetime.strptime( it,"%Y%m%d%H%M") for it in DAtimes]
     # Plot obs and mean
-    ax.plot_date(dates, Evo_slp['obs_slp'], 'black', label='TCvital', linestyle='-',linewidth='4',)
+    ax.plot_date(dates, Evo_slp['obs_slp'], 'black', label='TCvitals', linestyle='-',linewidth='4',)
     if slp_xa and not slp_xb: 
         ax.plot_date(dates, Evo_slp['xa_slp'][0,:], 'red', label='IR-THO', linestyle='-',linewidth='4',)
         ax.plot_date(dates, Evo_slp['xa_slp'][1,:], 'red', label='IR+MW-THO', linestyle='--',linewidth='4',)
@@ -233,23 +239,59 @@ def plot_slp_timeseries( small_dir, Storm, Expers, DAtimes, Evo_slp ):
         ax.plot_date(dates, Evo_slp['xb_slp'][1,:], 'blue', label='NO', linestyle='-',linewidth='4',)
     if slp_xa and slp_xb: # plot saw-tooth lines
         dates_zip = list( chain.from_iterable( zip(dates,dates)) )
-        len_seg = len(dates_zip)-1
-        colors = ['red','blue']
-        labels = ['YES','NO']
+        len_seg = len(dates_zip)
+        # Customize labels
+        labels = {}
+        for imp in MP:
+            if imp == 'TuneWSM6':
+                labels[imp] = {'xa':'MD_DA','xb':'MD_FC'}
+            else:
+                labels[imp] = {'xa':'Ref_DA','xb':'Ref_FC'}
+
+        bias = {}
+        rmse = {} 
+        # Loop thru experiments
         for iexper in range(len(Expers)):
+            # Calculate T-mean RMSE
+            rmse[MP[iexper]] = {'xb':RMSE(Evo_slp['xb_slp'][iexper,:], Evo_slp['obs_slp'] ),'xa':RMSE(Evo_slp['xa_slp'][iexper,:], Evo_slp['obs_slp'] )}
+            bias[MP[iexper]] = {'xb':Bias(Evo_slp['xb_slp'][iexper,:], Evo_slp['obs_slp'] ),'xa':Bias(Evo_slp['xa_slp'][iexper,:], Evo_slp['obs_slp'] )}
+
             slp_zip = list( chain.from_iterable( zip(Evo_slp['xb_slp'][iexper,:],Evo_slp['xa_slp'][iexper,:]) ) )
             for i in range(1,len_seg):
                 # specify which segment uses which line style
                 if i % 2 == 0:
-                    style = '-'
+                    line = '-'
                 else:
-                    style = '--'  
-                
-                if i == 2:
-                    ax.plot(dates_zip[i-1:i+1],slp_zip[i-1:i+1],linestyle=style,color=colors[iexper],linewidth='4',label=labels[iexper]) 
-                else:
-                    ax.plot(dates_zip[i-1:i+1],slp_zip[i-1:i+1],linestyle=style,color=colors[iexper],linewidth='4')
+                    line = '--'  
 
+              # customize the line
+                if MP[iexper] == 'TuneWSM6':
+                    color = 'blue'
+                    if i == 1:
+                        ax.plot(dates_zip[i-1:i+1],slp_zip[i-1:i+1],color,linestyle=line,linewidth='4',label=labels[MP[iexper]]['xa'])
+                    elif i == 2:
+                        ax.plot(dates_zip[i-1:i+1],slp_zip[i-1:i+1],color,linestyle=line,linewidth='4',label=labels[MP[iexper]]['xb']) #WSM6_Forecast
+                    else:
+                        ax.plot(dates_zip[i-1:i+1],slp_zip[i-1:i+1],color,linestyle=line,linewidth='4')
+                else:
+                    color = 'red'
+                    if i == 1:
+                        ax.plot(dates_zip[i-1:i+1],slp_zip[i-1:i+1],color,linestyle=line,linewidth='6',label=labels[MP[iexper]]['xa'])
+                    elif i == 2:
+                        ax.plot(dates_zip[i-1:i+1],slp_zip[i-1:i+1],color,linestyle=line,linewidth='4',label=labels[MP[iexper]]['xb'])
+                    else:
+                        ax.plot(dates_zip[i-1:i+1],slp_zip[i-1:i+1],color,linestyle=line,linewidth='4')
+        # title
+        bias_str = '\nBias: '
+        rmse_str = '\nRMSE: '
+        suptt = Storm+';  IR_WSM6; Over '+str(len(DAtimes))+' Cycles; Min SLP (hPa)'
+        for imp in MP:
+            bias_str= bias_str+labels[imp]['xb']+' '+'%.1f' %bias[imp]['xb']+'; ' 
+            bias_str= bias_str+labels[imp]['xa']+' '+'%.1f' %bias[imp]['xa']+'; '
+            rmse_str = rmse_str+labels[imp]['xb']+' '+'%.1f' %rmse[imp]['xb']+'; '  
+            rmse_str= rmse_str+labels[imp]['xa']+' '+'%.1f' %rmse[imp]['xa']+'; '
+        supt = suptt+ rmse_str + bias_str
+        fig.suptitle( supt, fontsize=17, fontweight='bold')
 
     leg = plt.legend(loc='lower left',fontsize=22)
     # Set X/Y labels
@@ -258,15 +300,12 @@ def plot_slp_timeseries( small_dir, Storm, Expers, DAtimes, Evo_slp ):
     ax.set_xlim( start_time, end_time)
     ax.tick_params(axis='x', labelrotation=45,labelsize=15)
     ax.set_ylabel('Minimum Sea Level Pressure (hPa)',fontsize=24)
-    ax.set_ylim(970,1020) #( 920,1020 ) #(970,1020)
+    ax.set_ylim(970,1020)  #( 900,1000 ) #(970,1020)
 
-    #title_name = Storm+'('+Exper_name+')'+': mim SLP'
-    title_name = Storm+': mim SLP (hPa)'
-    ax.set_title( title_name,fontweight="bold",fontsize='24' )
-    #fig.suptitle('WSM6', fontsize=24, fontweight='bold')
+    #ax.set_title( 'mim SLP (hPa)',fontweight="bold",fontsize='15' )
 
     # Save the figure
-    save_des = small_dir+Storm+'/'+Expers[0]+'/Vis_analyze/Model/minslp_'+DAtimes[0]+'_'+DAtimes[-1]+'.png'
+    save_des = small_dir+Storm+'/'+Expers[1]+'/Vis_analyze/Model/minslp_'+DAtimes[0]+'_'+DAtimes[-1]+'.png'
     plt.savefig( save_des )
     print( 'Saving the figure: ', save_des )
     plt.close()
@@ -380,24 +419,31 @@ def Gather_slp( Storm, Expers, DAtimes, big_dir ):
 
 if __name__ == '__main__':
 
-    Storm = 'HARVEY'
-    Expers = ['JerryRun/IR_THO','JerryRun/MW_THO','JerryRun/IR_WSM6','JerryRun/MW_WSM6']
-    #Expers = ['IR-TuneWSM6-J_DA+J_WRF+J_init-SP-intel17-WSM6-30hr-hroi900','IR-J_DA+J_WRF+J_init-SP-intel17-WSM6-30hr-hroi900']
-    #Expers = ['IR-J_DA+J_WRF+J_init-SP-intel17-THO-30hr-hroi900','IR+MW-J_DA+J_WRF+J_init-SP-intel17-THO-30hr-hroi900','IR-J_DA+J_WRF+J_init-SP-intel17-WSM6-30hr-hroi900','IR+MW-J_DA+J_WRF+J_init-SP-intel17-WSM6-30hr-hroi900',]
     big_dir = '/scratch/06191/tg854905/Pro2_PSU_MW/'
-    small_dir = '/work2/06191/tg854905/stampede2/Pro2_PSU_MW/'
+    small_dir =  '/work2/06191/tg854905/stampede2/Pro2_PSU_MW/'
+
+    # ---------- Configuration -------------------------
+    Storm = 'JOSE'
+    DA = 'IR'
+    MP = ['WSM6','TuneWSM6']
 
     meanOverEns = False  # mean of H(ens) or H of mean(ens)
     Com_IC_water = False
     Com_minslp_evo = True
 
     slp_xa = True
-    slp_xb = False
+    slp_xb = True
 
     # Time range set up
-    start_time_str = '201708221200'
-    end_time_str = '201708241200'
+    start_time_str = '201709050000'
+    end_time_str = '201709070000'
     Consecutive_times = True
+    # ------------------------------------------------------   
+
+    # Create experiment names
+    Expers = []
+    for imp in MP:
+        Expers.append( UD.generate_one_name( Storm,DA,imp ) )
 
     if not Consecutive_times:
         DAtimes = ['201708231200']

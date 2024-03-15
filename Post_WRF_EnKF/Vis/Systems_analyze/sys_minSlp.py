@@ -14,9 +14,15 @@ from wrf import getvar
 import subprocess
 import scipy as sp
 import scipy.ndimage
+from itertools import chain
+
 import Util_data as UD
 
 matplotlib.rcParams['font.size'] = 20
+
+# Calculate mean absolute error
+def mean_absolute_error(obs,model):
+    return np.mean(np.abs(np.subtract(obs, model)))
 
 # Generate time series
 def generate_times( Storms, start_time_str, end_time_str ):
@@ -169,8 +175,22 @@ def plot_sys_minslp():
                 else:
                     Exper_minSLP[istorm][imp][ida] = model_minSLP( istorm,Exper_names[istorm][imp][ida],dict_times[istorm] )
 
+    # Obtain mean absolute error
+    MAE = {}
+    for istorm in Storms:
+        MAE[istorm] = {}
+        for imp in MP:
+            MAE[istorm][imp] = {}
+            for ida in DA:
+                MAE[istorm][imp][ida] = {}
+                if slp_xb:
+                    MAE[istorm][imp][ida]['xb'] = mean_absolute_error(d_tcvital[istorm],Exper_minSLP[istorm][imp][ida]['xb_slp']) 
+                if slp_xa:
+                    MAE[istorm][imp][ida]['xa'] = mean_absolute_error(d_tcvital[istorm],Exper_minSLP[istorm][imp][ida]['xa_slp'])
+
+
     # Set up figure
-    fig = plt.figure( figsize=(12,9), dpi=300 )
+    fig = plt.figure( figsize=(18,9), dpi=300 )
     ax = plt.subplot(1,1,1) 
 
     # Set colors
@@ -179,33 +199,73 @@ def plot_sys_minslp():
    
     # Plot obs
     for istorm in Storms:
-        ax.plot(lead_t, d_tcvital[istorm],color=colorset[istorm],linestyle='-',linewidth=3,label=istorm)
+        ax.plot(lead_t, d_tcvital[istorm],color='black',linestyle='-',linewidth=3)#,label=istorm)
 
-    # Plot model
+    # plot slp_xa
     if slp_xa and not slp_xb:
         for istorm in Storms:
             for imp in MP:
                 for ida in DA: # linestyle=(0, (5, 1))
-                    ax.plot(lead_t, Exper_minSLP[istorm][imp][ida]['xa_slp'],color=colorset[istorm],linestyle=(0, (5, 1)),linewidth=4)
+                    if imp == 'WSM6':
+                        ax.plot(lead_t, Exper_minSLP[istorm][imp][ida]['xa_slp'],color=colorset[istorm],linestyle='-',linewidth=4,label=istorm) # linestyle=(0, (5, 1))
+                    elif imp == 'THO':
+                        ax.plot(lead_t, Exper_minSLP[istorm][imp][ida]['xa_slp'],color=colorset[istorm],linestyle='--',linewidth=4,markersize=12)
+                    else:
+                        ax.plot(lead_t, Exper_minSLP[istorm][imp][ida]['xa_slp'],color=colorset[istorm],marker='*',linewidth=4,markersize=12)
+                        #ax.scatter(lead_t, Exper_minSLP[istorm][imp][ida]['xa_slp'],s=5,color=colorset[istorm],marker='*')
+                        
+    # plot saw-tooth lines
+    if slp_xa and  slp_xb:
+        for istorm in Storms:
+            for imp in MP:
+                for ida in DA: # linestyle=(0, (5, 1))
+                    # zip data
+                    t_zip = list( chain.from_iterable( zip(lead_t,lead_t)) )
+                    len_seg = len( t_zip )
+                    slp_zip = list( chain.from_iterable( zip(Exper_minSLP[istorm][imp][ida]['xb_slp'],Exper_minSLP[istorm][imp][ida]['xa_slp']) ) )
+
+                    for i in range(1,len_seg):
+                    # specify which segment uses which line style
+                        if i % 2 == 0:
+                            line = '-' #'--'
+                        else:
+                            line = '-'
+                    # customize the line
+                        if i == 1:
+                            ax.plot(t_zip[i-1:i+1],slp_zip[i-1:i+1],linestyle=line,linewidth='6',color=colorset[istorm])
+                        elif i == 2:
+                            ax.plot(t_zip[i-1:i+1],slp_zip[i-1:i+1],linestyle=line,linewidth='4',color=colorset[istorm],label=istorm)
+                        else:
+                            ax.plot(t_zip[i-1:i+1],slp_zip[i-1:i+1],linestyle=line,linewidth='4',color=colorset[istorm])
 
 
-    leg = ax.legend(loc='lower left',fontsize=22)
+    # labels and attributes
+    leg = ax.legend(loc='lower left',fontsize=25)
     # Set X/Y labels
     ax.set_xticks( lead_t[::4] )
     ax.set_xlim([0,cycles-1])
-    ax.tick_params(axis='x',labelsize=20)
-    ax.set_xlabel('EnKF Cycle',fontsize=24)
+    ax.set_xlabel('EnKF Cycle',fontsize=28)
     ax.grid(True,linewidth=1, color='gray', alpha=0.5, linestyle='-')
-    ax.set_ylabel('Minimum Sea Level Pressure (hPa)',fontsize=24)
-    ax.set_ylim(920,1020) #( 920,1020 )
+    ax.set_ylabel('Minimum Sea Level Pressure (hPa)',fontsize=28)
+    ax.set_ylim(970,1020) #( 920,1020 )
+    ax.tick_params(axis='both',labelsize=28)
 
-    #title_name = Storm+'('+Exper_name+')'+': mim SLP'
-    title_name = 'min SLP (hPa)'
-    ax.set_title( title_name,fontweight="bold",fontsize='24' )
-    fig.suptitle('TCvtial V.S. IR-WSM6', fontsize=24, fontweight='bold')
+    # Titles
+    supt = 'mean absolute error of Xa\n'
+    for ida in DA:
+        for imp in MP:
+            supt = supt+ida+'_'+imp+': '
+            storm_str = ''
+            for istorm in Storms:
+                storm_str = storm_str+istorm+' '+'%.2f' %MAE[istorm][imp][ida]['xa']+'; '
+            supt = supt+storm_str+'\n'
+    fig.suptitle( supt, fontsize=17, fontweight='bold')
+ 
+    #if slp_xa and not slp_xb:
+    #    fig.suptitle('TCvtial V.S. Analysis', fontsize=24, fontweight='bold')
 
     # Save the figure
-    des_name = small_dir+'SYSTEMS/Vis_analyze/Model/sys_minslp_IR.png'
+    des_name = 'Harvey.png'#small_dir+'SYSTEMS/Vis_analyze/Model/sys_minslp_IR_WSM6_IR_TuneWSM6.png'
     plt.savefig( des_name )
     print( 'Saving the figure: ', des_name )
     plt.close()
@@ -217,9 +277,9 @@ if __name__ == '__main__':
     small_dir = '/work2/06191/tg854905/stampede2/Pro2_PSU_MW/'
 
     #--------Configuration------------
-    Storms = ['HARVEY','JOSE','MARIA','IRMA']
+    Storms = ['HARVEY',]#'JOSE','MARIA','IRMA']
     DA = ['IR',]
-    MP = ['WSM6',] #
+    MP = ['WSM6','THO','TuneWSM6'] #
 
     start_time_str = {'HARVEY':'201708221200','IRMA':'201709030000','JOSE':'201709050000','MARIA':'201709160000'}
     end_time_str = {'HARVEY':'201708241200','IRMA':'201709050000','JOSE':'201709070000','MARIA':'201709180000'}

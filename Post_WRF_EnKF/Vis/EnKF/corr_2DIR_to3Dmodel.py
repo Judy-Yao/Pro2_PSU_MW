@@ -8,6 +8,7 @@ import glob
 import netCDF4 as nc
 import math
 import matplotlib
+from wrf import getvar
 from scipy import interpolate
 matplotlib.use("agg")
 import matplotlib.ticker as mticker
@@ -20,6 +21,7 @@ import time
 import pickle
 
 import Util_Vis
+import Util_data as UD
 import Read_Obspace_IR as ROIR
 import Diagnostics as Diag
 import matlab.engine
@@ -223,19 +225,15 @@ def read_ens_obspace( ens_Tb_file, sensor ):
 #           Object: Hxb stddev ; Operation: verify
 # ------------------------------------------------------------------------------------------------------
 
-def verify_hxb( var, wrf_dir=None ):
+def verify_hxb( d_obs_ens, DAtime, var, wrf_dir):
 
-    #file_Diag = wrf_dir+'/run/201709170000/enkf/d03/fort.10000'
-    file_Diag = wrf_dir+'/run/'+DAtime+'/enkf/d03/fort.10000'
-    d_obs = Diag.Find_IR( file_Diag, fort_v )
-    lon_obs = list( d_obs['lon'] )
-    lat_obs = list( d_obs['lat'] )
+    lon_obs = list( d_obs_ens['lon_obs'] )
+    lat_obs = list( d_obs_ens['lat_obs'] )
 
     # Read WRF domain
-    #wrf_input_mean = wrf_dir+'/fc/201709160000/wrf_enkf_input_d03_mean'
-    wrf_input_mean = wrf_dir+'/fc/'+DAtime+'/wrf_enkf_input_d03_mean'
-    d_wrf_d03 = ROIR.read_wrf_domain( wrf_input_mean )
-    ncdir = nc.Dataset( wrf_input_mean, 'r')
+    wrf_file = wrf_dir+'/wrf_enkf_output_d03_mean'
+    d_wrf_d03 = UD.read_wrf_domain( wrf_file )
+    ncdir = nc.Dataset( wrf_file, 'r')
     xlat = ncdir.variables['XLAT'][0,:,:].flatten()
     xlon = ncdir.variables['XLONG'][0,:,:].flatten()
 
@@ -247,16 +245,20 @@ def verify_hxb( var, wrf_dir=None ):
     lon_max = d_wrf_d03['lon_max']
     ax.set_extent([lon_min,lon_max,lat_min,lat_max], crs=ccrs.PlateCarree())
     ax.coastlines(resolution='10m', color='black',linewidth=0.5)
+
+    min_stddev = 0
+    max_stddev = 12
+    bounds = np.linspace(min_stddev,max_stddev,5)
     if to_obs_res:
-        cs = ax.scatter(lon_obs,lat_obs,3,var,cmap='rainbow',vmin=0,vmax=15,transform=ccrs.PlateCarree())
+        #cs = ax.tricontourf(lon_obs, lat_obs, var, cmap='rainbow', \
+        #                vmin=min_stddev, vmax=max_stddev, levels=bounds, transform=ccrs.PlateCarree(), extend='both' )
+        cs = ax.scatter(lon_obs,lat_obs,4,var,cmap='rainbow',vmin=min_stddev,vmax=max_stddev,transform=ccrs.PlateCarree())
     else:
-        cs = ax.scatter(xlon,xlat,1,var,cmap='rainbow',vmin=0,vmax=15,transform=ccrs.PlateCarree())
+        cs = ax.scatter(xlon,xlat,1,var,cmap='rainbow',vmin=min_stddev,vmax=max_stddev,transform=ccrs.PlateCarree())
 
    # Colorbar
     cbaxes = fig.add_axes([0.91, 0.1, 0.03, 0.8])
-    color_ticks = [0,3,6,9,12,15]
-    cbar = fig.colorbar(cs, cax=cbaxes)
-    cbar.set_ticks( color_ticks )
+    cbar = fig.colorbar(cs,ticks=bounds, cax=cbaxes)
     cbar.ax.tick_params(labelsize=12)
 
     # Axis labels
@@ -264,7 +266,7 @@ def verify_hxb( var, wrf_dir=None ):
     lat_ticks = list(range(math.ceil(lat_min)-2, math.ceil(lat_max)+2,2))
 
     for j in range(1):
-        gl = ax.gridlines(crs=ccrs.PlateCarree(),draw_labels=False,linewidth=0.1, color='gray', alpha=0.5, linestyle='--')
+        gl = ax.gridlines(crs=ccrs.PlateCarree(),draw_labels=False,linewidth=1.5, color='gray', alpha=0.5, linestyle='--')
 
         gl.xlabels_top = False
         gl.xlabels_bottom = True
@@ -284,7 +286,7 @@ def verify_hxb( var, wrf_dir=None ):
 
     #title 
     ax.set_title('Stddev of Hxb',fontsize=12, fontweight='bold')
-    fig.suptitle(Storm+': '+Exper_name, fontsize=10, fontweight='bold')
+    fig.suptitle(Storm+': '+Exper_name+' '+DAtime, fontsize=10, fontweight='bold')
 
     # Save the figure
     if to_obs_res: 
@@ -363,7 +365,7 @@ def cal_pert_stddev_modelRes_Hxb( DAtime, sensor, Hx_dir, If_save, wrf_dir):
     # Check if there are any NaN values using assert
     assert not np.isnan(stddev_hxb).any()
 
-    verify_hxb( stddev_hxb, wrf_dir )
+    #verify_hxb( d_obs_ens, DAtime, var, wrf_dir )
 
     # May save the standard deviation
     if If_save:
@@ -377,7 +379,7 @@ def cal_pert_stddev_modelRes_Hxb( DAtime, sensor, Hx_dir, If_save, wrf_dir):
 
 
 # Calculate values in observation space
-def cal_pert_stddev_obsRes_Hxb( DAtime, sensor, Hx_dir, If_save, fort_v, wrf_dir=None):
+def cal_pert_stddev_obsRes_Hxb( DAtime, sensor, Hx_dir, If_save, fort_v,  wrf_dir=None):
 
     # Number of ensemble members
     num_ens = 60
@@ -439,7 +441,7 @@ def cal_pert_stddev_obsRes_Hxb( DAtime, sensor, Hx_dir, If_save, fort_v, wrf_dir
     assert not np.isnan(stddev_hxb).any()
 
     # verify the standard deviation of hxb
-    verify_hxb( stddev_hxb, wrf_dir )
+    verify_hxb( d_obspace, DAtime, stddev_hxb,  wrf_dir )
 
     # May save the standard deviation
     if If_save:
@@ -459,10 +461,7 @@ def cal_pert_stddev_xb( DAtime, wrf_dir, var_name, If_save ):
     # Dimension of the domain
     xmax = 297
     ymax = 297
-    if 'Q' in var_name:
-        nLevel = 42
-    elif 'W' in var_name:
-        nLevel = 43
+    nLevel = 42
 
     ### ------------------------- Perturbation -------------------------
     print("Read the ensemble and calculate the perturbations for Xb...")
@@ -473,15 +472,39 @@ def cal_pert_stddev_xb( DAtime, wrf_dir, var_name, If_save ):
     # read the ensemble mean of xb
     mean_xb = wrf_dir + '/wrf_enkf_input_d03_mean'
     ncdir = nc.Dataset( mean_xb, 'r')
-    var = ncdir.variables[var_name][0,:,:,:]
+    if var_name == 'W':
+        var = ncdir.variables[var_name][0,:,:,:]
+        var = var.reshape(nLevel+1,xmax*ymax)
+        var_half = (var[:-1]+var[1:])/2
+        var = np.ma.getdata( var_half )
+    elif var_name == 'rt_vo':
+        xb_avo = getvar( ncdir, 'avo') # Absolute vorticity, units: 10-5 s-1 
+        xb_coriolis_sin = ncdir.variables['F'][0,:,:]/1e-5 #units: 10-5 s-1
+        xb_rtvo = np.array(xb_avo - xb_coriolis_sin) #relative vorticity, units: 10-5 s-1 
+        var = xb_rtvo.reshape(nLevel,xmax*ymax)
+    else:
+        var = ncdir.variables[var_name][0,:,:,:]
+        var = var.reshape(nLevel,xmax*ymax)
     xb_ens_pert[:,num_ens,:] = var.reshape(nLevel,xmax*ymax)
     # read the ensemble of xb
     file_xb = sorted( glob.glob(wrf_dir + '/wrf_enkf_input_d03_0*') )
     for ifile in file_xb:
         idx = file_xb.index( ifile )
         ncdir = nc.Dataset( ifile, 'r')
-        var = ncdir.variables[var_name][0,:,:,:]
-        xb_ens_pert[:,idx,:] = var.reshape(nLevel,xmax*ymax) - xb_ens_pert[:,num_ens,:]
+        if var_name == 'W':
+            var = ncdir.variables[var_name][0,:,:,:]
+            var = var.reshape(nLevel+1,xmax*ymax)
+            var_half = (var[:-1]+var[1:])/2
+            var = np.ma.getdata( var_half )
+        elif var_name == 'rt_vo':
+            xb_avo = getvar( ncdir, 'avo') # Absolute vorticity, units: 10-5 s-1 
+            xb_coriolis_sin = ncdir.variables['F'][0,:,:]/1e-5 #units: 10-5 s-1
+            xb_rtvo = np.array(xb_avo - xb_coriolis_sin) #relative vorticity, units: 10-5 s-1 
+            var = xb_rtvo.reshape(nLevel,xmax*ymax)
+        else:
+            var = ncdir.variables[var_name][0,:,:,:]
+            var = var.reshape(nLevel,xmax*ymax)
+        xb_ens_pert[:,idx,:] = var - xb_ens_pert[:,num_ens,:]
     
     # Check if there are any NaN values using assert
     assert not np.isnan(xb_ens_pert).any()
@@ -811,15 +834,16 @@ if __name__ == '__main__':
 
     # ---------- Configuration -------------------------
     Storm = 'IRMA'
-    Exper_name = 'IR-J_DA+J_WRF+J_init-SP-intel17-WSM6-30hr-hroi900'
+    DA = 'IR'
+    MP = 'THO'
 
-    v_interest = [ 'P',]
+    v_interest = [ 'QICE','QCLOUD','QRAIN','QSNOW','QGRAUP','QVAPOR']
     sensor = 'abi_gr'
     ch_list = ['8',]
     fort_v = ['obs_type','lat','lon','obs']
 
-    start_time_str = '201709041600'
-    end_time_str = '201709041600'
+    start_time_str = '201709042300'
+    end_time_str = '201709050000'
     Consecutive_times = True
 
     # Number of ensemble members
@@ -829,12 +853,14 @@ if __name__ == '__main__':
     ymax = 297
 
     to_obs_res = True
-    ens_Interp_to_obs = False
-    
-    If_cal_pert_stddev = True
+    ens_Interp_to_obs = True
+   
+    If_cal_pert_stddev = False
     If_save = True
     If_plot = False
     # -------------------------------------------------------    
+
+    Exper_name = UD.generate_one_name( Storm,DA,MP )
 
     if not Consecutive_times:
         IR_times = ['201709160600','201709161200','201709161800','201709170000','201709170600','201709171200','201709171800','201709180000']#['201709160000','201709161200','201709161800',]#'201708221800','201708230000','201708230600','201708231200']
@@ -862,7 +888,7 @@ if __name__ == '__main__':
         for DAtime in IR_times:
             # Hxb
             Hx_dir = big_dir+Storm+'/'+Exper_name+'/Obs_Hx/IR/'+DAtime+'/'
-            wrf_dir =  big_dir+Storm+'/'+Exper_name
+            wrf_dir =  big_dir+Storm+'/'+Exper_name+'/fc/'+DAtime+'/'
             if to_obs_res:
                 cal_pert_stddev_obsRes_Hxb( DAtime, sensor, Hx_dir, If_save, fort_v, wrf_dir)
             else:
