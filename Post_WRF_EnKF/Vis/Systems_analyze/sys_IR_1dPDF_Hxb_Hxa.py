@@ -276,9 +276,9 @@ if __name__ == '__main__':
     small_dir = '/work2/06191/tg854905/stampede2/Pro2_PSU_MW/'
 
     #--------Configuration------------
-    Storms = ['IRMA','JOSE','MARIA','HARVEY']#['HARVEY','IRMA','JOSE','MARIA']
+    Storms = ['HARVEY']#['HARVEY','IRMA','JOSE','MARIA']
     DA = ['IR',]
-    MP = ['WSM6','TuneWSM6'] 
+    MP = ['WSM6','THO'] 
     sensor = 'abi_gr'
 
     start_time_str = {'HARVEY':'201708221200','IRMA':'201709030000','JOSE':'201709050000','MARIA':'201709160000'}
@@ -291,7 +291,6 @@ if __name__ == '__main__':
     min_Tbdiff_rg = -25
     max_Tbdiff_rg = 25
 
-    Make_bins = True
     bin_Tbdiff = True
 
     # number of bins
