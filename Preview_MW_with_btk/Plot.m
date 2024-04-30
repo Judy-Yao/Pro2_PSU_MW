@@ -27,12 +27,14 @@ function [] = Plot(storm_phase, platform, sensor, min_lat_dpy, max_lat_dpy, min_
             pointsize = 50;
         elseif contains(sensor,'SAPHIR')
             pointsize = 10;
+        else
+            pointsize = 50;
         end
         % scatter points
         m_scatter(lon_need,lat_need,pointsize,Tb_need,'o','filled');
         hold on;
         % indicate the best_track location of storm
-        if contains(ChName, '18.7GHzV-Pol') | contains(ChName,'19.35GHzV-Pol')
+        if contains(ChName, '18.7GHzV') | contains(ChName,'19.35GHzV') | contains(ChName,'fcdr_tb19v')
             m_scatter(loc_storm(2),loc_storm(1),50,0, '*'); % 0 is represented by black color in this colormap
         else
             m_scatter(loc_storm(2),loc_storm(1),50,299, '*'); % 299 is represented by red color in this colormap
@@ -73,12 +75,12 @@ function [] = Plot(storm_phase, platform, sensor, min_lat_dpy, max_lat_dpy, min_
         title(title_char,'Fontsize',20);
        
          time_save = replace(erase(time,':'),'-','_');
-        if contains(ChName, '18.7GHzV-Pol') | contains(ChName,'19.35GHzV-Pol')
-            disp([control.plot_dir,'/',storm_phase,'/all_low/','MW_lf_', char(time_save),'.png']);
-            saveas(gcf, [control.plot_dir,'/',storm_phase,'/all_low/','MW_lf_', char(time_save),'.png']);
+        if contains(ChName, '18.7GHzV') | contains(ChName,'19.35GHzV') | contains(ChName,'fcdr_tb19v')
+            disp([control.plot_dir,'/',storm_phase,'/lf/','MW_lf_', char(time_save),'.png']);
+            saveas(gcf, [control.plot_dir,'/',storm_phase,'/lf/','MW_lf_', char(time_save),'.png']);
         else
-            disp([control.plot_dir,'/',storm_phase,'/all_high/','MW_hf_', char(time_save),'.png']);
-            saveas(gcf, [control.plot_dir,'/',storm_phase,'/all_high/','MW_hf_', char(time_save),'.png']);
+            disp([control.plot_dir,'/',storm_phase,'/hf/','MW_hf_', char(time_save),'.png']);
+            saveas(gcf, [control.plot_dir,'/',storm_phase,'/hf/','MW_hf_', char(time_save),'.png']);
         end
 
 

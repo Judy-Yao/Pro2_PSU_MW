@@ -58,8 +58,8 @@ function [] = Plot_AMSR2scans(storm_phase, platform, sensor, min_lat_dpy, max_la
         %subtitle(['DA time: ', DAtime]);
         
         time_save = replace(erase(time,':'),'-','_');
-        disp([control.plot_dir,'/',storm_phase,'/all_high/','MW_hf_', char(time_save),'.png']);
-        saveas(gcf, [control.plot_dir,'/',storm_phase,'/all_high/','MW_hf_', char(time_save),'.png']);
+        disp([control.plot_dir,'/',storm_phase,'/hf/','MW_hf_', char(time_save),'.png']);
+        saveas(gcf, [control.plot_dir,'/',storm_phase,'/hf/','MW_hf_', char(time_save),'.png']);
 
 
 end
