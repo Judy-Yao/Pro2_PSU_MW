@@ -21,6 +21,7 @@ import time
 import subprocess
 import metpy.calc as mpcalc
 from metpy.units import units
+import numpy.ma as ma
 
 import Util_data as UD
 
@@ -40,25 +41,6 @@ def d03_domain( wrfout_d03 ):
 
     d03_list = [d03_lon_min, d03_lon_max, d03_lat_min, d03_lat_max]
     return d03_list
-
-# !!!Judy wrote it and it was wrong!!!!
-def cal_IC_water_way1( ncdir ):
-    # read water vapor mixing ratio
-    qvapor_3d = ncdir.variables['QVAPOR'][0,:,:,:] #bottom_top, south_north, west_east
-    qvapor_3d_TtoB = np.flip( qvapor_3d, axis=0 )
-    # calculated the water vapor mixting ratio at the grid center (staggered)
-    qvapor_mass_center = (qvapor_3d_TtoB[1:,:,:] + qvapor_3d_TtoB[0:np.size(qvapor_3d,0)-1,:,:])/2
-    # use the assumption (hydrostatic balance) to calculate IC water
-    PB = ncdir.variables['PB'][0,:,:,:]
-    P = ncdir.variables['P'][0,:,:,:]
-    P_3d = PB + P
-    P_3d_TtoB = np.flip( P_3d,axis=0 )
-    delta_P = P_3d_TtoB[1:,:,:] - P_3d_TtoB[0:np.size(qvapor_3d,0)-1,:,:]
-    vapor_content = qvapor_mass_center*delta_P;
-    IC_water_file = np.sum(vapor_content,axis=0)/9.8
-    return IC_water_file
-
-
 
 # ------------------------------------------------------------------------------------------------------
 #           Operation: Read, process, and plot precipitable water per snapshot
@@ -191,6 +173,139 @@ def IC_water( Storm, Exper_name, DAtimes, big_dir, small_dir ):
             plot_IC_water( Storm, Exper_name, DAtime, wrf_dir, plot_dir )
 
 # ------------------------------------------------------------------------------------------------------
+#           Operation: Read, process, and plot slp per snapshot
+# ------------------------------------------------------------------------------------------------------
+def read_slp( wrf_dir ):
+
+    # set file names for background and analysis
+    mean_dir = [wrf_dir+'/wrf_enkf_input_d03_mean',wrf_dir+'/wrf_enkf_output_d03_mean']
+    # read the shared variables: lat/lon
+    ncdir = nc.Dataset( mean_dir[0] )
+    lat = ncdir.variables['XLAT'][0,:,:]
+    lon = ncdir.variables['XLONG'][0,:,:]
+    # read UV10 and slp
+    slp_original = np.zeros( [len(mean_dir), np.size(lat,0), np.size(lat,1)] )
+    slp_smooth = np.zeros( [len(mean_dir), np.size(lat,0), np.size(lat,1)] )
+    for i in range(len(mean_dir)):
+        file_name = mean_dir[i]
+        ncdir = nc.Dataset( file_name )
+        # sea level pressure
+        slp = getvar(ncdir, 'slp')
+        slp_values = slp.values
+        slp_smt = sp.ndimage.gaussian_filter(slp_values, [3,3]) #[11,11]
+        slp_smt[slp_smt > 1020] = np.nan
+        slp_smooth[i,:,:] = slp_smt
+        slp_values[slp_values > 1020] = np.nan
+        slp_original[i,:,:] = slp_values
+
+    d_slp = {'lat':lat,'lon':lon,'slp':slp_original,'slp_smooth':slp_smooth}
+    return d_slp
+
+def slp_plt( Storm, Exper_name, DAtime, wrf_dir, plot_dir ):
+
+    # Read storm center
+    dict_btk = UD.read_bestrack(Storm)
+    # Find the best-track position
+    btk_dt = [it_str for it_str in dict_btk['time'] ]#[datetime.strptime(it_str,"%Y%m%d%H%M") for it_str in dict_btk['time']]
+    bool_match = [DAtime == it for it in btk_dt]
+    if True in bool_match:
+        if_btk_exist = True
+        idx_btk = np.where( bool_match )[0][0] # the second[0] is due to the possibility of multiple records at the same time
+    else:
+        if_btk_exist = False
+    # ------ Read WRFout -------------------
+    d_field = read_slp( wrf_dir )
+    lat = d_field['lat']
+    lon = d_field['lon']
+    slp = d_field['slp']
+    slp_smooth = d_field['slp_smooth']
+    lat_min = np.amin( lat )
+    lon_min = np.amin( lon )
+    lat_max = np.amax( lat )
+    lon_max = np.amax( lon )
+    min_slp = np.min( slp )
+    max_slp = np.max( slp )
+
+    # ------ Plot Figure -------------------
+    fig, ax=plt.subplots(1, 2, subplot_kw={'projection': ccrs.PlateCarree()}, gridspec_kw = {'wspace':0, 'hspace':0}, linewidth=0.5, sharex='all', sharey='all',  figsize=(12,6), dpi=400)
+
+    min_slp = 990
+    max_slp = 1015
+    bounds = np.linspace(min_slp, max_slp, 6)
+    for i in range(2):
+        ax[i].set_extent([lon_min,lon_max,lat_min,lat_max], crs=ccrs.PlateCarree())
+        ax[i].coastlines (resolution='10m', color='black', linewidth=1)
+        slp_contourf = ax[i].contourf(lon,lat,slp[i,:,:],cmap='inferno',vmin=min_slp,vmax=max_slp,levels=bounds,extend='both',transform=ccrs.PlateCarree())
+        # Mark the best track
+        if if_btk_exist:
+            ax[i].scatter(dict_btk['lon'][idx_btk],dict_btk['lat'][idx_btk], 20, 'green', marker='*',transform=ccrs.PlateCarree())
+        # min slp location
+        idx = np.nanargmin( slp[i,:,:] )
+        ax[i].scatter(lon.flatten()[idx],lat.flatten()[idx], 20, 'blue', marker='o',transform=ccrs.PlateCarree())
+
+    # Adding the colorbar
+    caxes = fig.add_axes([0.2, 0.05, 0.6, 0.02])
+    slp_bar = fig.colorbar(slp_contourf,  orientation="horizontal", cax=caxes)
+    #rtvo_bar.ax.set_xlabel('Sea Level Pressure (hPa)',fontsize=8)
+    #rtvo_bar.ax.tick_params(labelsize='10')
+
+    # Title
+    if Storm == 'HARVEY':
+        mask = lat < 18 # lat > 18 will be True
+        for i in range(2):
+            slp_masked = ma.masked_array(slp[i,:,:], mask=mask)
+            min_slp = np.nanmin( slp_masked )
+            if i == 0:
+                ax[i].set_title( 'Xb--min slp: '+str("{0:.3f}".format(min_slp))+' hPa',  fontweight='bold')
+            elif i == 1:
+                ax[i].set_title( 'Xa--min slp: '+str("{0:.3f}".format(min_slp))+' hPa',  fontweight='bold')
+    else:
+        ax[0].set_title( 'Xb--min slp: '+str("{0:.3f}".format(np.nanmin( slp[0,:,:] )))+' hPa',  fontweight='bold') #, fontsize=12)
+        ax[1].set_title( 'Xa--min slp: '+str("{0:.3f}".format(np.nanmin( slp[1,:,:] )))+' hPa',  fontweight='bold') #, fontsize=12)
+    fig.suptitle(Storm+': '+Exper_name+'('+DAtime+')', fontsize=12, fontweight='bold')
+
+    # Axis labels
+    lon_ticks = list(range(math.ceil(lon_min), math.ceil(lon_max),2))
+    lat_ticks = list(range(math.ceil(lat_min), math.ceil(lat_max),2))
+    for j in range(2):
+        gl = ax[j].gridlines(crs=ccrs.PlateCarree(),draw_labels=False,linewidth=0.1, color='gray', alpha=0.5, linestyle='--')
+        gl.top_labels = False
+        gl.bottom_labels = True
+        if j==0:
+            gl.left_labels = True
+            gl.right_labels = False
+        else:
+            gl.left_labels = False
+            gl.right_labels = False
+        gl.ylocator = mticker.FixedLocator(lat_ticks)
+        gl.xlocator = mticker.FixedLocator(lon_ticks)
+        gl.xformatter = LONGITUDE_FORMATTER
+        gl.yformatter = LATITUDE_FORMATTER
+        gl.xlabel_style = {'size': 12}
+        gl.ylabel_style = {'size': 12}
+
+    plt.savefig( plot_dir+DAtime+'_slp', dpi=300 )
+    print('Saving the figure: ', plot_dir+DAtime+'_slp.png')
+    plt.close()
+
+def plot_slp( Storm, Exper_name, DAtimes, big_dir, small_dir ):
+
+    # Loop through each DAtime/analysis
+    for DAtime in DAtimes:
+        wrf_dir = big_dir+Storm+'/'+Exper_name+'/fc/'+DAtime
+        print('Reading WRF background and analysis: ', wrf_dir)
+        DAtime_dt = datetime.strptime( DAtime, '%Y%m%d%H%M' )
+        # ------ Plot -------------------
+        plot_dir = small_dir+Storm+'/'+Exper_name+'/Vis_analyze/Model/Slp/'
+        plotdir_exists = os.path.exists( plot_dir )
+        if plotdir_exists == False:
+            os.mkdir(plot_dir)
+            slp_plt( Storm, Exper_name, DAtime, wrf_dir, plot_dir )
+        else:
+            slp_plt( Storm, Exper_name, DAtime, wrf_dir, plot_dir )
+
+
+# ------------------------------------------------------------------------------------------------------
 #           Operation: Read, process, and plot UV10_slp per snapshot
 # ------------------------------------------------------------------------------------------------------
 def read_UV10_slp( wrf_dir ):
@@ -321,6 +436,120 @@ def UV10_slp( Storm, Exper_name, DAtimes, big_dir, small_dir ):
             plot_UV10_slp( Storm, Exper_name, DAtime, wrf_dir, plot_dir )
         else:
             plot_UV10_slp( Storm, Exper_name, DAtime, wrf_dir, plot_dir )
+
+
+# ------------------------------------------------------------------------------------------------------
+#           Operation: Read, process, and plot accumulated grid scale precipitation per snapshot
+# ------------------------------------------------------------------------------------------------------
+def read_Precip( wrf_dir ):
+
+    # set file names for background and analysis
+    mean_dir = [wrf_dir+'/wrf_enkf_input_d03_mean',wrf_dir+'/wrf_enkf_output_d03_mean']
+    # read the shared variables: lat/lon
+    ncdir = nc.Dataset( mean_dir[0] )
+    lat = ncdir.variables['XLAT'][0,:,:]
+    lon = ncdir.variables['XLONG'][0,:,:]
+    # calculate IC water
+    pp = np.zeros( [len(mean_dir), np.size(lat,0), np.size(lat,1)] )
+    for i in range(len(mean_dir)):
+        file_name = mean_dir[i]
+        ncdir = nc.Dataset( file_name )
+        pp[i,:,:] = ncdir.variables['RAINNC'][0,:,:]
+
+    d_pp = {'lat':lat,'lon':lon,'Precip':pp}
+    return d_pp
+
+def plot_pp( Storm, Exper_name, DAtime, wrf_dir, plot_dir ):
+
+    # Read storm center
+    dict_btk = UD.read_bestrack(Storm)
+    # Find the best-track position
+    btk_dt = [it_str for it_str in dict_btk['time'] ]#[datetime.strptime(it_str,"%Y%m%d%H%M") for it_str in dict_btk['time']]
+    bool_match = [DAtime == it for it in btk_dt]
+    if True in bool_match:
+        if_btk_exist = True
+        idx_btk = np.where( bool_match )[0][0] # the second[0] is due to the possibility of multiple records at the same time
+    else:
+        if_btk_exist = False
+    # ------ Read WRFout -------------------
+    d_field = read_Precip( wrf_dir )
+    lat = d_field['lat']
+    lon = d_field['lon']
+    pp = d_field['Precip']
+    lat_min = np.amin( lat )
+    lon_min = np.amin( lon )
+    lat_max = np.amax( lat )
+    lon_max = np.amax( lon )
+    min_pp = np.min( pp )
+    max_pp = np.max( pp )
+
+    # ------ Plot Figure -------------------
+    fig, ax=plt.subplots(1, 2, subplot_kw={'projection': ccrs.PlateCarree()}, gridspec_kw = {'wspace':0, 'hspace':0}, linewidth=0.5, sharex='all', sharey='all',  figsize=(12,6), dpi=400)
+
+    min_pp = 0
+    max_pp = 40
+    bounds = np.linspace(min_pp, max_pp, 6)
+    for i in range(2):
+        pp[pp == 0 ] = np.nan # set elements with 0 as np.nan
+        ax[i].set_extent([lon_min,lon_max,lat_min,lat_max], crs=ccrs.PlateCarree())
+        ax[i].coastlines(resolution='10m', color='black', linewidth=1)
+        pp_contourf = ax[i].contourf(lon,lat,pp[i,:,:],cmap='ocean_r',vmin=min_pp,vmax=max_pp,levels=bounds,extend='max',transform=ccrs.PlateCarree())
+        # Mark the best track
+        if if_btk_exist:
+            ax[i].scatter(dict_btk['lon'][idx_btk],dict_btk['lat'][idx_btk], 20, 'purple', marker='*',transform=ccrs.PlateCarree())
+
+    # Adding the colorbar
+    caxes = fig.add_axes([0.2, 0.05, 0.6, 0.02])
+    pp_bar = fig.colorbar(pp_contourf,  orientation="horizontal", cax=caxes)
+    #rtvo_bar.ax.set_xlabel('Sea Level Pressure (hPa)',fontsize=8)
+    #rtvo_bar.ax.tick_params(labelsize='10')
+
+    # Title
+    #ax[0].set_title( 'Xb--min slp: '+str("{0:.3f}".format(np.nanmin( slp[0,:,:] )))+' hPa',  fontweight='bold') #, fontsize=12)
+    #ax[1].set_title( 'Xa--min slp: '+str("{0:.3f}".format(np.nanmin( slp[1,:,:] )))+' hPa',  fontweight='bold') #, fontsize=12)
+    fig.suptitle(Storm+': '+Exper_name+'('+DAtime+')', fontsize=12, fontweight='bold')
+
+    # Axis labels
+    lon_ticks = list(range(math.ceil(lon_min), math.ceil(lon_max),2))
+    lat_ticks = list(range(math.ceil(lat_min), math.ceil(lat_max),2))
+    for j in range(2):
+        gl = ax[j].gridlines(crs=ccrs.PlateCarree(),draw_labels=False,linewidth=0.1, color='gray', alpha=0.5, linestyle='--')
+        gl.top_labels = False
+        gl.bottom_labels = True
+        if j==0:
+            gl.left_labels = True
+            gl.right_labels = False
+        else:
+            gl.left_labels = False
+            gl.right_labels = False
+        gl.ylocator = mticker.FixedLocator(lat_ticks)
+        gl.xlocator = mticker.FixedLocator(lon_ticks)
+        gl.xformatter = LONGITUDE_FORMATTER
+        gl.yformatter = LATITUDE_FORMATTER
+        gl.xlabel_style = {'size': 12}
+        gl.ylabel_style = {'size': 12}
+
+    plt.savefig( plot_dir+DAtime+'_Precip', dpi=300 )
+    print('Saving the figure: ', plot_dir+DAtime+'_Precip.png')
+    plt.close()
+
+
+def Precip( Storm, Exper_name, DAtimes, big_dir, small_dir ):
+
+    # Loop through each DAtime/analysis
+    for DAtime in DAtimes:
+        wrf_dir = big_dir+Storm+'/'+Exper_name+'/fc/'+DAtime
+        print('Reading WRF background and analysis: ', wrf_dir)
+        DAtime_dt = datetime.strptime( DAtime, '%Y%m%d%H%M' )
+        # ------ Plot -------------------
+        plot_dir = small_dir+Storm+'/'+Exper_name+'/Vis_analyze/Model/Precip/'
+        plotdir_exists = os.path.exists( plot_dir )
+        if plotdir_exists == False:
+            os.mkdir(plot_dir)
+            plot_pp( Storm, Exper_name, DAtime, wrf_dir, plot_dir )
+        else:
+            plot_pp( Storm, Exper_name, DAtime, wrf_dir, plot_dir )
+
 
 # ------------------------------------------------------------------------------------------------------
 #           Operation: Read, process, and plot precipitable water per snapshot
@@ -772,15 +1001,17 @@ def diver( Storm, Exper_name, DAtimes, big_dir, small_dir ):
 
 if __name__ == '__main__':
 
-    big_dir = '/scratch_S2/06191/tg854905/Pro2_PSU_MW/'
+    big_dir = '/scratch/06191/tg854905/Pro2_PSU_MW/'
     small_dir = '/work2/06191/tg854905/stampede2/Pro2_PSU_MW/'
 
     # -------- Configuration -----------------
     Storm = 'HARVEY'
-    DA = ['IR']   
+    DA = ['IR+MW']   
     MP = 'THO' 
 
-    Plot_UV10_slp = True
+    Plot_Precip = True       # Accumulated total grid scale precipitation
+    Plot_slp = False
+    Plot_UV10_slp = False
     Plot_IC_water = False
     Plot_minslp_evo = False
     Plot_rtvo = False
@@ -788,7 +1019,7 @@ if __name__ == '__main__':
     # -----------------------------------------
 
     # Time range set up
-    start_time_str = '201708221200'
+    start_time_str = '201708241200'
     end_time_str = '201708241200'
     Consecutive_times = True
 
@@ -808,6 +1039,14 @@ if __name__ == '__main__':
     for ida in DA:
         Expers.append( UD.generate_one_name( Storm,ida,MP ) )
     #Expers= ['IR-TuneWSM6-J_DA+J_WRF+J_init-SP-intel17-WSM6-30hr-hroi900',]
+
+    # Plot slp
+    if Plot_slp:
+        for iExper in Expers:
+            start_time=time.process_time()
+            plot_slp( Storm, iExper, DAtimes, big_dir, small_dir )
+            end_time = time.process_time()
+            print ('time needed: ', end_time-start_time, ' seconds')
 
     # Plot low-level circulation
     if Plot_UV10_slp:
@@ -839,6 +1078,14 @@ if __name__ == '__main__':
         for iExper in Expers:
             start_time=time.process_time()
             IC_water( Storm, iExper, DAtimes, big_dir, small_dir )
+            end_time = time.process_time()
+            print ('time needed: ', end_time-start_time, ' seconds')
+
+    # Plot accumulated total grid scale precipitation
+    if Plot_Precip:
+        for iExper in Expers:
+            start_time=time.process_time()
+            Precip( Storm, iExper, DAtimes, big_dir, small_dir )
             end_time = time.process_time()
             print ('time needed: ', end_time-start_time, ' seconds')
 

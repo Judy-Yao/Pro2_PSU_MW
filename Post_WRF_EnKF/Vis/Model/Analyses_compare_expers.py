@@ -20,6 +20,7 @@ from mpl_toolkits.axes_grid1 import make_axes_locatable
 import time
 import subprocess
 from itertools import chain
+import numpy.ma as ma
 
 from Util_data import read_bestrack
 import Util_data as UD
@@ -168,14 +169,14 @@ def plot_IC_water( Storm, Expers, DAtime, wrf_dirs, plot_dir ):
     lat_ticks = list(range(math.ceil(lat_min), math.ceil(lat_max),2))
     for j in range(3):
         gl = axs.flat[j].gridlines(crs=ccrs.PlateCarree(),draw_labels=False,linewidth=0.1, color='gray', alpha=0.5, linestyle='--')
-        gl.xlabels_top = False
-        gl.xlabels_bottom = True
+        gl.top_labels = False
+        gl.bottom_labels = True
         if j==0:
-            gl.ylabels_left = True
-            gl.ylabels_right = False
+            gl.left_labels = True
+            gl.right_labels = False
         else:
-            gl.ylabels_left = False
-            gl.ylabels_right = False
+            gl.left_labels = False
+            gl.right_labels = False
         gl.ylocator = mticker.FixedLocator(lat_ticks)
         gl.xlocator = mticker.FixedLocator(lon_ticks)
         gl.xformatter = LONGITUDE_FORMATTER
@@ -415,6 +416,154 @@ def Gather_slp( Storm, Expers, DAtimes, big_dir ):
 
     return dict_minSLP
 
+# ------------------------------------------------------------------------------------------------------
+#           Operation: Read, process, and plot accumulated grid scale precipitation per snapshot
+# ------------------------------------------------------------------------------------------------------
+def read_Precip( Expers,wrf_dirs, DAtime ):
+
+    d_pp_all = {}
+    for iExper in Expers:
+        idx_exper = Expers.index( iExper )
+        # set file names for background and analysis
+        mean_dir = [wrf_dirs[idx_exper]+DAtime+'/wrf_enkf_input_d03_mean',]     
+        # read the shared variables: lat/lon
+        ncdir = nc.Dataset( mean_dir[0] )
+        lat = ncdir.variables['XLAT'][0,:,:]
+        lon = ncdir.variables['XLONG'][0,:,:]
+        # read precipitation
+        pp = np.zeros( [len(mean_dir), np.size(lat,0), np.size(lat,1)] )
+        for i in range(len(mean_dir)): 
+            file_name = mean_dir[i] 
+            ncdir = nc.Dataset( file_name )
+            pp[i,:,:] = ncdir.variables['RAINNC'][0,:,:]
+        d_pp = {'lat':lat,'lon':lon,'Precip':pp}
+        
+        d_pp_all[iExper] = d_pp
+    return d_pp_all
+
+
+def plot_Precip( Storm, Expers, DAtime, wrf_dirs, plot_dir ):
+
+    # Read storm center
+    dict_btk = read_bestrack(Storm)
+    # Find the best-track position
+    btk_dt = [it_str for it_str in dict_btk['time'] ]#[datetime.strptime(it_str,"%Y%m%d%H%M") for it_str in dict_btk['time']]
+    bool_match = [DAtime == it for it in btk_dt]
+    if True in bool_match:
+        if_btk_exist = True
+        idx_btk = np.where( bool_match )[0][0] # the second[0] is due to the possibility of multiple records at the same time
+    else:
+        if_btk_exist = False
+
+    #------ Read WRFout -------------------
+    d_precip = read_Precip( Expers, wrf_dirs, DAtime )
+
+    # Big Assumption: in the same domain!!!
+    lat = d_precip[Expers[0]]['lat']
+    lon = d_precip[Expers[0]]['lon']
+    lat_min = np.amin( lat )
+    lon_min = np.amin( lon )
+    lat_max = np.amax( lat )
+    lon_max = np.amax( lon )
+
+    # ------------------ Plot -----------------------
+    fig, axs=plt.subplots(1, 3, subplot_kw={'projection': ccrs.PlateCarree()}, gridspec_kw = {'wspace':0, 'hspace':0}, linewidth=0.5, sharex='all', sharey='all',  figsize=(12,5), dpi=400)
+
+    # Exper 1: Xb
+    min_pp = 0
+    max_pp = 20
+    bounds = np.linspace(min_pp, max_pp, 6)
+    axs.flat[0].set_extent([lon_min,lon_max,lat_min,lat_max], crs=ccrs.PlateCarree())
+    axs.flat[0].coastlines(resolution='10m', color='black',linewidth=0.5)
+    pp = d_precip[Expers[0]]['Precip'][0,:,:]
+    #pp[pp == 0 ] = np.nan # set elements with 0 as np.nan
+    mask = pp <= 0.5
+    pp_masked = ma.masked_array(pp, mask=mask)
+    pp_contourf = axs.flat[0].contourf(lon,lat,pp_masked,cmap='ocean_r',vmin=min_pp,vmax=max_pp,levels=bounds,extend='max',transform=ccrs.PlateCarree())
+    # Mark the best track
+    if if_btk_exist:
+        axs.flat[0].scatter(dict_btk['lon'][idx_btk],dict_btk['lat'][idx_btk], 20, 'red', marker='*',transform=ccrs.PlateCarree())
+
+    # Exper 2: Xb
+    axs.flat[1].set_extent([lon_min, lon_max, lat_min, lat_max], crs=ccrs.PlateCarree())
+    axs.flat[1].coastlines(resolution='10m', color='black',linewidth=0.5)
+    pp = d_precip[Expers[1]]['Precip'][0,:,:]
+    pp[pp == 0 ] = np.nan # set elements with 0 as np.nan
+    pp_contourf = axs.flat[1].contourf(lon,lat,pp,cmap='ocean_r',vmin=min_pp,vmax=max_pp,levels=bounds,extend='max',transform=ccrs.PlateCarree())
+    # Mark the best track
+    if if_btk_exist:
+        axs.flat[1].scatter(dict_btk['lon'][idx_btk],dict_btk['lat'][idx_btk], 20, 'red', marker='*',transform=ccrs.PlateCarree())
+    # Colorbar
+    caxes = fig.add_axes([0.12, 0.1, 0.5, 0.02])
+    pp_bar = fig.colorbar(pp_contourf,ax=axs[0:2],orientation="horizontal", cax=caxes)
+    pp_bar.ax.tick_params()
+
+    # Exper 1: Xb - Exper 2: Xb
+    min_incre = -5
+    max_incre = 5
+    axs.flat[2].set_extent([lon_min, lon_max, lat_min, lat_max], crs=ccrs.PlateCarree())
+    axs.flat[2].coastlines(resolution='10m', color='black',linewidth=0.5)
+    pp_incre = d_precip[Expers[1]]['Precip'][:,:] - d_precip[Expers[0]]['Precip'][:,:]
+    incre_pp = axs.flat[2].scatter(lon,lat,1.5,c=pp_incre,edgecolors='none', cmap='PiYG', vmin=min_incre, vmax=max_incre,transform=ccrs.PlateCarree())
+    if if_btk_exist:
+        axs.flat[2].scatter(dict_btk['lon'][idx_btk],dict_btk['lat'][idx_btk], 20, 'black', marker='*',transform=ccrs.PlateCarree())
+    # Colorbar
+    caxes = fig.add_axes([0.65, 0.1, 0.25, 0.02])
+    cb_diff_ticks = np.linspace(min_incre, max_incre, 5, endpoint=True)
+    cbar = fig.colorbar(incre_pp, ax=axs[2:], ticks=cb_diff_ticks, orientation="horizontal", cax=caxes)
+    cbar.ax.tick_params()
+
+    #subplot title
+    axs.flat[0].set_title('IR_WSM6',fontweight='bold')
+    axs.flat[1].set_title('IRMW_WSM6',fontweight='bold')
+    axs.flat[2].set_title('IRMW-IR', fontweight='bold')
+
+    #title for all
+    fig.suptitle(Storm+': '+'('+DAtime+')'+'--Precip (mm)', fontsize=13, fontweight='bold')
+
+    # Axis labels
+    lon_ticks = list(range(math.ceil(lon_min), math.ceil(lon_max),2))
+    lat_ticks = list(range(math.ceil(lat_min), math.ceil(lat_max),2))
+    for j in range(3):
+        gl = axs.flat[j].gridlines(crs=ccrs.PlateCarree(),draw_labels=False,linewidth=0.1, color='gray', alpha=0.5, linestyle='--')
+        gl.top_labels = False
+        gl.bottom_labels = True
+        if j==0:
+            gl.left_labels = True
+            gl.right_labels = False
+        else:
+            gl.left_labels = False
+            gl.right_labels = False
+        gl.ylocator = mticker.FixedLocator(lat_ticks)
+        gl.xlocator = mticker.FixedLocator(lon_ticks)
+        gl.xformatter = LONGITUDE_FORMATTER
+        gl.yformatter = LATITUDE_FORMATTER
+        gl.xlabel_style = {'size': 12}
+        gl.ylabel_style = {'size': 12}
+
+    savename = plot_dir+DAtime+'_compare_Precip_masked.png'
+    plt.savefig( savename, dpi=300 )
+    print('Saving the figure: ', savename)
+    plt.close()
+
+
+def Precip( Storm, Expers, DAtimes, big_dir, small_dir ):
+
+    wrf_dirs = []
+    for iExper in Expers:
+        wrf_dirs.append( big_dir+Storm+'/'+iExper+'/fc/' )
+    # Loop through each DAtime/analysis
+    for DAtime in DAtimes:
+        print('Reading WRF background and analysis at ', DAtime)
+        DAtime_dt = datetime.strptime( DAtime, '%Y%m%d%H%M' )
+        # ------ Plot -------------------
+        plot_dir = small_dir+Storm+'/'+Expers[0]+'/Vis_analyze/Model/Precip/'
+        plotdir_exists = os.path.exists( plot_dir )
+        if plotdir_exists == False:
+            os.mkdir(plot_dir)
+            plot_Precip( Storm, Expers, DAtime, wrf_dirs, plot_dir )
+        else:
+            plot_Precip( Storm, Expers, DAtime, wrf_dirs, plot_dir )
 
 
 if __name__ == '__main__':
@@ -423,27 +572,28 @@ if __name__ == '__main__':
     small_dir =  '/work2/06191/tg854905/stampede2/Pro2_PSU_MW/'
 
     # ---------- Configuration -------------------------
-    Storm = 'JOSE'
-    DA = 'IR'
-    MP = ['WSM6','TuneWSM6']
+    Storm = 'IRMA'
+    DA = ['IR','IR+MW']
+    MP = 'WSM6'
+
+    slp_xa = False
+    slp_xb = False
+    Com_minslp_evo = False
 
     meanOverEns = False  # mean of H(ens) or H of mean(ens)
     Com_IC_water = False
-    Com_minslp_evo = True
-
-    slp_xa = True
-    slp_xb = True
+    Com_Precip = True
 
     # Time range set up
-    start_time_str = '201709050000'
-    end_time_str = '201709070000'
+    start_time_str = '201709030000'
+    end_time_str = '201709050000'
     Consecutive_times = True
     # ------------------------------------------------------   
 
     # Create experiment names
     Expers = []
-    for imp in MP:
-        Expers.append( UD.generate_one_name( Storm,DA,imp ) )
+    for ida in DA:
+        Expers.append( UD.generate_one_name( Storm,ida,MP ) )
 
     if not Consecutive_times:
         DAtimes = ['201708231200']
@@ -465,5 +615,11 @@ if __name__ == '__main__':
         Evo_slp = Gather_slp( Storm, Expers, DAtimes, big_dir )
         plot_slp_timeseries( small_dir, Storm, Expers, DAtimes, Evo_slp )
 
+    # Plot the accumulated grid scale precipitation
+    if Com_Precip:
+        start_time=time.process_time()
+        Precip( Storm, Expers, DAtimes, big_dir, small_dir )
+        end_time = time.process_time()
+        print ('time needed: ', end_time-start_time, ' seconds')        
  
 

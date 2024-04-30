@@ -10,6 +10,7 @@ import math
 import scipy as sp
 import scipy.ndimage
 import matplotlib
+from matplotlib import ticker
 matplotlib.use("agg")
 import matplotlib.ticker as mticker
 from matplotlib import pyplot as plt
@@ -19,6 +20,7 @@ from cartopy.mpl.gridliner import LONGITUDE_FORMATTER, LATITUDE_FORMATTER
 from mpl_toolkits.axes_grid1 import make_axes_locatable
 import time
 from scipy import interpolate
+from fast_histogram import histogram2d as hist2d
 
 #from Track_xbxa import read_HPI_model
 import Util_data as UD
@@ -61,6 +63,33 @@ def cal_cdir(get_cdir,ver_coor,accu_qhydro,accu_th):
                 ip_valid[ip] = ip_seq[ip]
                 break
     return cd_ir,ip_valid
+
+
+# ------------------------------------------------------------------------
+#                    Object: Tbs of Forecasts
+# ------------------------------------------------------------------------
+
+# Read crtm calcuated IR data from one binary file
+def read_simu_IR_one(Hxb_file, ch_list):
+
+    xmax = 297
+    ymax = 297
+    print('Hxb_file:' + Hxb_file)
+
+    Hxb_data = np.fromfile(Hxb_file,dtype='<f4') # <: little endian; f: float; 4: 4 bytes
+    n_ch = len(Hxb_data)/(xmax*ymax) - 2
+    n_ch = int(n_ch)
+    if n_ch != len(ch_list):
+        print('Error!! # of channels in data is '+str(n_ch))
+    Hxb_sim = Hxb_data[:].reshape(n_ch+2,ymax,xmax)
+
+    dict_simu_Tb = {}
+    dict_simu_Tb['Lon_x'] = Hxb_sim[0,:,:]
+    dict_simu_Tb['Lat_x'] = Hxb_sim[1,:,:]
+    dict_simu_Tb['Ch_x'] = ch_list[0]
+    dict_simu_Tb['Tb_x'] = Hxb_sim[2,:,:]
+
+    return dict_simu_Tb
 
 
 # Read variables at model resolution/location
@@ -175,7 +204,6 @@ def Plot_DM_all_oneTime( FCtime,v_interest,d_hydro,ver_coor ):
     else:
         ver_coor = np.mean( ver_coor, axis=0)
         ver_coor = np.mean( ver_coor, axis=1 )/1000 # convert to km
-        ver_coor = (ver_coor[:-1]+ver_coor[1:])/2
 
     # Set up figure
     fig = plt.figure( figsize=(12,6), dpi=300 )
@@ -188,7 +216,7 @@ def Plot_DM_all_oneTime( FCtime,v_interest,d_hydro,ver_coor ):
     #else:
     #    x_range = np.arange(0,500.5,50) #2100.5
    
-    x_range = list(np.logspace(0,3,num=50)) # start: 10**0, end:10**3
+    x_range = list(np.logspace(0,4,num=50)) # start: 10**0, end:10**3
     x_range.insert(0,0)
     x_axis_rg = range(len(x_range))
     f_xinterp = interpolate.interp1d( x_range, x_axis_rg)
@@ -206,18 +234,31 @@ def Plot_DM_all_oneTime( FCtime,v_interest,d_hydro,ver_coor ):
     Color = ['#f032e6','#911eb4','#4363d8','#f58231','#469990']
 
     for ifile in range( len(wrf_files) ):
-        #PF_all = np.zeros( (nLevel,) )
+        # Read simulated Tb of Xb and Xa
+        Hx_dir = big_dir+Storm+'/'+Exper_name+'/Obs_Hx/IR/'+FCtime+'/'
+        Tb_file = Hx_dir + "/mean_model_res_d03_" + FCtime + '_' +  sensor + '.txt'
+        d_Tb = read_Tb_modelRes(Tb_file, sensor )
+        print(np.shape(d_Tb['meanYb_m']))
+        if ifile == 0: 
+            condi = d_Tb['meanYb_m'] < 210
+        else:
+            condi = d_Tb['meanYa_m'] < 210
+        idx_area = np.where( condi )[0]
+       
+        PF_all = np.zeros( (nLevel,) )
         for var in hydros:
             idx = hydros.index( var )
-            PF_x = np.mean(d_hydro[var][ifile,:,:],axis=1)*1000 # convert from kg/m2 to g/m2
+            print(np.shape(d_hydro[var][ifile,:,idx_area]))
+            PF_x = np.mean(d_hydro[var][ifile,:,idx_area],axis=0)*1000 # convert from kg/m2 to g/m2
             loc_inx = f_xinterp( PF_x )
             ax.plot( loc_inx,loc_iny,Color[idx],linewidth=3,label=labels[ifile]+var,linestyle=lstyle[ifile] )
-            #PF_all = PF_all + PF_x
-        #loc_inx = f_xinterp( PF_all )
-        #if ifile == 0:
-        #    ax.plot( loc_inx,loc_iny,'black',linewidth=2,label=labels[ifile]+'All',linestyle=lstyle[ifile] )
-        #else:
-        #    ax.plot( loc_inx,loc_iny,'black',linewidth=2,label=labels[ifile]+'All',linestyle=lstyle[ifile] )
+            PF_all = PF_all + PF_x
+        print(np.max(PF_all))
+        loc_inx = f_xinterp( PF_all )
+        if ifile == 0:
+            ax.plot( loc_inx,loc_iny,'black',linewidth=2,label=labels[ifile]+'All',linestyle=lstyle[ifile] )
+        else:
+            ax.plot( loc_inx,loc_iny,'black',linewidth=2,label=labels[ifile]+'All',linestyle=lstyle[ifile] )
 
     # Plot a line indicating the threshold value
     th_loc = f_xinterp(accu_th)
@@ -227,11 +268,11 @@ def Plot_DM_all_oneTime( FCtime,v_interest,d_hydro,ver_coor ):
     ax.legend(loc='upper right',fontsize='10')
 
     # set X label
-    xlabel_like = [0,1,10,30,100,1000]
+    xlabel_like = [0,1,10,20,100,1000,3162]
     xticks_loc = []
     for it in xlabel_like:
         xticks_loc.append( f_xinterp(it) )
-    ax.set_xlim(xmin=f_xinterp(0),xmax=f_xinterp(1e3))
+    ax.set_xlim(xmin=f_xinterp(0),xmax=f_xinterp(3162))
     #if Storm == 'IRMA' and MP == 'THO':
     #    xticks_loc = list(x_axis_rg[::2])
     #    xlabel_like = list(x_range[::2])
@@ -243,7 +284,7 @@ def Plot_DM_all_oneTime( FCtime,v_interest,d_hydro,ver_coor ):
     #xticks_loc.insert(0,th_loc)
     #xlabel_like.insert(0,accu_th)
     ax.set_xticks( xticks_loc )
-    ax.set_xticklabels( ['0',r'$10^{0}$',r'$10^{1}$','30',r'$10^{2}$',r'$10^{3}$',],fontsize=15 )
+    ax.set_xticklabels( ['0',r'$10^{0}$',r'$10^{1}$','20',r'$10^{2}$',r'$10^{3}$',r'$10^{3.5}$'],fontsize=15 )
     #ax.set_xticklabels( [str(it) for it in xlabel_like],fontsize=15 )
     ax.set_xlabel('Accumulated Mass (gram m-2)',fontsize=15)
     ax.set_xlim(xmin=0)
@@ -251,15 +292,14 @@ def Plot_DM_all_oneTime( FCtime,v_interest,d_hydro,ver_coor ):
     if ver_use_press:
         pass
     else:
-        ylabel_like = [0.0,5.0,10.0,15.0,20.0]
+        ylabel_like = [10.0,12.5,15.0,17.5,20.0] #[0.0,5.0,10.0,15.0,20.0]
         yticks = []
-        list_y_range = list(y_range)
         for it in ylabel_like:
-            yticks.append( list_y_range.index(it) )
+            yticks.append( f_yinterp( it ) )
         ax.set_yticks( yticks )
         ax.set_yticklabels( [str(it) for it in ylabel_like],fontsize=15 )
         ax.set_ylabel('Height (km)',fontsize=15)
-        ax.set_ylim(ymin=0,ymax=20.5) # cut off data above 25km
+        ax.set_ylim(ymin=10,ymax=20.5) # cut off data above 25km
 
     # Set title
     title_name = 'Domain-mean Profile: Top-to-down Accumulated Hydro Mass'
@@ -399,25 +439,98 @@ def Plot_depth_IRsee( FCtime, wrf_files, d_hydro, ver_coor ):
 
     return None
 
-def Plot_depth_IRsee_OneScene( FCtime, wrf_files, d_hydro, ver_coor ):
+
+
+
+##################################################################
+# One Scene
+##################################################################
+
+def cloudHeight_Tb_2D( cdirs ):
+
+    # temporary parameters
+    min_ch = 7.5
+    max_ch = 19
+    min_tb = 185
+    max_tb = 250
+    number_bins = 100
+
+    # Read simulated Tb of Xb and Xa
+    #Hx_dir = big_dir+Storm+'/'+Exper_name+'/Obs_Hx/IR/'+FCtime+'/'
+    Hx_dir = '/scratch/06191/tg854905/Pro2_PSU_MW/HARVEY/JerryRun/IR_THO/wrf_df/201708241200/'
+    Tb_file = Hx_dir+'/CRTM_'+ wrfname + '.bin'
+    d_Tb = read_simu_IR_one(Tb_file, ch_list)
+
+    # bin
+    d_count = hist2d(cdirs[0,:],d_Tb['Tb_x'].flatten(),range=[[min_ch,max_ch],[min_tb,max_tb]],bins=number_bins)
+    # Compute log10 of non-zero elements, return NAN where elements are ZERO
+    with np.errstate(divide='ignore', invalid='ignore'):
+        dcount = np.where(d_count != 0, np.log10(d_count), np.nan)
+
+    # Set up figure
+    fig,ax = plt.subplots(1, 1, figsize=(10,6), dpi=300 )   
+
+    # verification
+    #ax.scatter(cdirs[0,:], d_Tb['Tb_x'], s=2)
+
+    # new map
+    # Customize the colormap
+    color_intervals = [0,0.5,1,1.5,2,2.5,3,3.5]
+    exist_cmap = plt.cm.rainbow #.reversed()
+    colors = exist_cmap(np.linspace(0,1,len(color_intervals)-1))
+    new_map = mcolors.LinearSegmentedColormap.from_list('custom_colormap',colors,N=len(color_intervals)-1)
+
+    # Plot 2d histogram
+    show = ax.imshow(np.transpose(dcount),cmap=new_map,aspect=0.5,vmin=0,vmax=3.5) 
+    # Add color bar below the plot
+    caxes = fig.add_axes([0.12, 0.88, 0.78, 0.03])
+    color_bar = fig.colorbar(show,cax=caxes,orientation='horizontal')#ticks=bounds)
+    color_bar.ax.xaxis.set_major_locator(ticker.FixedLocator([0,1,2,3]))
+    color_bar.ax.xaxis.set_major_formatter(ticker.FixedFormatter(['$10^0$', '$10^1$', '$10^2$', '$10^3$']))
+    color_bar.ax.tick_params(labelsize=15)
+
+    # Ticks
+    tick = list(range(0,number_bins+1))
+    xticks = np.linspace(min_ch,max_ch,number_bins+1)#list(range(0,max_ch-min_ch+1,1)) 
+    yticks = np.linspace(min_tb,max_tb,number_bins+1)#list(range(0,max_tb-min_tb+1,10))
+    f_xip = interpolate.interp1d( xticks, tick)
+    f_yip = interpolate.interp1d( yticks, tick)
+    # plot line where y=y0 is
+    ax.axhline( y = f_yip(210), color='grey', linestyle='dashed', linewidth=2)
+    # plot a patch
+    #cloud_th = 210
+    #xc_left = f_xinterp( 180 )
+    #xc_right = f_xinterp( cloud_th )
+    #yc_bottom = f_yinterp( 15 )
+    #yc_up = f_yinterp( 45 )
+    #pp = plt.Rectangle( (xc_left,yc_bottom),xc_right-xc_left,yc_up-yc_bottom,alpha=0.2,facecolor='grey')
+    #ax[j].add_patch(pp) 
+    # labels
+    xtick_labels = list(np.arange(min_ch,max_ch+1,2.5))
+    ytick_labels = list(range(min_tb,max_tb+1,10))
+    ax.set_xticks( [f_xip(it) for it in xtick_labels] )
+    ax.set_yticks( [f_yip(it) for it in ytick_labels] )
+    ax.set_xticklabels( [str(it) for it in xtick_labels],fontsize=15 )
+    ax.set_yticklabels( [str(it) for it in ytick_labels],fontsize=15 )
+    ax.set_xlim(xmin=0,xmax=number_bins)
+    ax.set_ylim(ymin=0,ymax=number_bins)
+    ax.set_xlabel('IR-sensitive cloud top height (km)',fontsize=16)
+    ax.set_ylabel('Brightness Temperatures (K)',fontsize=15)
+
+
+    des_name = '/scratch/06191/tg854905/Pro2_PSU_MW/HARVEY/JerryRun/IR_THO/wrf_df/201708241200/twoD_cloud_top_height_'+FCtime+'.png' #big_dir+Storm+'/'+Exper_name+'/cloud_top_height_'+MP+'_'+FCtime+'.png'
+    plt.savefig( des_name, dpi=200)
+    print('Saving the figure: ', des_name)  
+
+#CRTM_wrfout_d03_2017-08-25_18:00:00.bin 
+
+def spatialD_oneScene( wrf_files, cdirs ):
 
     # Read WRF domain
     domain = UD.read_wrf_domain( wrf_files[0] )
     ncdir = nc.Dataset(wrf_files[0], 'r')
     xlat = ncdir.variables['XLAT'][0,:,:].flatten()
     xlon = ncdir.variables['XLONG'][0,:,:].flatten()
-
-    # Calculate the vertical coordinate where IR can see the furthest depth of cloud 
-    tmp = d_hydro['QCLOUD']+d_hydro['QRAIN']+d_hydro['QICE']+d_hydro['QSNOW']+d_hydro['QGRAUP']
-    cdirs = np.zeros( (len(wrf_files),xmax*ymax) )
-    for ifile in wrf_files:
-        get_cdir = np.zeros( (xmax*ymax,) )
-        idx = wrf_files.index( ifile )
-        cdir,idx_p = cal_cdir(get_cdir,ver_coor[idx,:,:],tmp[idx,:,:]*1000,accu_th)
-        if ver_use_press:
-            cdirs[idx,:] = cdir/100 # convert to hPa
-        else:
-            cdirs[idx,:] = cdir/1000 # conver to km
 
     # ------------------ Plot -----------------------
     f, ax=plt.subplots(1, 1, subplot_kw={'projection': ccrs.PlateCarree()}, gridspec_kw = {'wspace':0, 'hspace':0}, linewidth=0.5, sharex='all', sharey='all',  figsize=(5,5), dpi=400)
@@ -496,6 +609,25 @@ def Plot_depth_IRsee_OneScene( FCtime, wrf_files, d_hydro, ver_coor ):
 
 
 
+def Plot_depth_IRsee_OneScene( FCtime, wrf_files, d_hydro, ver_coor ):
+
+    # Calculate the vertical coordinate where IR can see the furthest depth of cloud 
+    tmp = d_hydro['QCLOUD']+d_hydro['QRAIN']+d_hydro['QICE']+d_hydro['QSNOW']+d_hydro['QGRAUP']
+    cdirs = np.zeros( (len(wrf_files),xmax*ymax) )
+    for ifile in wrf_files:
+        get_cdir = np.zeros( (xmax*ymax,) )
+        idx = wrf_files.index( ifile )
+        cdir,idx_p = cal_cdir(get_cdir,ver_coor[idx,:,:],tmp[idx,:,:]*1000,accu_th)
+        if ver_use_press:
+            cdirs[idx,:] = cdir/100 # convert to hPa
+        else:
+            cdirs[idx,:] = cdir/1000 # conver to km
+
+    # plot spatial distribution 
+    if plot_spatialD:
+        spatialD_oneScene( wrf_files, cdirs )
+    if plot_2D_hist:
+        cloudHeight_Tb_2D( cdirs )
 
 
 if __name__ == '__main__':
@@ -505,17 +637,17 @@ if __name__ == '__main__':
     model_resolution = 3000 #m
 
     # ---------- Configuration -------------------------
-    Storm = 'HARVEY'
+    Storm = 'IRMA'
     DA = 'IR'
-    MP = 'THO'
-    hydros =  ['QCLOUD','QRAIN','QICE','QSNOW','QGRAUP']
+    MP = 'TuneWSM6'
+    hydros =  ['QICE','QSNOW','QGRAUP']#['QCLOUD','QRAIN','QICE','QSNOW','QGRAUP']
     
     sensor = 'abi_gr'
     ch_list = ['8',]
     fort_v = ['obs_type','lat','lon','obs']
 
-    start_time_str = '201708251200'
-    end_time_str = '201708251200'
+    start_time_str = '201709030100'
+    end_time_str = '201709030100'
     time_step = 3600 # seconds
     Consecutive_times = True
 
@@ -525,14 +657,18 @@ if __name__ == '__main__':
     radius_th = 200 # km
 
     path_from_top = True # accumulate water from top to down
-    accu_th = 30.0 
+    accu_th = 20.0 # gram per meter squared 
     ver_use_press = False
     each_water = True
-    domain_mean = False
-    depth_IR_see = True
-    plot_scatter = False
+    domain_mean = True
 
-    oneScene = True
+    depth_IR_see = False
+    if depth_IR_see:
+        oneScene = True
+    plot_scatter = False
+    plot_spatialD = False
+    plot_2D_hist = True
+
     # ------------------------------------------------------  
     # Dimension of the domain
     nLevel = 42
@@ -540,7 +676,7 @@ if __name__ == '__main__':
     ymax = 297
 
     # Create experiment names
-    Exper_name = 'JerryRun/IR_THO/wrf_df/201708241200'#UD.generate_one_name( Storm,DA,MP )
+    Exper_name = UD.generate_one_name( Storm,DA,MP ) #'JerryRun/IR_THO/wrf_df/201708241200'
 
     # Times
     if not Consecutive_times:
@@ -554,20 +690,20 @@ if __name__ == '__main__':
 
     if not deep_slp_incre:
         # ------ Plot -------------------
-        #plot_dir = '/work2/06191/tg854905/stampede2/Pro2_PSU_MW/HARVEY/JerryRun/IR_THO/wrf_df/201708241200/'
-        #plot_dir = small_dir+Storm+'/'+Exper_name+'/Vis_analyze/Model/Accu_HydroPath/'
-        #plotdir_exists = os.path.exists( plot_dir )
-        #if plotdir_exists == False:
-        #    os.mkdir(plot_dir)
+        plot_dir = small_dir+Storm+'/'+Exper_name+'/Vis_analyze/Model/Accu_HydroPath/'
+        plotdir_exists = os.path.exists( plot_dir )
+        if plotdir_exists == False:
+            os.mkdir(plot_dir)
 
         start_time=time.process_time()
         for FCtime in FCtimes:
             idx_t = FCtimes.index( FCtime )
             print('At '+FCtime)
-            wrfname = 'wrfout_d03_'+str(FCtime[0:4])+'-'+str(FCtime[4:6])+'-'+str(FCtime[6:8])+'_'+str(FCtime[8:10])+':00:00'
-            #wrf_dir = big_dir+Storm+'/'+Exper_name+'/fc/'+FCtime+'/'
-            wrf_files = ['/scratch/06191/tg854905/Pro2_PSU_MW/HARVEY/JerryRun/IR_THO/wrf_df/201708241200/'+wrfname,]
-            #wrf_files = [wrf_dir+'/wrf_enkf_input_d03_mean',wrf_dir+'/wrf_enkf_output_d03_mean']
+            ## deterministic forecast
+            #wrfname = 'wrfout_d03_'+str(FCtime[0:4])+'-'+str(FCtime[4:6])+'-'+str(FCtime[6:8])+'_'+str(FCtime[8:10])+':00:00'
+            #wrf_files = ['/scratch/06191/tg854905/Pro2_PSU_MW/HARVEY/JerryRun/IR_THO/wrf_df/201708241200/'+wrfname,]
+            wrf_dir = big_dir+Storm+'/'+Exper_name+'/fc/'+FCtime+'/'
+            wrf_files = [wrf_dir+'/wrf_enkf_input_d03_mean',wrf_dir+'/wrf_enkf_output_d03_mean']
             d_hydro,ver_coor = compute_accu_hydromass( wrf_files, hydros, idx_t) # hydro mass at any grid point
 
             # --- Condition

@@ -201,7 +201,7 @@ def read_rsl_error(Storm, Exper_name, directory, DF_start, DF_end):
     DF_diff = datetime.strptime(DF_end,"%Y%m%d%H%M") - datetime.strptime(DF_start_real[0],"%Y%m%d%H%M")
     DF_diff_hour = DF_diff.total_seconds() / 3600
     # - List these times (in string format) every hour
-    time_interest_dt = [datetime.strptime(DF_start_real[0],"%Y%m%d%H%M") + timedelta(hours=t) for t in list(range(0, int(DF_diff_hour), 1))]
+    time_interest_dt = [datetime.strptime(DF_start_real[0],"%Y%m%d%H%M") + timedelta(hours=t) for t in list(range(0, int(DF_diff_hour+1), 1))]
     time_interest_str = [time_dt.strftime("%Y%m%d%H%M") for time_dt in time_interest_dt]
 
     # Reads out a subset of records corresponding to times of interest
@@ -211,7 +211,7 @@ def read_rsl_error(Storm, Exper_name, directory, DF_start, DF_end):
     max_ws_sbs = []
     min_slp_sbs = []
 
-    for time_str in time_interest_str:
+    for time_str in time_interest_str[:-1]:
         boolean_compare = [ eachT  == time_str for eachT in time_all ]
         if any(boolean_compare):
             if len( np.where(boolean_compare)[0] ) > 1:
@@ -223,6 +223,12 @@ def read_rsl_error(Storm, Exper_name, directory, DF_start, DF_end):
             lon_sbs.append( lon_all[idx] )
             max_ws_sbs.append( maxV_all[idx] )
             min_slp_sbs.append( minP_all[idx] )
+
+    # Add the last record (e.g.,2017-09-07_23:45:00) to approximate o' clock (e.g.,2017-09-08_00:00:00) 
+    lat_sbs.append( lat_all[-1] )
+    lon_sbs.append( lon_all[-1] )
+    max_ws_sbs.append( maxV_all[-1] )
+    min_slp_sbs.append( minP_all[-1] )  
 
     # Calculate the distance between the next 6x time and the DF_start_real
     # ---------------------------------- idea ---------------------------------- 
@@ -397,7 +403,7 @@ def plot_hpi_df( Config ):
     
     # Customize labels ###### Chnage it every time !!!!!!!!!!!!!!! 
     #Labels = ['GTS+HPI(hroi:300km): ']
-    Labels = ['MD_mem:','MD_mean:']
+    Labels = ['WSM6:','THO:']
     #Labels = ['Stp2-Intel17 ','Eps-Intel19 ']
     Ana_labels = ['Ref Ans','MD Ans' ]
     #Ana_labels = ['Stampede2 Analysis', 'Expanse Analysis']
@@ -424,7 +430,6 @@ def plot_hpi_df( Config ):
                     print('Plotting ', it)
                     #HPI_model = read_rsl_error(Storm, key, wrf_dir+'/'+Storm+'/'+key+'/'+it, '201709030000', DF_model_end)
                     #print(wrf_dir+'/'+Storm+'/'+key+'/wrf_df/'+it)
-                    print('lala')
                     HPI_model = read_rsl_error(Storm, key, wrf_dir+'/'+Storm+'/'+key+'/wrf_df/'+it, it, DF_model_end)
                     plot_one_hpi( ax0, ax1, ax2, HPI_model, Color_set['c'+str(iExper)][ic], Line_types[iExper], 2.5, Labels[iExper]+it, steps=6 )
                     #if 'THO' in it:
@@ -464,12 +469,12 @@ def plot_hpi_df( Config ):
     ax0.set_title( 'Track',fontsize = 15 )
     ax1.set_title( 'MSLP (hPa)',fontsize = 15 )
     ax2.set_title( 'Vmax ($\mathregular{ms^{-1}}$)',fontsize = 15 )
-    fig.suptitle('WSM6',fontsize = 15)
+    fig.suptitle('conv',fontsize = 15)
 
     # Save figure
-    des_name = small_dir+Storm+'/'+Exper[1]+'/Vis_analyze/Model/'+Storm+'_forecast_IR_TuneWSM6_mem_mean.png'
+    des_name = small_dir+Storm+'/'+Exper[1]+'/Vis_analyze/Model/'+Storm+'_forecast_conv_WSM6_THO.png'
     plt.savefig( des_name )
-    print( 'Saving the figure to '+des_name+'!' )
+    print( 'Saving the figure to '+des_name )
 
 
 # ------------------------------------------------------------------------------------------------------
@@ -512,7 +517,6 @@ def error_eachInit(Storm,wrf_dir,exper,best_track,exper_inits,DF_model_end,run_h
             error_perInit[1,idx_t] = HPI_model['min_slp'][idx_m]-best_track['min_slp'][idx_btk] 
             # error of max wind
             error_perInit[2,idx_t] = HPI_model['max_ws'][idx_m]-best_track['max_ws'][idx_btk]
-
         # assemble the dictionary
         dict_Error[init_t] = error_perInit
         # accumulate the abs error
@@ -664,13 +668,13 @@ def plot_abs_err( Config ):
 
 if __name__ == '__main__':
     
-    big_dir = '/scratch_S2/06191/tg854905/Pro2_PSU_MW/'
+    big_dir = '/scratch/06191/tg854905/Pro2_PSU_MW/'
     small_dir = '/work2/06191/tg854905/stampede2/Pro2_PSU_MW/'
 
     # Configuration
-    Storm = 'MARIA'
-    MP = ['WSM6','TuneWSM6']
-    DA = 'IR'
+    Storm = 'IRMA'
+    MP = ['WSM6','THO']
+    DA = 'conv'
     DF_model_start = '20170822180000' # Default value of DF_model_start. Especially useful when dealing with ensemble forecast
     mem_id = 'mean' # Default value of member id. Especially useful when dealing with deterministic forecast
     read_fc_wrfout = False # Feature that decides the way of reading HPI from model files
@@ -683,9 +687,8 @@ if __name__ == '__main__':
     
     # Generate experiment names
     Exper_name = []
-    #for imp in MP:
-    #    Exper_name.append( UD.generate_one_name( Storm,DA,imp ) )
-    Exper_name = ['IR-TuneWSM6-J_DA+J_WRF+J_init-SP-intel17-WSM6-24hr-hroi900_origin','IR-TuneWSM6-J_DA+J_WRF+J_init-SP-intel17-WSM6-24hr-hroi900']
+    for imp in MP:
+        Exper_name.append( UD.generate_one_name( Storm,DA,imp ) )
 
     wrf_dir = big_dir
     Config = [wrf_dir, Storm, Exper_name, DF_model_start, mem_id, read_fc_wrfout, Plot_analyses]

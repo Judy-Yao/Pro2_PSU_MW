@@ -29,7 +29,7 @@ def normalize_2d(matrix):
 # scale the data PER DAY the abs(results) ranging from 0 to 1
 # with the orignical signs kept
 def scale_w_signs(array):
-    # 2d array. 1st d: day; 2nd d: level
+    # 2d array. 1st d: cycle; 2nd d: level
     min_var = np.min(np.abs(array), axis=1, keepdims=True)
     max_var = np.max(np.abs(array), axis=1, keepdims=True)
     #ptp_var = array.ptp(1) # fancy way to calculate range (max - min)
@@ -125,7 +125,7 @@ def plot_twoVarincre_timeseries( ave_var1, ave_var2, geoHkm=None):
     if specify_area:
         title_name = 'Scaled-EnKF-Increment Agreement: Qvapor and rt_vo in the circle with R='+str(radius_threshold)+' KM'
     else:
-        pass
+        title_name = 'Scaled-EnKF-Increment Agreement: d-mean Qvapor and rt_vo in the circle with R='+str(radius_threshold)+' KM' 
 
     ax.set_title( title_name,fontweight="bold",fontsize='12' )
     fig.suptitle(Storm+': '+Exper_name, fontsize=10, fontweight='bold')
@@ -134,7 +134,8 @@ def plot_twoVarincre_timeseries( ave_var1, ave_var2, geoHkm=None):
     if not interp_P:
         save_des = small_dir+Storm+'/'+Exper_name+'/Vis_analyze/EnKF/ML_incrAgree_'+var_name[0]+'_'+var_name[1]+'_'+DAtimes[0]+'_'+DAtimes[-1]+'.png'
     else:
-        save_des = small_dir+Storm+'/'+Exper_name+'/Vis_analyze/EnKF/Interp_increAgree_'+var_name[0]+'_'+var_name[1]+'_'+DAtimes[0]+'_'+DAtimes[-1]+'.png'
+        #save_des = small_dir+Storm+'/'+Exper_name+'/Vis_analyze/EnKF/Interp_increAgree_'+var_name[0]+'_'+var_name[1]+'_'+DAtimes[0]+'_'+DAtimes[-1]+'.png'
+        save_des = small_dir+Storm+'/'+Exper_name+'/Vis_analyze/EnKF/Interp_increAgree_Dmean'+var_name[0]+'_CircleMean_'+var_name[1]+'_'+DAtimes[0]+'_'+DAtimes[-1]+'.png'
     plt.savefig( save_des )
     print( 'Saving the figure: ', save_des )
     plt.close()
@@ -144,16 +145,14 @@ def plot_twoVarincre_timeseries( ave_var1, ave_var2, geoHkm=None):
 
 
 
-
-
 if __name__ == '__main__':
 
-    big_dir = '/scratch_S2/06191/tg854905/Pro2_PSU_MW/'
+    big_dir = '/scratch/06191/tg854905/Pro2_PSU_MW/'
     small_dir =  '/work2/06191/tg854905/stampede2/Pro2_PSU_MW/'
 
     # ---------- Configuration -------------------------
     Storm = 'HARVEY'
-    MP = 'THO'
+    MP = 'TuneWSM6'
     DA = 'IR'
     v_interest = [['QVAPOR','rt_vo'],]
 
@@ -164,7 +163,7 @@ if __name__ == '__main__':
     interp_P = True
     P_of_interest = list(range( 900,10,-20 ))
     interp_H = False
-    specify_area = True
+    specify_area = False
     radius_threshold = 300 #km
 
     If_plot_series = True
@@ -184,17 +183,17 @@ if __name__ == '__main__':
     if If_plot_series:
         for var_name in v_interest:
             if interp_P:
-                # Read var 1
-                save1_des = small_dir+Storm+'/'+Exper_name+'/Data_analyze/EnKF/Interp_increment_'+var_name[0]+'_'+DAtimes[0]+'_'+DAtimes[-1]+'.pickle'
+                # Read var 1: qvapor
+                save1_des = small_dir+Storm+'/'+Exper_name+'/Data_analyze/EnKF/DomainMean/Interp_increment_'+var_name[0]+'_'+DAtimes[0]+'_'+DAtimes[-1]+'.pickle'
                 with open(save1_des,'rb') as file:
                     meta_and_data1 = pickle.load( file )
                 ave_var1 = meta_and_data1['ave_var_overT']
                 # Read var 2
-                save2_des = small_dir+Storm+'/'+Exper_name+'/Data_analyze/EnKF/Interp_increment_'+var_name[1]+'_'+DAtimes[0]+'_'+DAtimes[-1]+'.pickle'
+                save2_des = small_dir+Storm+'/'+Exper_name+'/Data_analyze/EnKF/CircleMean/Interp_increment_'+var_name[1]+'_'+DAtimes[0]+'_'+DAtimes[-1]+'.pickle'
                 with open(save2_des,'rb') as file:
                     meta_and_data2 = pickle.load( file )
                 ave_var2 = meta_and_data2['ave_var_overT']
-                # scale the data per day with the result ranging from -1 to 1
+                # scale the data per cycle with the result ranging from -1 to 1
                 ave_var1_scale = scale_w_signs( ave_var1 )
                 ave_var2_scale = scale_w_signs( ave_var2 )   
                 # Plot
