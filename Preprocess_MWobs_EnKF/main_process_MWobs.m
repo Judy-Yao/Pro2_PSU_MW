@@ -16,8 +16,8 @@ control.bestrack_dir = '../../Preprocess_Obs/raw_Obs/Bestrack/'; % directory whe
 control.output_dir = '../../Preprocess_Obs/toEnKFobs/MW/'; % directory into which the microwave-observation-preprocessing system (MOPS) outputs
 control.geogrid_dir = '../../Preprocess_Domain/';
 % ---Storm information
-control.storm_phase = {'MARIA',}; % !!! It is recommended to process ONE storm at a time in spite of MOPS's ability to process as many storms as possible.
-control.period = {{'201709160000','201709180000'},}; % Date range of case study (yyyymmddHHMM)
+control.storm_phase = {'JOSE',}; % !!! It is recommended to process ONE storm at a time in spite of MOPS's ability to process as many storms as possible.
+control.period = {{'201709050000','201709070000'},}; % Date range of case study (yyyymmddHHMM)
 
 % --- WRF simulation setup
 control.domain = 'd03';
@@ -26,11 +26,11 @@ control.ny = 297; % number of grid points along Y direction
 control.dx = 3; % WRF resolution: 3 km
 
 % ---Satellite informaiton
-%control.sensor = {'AMSR2','ATMS',};
+%control.sensor = {'MHS',};
 control.sensor = {'AMSR2','ATMS','GMI','MHS','SAPHIR','SSMI','SSMIS'}; % sensor name
-%control.platform = {{'GCOMW1'},{'NPP'}};
+%control.platform = {{'METOPA','METOPB','NOAA18','NOAA19'},};
 control.platform = {{'GCOMW1'}, {'NPP'}, {'GPM'}, {'METOPA','METOPB','NOAA18','NOAA19'}, {'MT1'}, {'F15'}, {'F16','F17','F18'}}; % platform name (one sensor corresponds to at least one platform)
-%control.favFreq = {{'18.7GHzV-Pol','89GHzV-PolA-Scan','89GHzV-PolB-Scan'},{'183.31+-7GHzQH-Pol'}};
+%control.favFreq = {{'190.31GHzV-Pol'},};
 control.favFreq = {{'18.7GHzV-Pol','89GHzV-PolA-Scan','89GHzV-PolB-Scan'},{'183.31+-7GHzQH-Pol'},{'18.7GHzV-Pol','183.31+/-7GHzV-Pol'},{'190.31GHzV-Pol'},{'183.31+/-6.8GHz'},{'fcdr_tb19v','fcdr_tb85v'},{'19.35GHzV-Pol','183.31+/-6.6GHzH-Pol'}}; % frequencies of interest to this study (one sensor corresponds to at least one frequency/channel)
 control.comnine_AMSR89GHz = true; % if combines two 89GHz channels on AMSR2 (89GHzV-PolA-Scan and 89GHzV-PolB-Scan)
 %------------ NO NEED TO CHANGE --------------------------
@@ -45,7 +45,8 @@ control.filter_reso = [36;24]; % filter resolution for ROI
 control.roi_oh = {[200,0]; [60,60]}; % ROI plans [other variables, hydrometeors]
 control.obsError = [3;3];
 control.random = true;
-
+control.min_Tb_threshold = true; % default is 0k
+control.max_Tb_threshold = true; % default is 999k
 
 % ===================================================== Begin the System =====================================================
 
@@ -123,7 +124,7 @@ for istorm = 1:length(control.storm_phase)
             if contains(filename,singlepass_t(is))
                 idx_collectedTb = find([filename,filext] == Tbfile_names);
                 control.use8xGHz = true;
-                %Singlepass_write(idx_collectedTb,istorm,Swath_used,ChIdx_all,ChName_all,DAtime_all,loc_DAtime_all,Tb_file,control);
+                Singlepass_write(idx_collectedTb,istorm,Swath_used,ChIdx_all,ChName_all,DAtime_all,loc_DAtime_all,Tb_file,control);
             else
                 continue;
             end

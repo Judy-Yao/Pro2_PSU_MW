@@ -42,7 +42,6 @@ function [obs_index] = PickRawforCRTM(lat_obs,lon_obs,Tb_obs,min_XLONG,max_XLONG
             % find the lon/lat/Tb of obs that meet both requirements
             lat_obs_good = lat_obs_col(idx_obs_good);
             lon_obs_good = lon_obs_col(idx_obs_good);
-            Tb_good = Tb_obs_col(idx_obs_good);
             % For each possible good obs, calculate its distance from the focal point
             for i = 1:length(idx_obs_good)
                 Distance_obs_inArea(i) = distance(lat_obs_good(i),lon_obs_good(i),focus_lat,focus_lon);
@@ -68,9 +67,9 @@ function [obs_index] = PickRawforCRTM(lat_obs,lon_obs,Tb_obs,min_XLONG,max_XLONG
                     end
                 end
                 % Other conditions
-                if (exist('min_threshold') && Tb_good(my_obs_index) < min_threshold)
+                if control.min_Tb_threshold && (Tb_obs_col(my_obs_index) < 0 )
                     obs_index(idx_subset_x,idx_subset_y) = NaN;
-                elseif (exist('max_threshold') && Tb_good(my_obs_index) > max_threshold)
+                elseif control.max_Tb_threshold && (Tb_obs_col(my_obs_index) > 999)
                     obs_index(idx_subset_x,idx_subset_y) = NaN;
                 else
                     obs_index(idx_subset_x,idx_subset_y) = my_obs_index; %% !

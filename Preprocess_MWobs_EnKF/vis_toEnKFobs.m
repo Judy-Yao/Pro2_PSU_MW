@@ -9,7 +9,7 @@ control.obs_dir = '../../Preprocess_Obs/toEnKFobs/MW/';
 control.output_dir = '../../Preprocess_Obs/Visual/toEnKFobs/MW/';
 control.geogrid_dir = '../../Preprocess_Domain/';
 % ---Storm 
-control.storm_phase = 'MARIA';
+control.storm_phase = 'JOSE';
 % ---Satellite informaiton
 control.sensor_list = ["amsr2","atms","gmi","mhs","saphir","ssmi","ssmis"];
 control.freq_list = {{'18.7GHzV-Pol','89GHzV-Pol'},...
@@ -21,7 +21,7 @@ control.nx = 297;
 control.ny = 297;
 control.dx = 3;
 control.roi_oh = {[200,0]; [60,60]};
-control.domain = 3;
+control.domain = 'd03';
 % --- Customize colormap
 max_T = 300;
 min_T = 80;
@@ -166,10 +166,10 @@ for iso = 1:length(obs_files)
                 %max_lat = lat_bt + (control.ny/2*control.dx)/(cos(lat_bt*(pi/180))*111);
                 %min_lon = lon_bt - (control.nx/2*control.dx)/111;
                 %max_lon = lon_bt + (control.nx/2*control.dx)/111;
-                min_xlat = min(xlat_m,[],'all')-0.5;
-                max_xlat = max(xlat_m,[],'all')+0.5;
-                min_xlon = min(xlon_m,[],'all')-0.5;
-                max_xlon = max(xlon_m,[],'all')+0.5;
+                min_xlat = double(min(xlat_m,[],'all')-0.5);
+                max_xlat = double(max(xlat_m,[],'all')+0.5);
+                min_xlon = double(min(xlon_m,[],'all')-0.5);
+                max_xlon = double(max(xlon_m,[],'all')+0.5);
 
                 % scatter Tbs on a projected map
                 m_proj('mercator','lon',[min_xlon max_xlon],'lat',[min_xlat max_xlat]);
@@ -197,8 +197,8 @@ for iso = 1:length(obs_files)
                 % add coastline 
                 m_coast('color','k');
                 % grid lines 
-                lon_range = round(min_lon:2:max_lon);
-                lat_range = round(min_lat:2:max_lat);
+                lon_range = round(min_xlon-2:2:max_xlon+2);
+                lat_range = round(min_xlat-2:2:max_xlat+2);
                 m_grid('xtick',lon_range,'ytick',lat_range,'tickdir','out','fontsize',22);
                 % add DA time
                 xlh = xlabel(['DA time: ', DA_time], 'Fontsize',22,'fontweight','bold');
@@ -235,9 +235,9 @@ for iso = 1:length(obs_files)
                 title(title_char,'Fontsize',20)
                 
                 if iroi == 1  
-                    save_dir = [control.output_dir+string(control.storm_phase)+'/'+string(DA_time)+sensor_plf+'_Ch'+chNum_char+'_200km.png'];  
+                    save_dir = [control.output_dir+string(control.storm_phase)+'/'+string(DA_time)+'_'+sensor+'_Ch'+chNum_char+'_200km.png'];  
                 else
-                    save_dir = [control.output_dir+string(control.storm_phase)+'/'+string(DA_time)+sensor_plf+'_Ch'+chNum_char+'_60km.png'];
+                    save_dir = [control.output_dir+string(control.storm_phase)+'/'+string(DA_time)+'_'+sensor+'_Ch'+chNum_char+'_60km.png'];
                 end
                 saveas(gcf, save_dir); 
             end % end the loop through channels on that sensor
