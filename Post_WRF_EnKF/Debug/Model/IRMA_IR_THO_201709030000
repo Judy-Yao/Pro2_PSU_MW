@@ -1,0 +1,37 @@
+posterior mean:
+-45.543457 18.381569 975
+/scratch/06191/tg854905/Pro2_PSU_MW/IRMA/IR-J_DA+J_WRF+J_init-SP-intel17-THO-30hr-hroi900//run/201709030000/enkf/d03/fort.80011
+970.0
+/scratch/06191/tg854905/Pro2_PSU_MW/IRMA/IR-J_DA+J_WRF+J_init-SP-intel17-THO-30hr-hroi900//run/201709030000/enkf/d03/fort.80012
+985.0
+/scratch/06191/tg854905/Pro2_PSU_MW/IRMA/IR-J_DA+J_WRF+J_init-SP-intel17-THO-30hr-hroi900//run/201709030000/enkf/d03/fort.80013
+957.0
+/scratch/06191/tg854905/Pro2_PSU_MW/IRMA/IR-J_DA+J_WRF+J_init-SP-intel17-THO-30hr-hroi900//run/201709030000/enkf/d03/fort.80014
+983.0
+/scratch/06191/tg854905/Pro2_PSU_MW/IRMA/IR-J_DA+J_WRF+J_init-SP-intel17-THO-30hr-hroi900//run/201709030000/enkf/d03/fort.80015
+Traceback (most recent call last):
+  File "find_close_mem.py", line 59, in <module>
+    compare_mems(wrf_dir, DAtime)
+  File "find_close_mem.py", line 38, in compare_mems
+    mem[imem,:] = min_psfc( Hxa_file )      
+  File "find_close_mem.py", line 17, in min_psfc
+    slp = getvar(ncdir, 'slp')
+  File "/work2/06191/tg854905/stampede2/opt/anaconda3/lib/python3.7/site-packages/wrf/routines.py", line 355, in getvar
+    meta, _key, **kwargs)
+  File "/work2/06191/tg854905/stampede2/opt/anaconda3/lib/python3.7/site-packages/wrf/metadecorators.py", line 129, in func_wrapper
+    result = wrapped(*new_args)
+  File "/work2/06191/tg854905/stampede2/opt/anaconda3/lib/python3.7/site-packages/wrf/decorators.py", line 45, in func_wrapper
+    return do_conversion(wrapped(*args, **kwargs), unit_type,
+  File "/work2/06191/tg854905/stampede2/opt/anaconda3/lib/python3.7/site-packages/wrf/g_slp.py", line 79, in get_slp
+    meta=False, _key=_key)
+  File "/work2/06191/tg854905/stampede2/opt/anaconda3/lib/python3.7/site-packages/wrf/util.py", line 2291, in extract_vars
+    for var in varlist}
+  File "/work2/06191/tg854905/stampede2/opt/anaconda3/lib/python3.7/site-packages/wrf/util.py", line 2291, in <dictcomp>
+    for var in varlist}
+  File "/work2/06191/tg854905/stampede2/opt/anaconda3/lib/python3.7/site-packages/wrf/util.py", line 2220, in _extract_var
+    result = wrfin.variables[varname][timeidx, :]
+  File "netCDF4/_netCDF4.pyx", line 4446, in netCDF4._netCDF4.Variable.__getitem__
+  File "netCDF4/_netCDF4.pyx", line 4590, in netCDF4._netCDF4.Variable._toma
+  File "/work2/06191/tg854905/stampede2/opt/anaconda3/lib/python3.7/site-packages/numpy/core/_methods.py", line 42, in _any
+    def _any(a, axis=None, dtype=None, out=None, keepdims=False):
+KeyboardInterrupt
