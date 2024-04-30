@@ -99,8 +99,15 @@ contains
 
       ! set cloud hydrometer information
       rho_air = state%pressure(x,y,:)/287.2/(state%temperature(x,y,:)+0.61*(state%qvapor(x,y,:)/(1+state%qvapor(x,y,:))))
-      call calc_reff_driver(nml_s_reff_method, state, x, y, rho_air, reff_cloud, reff_ice, reff_rain, reff_snow, reff_graup) 
-!      print *, 'rho_air', rho_air
+      call calc_reff_driver(nml_s_reff_method, state, x, y, rho_air, reff_cloud, reff_ice, reff_rain, reff_snow, reff_graup)
+      ! remove negative effective radius
+      where(reff_cloud .lt. 0.0)  reff_cloud =0.0
+      where(reff_ice .lt. 0.0)    reff_ice =0.0
+      where(reff_rain .lt. 0.0)   reff_rain =0.0
+      where(reff_snow .lt. 0.0)   reff_snow =0.0
+      where(reff_graup .lt. 0.0)  reff_graup =0.0
+
+      !print *, 'rho_air', rho_air
 !      print *, 'pressure', state%pressure(x,y,:)
 !      print *, 'temperature', state%temperature(x,y,:)
 !      print *, 'delz', state%delz(x,y,:)

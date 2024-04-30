@@ -11,7 +11,6 @@ contains
   ! --------------------
   ! subroutines to calculate zenith angle
   ! --------------------
-   
   subroutine calc_zenith_GEO(state, res, sensor_id, error_status)
     type(model_state), intent(in) :: state
     type(rt_result),   intent(inout) :: res
@@ -61,6 +60,10 @@ contains
     deallocate( sat_dis, scan_angle )
   end subroutine calc_zenith_GEO 
   ! --------------
+
+  !------------------------------------------------------
+  ! 
+  !------------------------------------------------------ 
   subroutine calc_zenith_obs(state, res, obs, sensor, error_status, method)
     type(model_state), intent(in) :: state
     type(rt_result),   intent(inout) :: res
@@ -93,6 +96,11 @@ contains
     deallocate( idx_used)
   end subroutine calc_zenith_obs
   ! --------------
+
+
+  !------------------------------------------------------
+  ! 
+  !------------------------------------------------------ 
   subroutine calc_zenith_obs_microwave(state, res, obs_mw, sensor, error_status, method)
     type(model_state), intent(in) :: state
     type(rt_result),   intent(inout) :: res
@@ -124,8 +132,12 @@ contains
     end if
     deallocate( idx_used)
   end subroutine calc_zenith_obs_microwave
-
   ! --------------
+
+
+  !------------------------------------------------------
+  ! 
+  !------------------------------------------------------ 
   subroutine calc_zenith_obs_gaussian(state, res, sensor, n, idx_used, obs_x, obs_y, obs_zen, obs_azi, efov_a, efov_c, error_status)
     type(model_state), intent(in) :: state
     type(rt_result),   intent(inout) :: res
@@ -194,8 +206,12 @@ contains
     end where
     deallocate(w, total_w, sindazi, cosdazi)
   end subroutine calc_zenith_obs_gaussian
-
   ! --------------
+
+
+  !------------------------------------------------------
+  ! 
+  !------------------------------------------------------ 
   subroutine calc_zenith_obs_boxsearch(state, res, sensor, n, idx_used, obs_x, obs_y, obs_zen, obs_azi, efov_a, efov_c, error_status)
     type(model_state), intent(in) :: state
     type(rt_result), intent(inout) :: res 
@@ -305,9 +321,12 @@ contains
     end where
 
   end subroutine calc_zenith_obs_boxsearch
-
   ! ----------
-  ! calculate 'true' model columns when viewing in a slant direction
+
+
+  !------------------------------------------------------
+  ! calculate 'true' model columns when viewing in a slant direction 
+  !------------------------------------------------------ 
   subroutine calc_slant_path(state, res, slant, error_status)
     type(model_state), intent(in) :: state
     type(rt_result),   intent(in) :: res
@@ -343,7 +362,6 @@ contains
     slant%soiltype(state%xbeg:state%xend,state%ybeg:state%yend) = state%soiltype(state%xbeg:state%xend,state%ybeg:state%yend)
     slant%hgt     (state%xbeg:state%xend,state%ybeg:state%yend) = state%hgt     (state%xbeg:state%xend,state%ybeg:state%yend)
     slant%level_pressure(state%xbeg:state%xend,state%ybeg:state%yend,0) = state%level_pressure(state%xbeg:state%xend,state%ybeg:state%yend,0)
-    
     
     ! copy other properties
     slant%proj = state%proj

@@ -96,7 +96,7 @@ contains
           call rt_result_output_nc(res, state, filename_out, error_status)
 
 
-          call rt_result_convolution( res, state, obs%num, obs%ch, obs%position(:,1), obs%position(:,2),  obs%efov_aScan, obs%efov_cscan, obs%azimuth_angle,tb_conv, error_status)
+          call rt_result_convolution( res, state, obs%num, obs%ch, obs%position(:,1), obs%position(:,2), obs%efov_aScan, obs%efov_cscan, obs%azimuth_angle,tb_conv, error_status)
 
           !call rt_conv_output_txt( obs_info, obs_mw, tb_conv, filename_out, error_status)
           call rt_result_dealloc(res, error_status)

@@ -57,10 +57,17 @@ module rt_state_module
     real, allocatable :: qsnow (:,:,:)
     real, allocatable :: qgraup(:,:,:)
     real, allocatable :: nrain (:,:,:)
+    real, allocatable :: nsnow (:,:,:)
+    real, allocatable :: ngraup (:,:,:)
 
     character(len=20) :: mp_physics_name = ''
   end type
+
 contains
+
+  !------------------------------------------------------
+  ! Allocate model state (state: structure type)
+  !------------------------------------------------------
   subroutine model_state_alloc(state, xbeg0, xend0, ybeg0, yend0, xbeg, xend, ybeg, yend, nz, error_status, buffer_in)
     type(model_state), intent(inout) :: state
     integer, intent(in) :: xbeg0, xend0, ybeg0, yend0, nz
@@ -154,7 +161,8 @@ contains
     state%pressure      (:,:,:) = 0.0
     state%temperature   (:,:,:) = 0.0
     state%qvapor        (:,:,:) = 0.0
-
+   
+    ! cloudy sky
     if (nml_l_include_cloud) then
       allocate( &
               state%qcloud(xbeg1:xend1,ybeg1:yend1,nz),&
@@ -163,6 +171,8 @@ contains
               state%qsnow (xbeg1:xend1,ybeg1:yend1,nz),&
               state%qgraup(xbeg1:xend1,ybeg1:yend1,nz),&
               state%nrain (xbeg1:xend1,ybeg1:yend1,nz),&
+              state%nsnow (xbeg1:xend1,ybeg1:yend1,nz),&
+              state%ngraup (xbeg1:xend1,ybeg1:yend1,nz),&
               stat=error_status )
       state%qcloud(:,:,:) = 0.0
       state%qrain (:,:,:) = 0.0
@@ -170,12 +180,18 @@ contains
       state%qsnow (:,:,:) = 0.0
       state%qgraup(:,:,:) = 0.0
       state%nrain (:,:,:) = 0.0
+      state%nsnow (:,:,:) = 0.0
+      state%ngraup (:,:,:) = 0.0
     end if
   
   state%l_allocated = .true.        
   end subroutine model_state_alloc
   !---------------
 
+
+  !------------------------------------------------------
+  ! Deallocate model state (state: structure type)
+  !------------------------------------------------------
   subroutine model_state_dealloc(state, error_status)
     type(model_state), intent(inout) :: state
     integer, intent(out) :: error_status
@@ -206,7 +222,8 @@ contains
               state%temperature   ,&
               state%qvapor,&
               stat=error_status )
-              
+
+    ! cloudy sky              
     if (nml_l_include_cloud) then
       deallocate( &
               state%qcloud,&
@@ -215,8 +232,11 @@ contains
               state%qsnow ,&
               state%qgraup,&
               state%nrain ,&
+              state%nsnow ,&
+              state%ngraup ,&
               stat=error_status )
     end if
+
     state%l_allocated = .false.
     state%xbeg0 = -1
     state%xend0 = -1
@@ -235,6 +255,10 @@ contains
   end subroutine model_state_dealloc
   !---------------
 
+
+  !------------------------------------------------------
+  ! 
+  !------------------------------------------------------
   subroutine calc_proc_xyrange_simple(xbeg0, xend0, ybeg0, yend0, xbeg, xend, ybeg, yend )
     integer, intent(in) :: xbeg0, xend0, ybeg0, yend0
     integer, intent(out) :: xbeg, xend, ybeg, yend
@@ -244,6 +268,11 @@ contains
 
   end subroutine calc_proc_xyrange_simple
   !---------------
+
+
+  !------------------------------------------------------
+  ! 
+  !------------------------------------------------------
   subroutine calc_proc_helper(nycpu, my_id, ybeg0, yend0, ybeg, yend)
     integer, intent(in) :: nycpu, my_id
     integer, intent(in) :: ybeg0, yend0
@@ -264,7 +293,11 @@ contains
     end if
   end subroutine calc_proc_helper
   !---------------
-  
+
+
+  !------------------------------------------------------
+  ! Read WRF model output into memory 
+  !------------------------------------------------------ 
   subroutine model_state_read_wrf(state, filename_wrf, time_idx, error_status, buffer)
     type(model_state), intent(inout) :: state
     character(len=*), intent(in) :: filename_wrf
@@ -294,10 +327,10 @@ contains
     integer :: ix, iy
 
     call getxyzmax_wrfout(filename_wrf, xmax, ymax, zmax)
-
     if (should_print(1)) then
       write(*,*) 'xmax,ymax,zmax: ', xmax, ymax, zmax
     end if
+
     ! calculate x,y ranges according to namelist
     nml_i_x_calc_beg = max(1,    nml_i_x_calc_beg)
     nml_i_x_calc_end = min(xmax, nml_i_x_calc_end)
@@ -313,23 +346,24 @@ contains
       write(*,*) 'xbeg0,xend0,ybeg0,yend0: ', xbeg0,xend0,ybeg0,yend0
     end if
     
+    ! 
     call calc_proc_xyrange_simple(xbeg0, xend0, ybeg0, yend0, xbeg, xend, ybeg, yend )
     if (should_print(10)) then
       write(*,*) 'xbeg,xend,ybeg,yend: ', xbeg,xend,ybeg,yend
     end if
+
     ! initialize state
     if (present(buffer)) then
       call model_state_alloc( state, xbeg0, xend0, ybeg0, yend0, xbeg, xend, ybeg, yend, zmax, error_status, buffer)
     else
       call model_state_alloc( state, xbeg0, xend0, ybeg0, yend0, xbeg, xend, ybeg, yend, zmax, error_status)
     end if
+
     ! allocate temporary arrays
     xbeg1 = state%xbeg1
     xend1 = state%xend1
     ybeg1 = state%ybeg1
     yend1 = state%yend1
-    
-    
     allocate( p   (xbeg1:xend1, ybeg1:yend1, zmax), &
               pb  (xbeg1:xend1, ybeg1:yend1, zmax), &
               ph  (xbeg1:xend1, ybeg1:yend1, zmax+1), &
@@ -338,7 +372,7 @@ contains
               psfc(xbeg1:xend1, ybeg1:yend1), &
               stat=error_status)
 
-
+    ! read model output 
     call open_file( filename_wrf, nf_nowrite, fid)
     call get_variable2d_local(fid,'XLAT',    xbeg1, xend1, ybeg1, yend1,           time_idx, state%lat)
     call get_variable2d_local(fid,'XLONG',   xbeg1, xend1, ybeg1, yend1,           time_idx, state%lon)
@@ -355,20 +389,43 @@ contains
     call get_variable2d_local(fid,'LAKEMASK',xbeg1, xend1, ybeg1, yend1,           time_idx, state%lakemask)
     call get_variable2d_local(fid,'U10',     xbeg1, xend1, ybeg1, yend1,           time_idx, state%u10)
     call get_variable2d_local(fid,'V10',     xbeg1, xend1, ybeg1, yend1,           time_idx, state%v10)
-    
+   
+    ! read the microphysics scheme used in WRF
+    error_status = nf_get_att_int(fid, nf_global, 'MP_PHYSICS', mp_physics)
+    if (mp_physics == 6) then
+      state%mp_physics_name = 'WSM6'
+    else if (mp_physics == 7) then
+      state%mp_physics_name = 'Goddard'
+    else if (mp_physics == 8) then
+      state%mp_physics_name = 'Thompson08'
+    else if (mp_physics == 10) then
+      state%mp_physics_name = 'Morrison'
+    else if (mp_physics == 17) then
+      state%mp_physics_name = 'NSSL'
+    else if (mp_physics == 28) then
+      state%mp_physics_name = 'Thompson08'
+    end if
+
+    ! cloudy sky
     if (nml_l_include_cloud) then
       call get_variable3d_local(fid,'QCLOUD',  xbeg1, xend1, ybeg1, yend1, 1, zmax,  time_idx, state%qcloud)
       call get_variable3d_local(fid,'QRAIN',   xbeg1, xend1, ybeg1, yend1, 1, zmax,  time_idx, state%qrain)
       call get_variable3d_local(fid,'QICE',    xbeg1, xend1, ybeg1, yend1, 1, zmax,  time_idx, state%qice)
       call get_variable3d_local(fid,'QSNOW',   xbeg1, xend1, ybeg1, yend1, 1, zmax,  time_idx, state%qsnow)
       call get_variable3d_local(fid,'QGRAUP',  xbeg1, xend1, ybeg1, yend1, 1, zmax,  time_idx, state%qgraup)
+      if (state%mp_physics_name == 'Thompson08') then
+        call get_variable3d_local(fid,'QNRAIN',   xbeg1, xend1, ybeg1, yend1, 1, zmax,  time_idx, state%nrain)
+        print *, state%nrain
+      else if (state%mp_physics_name == 'NSSL') then
+        call get_variable3d_local(fid,'QNRAIN',   xbeg1, xend1, ybeg1, yend1, 1, zmax,  time_idx, state%nrain)
+        call get_variable3d_local(fid,'QNSNOW',   xbeg1, xend1, ybeg1, yend1, 1, zmax,  time_idx, state%nsnow)
+        call get_variable3d_local(fid,'QNGRAUPEL',   xbeg1, xend1, ybeg1, yend1, 1, zmax,  time_idx, state%ngraup)
+      end if
     end if
 
-    error_status = nf_get_att_int(fid, nf_global, 'MP_PHYSICS', mp_physics)
+    ! close the file
     call close_file(fid)
 
-
-    !where(state%lon > 180.) state%lon = state%lon - 360.
     ! Remove negative hydro
     where(state%qvapor .lt. 1.0e-10) state%qvapor =1.0e-10
     if (nml_l_include_cloud) then
@@ -378,12 +435,12 @@ contains
       where(state%qsnow  .lt. 0.0) state%qsnow  =0.0
       where(state%qgraup .lt. 0.0) state%qgraup =0.0
     end if
+
+    ! ***************************
     ! calculate other variables not directly saved in WRF output
-    
+    ! ***************************
     state%pressure = P + PB
-    
     state%temperature = (T + 300.0) * ( (state%pressure / P1000MB) ** (R_D/CP) )
-    
     ! top layer
     state%level_Pressure(:,:,zmax) = state%pressure(:,:,zmax)*1.5 - state%pressure(:,:,zmax-1)*0.5 
     ! lowest layer
@@ -393,31 +450,26 @@ contains
       state%delz(:,:,z)             = ((PH(:,:,z+1) + PHB(:,:,z+1))-(PH(:,:,z) + PHB(:,:,z)))/9.806
       state%level_pressure(:,:,z-1) = (state%pressure(:,:,z) + state%pressure(:,:,z-1) ) * 0.5
     end do ! z
-   
-  if (mp_physics == 6) then
-    state%mp_physics_name = 'WSM6'
-  else if (mp_physics == 7) then
-    state%mp_physics_name = 'Goddard'
-  else if (mp_physics == 8) then
-    state%mp_physics_name = 'Thompson08'
-  else if (mp_physics == 28) then
-    state%mp_physics_name = 'Thompson08'
-  end if
+    ! *******
+ 
+    ! set projection
+    call set_domain_proj(filename_wrf, state%proj)
+    state%dx = state%proj%dx / 1000.
 
-
-  ! set projection
-  call set_domain_proj(filename_wrf, state%proj)
-  state%dx = state%proj%dx / 1000.
-
-  do ix = state%xbeg1, state%xend1
-    do iy = state%ybeg1, state%yend1
-      state%x(ix,iy) = ix
-      state%y(ix,iy) = iy
+    do ix = state%xbeg1, state%xend1
+      do iy = state%ybeg1, state%yend1
+        state%x(ix,iy) = ix
+        state%y(ix,iy) = iy
+      end do
     end do
-  end do
 
   end subroutine model_state_read_wrf
-  
+  !---------------
+
+
+  !------------------------------------------------------
+  ! Read FV3 restart model output into memory 
+  !------------------------------------------------------ 
   subroutine model_state_read_fv3restart(state, &
                                          filename_f3r_core, &
                                          filename_f3r_ak, &
@@ -529,41 +581,41 @@ contains
     ! /work/05012/tg843115/stampede2/FV3/Harvey/FV3_combine/FV3GFS_SRC/atmos_cubed_sphere/tools/fv_io.F90
     ! /work/05012/tg843115/stampede2/FV3/Harvey/FV3_combine/FV3GFS_SRC/atmos_cubed_sphere/model/fv_arrays.F90
 
-!-----------------------------------------------------------------------
-! Five prognostic state variables for the f-v dynamics
-!-----------------------------------------------------------------------
-! dyn_state:
-! D-grid prognostatic variables: u, v, and delp (and other scalars)
-!
-!     o--------u(i,j+1)----------o
-!     |           |              |
-!     |           |              |
-!  v(i,j)------scalar(i,j)----v(i+1,j)
-!     |           |              |
-!     |           |              |
-!     o--------u(i,j)------------o
-!
-! The C grid component is "diagnostic" in that it is predicted every time step
-! from the D grid variables.
-!    real, _ALLOCATABLE :: u(:,:,:)    _NULL  ! D grid zonal wind (m/s)
-!    real, _ALLOCATABLE :: v(:,:,:)    _NULL  ! D grid meridional wind (m/s)
-!    real, _ALLOCATABLE :: pt(:,:,:)   _NULL  ! temperature (K)
-!    real, _ALLOCATABLE :: delp(:,:,:) _NULL  ! pressure thickness (pascal)
-!    real, _ALLOCATABLE :: q(:,:,:,:)  _NULL  ! specific humidity and prognostic constituents
-!    real, _ALLOCATABLE :: qdiag(:,:,:,:)  _NULL  ! diagnostic tracers
+    !-----------------------------------------------------------------------
+    ! Five prognostic state variables for the f-v dynamics
+    !-----------------------------------------------------------------------
+    ! dyn_state:
+    ! D-grid prognostatic variables: u, v, and delp (and other scalars)
+    !
+    !     o--------u(i,j+1)----------o
+    !     |           |              |
+    !     |           |              |
+    !  v(i,j)------scalar(i,j)----v(i+1,j)
+    !     |           |              |
+    !     |           |              |
+    !     o--------u(i,j)------------o
+    !
+    ! The C grid component is "diagnostic" in that it is predicted every time step
+    ! from the D grid variables.
+    !    real, _ALLOCATABLE :: u(:,:,:)    _NULL  ! D grid zonal wind (m/s)
+    !    real, _ALLOCATABLE :: v(:,:,:)    _NULL  ! D grid meridional wind (m/s)
+    !    real, _ALLOCATABLE :: pt(:,:,:)   _NULL  ! temperature (K)
+    !    real, _ALLOCATABLE :: delp(:,:,:) _NULL  ! pressure thickness (pascal)
+    !    real, _ALLOCATABLE :: q(:,:,:,:)  _NULL  ! specific humidity and prognostic constituents
+    !    real, _ALLOCATABLE :: qdiag(:,:,:,:)  _NULL  ! diagnostic tracers
 
-!----------------------
-! non-hydrostatic state:
-!----------------------------------------------------------------------
-!    real, _ALLOCATABLE ::     w(:,:,:)  _NULL  ! cell center vertical wind (m/s)
-!    real, _ALLOCATABLE ::  delz(:,:,:)  _NULL  ! layer thickness (meters)
-!    real, _ALLOCATABLE ::   ze0(:,:,:)  _NULL  ! height at layer edges for remapping
-!    real, _ALLOCATABLE ::  q_con(:,:,:) _NULL  ! total condensates
+    !----------------------
+    ! non-hydrostatic state:
+    !----------------------------------------------------------------------
+    !    real, _ALLOCATABLE ::     w(:,:,:)  _NULL  ! cell center vertical wind (m/s)
+    !    real, _ALLOCATABLE ::  delz(:,:,:)  _NULL  ! layer thickness (meters)
+    !    real, _ALLOCATABLE ::   ze0(:,:,:)  _NULL  ! height at layer edges for remapping
+    !    real, _ALLOCATABLE ::  q_con(:,:,:) _NULL  ! total condensates
 
-!-----------------------------------------------------------------------
-! Others:
-!-----------------------------------------------------------------------
-!    real, _ALLOCATABLE :: phis(:,:)     _NULL  ! Surface geopotential (g*Z_surf)
+    !-----------------------------------------------------------------------
+    ! Others:
+    !-----------------------------------------------------------------------
+    !    real, _ALLOCATABLE :: phis(:,:)     _NULL  ! Surface geopotential (g*Z_surf)
     call open_file( filename_f3r_core, nf_nowrite, fid)
 
     call get_variable3d_local(fid,'T',    xbeg1, xend1, ybeg1, yend1, 1, zmax, time_idx, state%temperature) ! temperature (K)
@@ -678,9 +730,12 @@ contains
   end do
 
   end subroutine model_state_read_fv3restart
-  
-  ! Read HRRR output
-  ! Can also read RAP output
+  !---------------
+
+
+  !------------------------------------------------------
+  ! Read HRRR model output into memory (can also read RAP output) 
+  !------------------------------------------------------ 
   subroutine model_state_read_hrrr(state, filename_hrrr, time_idx, modeltype, error_status, buffer)
     type(model_state), intent(inout) :: state
     character(len=*), intent(in) :: filename_hrrr
@@ -985,8 +1040,12 @@ contains
   end do
 
   end subroutine model_state_read_hrrr
+  !---------------
 
 
+  !------------------------------------------------------
+  ! 
+  !------------------------------------------------------
   subroutine model_state_add_weight(state1, x1, y1, z1, state2, x2, y2, z2, weight)
     type(model_state), intent(in) :: state1
     type(model_state), intent(inout) :: state2
@@ -1020,6 +1079,6 @@ contains
     end if
 
   end subroutine model_state_add_weight
-
+  !---------------
 
 end module rt_state_module

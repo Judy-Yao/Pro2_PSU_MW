@@ -6,11 +6,11 @@
 # Author: Zhu (Judy) Yao. July 27 - 28, 2022
 
 #####header for stampede######
-#SBATCH -J toMW
+#SBATCH -J JOSEmw
 #SBATCH -N 4
 #SBATCH --ntasks-per-node 48
-#SBATCH -p skx-normal
-#SBATCH -t 03:00:00
+#SBATCH -p icx-normal
+#SBATCH -t 05:00:00
 #SBATCH -o out_mw
 #SBATCH -e error_mw
 #SBATCH --mail-type=ALL
@@ -26,8 +26,9 @@ module load python3/3.7.0
 
 # Fill in the storm name and experiment name
 Storm=JOSE
-Exper=IR-TuneWSM6-J_DA+J_WRF+J_init-SP-intel17-WSM6-30hr-hroi900
+Exper=IR-J_DA+J_WRF+J_init-SP-intel17-WSM6-30hr-hroi900
 Exper_obs=IR+MW-J_DA+J_WRF+J_init-SP-intel17-WSM6-30hr-hroi900
+
 
 # Parent paths
 Big_dir=/scratch/06191/tg854905/Pro2_PSU_MW/
@@ -35,8 +36,8 @@ Small_dir=/work2/06191/tg854905/stampede2/Pro2_PSU_MW
 Code_dir=/work2/06191/tg854905/stampede2/Pro2_PSU_MW/SourceCode/Post_WRF_EnKF/toHx/MW/newrt 
 
 ############ User control parameters
-date_st=201709061700        # Start date  
-date_ed=201709061700        # End date (24 forecast hrs can be done in < 2 hr w/4 nodes on skx queues
+date_st=201709052100        # Start date  
+date_ed=201709070000        # End date (24 forecast hrs can be done in < 2 hr w/4 nodes on skx queues
 nE=60               # Number of ens members
 dom=3                           # Domain you are running it on 
 state=("input" "output") # Input or output or both
