@@ -59,7 +59,8 @@ function [] = IR_vis(istorm, min_lat, max_lat, min_lon, max_lon, Tb_file, contro
     figure;
     set(gcf,'PaperPositionMode', 'auto'); 
     hFig=gcf;
-    set(hFig, 'Position', [0 0 1000 500]);
+    %set(hFig, 'Position', [0 0 1000 500]);
+    set(hFig, 'Position', [0 0 610 500]);
     set(gcf,'PaperPositionMode', 'auto');
 
     % Limits of the map
@@ -87,11 +88,9 @@ function [] = IR_vis(istorm, min_lat, max_lat, min_lon, max_lon, Tb_file, contro
     m_grid('off','fancy','tickdir','out','fontsize',22);
 
     % title
-    if string(control.storm_phase{istorm}) == 'Irma_1stRI'
-        title(['CH8 1st RI of Irma: ', time],'Fontsize',20);
-    elseif string(control.storm_phase{istorm}) == 'Irma_2ndRI'
-        title(['CH8 2nd RI of Irma: ', time],'Fontsize',20);
-    elseif string(control.storm_phase{istorm}) == 'Jose_RI'
+    if string(control.storm_phase{istorm}) == 'IRMA'
+        title(['CH8 2nd RI of IRMA: ', time],'Fontsize',20);
+    elseif string(control.storm_phase{istorm}) == 'JOSE'
         title(['CH8 RI of Jose: ', time],'Fontsize',20);
     elseif string(control.storm_phase{istorm}) == 'MARIA'
         title(['CH8 RI of Maria: ', time],'Fontsize',20);

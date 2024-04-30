@@ -3,35 +3,30 @@
 % control variables
 control = struct;
 
-control.obs_dir = '../../raw_Obs/GOESR_IR/';
-control.plot_dir = '../../Visual/raw_Obs/GOESR_IR/';
+control.obs_dir = '../../raw_Obs/GOESR_IR/';%'/scratch/06191/tg854905/Pro2_PSU_MW/JOSE/raw_IR/'; %'../../raw_Obs/GOESR_IR/';
+control.plot_dir = '../../Visual/raw_Obs/GOESR_IR/'; %'/scratch/06191/tg854905/Pro2_PSU_MW/JOSE/raw_IR/Visual/'; %'../../Visual/raw_Obs/GOESR_IR/';
 %control.storm_phase = {'Irma_1stRI','Irma_2ndRI','Jose_RI','Maria_RI'};
-control.storm_phase = {'MARIA',};
+control.storm_phase = {'IRMA',};
 
 
 % Operation for each storm phase
 for istorm = 1:length(control.storm_phase)
     switch(control.storm_phase{istorm})  
-        case 'Irma_1stRI'
-            min_lat = 5;
-            max_lat = 20;
-            min_lon = -35;
-            max_lon = -20;
-        case 'Irma_2ndRI'
+        case 'IRMA'
             min_lat = 10;
             max_lat = 30;
             min_lon = -60;
             max_lon = -40;
-        case 'Jose_RI'
-            min_lat = 5;
+        case 'JOSE'
+            min_lat = 0;
             max_lat = 20;
             min_lon = -50;
-            max_lon = -35;
+            max_lon = -28;
         case 'MARIA'
-            min_lat = 7.5; % 7.5;
-            max_lat = 12; %12;
-            min_lon = -34; %-32;
-            max_lon = -25; %-28; 
+            min_lat = 0; % 7.5;
+            max_lat = 20; %12;
+            min_lon = -70; %-32;
+            max_lon = -15; %-28; 
     end
     
     % Operation for each observation file
