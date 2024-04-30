@@ -5,11 +5,11 @@
 % -------------------------------------------------------------------------------------
 control = struct;
 % ----Path
-control.obs_dir = '../../toEnKFobs/GOESR_IR/';
-control.output_dir = '../../Visual/toEnKFobs/GOESR_IR/';
+control.obs_dir = '../../Preprocess_Obs/toEnKFobs/GOESR_IR/';
+control.output_dir = '../../Preprocess_Obs/Visual/toEnKFobs/GOESR_IR/';
 control.geogrid_dir = '../../Preprocess_Domain/';
 % ---Storm information
-control.storm_phase = 'MARIA';  
+control.storm_phase = 'IRMA';  
 % --- WRF setup
 control.domain = 'd03';
 control.dx = 3; % WRF resolution: 3 km
@@ -85,10 +85,10 @@ for iso = 1:length(obs_files)
     disp(['Reading ', geo_file, '......']);
     xlat_m = ncread(geo_file,'XLAT_M');
     xlon_m = ncread(geo_file,'XLONG_M');
-    min_xlat = double(min(xlat_m,[],'all')-0.02);
-    max_xlat = double(max(xlat_m,[],'all')+0.02);
-    min_xlon = double(min(xlon_m,[],'all')-0.02);
-    max_xlon = double(max(xlon_m,[],'all')+0.02);
+    min_xlat = double(min(xlat_m,[],'all')-0.5);
+    max_xlat = double(max(xlat_m,[],'all')+0.5);
+    min_xlon = double(min(xlon_m,[],'all')-0.5);
+    max_xlon = double(max(xlon_m,[],'all')+0.5);
    
     % ---------- Plot the figure -----------
     figure; hFig=gcf; set(hFig, 'Position', [0 0 800 800]);

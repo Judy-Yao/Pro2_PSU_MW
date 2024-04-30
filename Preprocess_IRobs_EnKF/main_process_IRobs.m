@@ -5,15 +5,15 @@
 % -------------------------------------------------------------------------------------
 control = struct;
 % ----Path
-control.obs_dir = '../../raw_Obs/GOESR_IR/'; % directory where original GOESR files are
-control.bestrack_dir = '../../raw_Obs/Bestrack/'; % directory where best-track files are
-control.output_dir = '../../toEnKFobs/GOESR_IR/'; % directory where this algorithm outputs
-control.obs_collect_dir = '../../raw_Obs/Collected_IR/'; % 
+control.obs_dir = '../../Preprocess_Obs/raw_Obs/GOESR_IR/'; % directory where original GOESR files are
+control.bestrack_dir = '../../Preprocess_Obs/raw_Obs/Bestrack/'; % directory where best-track files are
+control.output_dir = '../../Preprocess_Obs/toEnKFobs/GOESR_IR/'; % directory where this algorithm outputs
+control.obs_collect_dir = '../../Preprocess_Obs/raw_Obs/Collected_IR/'; % 
 control.geogrid_dir = '../../Preprocess_Domain/';
 % ---Storm information
-control.storm_phase = {'MARIA',};  
+control.storm_phase = {'IRMA',};  
 %control.storm_phase = ["Irma2ndRI",'JoseRI','MariaRI'};
-control.period = {{'201709140000','201709170000'},};
+control.period = {{'201709030000','201709050000'},};
 %control.period = {{'201709030600','201709050600'},{'201709050600','201709070600'},{'201709160000','201709180000'}}; %YYYYMMDDHHmm
 % ---Satellite information
 control.favCH = [8,];
@@ -52,9 +52,9 @@ for istorm = 1:length(control.storm_phase)
     % -------------------------------------------------------------------------------------
     % --- Generate hours of interest (and obtain the best-track locations at these hours using linear interpolation)
     % -------------------------------------------------------------------------------------
-    bestrack_str = Hourly_Bestrack(istorm, control); % (cell)
-    
-    filename = strcat(control.output_dir,control.storm_phase{istorm},'/bestrack_perHour');
+    [bestrack_str,start_time,end_time] = Hourly_Bestrack(istorm, control); % (cell)
+
+    filename = strcat(control.output_dir,control.storm_phase{istorm},'/bestrack_perHour_',start_time,'_',end_time);
     disp(['Output the hourly best-track location and time: ',filename]);
     formatSpec = '%12s%12.3f%12.3f\n';
     fileID = fopen(filename,'w');
@@ -73,6 +73,7 @@ for istorm = 1:length(control.storm_phase)
     % -------------------------------------------------------------------------------------
     % --- Loop through each DAtime and output obs
     % -------------------------------------------------------------------------------------
+    disp('Processing to EnKF readable obs......');
     Tb_dir = [control.obs_collect_dir,control.storm_phase{istorm},'/*'];
     Tb_files = strsplit(ls(Tb_dir));
     Tb_files = Tb_files(~cellfun('isempty',Tb_files)); % get rid of annoying empty cell    

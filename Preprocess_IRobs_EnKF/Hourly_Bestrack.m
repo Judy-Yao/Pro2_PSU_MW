@@ -1,7 +1,7 @@
 % Find times and center locations of the storm in Best track file (only available on 00, 06, 12, 18 UTC) &
 % linearly interpolate locations at these times to other o'clock
 
-function [hr_btk] = Hourly_Bestrack(istorm, control)
+function [ hr_btk,start_time,end_time ] = Hourly_Bestrack(istorm, control)
 
     % ----- Read relevant information into memory ------------------
     % scan the best-track file 
@@ -87,7 +87,8 @@ function [hr_btk] = Hourly_Bestrack(istorm, control)
         hr_btk{ih,3} = best_track_locations*best_track_weights; 
     end
 
-
+    start_time = hr_btk{1,1};
+    end_time = hr_btk{length(DA_datetime_ss),1};
 
 
 end

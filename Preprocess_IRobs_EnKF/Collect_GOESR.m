@@ -23,6 +23,7 @@ function [] = Collect_GOESR(istorm, bestrack_str, control)
     for ibr = 1:size(bestrack_str,1)
         time_btk_str(ibr) = convertCharsToStrings(bestrack_str{ibr,1});
     end
+
     % Loop through files for each channel
     for ich = 1:length(control.favCH) 
         Tb_dir = [control.obs_dir, control.storm_phase{istorm},'/*.nc'];
@@ -61,9 +62,6 @@ function [] = Collect_GOESR(istorm, bestrack_str, control)
             end
         end 
     end
-
-
-
 
 
 

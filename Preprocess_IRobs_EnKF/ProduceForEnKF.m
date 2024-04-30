@@ -42,10 +42,10 @@ function [myTimes,mySat_name,myChNum,myLat,myLon,myTb,myROI_hydro,myROI_other,my
     disp(['Reading ', geo_file, '......']);
     xlat_m = ncread(geo_file,'XLAT_M'); 
     xlon_m = ncread(geo_file,'XLONG_M');
-    min_xlat = min(xlat_m,[],'all')-0.05;
-    max_xlat = max(xlat_m,[],'all')+0.05;
-    min_xlon = min(xlon_m,[],'all')-0.05;
-    max_xlon = max(xlon_m,[],'all')+0.05;
+    min_xlat = min(xlat_m,[],'all')-0.5;
+    max_xlat = max(xlat_m,[],'all')+0.5;
+    min_xlon = min(xlon_m,[],'all')-0.5;
+    max_xlon = max(xlon_m,[],'all')+0.5;
 
     % ---------------------------------------------------------------------------
     % Separate model grids in the domain of interest into different groups for ROI plans
@@ -72,7 +72,7 @@ function [myTimes,mySat_name,myChNum,myLat,myLon,myTb,myROI_hydro,myROI_other,my
     grid_start(1) = grid_start(2) + .5*(2*filter_grid_step(2) - filter_grid_step(1)); % start point for ROI plan 2 
 
     t_Start_filter = tic;
-    parpool(48); % use 48 cores in a node   
+    %parpool(48); % use 48 cores in a node   
     % loop through each ROI plan to filter grids and obtain GOESR obs for filtered points
     for iroi = 1:length(control.roi_oh)
         disp(['  Resolution to be filtered for this ROI is : ', num2str(control.filter_reso(iroi)), 'km ......']);
