@@ -1,4 +1,3 @@
-#!/work2/06191/tg854905/stampede2/opt/anaconda3/lib/python3.7
 
 import os
 import glob
@@ -54,11 +53,11 @@ def read_simu_IR_one(Hxb_file, ch_list):
 def plot_Tb_mspace( Storm, Exper_name, fctime):
 
     # Read simulated data
-    Hxb = big_dir+Storm+'/'+Exper_name+'/'+'CRTM_wrfout_d03_'+fctime+'.bin'
+    Hxb = big_dir+Storm+'/'+Exper_name+'/'+'CRTM_wrfinput_d03_'+fctime+'.bin'#'CRTM_wrfout_d03_'+fctime+'.bin'
     d_simu = read_simu_IR_one( Hxb, ch_list )
 
     # Read min slp
-    wrf_file =  big_dir+Storm+'/'+Exper_name+'/wrfout_d03_'+fctime
+    wrf_file =  big_dir+Storm+'/'+Exper_name+'/wrfinput_d03'#'/wrfout_d03_'+fctime
     with Dataset( wrf_file ) as ncid:
         # minimum sea level pressure
         slp = getvar(ncid, 'slp')
@@ -88,11 +87,12 @@ def plot_Tb_mspace( Storm, Exper_name, fctime):
                 edgecolors='none', cmap=IRcmap, vmin=min_T, vmax=max_T, transform=ccrs.PlateCarree())
 
     # Mark the slp 
-    ax.scatter(lon_storm,lat_storm,20,'blue',marker='*',transform=ccrs.PlateCarree())
+    #ax.scatter(lon_storm,lat_storm,20,'blue',marker='*',transform=ccrs.PlateCarree())
 
     # Colorbar
     caxes = f.add_axes([0.125, 0.05, 0.775, 0.02])
-    cbar = f.colorbar(cs, orientation="horizontal", cax=caxes)
+    cbar_ticks = list(range(min_T,max_T,15))
+    cbar = f.colorbar(cs, orientation="horizontal",cax=caxes,ticks=cbar_ticks)
     cbar.ax.tick_params(labelsize=10)
 
     #title for all
@@ -109,14 +109,14 @@ def plot_Tb_mspace( Storm, Exper_name, fctime):
     for j in range(1):
         gl = ax.gridlines(crs=ccrs.PlateCarree(),draw_labels=False,linewidth=0.5, color='gray', alpha=0.7, linestyle='--')
        
-        gl.xlabels_top = False
-        gl.xlabels_bottom = True
+        gl.top_labels = False
+        gl.bottom_labels = True
         if j==0:
-            gl.ylabels_left = True
-            gl.ylabels_right = False
+            gl.left_labels = True
+            gl.right_labels = False
         else:
-            gl.ylabels_left = False
-            gl.ylabels_right = False
+            gl.left_labels = False
+            gl.right_labels = False
     
         gl.ylocator = mticker.FixedLocator(lat_ticks)
         gl.xlocator = mticker.FixedLocator(lon_ticks)
@@ -125,7 +125,7 @@ def plot_Tb_mspace( Storm, Exper_name, fctime):
         gl.xlabel_style = {'size': 10}
         gl.ylabel_style = {'size': 10}
 
-    des_name = big_dir+Storm+'/'+Exper_name+'/'+MP+'_'+FCtime+'.png'
+    des_name = big_dir+Storm+'/wrfinput_d03_201709151200_GFS_025deg.png'#+Exper_name+'/'+MP+'_'+FCtime+'.png'
     plt.savefig( des_name, dpi=200)
     print('Saving the figure: ', des_name)
 
@@ -144,7 +144,8 @@ def read_D_multipleE( Exper_names,FCtime ):
     fctime = FCtime[:4]+'-'+FCtime[4:6]+'-'+FCtime[6:8]+'_'+FCtime[8:10]+':00:00'
     wrf_files = []
     for ie in Exper_names:
-        wrf_files.append( big_dir+Storm+'/'+ie+'/wrfout_d03_'+fctime )
+        #wrf_files.append( big_dir+Storm+'/'+ie+'/wrfout_d03_'+fctime )
+        wrf_files.append( big_dir+Storm+'/'+ie+'/wrfinput_d03')
 
     # Loop thru files
     for ifile in wrf_files:
@@ -194,9 +195,11 @@ def plot_Tb_obs( FCtime ):
     # convert from date to the day of the year
     FCtime_dt = datetime.strptime(FCtime[:8],"%Y%m%d")
     doy = FCtime_dt.timetuple().tm_yday # day of the year
+    print(doy)
     # Read observed Tb file
     #Yo_dir = small_dir+Storm+'/'+Exper_name+'/obs_Tb/'
-    Yo_dir = small_dir+Storm+'/free_run_MPs/obs_Tb/'
+    Yo_dir = small_dir+Storm+'/Obs_y/'
+    print(str(doy))
     Yo_file = glob.glob(Yo_dir+'OR_ABI-L2-CMIPF-M3C08_G16_s'+FCtime[:4]+str(doy)+FCtime[8:10]+'*')
     d_tb = read_GOES16( Yo_file[0], lonlat=True )
 
@@ -228,7 +231,8 @@ def plot_Tb_obs( FCtime ):
 
     # Colorbar
     caxes = f.add_axes([0.125, 0.05, 0.775, 0.02])
-    cbar = f.colorbar(cs, orientation="horizontal", cax=caxes)
+    cbar_ticks = list(range(min_T,max_T,15)) 
+    cbar = f.colorbar(cs, orientation="horizontal",cax=caxes,ticks=cbar_ticks)
     cbar.ax.tick_params(labelsize=10)
 
     #title for all
@@ -242,10 +246,10 @@ def plot_Tb_obs( FCtime ):
     lon_ticks = list(range(math.ceil(lon_min)-2, math.ceil(lon_max)+2,2))
     lat_ticks = list(range(math.ceil(lat_min)-2, math.ceil(lat_max)+2,2))
     gl = ax.gridlines(crs=ccrs.PlateCarree(),draw_labels=False,linewidth=0.5, color='gray', alpha=0.7, linestyle='--')
-    gl.xlabels_top = False
-    gl.xlabels_bottom = True
-    gl.ylabels_left = True
-    gl.ylabels_right = False
+    gl.top_labels = False
+    gl.bottom_labels = True
+    gl.left_labels = True
+    gl.right_labels = False
     gl.ylocator = mticker.FixedLocator(lat_ticks)
     gl.xlocator = mticker.FixedLocator(lon_ticks)
     gl.xformatter = LONGITUDE_FORMATTER
@@ -265,21 +269,23 @@ if __name__ == '__main__':
     small_dir =  '/work2/06191/tg854905/stampede2/Pro2_PSU_MW/'
 
     # ---------- Configuration -------------------------
-    Storm = 'IRMA'
-    Exper_name = 'IR-J_DA+J_WRF+J_init-SP-intel17-WSM6-30hr-hroi900/wrf_df/201709041800'
-    Exper_names = ['IR-J_DA+J_WRF+J_init-SP-intel17-WSM6-30hr-hroi900/wrf_df/201709041800','IR-TuneWSM6-J_DA+J_WRF+J_init-SP-intel17-WSM6-30hr-hroi900/wrf_df/201709041800','IR-TuneWSM6-J_DA+J_WRF+J_init-SP-intel17-WSM6-30hr-hroi900_origin/wrf_df/201709041800']
+    Storm = 'MARIA'
+    Exper_name = 'IR-J_DA+J_WRF+J_init-SP-intel17-WSM6-24hr-hroi900/fc/201709151200'#'IR-TuneWSM6-J_DA+J_WRF+J_init-SP-intel17-WSM6-24hr-hroi300/wrf_df/201708240600'
+    #Exper_names = ['IR-J_DA+J_WRF+J_init-SP-intel17-WSM6-24hr-hroi900/fc/201709151200',]
+    #Exper_names = ['IR-TuneWSM6-J_DA+J_WRF+J_init-SP-intel17-WSM6-24hr-hroi300/wrf_df/201708240600/','JerryRun/IR_THO/wrf_df/201708240600/','JerryRun/IR_WSM6/wrf_df/201708240600/']
+    #['IR-J_DA+J_WRF+J_init-SP-intel17-WSM6-30hr-hroi900/wrf_df/201709041800','IR-TuneWSM6-J_DA+J_WRF+J_init-SP-intel17-WSM6-30hr-hroi900/wrf_df/201709041800','IR-TuneWSM6-J_DA+J_WRF+J_init-SP-intel17-WSM6-30hr-hroi900_origin/wrf_df/201709041800']
     MP = 'WSM6'
     sensor = 'abi_gr'
     ch_list = ['8',]
     fort_v = ['obs_type','lat','lon','obs']
     num_ens = 60
 
-    start_time_str = '201709041800'
-    end_time_str = '20179080000'
+    start_time_str = '201709151200'
+    end_time_str = '201709151200'
     Consecutive_times = True
 
-    If_plot_obs = True
-    If_plot = False
+    If_plot_obs = False
+    If_plot = True
     # -------------------------------------------------------   
 
     if not Consecutive_times:
@@ -287,7 +293,7 @@ if __name__ == '__main__':
     else:
         time_diff = datetime.strptime(end_time_str,"%Y%m%d%H%M") - datetime.strptime(start_time_str,"%Y%m%d%H%M")
         time_diff_hour = time_diff.total_seconds() / 3600
-        time_interest_dt = [datetime.strptime(start_time_str,"%Y%m%d%H%M") + timedelta(hours=t) for t in list(range(0, int(time_diff_hour)+1, 6))]
+        time_interest_dt = [datetime.strptime(start_time_str,"%Y%m%d%H%M") + timedelta(hours=t) for t in list(range(0, int(time_diff_hour)+1, 3))]
         IR_times = [time_dt.strftime("%Y%m%d%H%M") for time_dt in time_interest_dt]
    
     # Plot Tbs of forecast

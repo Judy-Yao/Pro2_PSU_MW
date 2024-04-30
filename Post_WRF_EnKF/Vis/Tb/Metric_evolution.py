@@ -140,110 +140,166 @@ def Plot_two_metrics( IR_metric ):
 def Plot_one_metric( Tb_metric ):
 
     # ------ Define range of metrics -------------------
-    rmse_min = 0
-    rmse_max = 15
-    bias_min = -3.5
-    bias_max = 4 
+    if limit:
+        rmse_min = 0
+        rmse_max = 20
+        bias_min = -3.5
+        bias_max = 15
+    else:
+        rmse_min = 0
+        rmse_max = 9
+        bias_min = -3.5
+        bias_max = 4 
 
     # ------ Plot Figure -------------------
-    fig,ax = plt.subplots(1, 1, figsize=(8,8), dpi=300 )
+    fig,ax = plt.subplots(1, 1, dpi=300, figsize=(12,6)) #8) ) #figsize=(8,8)
     
     dates = [datetime.strptime( it,"%Y%m%d%H%M") for it in DAtimes]
     start_time = datetime.strptime( DAtimes[0],"%Y%m%d%H%M")
     end_time = datetime.strptime( DAtimes[-1],"%Y%m%d%H%M")
+    
+    # Customize labels
+    labels = {}
+    for imp in MP:
+        if imp == 'TuneWSM6':
+            labels[imp] = {'xa':'Tune_DA','xb':'Tune_FC'}   
+        else:
+            labels[imp] = {'xa':'WSM6_DA','xb':'WSM6_FC'}
 
+    tmean = {}
+    # Plot figures
     for iexper in range(len(Expers)):
         dates_zip = list( chain.from_iterable( zip(dates,dates)) )
-        if if_bias and not if_rmse:
-            bias_zip = list( chain.from_iterable( zip(Tb_metric['xb_bias'][iexper,:],Tb_metric['xa_bias'][iexper,:]) ))
-            len_seg = len(dates_zip)-1
-            for i in range(1,len_seg):
-                # specify which segment uses which color
-                if i % 2 == 0:
-                    color = 'red'
-                else:
-                    color = 'blue'
 
-                #if MP[iexper] == 'WSM6':
-                if 'update' in Expers[iexper]:
-                    if i == 1:
-                        ax.plot(dates_zip[i-1:i+1],bias_zip[i-1:i+1],color,linewidth='6')
-                    elif i == 2:
-                        ax.plot(dates_zip[i-1:i+1],bias_zip[i-1:i+1],color,linewidth='4',label='YES_Forecast') #WSM6_Forecast
-                    elif i == 3:
-                        ax.plot(dates_zip[i-1:i+1],bias_zip[i-1:i+1],color,linewidth='4',label='YES_Assimilation') #WSM6_Assimilation
-                    else:
-                        ax.plot(dates_zip[i-1:i+1],bias_zip[i-1:i+1],color,linewidth='4')
+        # only bias
+        if if_bias and not if_rmse:
+            # calculate time averaged mean of bias 
+            tmean[MP[iexper]] = {'xb':np.mean(Tb_metric['xb_bias'][iexper,:]),'xa':np.mean(Tb_metric['xa_bias'][iexper,:])}
+
+            bias_zip = list( chain.from_iterable( zip(Tb_metric['xb_bias'][iexper,:],Tb_metric['xa_bias'][iexper,:]) ))
+            len_seg = len(dates_zip)
+            for i in range(1,len_seg):
+                # specify which segment uses which color/linestyle
+                if i % 2 == 0:
+                    line='-'  #color = 'red'
                 else:
+                    line='--' #color = 'blue'
+
+                # customize the line
+                if MP[iexper] == 'TuneWSM6':
+                    color = 'blue'
                     if i == 1:
-                        ax.plot(dates_zip[i-1:i+1],bias_zip[i-1:i+1],'grey',linewidth='6',linestyle='--')
+                        ax.plot(dates_zip[i-1:i+1],bias_zip[i-1:i+1],color,linestyle=line,linewidth='6',label=labels[MP[iexper]]['xa'])
                     elif i == 2:
-                        ax.plot(dates_zip[i-1:i+1],bias_zip[i-1:i+1],'grey',linewidth='2.5',label='NO_Forecast',linestyle='-')
-                    elif i == 3:
-                        ax.plot(dates_zip[i-1:i+1],bias_zip[i-1:i+1],'grey',linewidth='2.5',label='NO_Assimilation',linestyle='--')
-                    elif i % 2 != 0:
-                        ax.plot(dates_zip[i-1:i+1],bias_zip[i-1:i+1],'grey',linewidth='2.5',linestyle='--')
+                        ax.plot(dates_zip[i-1:i+1],bias_zip[i-1:i+1],color,linestyle=line,linewidth='4',label=labels[MP[iexper]]['xb']) #WSM6_Forecast
+                    #elif i == 3:
+                    #    ax.plot(dates_zip[i-1:i+1],bias_zip[i-1:i+1],color,linestyle,linewidth='4',label='Modify_DA') #WSM6_Assimilation
                     else:
-                        ax.plot(dates_zip[i-1:i+1],bias_zip[i-1:i+1],'grey',linewidth='2.5',linestyle='-')
+                        ax.plot(dates_zip[i-1:i+1],bias_zip[i-1:i+1],color,linestyle=line,linewidth='4')
+                else:
+                    color = 'red'
+                    if i == 1:
+                        ax.plot(dates_zip[i-1:i+1],bias_zip[i-1:i+1],color,linestyle=line,linewidth='6',label=labels[MP[iexper]]['xa'])
+                    elif i == 2:
+                        ax.plot(dates_zip[i-1:i+1],bias_zip[i-1:i+1],color,linestyle=line,linewidth='4',label=labels[MP[iexper]]['xb'])
+                    else:
+                        ax.plot(dates_zip[i-1:i+1],bias_zip[i-1:i+1],color,linestyle=line,linewidth='4')
 
 
             ax.set_ylim( bias_min,bias_max )
             ax.axhline(y=0.0,color='k',linestyle='-',linewidth='2') 
 
+        # only rmse
         elif not if_bias and if_rmse:
+            # calculate time averaged mean of rmse
+            tmean[MP[iexper]] = {'xb':np.mean(Tb_metric['xb_rmse'][iexper,:]),'xa':np.mean(Tb_metric['xa_rmse'][iexper,:])}
+
             rmse_zip = list( chain.from_iterable( zip(Tb_metric['xb_rmse'][iexper,:],Tb_metric['xa_rmse'][iexper,:]) ))
-            len_seg = len(dates_zip)-1
+            len_seg = len(dates_zip)
             for i in range(1,len_seg):
                 # specify which segment uses which color
                 if i % 2 == 0:
-                    color = 'red'
+                    line='-'  #color = 'red'
                 else:
+                    line='--' #color = 'blue'
+
+                # customize the line
+                if MP[iexper] == 'TuneWSM6':
                     color = 'blue'
-
-                #if MP[iexper] == 'WSM6':
-                if 'update' in Expers[iexper]:
                     if i == 1:
-                        ax.plot(dates_zip[i-1:i+1],rmse_zip[i-1:i+1],color,linewidth='6')
+                        ax.plot(dates_zip[i-1:i+1],rmse_zip[i-1:i+1],color,linestyle=line,linewidth='6',label=labels[MP[iexper]]['xa'])
                     elif i == 2:
-                        ax.plot(dates_zip[i-1:i+1],rmse_zip[i-1:i+1],color,linewidth='4',label='YES_Forecast') #WSM6_Forecast
-                    elif i == 3:
-                        ax.plot(dates_zip[i-1:i+1],rmse_zip[i-1:i+1],color,linewidth='4',label='YES_Assimilation') #WSM6_Assimilation
+                        ax.plot(dates_zip[i-1:i+1],rmse_zip[i-1:i+1],color,linestyle=line,linewidth='4',label=labels[MP[iexper]]['xb']) #WSM6_Forecast
+                    #elif i == 3:
+                    #    ax.plot(dates_zip[i-1:i+1],rmse_zip[i-1:i+1],color,linestyle,linewidth='4',label='Modify_DA') #WSM6_Assimilation
                     else:
-                        ax.plot(dates_zip[i-1:i+1],rmse_zip[i-1:i+1],color,linewidth='4')
+                        ax.plot(dates_zip[i-1:i+1],rmse_zip[i-1:i+1],color,linestyle=line,linewidth='4')
                 else:
+                    color = 'red'
                     if i == 1:
-                        ax.plot(dates_zip[i-1:i+1],rmse_zip[i-1:i+1],'grey',linewidth='6',linestyle='--')
+                        ax.plot(dates_zip[i-1:i+1],rmse_zip[i-1:i+1],color,linestyle=line,linewidth='6',label=labels[MP[iexper]]['xa'])
                     elif i == 2:
-                        ax.plot(dates_zip[i-1:i+1],rmse_zip[i-1:i+1],'grey',linewidth='2.5',label='NO_Forecast',linestyle='-')
-                    elif i == 3:
-                        ax.plot(dates_zip[i-1:i+1],rmse_zip[i-1:i+1],'grey',linewidth='2.5',label='NO_Assimilation',linestyle='--')
-                    elif i % 2 != 0:
-                        ax.plot(dates_zip[i-1:i+1],rmse_zip[i-1:i+1],'grey',linewidth='2.5',linestyle='--')
+                        ax.plot(dates_zip[i-1:i+1],rmse_zip[i-1:i+1],color,linestyle=line,linewidth='4',label=labels[MP[iexper]]['xb'])
                     else:
-                        ax.plot(dates_zip[i-1:i+1],rmse_zip[i-1:i+1],'grey',linewidth='2.5',linestyle='-')
+                        ax.plot(dates_zip[i-1:i+1],rmse_zip[i-1:i+1],color,linestyle=line,linewidth='4')
 
- 
-    ax.legend(frameon=True,loc='upper right',fontsize='18') #24
+            ax.set_ylim( rmse_min,rmse_max )
 
+
+    ax.legend(frameon=True,loc='upper right',fontsize='15') #24
     ax.set_xlim([dates[0],dates[-1]])
-    ax.tick_params(axis='x', labelrotation=30,labelsize=20)
-    ax.tick_params(axis='y',labelsize=24)
+    ax.tick_params(axis='x', labelrotation=15,labelsize=18)
+    ax.tick_params(axis='y',labelsize=22)
     ax.grid(True,linestyle='--',alpha=0.5)
-    ax.set_ylabel('Brightness Temperature (K)',fontsize=24)
+    ax.set_ylabel('Brightness Temperature (K)',fontsize=20)
 
+
+    suptt = Storm+';  IR_WSM6; Over '+str(len(DAtimes))+' Cycles;'
     if if_bias and not if_rmse:
+        # suptitle
+        if limit:
+            suptt = suptt + ' Obs <= 220K'
+        else:
+            suptt = suptt + ' All-sky' 
+        tmean_str = '\nT-mean: '
+        for imp in MP:
+            tmean_str= tmean_str+labels[imp]['xb']+' '+'%.3f' %tmean[imp]['xb']+'K; '
+            tmean_str= tmean_str+labels[imp]['xa']+' '+'%.3f' %tmean[imp]['xa']+'K; '
+        supt = suptt+ tmean_str
+        #fig.suptitle( supt, fontsize=17, fontweight='bold')
+        # title
+        ax.set_title( 'Bias: '+r'$\mathbf{\overline{H(X)}}$'+' - Obs',fontweight="bold",fontsize='15' )
+        # saved name
+        des_name = small_dir+Storm+'/'+Expers[0]+'/Vis_analyze/Tb/IR_Bias_'+DAtimes[0]+'_'+DAtimes[-1]+'.png'
+    elif not if_bias and if_rmse:
+        # suptitle
+        if limit:
+            suptt = suptt + ' Obs <= 220K'
+        else:
+            suptt = suptt + ' All-sky'
+        tmean_str = '\nT-mean: '
+        for imp in MP:
+            tmean_str= tmean_str+labels[imp]['xb']+' '+'%.3f' %tmean[imp]['xb']+'K; '
+            tmean_str= tmean_str+labels[imp]['xa']+' '+'%.3f' %tmean[imp]['xa']+'K; '
+        supt = suptt+ tmean_str
+        fig.suptitle( supt, fontsize=17, fontweight='bold')
+        # title
+        ax.set_title( 'RMSE: '+r'$\mathbf{\overline{H(X)}}$'+' ~ Obs',fontweight="bold",fontsize='15' )
+        # saved name
+        des_name = small_dir+Storm+'/'+Expers[0]+'/Vis_analyze/Tb/IR_RMSE_'+DAtimes[0]+'_'+DAtimes[-1]+'.png' 
+    else:
         pass
-        #ax.set_title( 'Bias: H(X) - Obs',fontweight="bold",fontsize='15' )
-    if if_bias and if_rmse:
-        pass
-        #ax.set_title( DA+'_'+MP+' RMSE',fontweight="bold",fontsize='15' )
 
-    #fig.suptitle( Storm+': Metric of IR Tbs over '+str(len(DAtimes))+' Cycles', fontsize=15, fontweight='bold')
-    fig.suptitle( Storm+' IR_WSM6: if update W or not', fontsize=15, fontweight='bold')
+    # suptitle
+    #suptt = Storm+'  IR_WSM6: metric of IR Tbs over '+str(len(DAtimes))+' Cycles\n'
+    #if limit:
+    #    suptt = suptt + 'Obs <= 220K'
+    #else:
+    #    suptt = suptt + 'All-sky'
+    #fig.suptitle( suptt, fontsize=15, fontweight='bold')
 
-    des_name = small_dir+Storm+'/'+Expers[0]+'/Vis_analyze/Tb/IR_Metric_'+DAtimes[0]+'_'+DAtimes[-1]+'.png'
     plt.savefig( des_name )
-    print( 'Saving the figure to '+des_name+'!' )
+    print( 'Saving the figure to '+des_name )
 
 
 
@@ -263,14 +319,25 @@ def IR_metric( ):
                 d_all = IR_obs.read_Tb_obsRes(Tb_file, sensor )
             else:
                 raise ValueError(Tb_file+' does not exist!')
+
+            # limitation
+            if limit:
+                condi = d_all['Yo_obs'] <= 220
+                idx_lm = np.where( condi )[0]
+            else:
+                idx_lm = range(len(d_all['Yo_obs'])) 
             
+            # Bias
             if if_bias:
-                xb_bias[idx].append( Bias(d_all['meanYb_obs'], d_all['Yo_obs'] ))
-                xa_bias[idx].append( Bias(d_all['meanYa_obs'], d_all['Yo_obs'] ))
+                xb_bias[idx].append( Bias(d_all['meanYb_obs'][idx_lm], d_all['Yo_obs'][idx_lm] ))
+                xa_bias[idx].append( Bias(d_all['meanYa_obs'][idx_lm], d_all['Yo_obs'][idx_lm] ))
+
+            # RMSE
             if if_rmse:     
-                xb_rmse[idx].append( RMSE(d_all['meanYb_obs'], d_all['Yo_obs'] ))
-                xa_rmse[idx].append( RMSE(d_all['meanYa_obs'], d_all['Yo_obs'] ))
-      
+                xb_rmse[idx].append( RMSE(d_all['meanYb_obs'][idx_lm], d_all['Yo_obs'][idx_lm] ))
+                xa_rmse[idx].append( RMSE(d_all['meanYa_obs'][idx_lm], d_all['Yo_obs'][idx_lm] ))
+
+
     # Assemble the dictionary
     if if_bias and not if_rmse:
         dict_IR_metric = {'xb_bias': np.array(xb_bias),'xa_bias':np.array(xa_bias) }
@@ -289,28 +356,30 @@ if __name__ == '__main__':
     small_dir =  '/work2/06191/tg854905/stampede2/Pro2_PSU_MW/'
 
     # ---------- Configuration -------------------------
-    Storm = 'IRMA'
+    Storm = 'HARVEY'
     DA = 'IR'
-    MP = ['THO','WSM6']
+    MP = ['WSM6','TuneWSM6']
 
     sensor = 'abi_gr'
     ch_list = ['8',]
 
-    start_time_str = '201709030000'
-    end_time_str = '201709040000'
+    start_time_str = '201708221200'
+    end_time_str = '201708241200'
     Consecutive_times = True
 
-    if_bias = False
-    if_rmse = True
+    # limitations
+    limit = False
+
+    if_bias = True
+    if_rmse = False
     Plot_IR = True
     Plot_MW = False
     # ------------------------------------------------------   
 
     # Create experiment names
-    #Expers = []
-    #for imp in MP:
-    #    Expers.append( UD.generate_one_name( Storm,DA,imp ) )
-    Expers = ['IR-updateW-J_DA+J_WRF+J_init-SP-intel17-WSM6-30hr-hroi900','IR-J_DA+J_WRF+J_init-SP-intel17-WSM6-30hr-hroi900']
+    Expers = []
+    for imp in MP:
+        Expers.append( UD.generate_one_name( Storm,DA,imp ) )
 
 
     if not Consecutive_times:

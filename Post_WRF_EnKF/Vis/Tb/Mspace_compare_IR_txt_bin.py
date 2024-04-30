@@ -29,19 +29,20 @@ def Read_IR_modelRes( DAtime ):
         all_lines = f.readlines()
     lat_x = []
     lon_x = []
-    meanYa_x = []
+    meanYb_x = []
     meanYa_x = []
     for line in all_lines:
         split_line = line.split()
         lat_x.append( float(split_line[0]) )
         lon_x.append( float(split_line[1]) )
-        meanYa_x.append( float(split_line[3]) )
+        meanYb_x.append( float(split_line[3]) )
         meanYa_x.append( float(split_line[4]) )
     lat_x = np.array( lat_x )
     lon_x = np.array( lon_x )
+    meanYb_x = np.array( meanYb_x )
     meanYa_x = np.array( meanYa_x )
-    meanYa_x = np.array( meanYa_x )
-    d_IRx = {'Lat_x':lat_x, 'Lon_x':lon_x, 'mean_Hxb':meanYa_x, 'mean_Hxa':meanYa_x}
+    d_IRx = {'Lat_x':lat_x, 'Lon_x':lon_x, 'mean_Hxb':meanYb_x, 'mean_Hxa':meanYa_x}
+    return d_IRx
 
 def plot_Tb( DAtime, d_obs ):
 
@@ -50,7 +51,7 @@ def plot_Tb( DAtime, d_obs ):
 
     # Read location from TCvitals
     if any( hh in DAtime[8:10] for hh in ['00','06','12','18']):
-        tc_lon, tc_lat = UD.read_TCvitals(small_dir+Storm+'/TCvitals/'+Storm+'_tcvitals', DAtime)
+        tc_lon, tc_lat, tc_slp = UD.read_TCvitals(Storm, DAtime)
         print( 'Location from TCvital: ', tc_lon, tc_lat )
 
     # ------------------ Plot -----------------------
@@ -70,18 +71,17 @@ def plot_Tb( DAtime, d_obs ):
     ax[0].set_extent([lon_min,lon_max,lat_min,lat_max], crs=ccrs.PlateCarree())
     ax[0].coastlines(resolution='10m', color='black',linewidth=0.5)
     ax[0].scatter(d_obs['lon'],d_obs['lat'],1.5,c=d_obs['obs'],edgecolors='none', cmap=IRcmap, vmin=min_T, vmax=max_T,transform=ccrs.PlateCarree())
-    ax[0].add_patch(patches.Polygon(path,facecolor='none',edgecolor='white',linewidth=0.5 ))
 
     ax[1].set_extent([lon_min, lon_max, lat_min, lat_max], crs=ccrs.PlateCarree())
     ax[1].coastlines(resolution='10m', color='black',linewidth=0.5)
-    ax[1].scatter(d_simu['Lon_x'][idx], d_simu['Lat_x'][idx],1,c=d_simu['mean_Hxb'][idx],\
+    ax[1].scatter(d_simu['Lon_x'], d_simu['Lat_x'],1,c=d_simu['mean_Hxb'],\
                 edgecolors='none', cmap=IRcmap, vmin=min_T, vmax=max_T, transform=ccrs.PlateCarree())
     if any( hh in DAtime[8:10] for hh in ['00','06','12','18'] ):
         ax[1].scatter(tc_lon, tc_lat, s=3, marker='*', edgecolors='white', transform=ccrs.PlateCarree())
 
     ax[2].set_extent([lon_min, lon_max, lat_min, lat_max], crs=ccrs.PlateCarree())
     ax[2].coastlines(resolution='10m', color='black',linewidth=0.5)
-    cs = ax[2].scatter(d_simu['Lon_x'][idx], d_simu['Lat_x'][idx],1,c=d_simu['mean_Hxa'][idx],\
+    cs = ax[2].scatter(d_simu['Lon_x'], d_simu['Lat_x'],1,c=d_simu['mean_Hxa'],\
                 edgecolors='none', cmap=IRcmap, vmin=min_T, vmax=max_T, transform=ccrs.PlateCarree())
     if any( hh in DAtime[8:10] for hh in ['00','06','12','18'] ):
         ax[2].scatter(tc_lon, tc_lat, s=3, marker='*', edgecolors='white', transform=ccrs.PlateCarree())
@@ -122,7 +122,7 @@ def plot_Tb( DAtime, d_obs ):
         gl.xlabel_style = {'size': 4}
         gl.ylabel_style = {'size': 6}
 
-    des_name = small_dir+Storm+'/'+Exper_name+'/Vis_analyze/Tb/IR/'+DAtime+'_'+sensor+'_mspace.png'
+    des_name = small_dir+Storm+'/'+Exper_name+'/Vis_analyze/Tb/IR_meanOfHX/'+DAtime+'_'+sensor+'_meanOfHx.png'
     plt.savefig( des_name, dpi=300)
     print('Saving the figure: ', des_name)
 
@@ -133,16 +133,16 @@ if __name__ == '__main__':
     small_dir =  '/work2/06191/tg854905/stampede2/Pro2_PSU_MW/'
 
     # ---------- Configuration -------------------------
-    Storm = 'MARIA'
+    Storm = 'JOSE'
     DA = 'IR'
-    MP = 'THO'
+    MP = 'TuneWSM6'
 
     sensor = 'abi_gr'
     ch_list = ['8',]
     fort_v = ['obs_type','lat','lon','obs']
 
-    start_time_str = '201709160000'
-    end_time_str = '201709180000'
+    start_time_str = '201709050000'
+    end_time_str = '201709070000'
     Consecutive_times = True
 
     If_plot = True
@@ -169,5 +169,5 @@ if __name__ == '__main__':
 
             print('------------ Plot ----------------------')
             print('DAtime: '+ DAtime)
-            plot_Tb( Storm, Exper_name, Hx_dir, DAtime, sensor, ch_list, d_obs)
+            plot_Tb( DAtime, d_obs )
         

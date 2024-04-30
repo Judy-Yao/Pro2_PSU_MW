@@ -298,7 +298,7 @@ if __name__ == '__main__':
     small_dir =  '/work2/06191/tg854905/stampede2/Pro2_PSU_MW/'
 
     # ---------- Configuration -------------------------
-    Storm = 'IRMA'
+    Storm = 'MARIA'
     DA = 'IR'
     MP = ['','Tune']#['THO','WSM6']
 
@@ -306,8 +306,8 @@ if __name__ == '__main__':
     ch_list = ['8',]
     fort_v = ['obs_type','lat','lon','obs']
 
-    start_time_str = '201709030100'
-    end_time_str = '201709040000'
+    start_time_str = '201709160000'
+    end_time_str = '201709180000'
     Consecutive_times = True
 
     number_bins = 50
@@ -324,7 +324,8 @@ if __name__ == '__main__':
     # ------------------------------------------------------   
 
     # Create experiment names
-    Expers = ['IR-J_DA+J_WRF+J_init-SP-intel17-WSM6-30hr-hroi900','IR-TuneWSM6-J_DA+J_WRF+J_init-SP-intel17-WSM6-30hr-hroi900',]#[]
+    Expers = ['IR-J_DA+J_WRF+J_init-SP-intel17-WSM6-24hr-hroi900','IR-TuneWSM6-J_DA+J_WRF+J_init-SP-intel17-WSM6-24hr-hroi900',]#[]
+    #Expers = []
     #Expers.append( UD.generate_one_name( Storm,DA,MP))
     #for imp in MP:
     #    Expers.append( UD.generate_one_name( Storm,DA,imp) )

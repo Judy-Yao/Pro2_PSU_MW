@@ -1,4 +1,3 @@
-#!/work2/06191/tg854905/stampede2/opt/anaconda3/lib/python3.7
 
 import os
 import glob
@@ -10,7 +9,7 @@ import matplotlib.ticker as mticker
 import matplotlib.patches as patches
 import cartopy.crs as ccrs
 from cartopy.mpl.gridliner import LONGITUDE_FORMATTER, LATITUDE_FORMATTER
-from global_land_mask import globe
+#from global_land_mask import globe
 import math
 from datetime import datetime, timedelta
 import time
@@ -89,7 +88,6 @@ def write_mean_bin ( DAtime, sensor, Hx_dir, ch_list):
     # List the Yb and Ya files
     file_yb = sorted( glob.glob(Hx_dir + '/TB_GOES_CRTM_input_mem0*.bin') )
     file_ya = sorted( glob.glob(Hx_dir + '/TB_GOES_CRTM_output_mem0*.bin') )
-    print(np.size(file_yb))
 
     # Sanity check the number of calculated ens
     if np.size(file_yb) != num_ens:
@@ -226,10 +224,10 @@ def interp_simu_to_obs_matlab( Hx_dir, sensor, DAtime, d_obs):
         print('Number of NaN in Ya_x_ch', sum(np.isnan(Ya_x_ch)))
         # interpolate simulated Tbs to obs location
         mYb_obspace = eng.griddata(matlab.double(Lon_x_ch.tolist()), matlab.double(Lat_x_ch.tolist()), matlab.double(Yb_x_ch.tolist()), matlab.double(Lon_obs_ch.tolist()), matlab.double(Lat_obs_ch.tolist()) )
-        Yb_obspace = np.array(mYb_obspace._data)
+        Yb_obspace = mYb_obspace._data
         print('Number of NaN in Yb_obspace', sum(np.isnan(Yb_obspace)))
         mYa_obspace = eng.griddata(matlab.double(Lon_x_ch.tolist()), matlab.double(Lat_x_ch.tolist()), matlab.double(Ya_x_ch.tolist()), matlab.double(Lon_obs_ch.tolist()), matlab.double(Lat_obs_ch.tolist()) )
-        Ya_obspace = np.array(mYa_obspace._data)
+        Ya_obspace = mYa_obspace._data
         print('Number of NaN in Ya_obspace', sum(np.isnan(Ya_obspace)))
 
         # Add values to the container
@@ -408,15 +406,15 @@ def plot_Tb(Storm, Exper_name, Hx_dir, DAtime, sensor, ch_list ):
     ax[1].coastlines(resolution='10m', color='black',linewidth=0.5)
     ax[1].scatter(d_all['lon_obs'][idx_x], d_all['lat_obs'][idx_x],1.5,c=d_all['meanYb_obs'][idx_x],\
                 edgecolors='none', cmap=IRcmap, vmin=min_T, vmax=max_T, transform=ccrs.PlateCarree())
-    if any( hh in DAtime[8:10] for hh in ['00','06','12','18'] ):
-        ax[1].scatter(tc_lon, tc_lat, s=3, marker='*', edgecolors='white', transform=ccrs.PlateCarree())
+    #if any( hh in DAtime[8:10] for hh in ['00','06','12','18'] ):
+    #    ax[1].scatter(tc_lon, tc_lat, s=3, marker='*', edgecolors='white', transform=ccrs.PlateCarree())
 
     ax[2].set_extent([lon_min, lon_max, lat_min, lat_max], crs=ccrs.PlateCarree())
     ax[2].coastlines(resolution='10m', color='black',linewidth=0.5)
     cs = ax[2].scatter(d_all['lon_obs'][idx_x], d_all['lat_obs'][idx_x],1.5,c=d_all['meanYa_obs'][idx_x],\
                 edgecolors='none', cmap=IRcmap, vmin=min_T, vmax=max_T, transform=ccrs.PlateCarree())
-    if any( hh in DAtime[8:10] for hh in ['00','06','12','18'] ):
-        ax[2].scatter(tc_lon, tc_lat, s=3, marker='*', edgecolors='white', transform=ccrs.PlateCarree())
+    #if any( hh in DAtime[8:10] for hh in ['00','06','12','18'] ):
+    #    ax[2].scatter(tc_lon, tc_lat, s=3, marker='*', edgecolors='white', transform=ccrs.PlateCarree())
 
     # Colorbar
     caxes = f.add_axes([0.2, 0.1, 0.6, 0.02])
@@ -445,14 +443,14 @@ def plot_Tb(Storm, Exper_name, Hx_dir, DAtime, sensor, ch_list ):
     for j in range(3):
         gl = ax[j].gridlines(crs=ccrs.PlateCarree(),draw_labels=False,linewidth=0.5, color='gray', alpha=0.7, linestyle='--')
        
-        gl.xlabels_top = False
-        gl.xlabels_bottom = True
+        gl.top_labels = False
+        gl.bottom_labels = True
         if j==0:
-            gl.ylabels_left = True
-            gl.ylabels_right = False
+            gl.left_labels = True
+            gl.right_labels = False
         else:
-            gl.ylabels_left = False
-            gl.ylabels_right = False
+            gl.left_labels = False
+            gl.right_labels = False
     
         gl.ylocator = mticker.FixedLocator(lat_ticks)
         gl.xlocator = mticker.FixedLocator(lon_ticks)
@@ -580,15 +578,15 @@ def plot_Tb_diff(Storm, Exper_name, Hx_dir, DAtime, sensor, ch_list ):
     for j in range(3):
         gl = axs.flat[j].gridlines(crs=ccrs.PlateCarree(),draw_labels=False,linewidth=0.5,alpha=0.7,color='gray',linestyle='--')
 
-        gl.xlabels_top = False
-        gl.xlabels_bottom = True
+        gl.top_labels = False
+        gl.bottom_labels = True
 
         if j==0:
-            gl.ylabels_left = True
-            gl.ylabels_right = False
+            gl.left_labels = True
+            gl.right_labels = False
         else:
-            gl.ylabels_left = False
-            gl.ylabels_right = False
+            gl.left_labels = False
+            gl.right_labels = False
 
         gl.ylocator = mticker.FixedLocator(lat_ticks)
         gl.xlocator = mticker.FixedLocator(lon_ticks)
@@ -611,22 +609,22 @@ if __name__ == '__main__':
     small_dir =  '/work2/06191/tg854905/stampede2/Pro2_PSU_MW/'
 
     # ---------- Configuration -------------------------
-    Storm = 'JOSE'
+    Storm = 'IRMA'
     DA = 'IR'
-    MP = 'WSM6'
+    MP = 'TuneWSM6'
  
     sensor = 'abi_gr'
     ch_list = ['8',]
     fort_v = ['obs_type','lat','lon','obs']
 
-    start_time_str = '201709052100' 
-    end_time_str = '201709052100'
+    start_time_str = '201709040000' 
+    end_time_str = '201709050000'
     Consecutive_times = True
     
     # limitations
     limit = False
 
-    Interp_to_obs = True
+    Interp_to_obs = False
     plot_full = True
     plot_diff = False
     plot_scatter = True
@@ -635,7 +633,7 @@ if __name__ == '__main__':
     # Create experiment names
 
     Exper_name = UD.generate_one_name( Storm,DA,MP )
-    Exper_obs =  UD.generate_one_name( Storm,'IR',MP )
+    Exper_obs =  Exper_name#UD.generate_one_name( Storm,'IR',MP )
     
     if not Consecutive_times:
         IR_times = ['201709030100',]
