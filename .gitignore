@@ -1,0 +1,10 @@
+**/*log*
+**/*.png
+**/*.jpg
+**/__pycache__
+**/*error*
+**/*out*
+**/error*
+**/*error
+**/out*
+**/*out
