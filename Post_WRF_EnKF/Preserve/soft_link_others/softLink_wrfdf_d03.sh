@@ -10,12 +10,12 @@ function advance_time {
 export -f advance_time
 
 
-path_from=/scratch/02191/yuz31/HARVEY/IR_THO/run/
-path_to=/scratch/06191/tg854905/Pro2_PSU_MW/HARVEY/JerryRun/IR_THO/run/
+path_from=/scratch/02191/yuz31/HARVEY/IR_THO/output/
+path_to=/scratch/06191/tg854905/Pro2_PSU_MW/HARVEY/JerryRun/IR_THO/wrf_df/
 
-date_st=201708221200
+date_st=201708221800
 date_ed=201708241200
-time_int=60         # Time interval btwn cycles in minutes
+time_int=360         # Time interval btwn cycles in minutes
 nE=60
 dom=3                           # Domain you are running it on 
 
@@ -28,16 +28,9 @@ while [[ $DAtime -le $date_ed ]]; do
   cd $path_from/${DAtime}
   echo 'Enter ' ${path_from}/${DAtime}
 
-  # figure out the time for this ensemble
-  year=${DAtime:0:4}
-  month=${DAtime:4:2}
-  day=${DAtime:6:2}
-  hour=${DAtime:8:2}
-  minute=${DAtime:10:2}
-
   outdir=${path_to}/${DAtime}/
   if [[ ! -d $outdir ]]; then mkdir -p $outdir; fi 
-  ln -s  ${path_from}/${DAtime}/enkf  ${path_to}/${DAtime}/enkf
+  ln -s  ${path_from}/${DAtime}/ATCF  ${path_to}/${DAtime}/ATCF_rsl.error.0000
 
   # Increment date
   DAtime=`advance_time $DAtime $time_int`
