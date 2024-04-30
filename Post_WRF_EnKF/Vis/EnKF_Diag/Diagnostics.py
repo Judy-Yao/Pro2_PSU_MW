@@ -268,6 +268,7 @@ def Find_IR( file_Diag, v_interest ):
                 IR_list[idx_var].append( d_diag[var][it])
             else:
                 IR_list[idx_var].append( float(d_diag[var][it]))
+        IR_list[idx_var] = np.array( IR_list[idx_var] )
 
     Diag_IR = {}
     print('Sanity check of reading process...Printing 222nd record...')
