@@ -3,14 +3,14 @@
 
 #source ~/.bashrc
 source /home1/06191/tg854905/.bashrc
-module restore intel19  # Intel Compiler Version 19
+module restore intel17  # Intel Compiler Version 19
 
 #!!!!!!!!!!!!!!!!!! Attention !!!!!!!!!!!!!!!!!!!!!!!!!!!!
-PRED_SCRIPT_DIR=/work2/06191/tg854905/stampede2/Pro2_PSU_MW/SourceCode/Preprocess_Domain/
+PRED_SCRIPT_DIR=/work2/06191/tg854905/stampede2/Pro2_PSU_MW/SourceCode/Preprocess_Domain/FindD3Mesh
 
 #load configuration files, functions, parameters
-if [ -f config_IR_MW.MARIA ]; then
-  export CONFIG_FILE=$(pwd)/config_IR_MW.MARIA
+if [ -f config.IRMA ]; then
+  export CONFIG_FILE=$(pwd)/config.IRMA
   source "$CONFIG_FILE"
 fi
 if [ -f util.sh ]; then
@@ -104,4 +104,4 @@ done
 echo CYCLING COMPLETE
 echo bottom "$MODULEPATH_ROOT"
 
-cp config_IR_MW.MARIA /work2/06191/tg854905/stampede2/Pro2_PSU_MW/Preprocess_Domain/${STORM_ID}/ 
+cp config.IRMA /work2/06191/tg854905/stampede2/Pro2_PSU_MW/Preprocess_Domain/${STORM_ID}/ 

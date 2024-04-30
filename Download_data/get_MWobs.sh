@@ -8,28 +8,28 @@
 # ===================================================================
 
 # Fill in the storm name
-Storm=HarveyRI
+Storm=IRMA
 
 # Specify the project directory
-Project_Path=/expanse/lustre/projects/pen116/zuy121/Pro2_PSU_MW/
+Project_Path=/work2/06191/tg854905/stampede2/Pro2_PSU_MW/Preprocess_Obs/
 
 # Date range of case study (yyyymmddHH)
-Timebeg=2017082212
-Timend=2017082412
+Timebeg=2017090300
+Timend=2017090500
 
 # Evaluate if GPM-calibrated level 1C is used
 GPM_1C="true"
 ## GPM-calibrated sensors
 GPM_sensor=("AMSR2" "ATMS" "GMI" "MHS" "SAPHIR" "SSMIS") 
 ## GPM-calibrated level 1C version
-GPM_1C_ver=05 #07
+GPM_1C_ver=07 #05
 ## Path to all GPM-calibrated level 1C data
 GPM_datapath="https://gpm1.gesdisc.eosdis.nasa.gov/data/GPM_L1C/"
 
 # Evaluate if SSMI data is used
-SSMI="false"
+SSMI="true"
 ## Path to SSMI Tb data
-SSMI_datapath="https://www.ncei.noaa.gov/data/ssmis-brightness-temperature-csu/access/ICDR/"
+SSMI_datapath="https://www.ncei.noaa.gov/data/ssmis-brightness-temperature-csu/access/FCDR/"
 ## ICDR: interim climate data record is used here because the more accurate one 
 ## & FCDR is not available for this period. FCDR is better.
 
@@ -318,7 +318,7 @@ else
 		echo "Date: ${currentDay}"
 		dataset="${SSMI_datapath}/${Year}/"
 		echo ${dataset}
-	    wget --no-verbose --no-parent --recursive --level=1 --no-directories -A "CSU_SSMI_ICDR_V01R00_F15_D${currentDay}_*.nc" --content-disposition "${dataset}"
+	    wget --no-verbose --no-parent --recursive --level=1 --no-directories -A "CSU_SSMI_FCDR_V02R00_F15_D${currentDay}_*.nc" --content-disposition "${dataset}"
     	currentDay=$(date -u -d 1' days '${currentDay} +%Y%m%d)
 
 	done
