@@ -20,11 +20,11 @@ source util.sh
 # Configuration
 #---------------------------------------------------------
 Storm=HARVEY
-Exp_interest=("J_DA+J_WRF+J_init-Expanse-WSM6-24hr-hroi300")
+Exp_interest=("IR-TuneWSM6-J_DA+J_WRF+J_init-SP-intel17-WSM6-24hr-hroi300")
 #Exp_interest=("J_DA+J_WRF+J_init" "IR-J_DA+J_WRF+J_init" "J_DA+Y_WRF+J_init-IR+MW" "J_DA+Y_WRF+J_init-IR" "JerryRun") #IR+MW-J_DA+J_WRF+J_init-SP-intel19
 StartDate_spinup=201708220000
 StartDate_cycling=201708221200
-EndDate_cycling=201708231200
+EndDate_cycling=201708241200
 NUM_ENS=60
 MAX_DOM=3
 

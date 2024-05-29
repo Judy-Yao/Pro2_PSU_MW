@@ -1,17 +1,22 @@
-NETCDF_INC=${TACC_NETCDF_INC}
-NETCDF_LIB=${TACC_NETCDF_LIB}
-HDF5_LIB=${TACC_HDF5_LIB}
+NETCDF_INC=/opt/apps/intel24/netcdf/4.9.2/x86_64/include
+NETCDF_LIB=/opt/apps/intel24/netcdf/4.9.2/x86_64/lib
+HDF5_LIB=/opt/apps/intel24/hdf5/1.14.3/x86_64/lib
 
 #QN2RE_DIR=/home1/05012/tg843115/src/fv3lut/src
-QN2RE_DIR=/work2/06191/tg854905/stampede2/opt/NWP_RTM/MW/qn2re_dev   #/work/02191/yuz31/stampede2/code/CRTM/qn2re
+QN2RE_DIR=/work2/06191/tg854905/stampede2/opt/NWP_RTM/MW/qn2re_dev
+#/work2/06191/tg854905/stampede2/JerryZhang_IRMW/Jerry_code/J_PSU-EnKF_w_satellites/fortran_src/qn2re
+#/work/02191/yuz31/stampede2/code/CRTM/qn2re
 
-RTTOV123_DIR=/work/05012/tg843115/stampede2/opt/RTTOV/rttov123_single_thread
+#RTTOV123_DIR=/work/05012/tg843115/stampede2/opt/RTTOV/rttov123_single_thread
 
-WGRIB2_DIR=/home1/05012/tg843115/wave/opt/grib2
+WGRIB2_DIR=/work2/06191/tg854905/App/wgrib2/3.1.3/grib2
+#/home1/05012/tg843115/wave/opt/grib2
 
-RTTOV_DIR=${RTTOV123_DIR}
+RTTOV_DIR=/work2/06191/tg854905/App/rttov
+#${RTTOV123_DIR}
 
-CRTM_DIR=/work/05012/tg843115/stampede2/opt/CRTM/REL-2.3.0_Lu
+CRTM_DIR=/work2/06191/tg854905/stampede2/JerryZhang_IRMW/Jerry_code/J_PSU-EnKF_w_satellites/fortran_src/crtm_v2.3.0
+#/work2/05012/tg843115/stampede2/opt/CRTM/REL-2.3.0_Lu
 
 RTTOV_FCFLAG=-I$(RTTOV_DIR)/include -I$(RTTOV_DIR)/mod
 RTTOV_LDFLAG=-L$(RTTOV_DIR)/lib -L$(HDF5_LIB) -lrttov12_wrapper -lrttov12_mw_scatt -lrttov12_brdf_atlas -lrttov12_emis_atlas -lrttov12_other -lrttov12_parallel -lrttov12_coef_io -lrttov12_hdf -lrttov12_main -lhdf5hl_fortran -lhdf5_hl -lhdf5_fortran -lhdf5 
