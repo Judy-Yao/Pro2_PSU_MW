@@ -1,14 +1,9 @@
-
 import os,fnmatch # functions for interacting with the operating system
 import numpy as np
 from datetime import datetime, timedelta
-import glob
-import pickle
 from netCDF4 import Dataset
 from wrf import getvar
 import math
-import scipy as sp
-import scipy.ndimage
 import matplotlib
 import matplotlib.ticker as mticker
 from matplotlib.colors import ListedColormap
@@ -17,7 +12,6 @@ from matplotlib import pyplot as plt
 from cartopy import crs as ccrs
 from cartopy.mpl.gridliner import LONGITUDE_FORMATTER, LATITUDE_FORMATTER
 import time
-import copy
 import matplotlib.dates as mdates
 from matplotlib import pyplot
 
@@ -102,6 +96,7 @@ def plot_one_hpi( ax0, ax1, ax2,  state, color, line, line_width, label, steps=6
        # Read data (and process it if it is special)
         Diff_start_next6x = state['Diff_start_next6x']
         if Diff_start_next6x != 6 and Diff_start_next6x != 0: # it means time_to_move in namelist is not equal to 0
+            # 
             start_next6x = datetime.strptime(state['time'][0],"%Y%m%d%H%M") + timedelta(hours=Diff_start_next6x)
             boolean_compare = [ start_next6x.strftime("%Y%m%d%H%M") == time_str for time_str in state['time'][:] ]
             idx_next6x = int( np.where(boolean_compare)[0] )
@@ -111,7 +106,7 @@ def plot_one_hpi( ax0, ax1, ax2,  state, color, line, line_width, label, steps=6
             lat = state['lat'][idx_next6x::steps]
             x_min_slp = state['min_slp'][idx_next6x::steps]
             x_max_ws = state['max_ws'][idx_next6x::steps]
-
+            # Approximate the HPI at initialization time with the 1st record in ATCF_rsl.error.0000
             times = np.insert(times,0,state['time'][0])
             lon = np.insert(lon,0,state['lon'][0])
             lat = np.insert(lat,0,state['lat'][0])
@@ -343,7 +338,7 @@ if __name__ == '__main__':
     small_dir = '/work2/06191/tg854905/stampede2/Pro2_PSU_MW/'
 
     # Configuration
-    Storm = 'MARIA'
+    Storm = 'HARVEY'
     MP = ['WSM6','THO']
     DA = ['CONV','IR','IR+MW']
 
