@@ -9,6 +9,7 @@ import netCDF4 as nc
 import math
 from math import radians, sin, cos, sqrt, atan2
 from datetime import datetime, timedelta
+from geographiclib.geodesic import Geodesic
 
 # constants
 P1000MB = 100000.0
@@ -47,10 +48,42 @@ def mercator_distance(lon1, lat1, lon2, lat2):
     distance = 6371 * c  # Radius of Earth in kilometers
     return distance
 
+# Function to calculate azimuth & distance from point A to point B
+def twoP_inverse(lat1, lon1, lat2, lon2):
+    geod = Geodesic.WGS84
+    g = geod.Inverse(lat1, lon1, lat2, lon2)
+    # s12: distance from the first point to the second in meters
+    # azi1: azimuth
+    #       ^
+    #       | 
+    #       |   
+    #       A ~ azimuth at the first point 
+    #      /
+    #    / 
+    #  B
+    return g['s12']/1000,g['azi1']
+
+# Function to convert from geo azimuth to math definition in Cartesian coordinate
+# geo zimuth: North clockwise to South: 0 -> 180; North counter-clockwise to South: 0 -> -180
+# math: East counter-clockwise:  0->90->180->270->360 (0)
+def azi_geo_to_math(azimuth):
+    math_angle = 90 - azimuth
+    if math_angle < 0:
+        math_angle += 360
+    return math_angle
 
 # ------------------------------------------------------------------------------------------------------
 #           Operation: Perform Operations
 # ------------------------------------------------------------------------------------------------------
+
+# Generate time series constraint by start_date, end_date, and interval
+def generate_times( start_time_str, end_time_str, interval ):
+
+    time_diff = datetime.strptime(end_time_str,"%Y%m%d%H%M") - datetime.strptime(start_time_str,"%Y%m%d%H%M")
+    time_diff_hour = time_diff.total_seconds() / 3600
+    time_interest_dt = [datetime.strptime(start_time_str,"%Y%m%d%H%M") + timedelta(hours=t) for t in list(range(0, int(time_diff_hour)+interval, interval))]
+    time_interest_str = [time_dt.strftime("%Y%m%d%H%M") for time_dt in time_interest_dt]
+    return time_interest_str
 
 # generate linearly-interpolated locations between synoptic scale times
 def interpolate_locations( DAtimes, bestrack ):
@@ -113,18 +146,6 @@ def interpolate_locations( DAtimes, bestrack ):
     return dict_bestrack
 
 
-# Generate time series for multiple storms
-def generate_times( Storms, start_time_str, end_time_str ):
-
-    dict_times = {}
-    for istorm in Storms:
-        time_diff = datetime.strptime(end_time_str[istorm],"%Y%m%d%H%M") - datetime.strptime(start_time_str[istorm],"%Y%m%d%H%M")
-        time_diff_hour = time_diff.total_seconds() / 3600
-        time_interest_dt = [datetime.strptime(start_time_str[istorm],"%Y%m%d%H%M") + timedelta(hours=t) for t in list(range(0, int(time_diff_hour)+1, 1))]
-        dict_times[istorm] = [time_dt.strftime("%Y%m%d%H%M") for time_dt in time_interest_dt]
-    return dict_times
-
-
 # Automate the experiment name for one storm
 def generate_one_name( Storm,DA,MP ):
 
@@ -178,7 +199,7 @@ def generate_one_name( Storm,DA,MP ):
                 raise ValueError('No corresponding name!')
         elif DA == 'CONV':
             if Storm == 'HARVEY':
-                return 'J_DA+J_WRF+J_init-SP-intel17-WSM6-24hr-hroi300'
+                return 'J_DA+J_WRF+J_init-Expanse-WSM6-24hr-hroi300'
             elif Storm == 'IRMA' or Storm == 'JOSE':
                 return 'J_DA+J_WRF+J_init-SP-intel17-WSM6-30hr-hroi900'
             elif Storm == 'MARIA':
