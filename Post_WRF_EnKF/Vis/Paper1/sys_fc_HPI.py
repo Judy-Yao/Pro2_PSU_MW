@@ -15,6 +15,8 @@ import time
 import matplotlib.dates as mdates
 from matplotlib import pyplot
 from fast_histogram import histogram2d as hist2d
+from mpl_toolkits.axes_grid1.inset_locator import inset_axes
+from mpl_toolkits.axes_grid1 import make_axes_locatable
 
 import Util_data as UD
 import Track
@@ -102,8 +104,9 @@ def calculate_signed_error():
                     Exper_error[istorm][imp][ida] = None
     return Exper_error
 
-# Stack arrays in nested dictionary
-def stack_error( Exper_error ):
+# Stack arrays in nested dictionaries
+# From MP*DA*Storm*Times to MP*DA*Storms
+def stack_FCs( Exper_error ):
 
     allFC_error = {}
     for istorm in Storms:
@@ -120,43 +123,95 @@ def stack_error( Exper_error ):
                     continue
     return allFC_error
 
-# Bin sample: per angle per radius
-def bin_Polar( allFC_error ):
-
-    # Parameter to bin data by distance and angle
-    num_r_bins = 5
-    num_theta_bins = 10
-    r_bins = np.linspace(0, 250, num_r_bins + 1)
-    theta_bins = np.linspace(0,360, num_theta_bins + 1)
+# Assemble samples of one kind (MP*DA) from different storms
+def stack_Storms( allFC_error ):
     
-    # Bin data
-    hist_polar = {}
+    stack_storms = {}
     for imp in MP:
-        hist_polar[imp] = {}
+        stack_storms[imp] = {}
         for ida in DA:
-            stack_errs = np.zeros((2,1))
+            stack_errs = np.zeros((4,1)) #distance,angle,minSLP,Vmax
             for istorm in Storms:
                 if os.path.exists( wrf_dir+'/'+istorm+'/'+Exper_names[istorm][imp][ida] ):
-                    stack_errs = np.concatenate((stack_errs,allFC_error[istorm][imp][ida][:2,:]),axis=1)
-            # assemble all samples for one kind
-            all_storms = stack_errs[:,1:] #remove the first empty column                                
-            # bin data
-            hist, r_edges, theta_edges = np.histogram2d(all_storms[0,:],np.mod(all_storms[1,:], 360), bins=[r_bins, theta_bins])   
-            #hist = hist2d(all_storms[0,:],all_storms[1,:],range=[[0,250],[0,2*np.pi]],bins=50)
-            hist_polar[imp][ida] = hist.T
-   
-    # Step 4: Plot contourf of the sample distribution
+                    stack_errs = np.concatenate((stack_errs,allFC_error[istorm][imp][ida]),axis=1)
+            stack_storms[imp][ida] = stack_errs[:,1:] #remove the first empty column 
+    return stack_storms
+
+
+# For each experiment of MP*DA:
+# track: bin data per distance per angle in a polar coordinate centered at the best-track position
+# intensity: for each da scheme, bin data per intensity of WSM6 per intensify of THO 
+def bin_allFc( allFC_error ):
+
+    # parameters to bin track by distance and angle
+    num_r_bins = 5 # bin width: 50 km
+    num_theta_bins = 12 # bin width: 30 degrees
+    r_bins = np.linspace(0, max_radii, num_r_bins + 1)
+    theta_bins = np.linspace(0,360, num_theta_bins + 1)
+    # parameters to bin MSLP
+    minMSLPerr = -75
+    maxMSLPerr = 75
+    num_binsMSLP = 25 #maxMSLPerr-minMSLPerr
+    #MSLP_edges = np.linspace(minMSLPerr,maxMSLPerr,num_binsMSLP+1)
+    #MSLP_range_mid = 0.5 * (MSLP_edges[:-1] + MSLP_edges[1:])
+    # parameters to bin Vmax
+    minVmax_err = -60
+    maxVmax_err = 60
+    num_binsVmax = 25 #maxVmax_err-minVmax_err
+    #Vmax_edges = np.linspace(minVmax_err,maxVmax_err,num_binsVmax+1)
+    #Vmax_range_mid = 0.5 * (Vmax_edges[:-1] + Vmax_edges[1:])
+
+    # Assemble all samples for one kind (MP*DA)
+    stack_storms = stack_Storms( allFC_error )
+
+    # Marginally-bin data 
+    hist_HPI = {}
+    hist_HPI['track'] = {}
+    hist_HPI['MSLP'] = {}
+    hist_HPI['Vmax'] = {}
+    for imp in MP:
+        hist_HPI['track'][imp] = {}
+        hist_HPI['MSLP'][imp] = {}
+        for ida in DA:
+            all_storms = stack_storms[imp][ida]
+            # track
+            hist, r_edges, theta_edges = np.histogram2d(all_storms[0,:],np.mod(all_storms[1,:], 360), bins=[r_bins, theta_bins])  #np.mod(X, 360): Convert theta_data to the range [0, 360) 
+            hist_HPI['track'][imp][ida] = hist.T
+            # MSLP
+            hist, MSLP_edges = np.histogram(all_storms[2,:],range=[minMSLPerr,maxMSLPerr],bins=num_binsMSLP)
+            hist_HPI['MSLP'][imp][ida] = hist.T
+            # Vmax
+            hist, Vmax_edges = np.histogram(all_storms[3,:],range=[minVmax_err,maxVmax_err],bins=num_binsVmax)
+            hist_HPI['Vmax'][imp][ida] = hist.T
+
+
+    # meshgrid for coordinates
     r_mid = 0.5 * (r_edges[:-1] + r_edges[1:])
     theta_mid = 0.5 * (theta_edges[:-1] + theta_edges[1:])
     R, Theta = np.meshgrid(r_mid, np.deg2rad(theta_mid))
+    hist_HPI['track']['R'] = R
+    hist_HPI['track']['Theta'] = Theta
     
-    return [R,Theta,hist_polar]
+    hist_HPI['MSLP']['MSLP_edges'] = MSLP_edges
+    hist_HPI['Vmax']['Vmax_edges'] = Vmax_edges
+
+    # Jointly-bin intensity data
+    hist_HPI['joint_MSLP'] = {}
+    hist_HPI['joint_Vmax'] = {}
+    for ida in DA:
+        # bin minSLP
+        hist, MSLP_edges, MSLP_edges = np.histogram2d(stack_storms['WSM6'][ida][2,:],stack_storms['THO'][ida][2,:],range=[[minMSLPerr,maxMSLPerr],[minMSLPerr,maxMSLPerr]],bins=[num_binsMSLP, num_binsMSLP])
+        hist_HPI['joint_MSLP'][ida] = hist.T
+
+        hist, Vmax_edges, Vmax_edges = np.histogram2d(stack_storms['WSM6'][ida][3,:],stack_storms['THO'][ida][3,:],range=[[minVmax_err,maxVmax_err],[minVmax_err,maxVmax_err]],bins=[num_binsVmax,num_binsVmax])
+        hist_HPI['joint_Vmax'][ida] = hist
+
+    return hist_HPI
 
 # ------------------------------------------------------------------------------------------------------
-#            Operation: Plot PDF
+#            Operation: Plot data samples (scatter)
 # ------------------------------------------------------------------------------------------------------
-
-def plot_polarCoor(ax, num_circles, radius_increment):
+def plot_ConcentricCircle(ax, num_circles, radius_increment):
 
     radii = np.linspace(0.1, 250.0, 5)  # 5 concentric circles
     angles = np.linspace(0, 2 * np.pi, 360)  # 360 points for full circle
@@ -187,22 +242,12 @@ def plot_polarCoor(ax, num_circles, radius_increment):
     # Add grid
     ax.grid(True)
 
-def plot_polarCoor2(ax):
-
-    radii = np.linspace(0.1, 250.0, 5)  # 5 concentric circles
-    angles = np.linspace(0, 2 * np.pi, 100)  # 360 points for full circle
-
-    # Draw concentric circles
-    for radius in radii:
-        ax.plot(angles, np.full(100, radius),linestyle='')
-
-
 # plot
-def plot_sys_errs():
+def scatter_sys_errs( errs ):
 
     # Set up figure
-    fig = plt.figure( figsize=(6.5,8.5),dpi=200)
-    grids = fig.add_gridspec(ncols=3,nrows=3,bottom=0.05,top=0.96,left=0.10,right=0.98,wspace=0.08,hspace=0.06)
+    fig = plt.figure( figsize=(6.5,7.5),dpi=200)
+    grids = fig.add_gridspec(ncols=3,nrows=3,bottom=0.05,top=0.96,left=0.02,right=0.98,wspace=0.08,hspace=0.06)
 
     ax = {}
     for ida in DA:
@@ -210,7 +255,7 @@ def plot_sys_errs():
         ir = DA.index( ida )
         # Track: simulation relative to best track in a polar coordinate
         ax[ida]['ax0'] = fig.add_subplot( grids[ir,0] )
-        plot_polarCoor(ax[ida]['ax0'], num_circles, radius_increment)    
+        plot_ConcentricCircle(ax[ida]['ax0'], num_circles, radius_increment)    
         # Intensity
         ax[ida]['ax1'] = fig.add_subplot( grids[ir,1] )
         ax[ida]['ax2'] = fig.add_subplot( grids[ir,2] )
@@ -223,16 +268,16 @@ def plot_sys_errs():
     # Customize marker type
     marker = {'WSM6': 'P','THO':'o'}
 
-    # Plot simulations
+    # Scatter track errors
     for imp in MP:
         for ida in DA:
-            for istorm in Storms:
-                # Plot each storm
+            for istorm in Storms: # scatter each storm
                 if not os.path.exists( wrf_dir+'/'+istorm+'/'+Exper_names[istorm][imp][ida] ):
                     continue
+                # Track
                 distance = errs[istorm][imp][ida][0,:]
                 direction = errs[istorm][imp][ida][1,:]
-                # Convert polar coordinates (distance, direction) to Cartesian coordinates (x, y)
+                # convert polar coordinates (distance, direction) to Cartesian coordinates (x, y)
                 point_angle = np.deg2rad(direction)
                 px = distance * np.cos(point_angle)
                 py = distance * np.sin(point_angle)
@@ -241,35 +286,79 @@ def plot_sys_errs():
                 else:
                     ax[ida]['ax0'].plot(px,py,linestyle='',markersize=4,marker='o',color=colorset[istorm],alpha=0.5)
 
+    # Scatter intensities
+    for ida in DA:
+        for istorm in Storms:
+            # MSLP
+            ax[ida]['ax1'].set_aspect('equal', 'box')
+            ax[ida]['ax1'].plot(errs[istorm]['WSM6'][ida][2,:],errs[istorm]['THO'][ida][2,:],linestyle='',markersize=4,marker='o',color=colorset[istorm])
+            ax[ida]['ax1'].axvline(x=0, color='k', linestyle='-',linewidth=1)
+            ax[ida]['ax1'].axhline(y=0, color='k', linestyle='-',linewidth=1)
+            #Vmax
+            ax[ida]['ax2'].set_aspect('equal', 'box')
+            ax[ida]['ax2'].plot(errs[istorm]['WSM6'][ida][3,:],errs[istorm]['THO'][ida][3,:],linestyle='',markersize=4,marker='o',color=colorset[istorm])
+            ax[ida]['ax2'].axvline(x=0, color='k', linestyle='-',linewidth=1)
+            ax[ida]['ax2'].axhline(y=0, color='k', linestyle='-',linewidth=1)
+
+    # Set ticks/other attributes for intensity subplots
+    for ida in DA:
+        ax[ida]['ax1'].set_xlim([-75,75])
+        ax[ida]['ax1'].set_ylim([-75,75])
+        ax[ida]['ax2'].set_xlim([-60,60])
+        ax[ida]['ax2'].set_ylim([-60,60])
+
     # Save figure
-    des_name = small_dir+'SYSTEMS/Vis_analyze/Paper1/sys_fc_HPI.png'
+    des_name = small_dir+'SYSTEMS/Vis_analyze/Paper1/sys_fc_HPI_scatter.png'
     plt.savefig( des_name )
     print( 'Saving the figure to '+des_name )
 
 
-# plot PDF
-def plot_sys_errs_pdf( allFC_error ):
+# ------------------------------------------------------------------------------------------------------
+#            Operation: Plot PDF
+# ------------------------------------------------------------------------------------------------------
 
-    # Bin
-    returned = bin_Polar( allFC_error )
-    R = returned[0]
-    Theta = returned[1]
-    hist_polar = returned[2]
+def plot_PolarCoord(ax):
+
+    # Set up parameters
+    radii = np.linspace(0.1, max_radii, num_circles)  # X concentric circles
+    num_angle = 100 # number of points for full circle
+    angles = np.linspace(0, 360, num_angle)  # X points for full circle
+
+    # Draw concentric circles
+    for radius in radii:
+        ax.plot(angles, np.full(num_angle, radius),linestyle='')
+
+# plot PDF
+def plot_sys_errs_pdf( allFC_error,hist_HPI ):
+
+    # collect data
+    stack_storms = stack_Storms( allFC_error )
 
     # Set up figure
-    fig = plt.figure( figsize=(6.5,8.5),dpi=200)
-    grids = fig.add_gridspec(ncols=3,nrows=3,bottom=0.05,top=0.96,left=0.10,right=0.98,wspace=0.08,hspace=0.06)
+    fig = plt.figure( figsize=(6.5,8.5),dpi=200) # standard: 6.5,8.5
+    outer_grids = fig.add_gridspec(ncols=1,nrows=4,bottom=0.10,left=0.1)#,wspace=0.08,hspace=0.06)
 
     ax = {}
+    ax['wsm6_track'] = {}
+    ax['tho_track'] = {}
+    ax['mslp'] = {}
+	ax['vmax'] = {}
+    # gridspec inside gridspec
+    r0_grid = outer_grids[0].subgridspec(1, 3, wspace=0.01, hspace=0.02)
+    r1_grid = outer_grids[1].subgridspec(1, 3, wspace=0.01, hspace=0.02)
+    r2_grid = outer_grids[2].subgridspec(1, 3, wspace=0.0, hspace=0.02)
+	r3_grid = outer_grids[3].subgridspec(1, 3, wspace=0.0, hspace=0.02)
+
     for ida in DA:
-        ax[ida] = {}
         ir = DA.index( ida )
         # Track: simulation relative to best track in a polar coordinate
-        ax[ida]['ax0'] = fig.add_subplot( grids[ir,0],projection='polar' )
-        plot_polarCoor2(ax[ida]['ax0'])
+        ax['wsm6_track'][ida] = fig.add_subplot( r0_grid[ir],projection='polar' )
+        plot_PolarCoord( ax['wsm6_track'][ida] )
+        ax['tho_track'][ida] = fig.add_subplot( r1_grid[ir],projection='polar' )
+        plot_PolarCoord( ax['tho_track'][ida] ) 
         # Intensity
-        ax[ida]['ax1'] = fig.add_subplot( grids[ir,1] )
-        ax[ida]['ax2'] = fig.add_subplot( grids[ir,2] )
+        ax['mslp'][ida] = fig.add_subplot( r2_grid[ir] )
+		ax['vmax'][ida] = fig.add_subplot( r3_grid[ir] )
 
     # Customize color
     colors = {}
@@ -279,23 +368,85 @@ def plot_sys_errs_pdf( allFC_error ):
     # Customize marker type
     marker = {'WSM6': 'P','THO':'o'}
 
-    # Plot simulations
+    # Plot simulation error
+    R = hist_HPI['track']['R']
+    Theta = hist_HPI['track']['Theta']
+    mslp_rg = hist_HPI['MSLP']['MSLP_edges']
+    mslp_rg_mid =  0.5 * (mslp_rg[:-1] + mslp_rg[1:])
+    mslp_Xrg, mslp_Yrg = np.meshgrid(mslp_rg_mid,mslp_rg_mid)
+    vmax_rg = hist_HPI['Vmax']['Vmax_edges']
+    vmax_rg_mid =  0.5 * (vmax_rg[:-1] + vmax_rg[1:])
+    vmax_Xrg, vmax_Yrg = np.meshgrid(vmax_rg_mid,vmax_rg_mid)
+
+    ax_margMSLP_x = {}
+    ax_margMSLP_y = {}
+    for ida in DA: # column
+        ax['wsm6_track'][ida].pcolormesh(Theta, R, hist_HPI['track']['WSM6'][ida], cmap='hot_r',shading='auto')
+        t_pdf = ax['tho_track'][ida].pcolormesh(Theta, R, hist_HPI['track']['THO'][ida], cmap='hot_r',shading='auto')
+        if plot_MSLP:
+            # Marginal histogram
+            # create inset axes for the marginal histograms
+            ax_margMSLP_x[ida] = inset_axes(ax['its'][ida], width="100%", height="20%", loc='lower center')
+            ax_margMSLP_x[ida].set_frame_on(False)
+            ax_margMSLP_y[ida] = inset_axes(ax['its'][ida], width="20%", height="100%", loc='center left')
+            ax_margMSLP_y[ida].set_frame_on(False)
+            # plot the marginal histogram
+            ax_margMSLP_y[ida].barh(mslp_rg_mid,hist_HPI['MSLP']['THO'][ida],height=np.diff(mslp_rg),color='gray', alpha=0.7)
+            ax_margMSLP_x[ida].bar(mslp_rg_mid,hist_HPI['MSLP']['WSM6'][ida],width=np.diff(mslp_rg), color='gray', alpha=0.7)
+			# scatter
+            for istorm in Storms:
+                # scatter
+                ax['its'][ida].plot(allFC_error[istorm]['WSM6'][ida][2,:],allFC_error[istorm]['THO'][ida][2,:],linestyle='',markersize=4,marker='o',color=colorset[istorm])
+            #i_pdf = ax['its'][ida].pcolormesh(mslp_Xrg, mslp_Yrg, hist_HPI['joint_MSLP'][ida], cmap='gist_heat_r',shading='auto')
+
+
+	# Create a colorbar above the first row of subplots
+    cbar_ax = fig.add_axes([0.92, 0.35, 0.02, 0.55])
+    fig.colorbar(t_pdf, cax=cbar_ax, orientation='vertical')
+
+    # Set axis attributes
+    yticks = np.linspace(0,max_radii,num_circles+1)
     for ida in DA:
-        for imp in MP:
-            # Plot track distance/direction
-            print(np.amax(hist_polar[imp][ida]))
-            if imp == 'WSM6':
-                c = ax[ida]['ax0'].pcolormesh(Theta, R, hist_polar[imp][ida], cmap='hot_r',shading='auto')        
-                fig.colorbar(c, ax=ax[ida]['ax0'])
-            else:
-                c = ax[ida]['ax0'].pcolormesh(Theta, R, hist_polar[imp][ida], cmap='hot_r',shading='auto')        
-                fig.colorbar(c, ax=ax[ida]['ax0'])
+        # Track
+        ax['wsm6_track'][ida].set_rticks(yticks[:-1])
+        ax['wsm6_track'][ida].set_rlabel_position(90)
+        ax['tho_track'][ida].set_rticks(yticks[:-1])
+        ax['tho_track'][ida].set_rlabel_position(90)
+        if DA.index(ida) == 0:
+            ax['wsm6_track'][ida].set_xticks(np.deg2rad([0,45,90,135,180,225,270,315]))
+            ax['wsm6_track'][ida].set_xticklabels(['','NE', 'N', 'NW', 'W', 'SW','S/N', 'SE'])
+            ax['tho_track'][ida].set_xticks(np.deg2rad([0,45,90,135,180,225,270,315]))
+            ax['tho_track'][ida].set_xticklabels(['','NE','', 'NW', 'W', 'SW', 'S', 'SE'])
+        elif DA.index(ida) == 1:
+            ax['wsm6_track'][ida].set_xticks(np.deg2rad([0,45,90,135,180,225,270,315]))
+            ax['wsm6_track'][ida].set_xticklabels(['','NE', 'N', 'NW', '','SW', 'S/N','SE'])
+            ax['tho_track'][ida].set_xticks(np.deg2rad([0,45,90,135,180,225,270,315]))
+            ax['tho_track'][ida].set_xticklabels(['','NE','', 'NW','', 'SW', 'S', 'SE'])
+        else:
+            ax['wsm6_track'][ida].set_xticks(np.deg2rad([0,45,90,135,180,225,270,315]))
+            ax['wsm6_track'][ida].set_xticklabels(['E','NE', 'N', 'NW','', 'SW','S/N', 'SE'])
+            ax['tho_track'][ida].set_xticks(np.deg2rad([0,45,90,135,190,225,270,315]))
+            ax['tho_track'][ida].set_xticklabels(['E','NE','', 'NW', '','SW', 'S', 'SE'])
 
-
-    #fig.colorbar(c, ax=ax)
+        # Intensity
+        ax['its'][ida].set_xlim([-75,75])
+        ax['its'][ida].set_ylim([-75,75])
+        # set equal aspect ratio
+        ax['its'][ida].set_aspect('equal', 'box')
+        # set reference lines
+        ax['its'][ida].axvline(x=0, color='gray', linestyle='-',linewidth=1,alpha=0.5)
+        ax['its'][ida].axhline(y=0, color='gray', linestyle='-',linewidth=1,alpha=0.5)
+        # minimize the use of y axis label
+        if DA.index( ida ) != 0:
+            ax['its'][ida].set_yticklabels([])
+        # hide the marginal axes labels
+        ax_margMSLP_x[ida].xaxis.set_visible(False)
+        ax_margMSLP_x[ida].yaxis.set_ticks([])
+        ax_margMSLP_y[ida].yaxis.set_visible(False)
+        ax_margMSLP_y[ida].xaxis.set_ticks([])
 
     # Save figure
-    des_name = small_dir+'SYSTEMS/Vis_analyze/Paper1/sys_fc_HPI.png'
+    des_name = small_dir+'SYSTEMS/Vis_analyze/Paper1/sys_fc_HPI_pdf.png'
     plt.savefig( des_name )
     print( 'Saving the figure to '+des_name )
 
@@ -307,9 +458,9 @@ if __name__ == '__main__':
     small_dir = '/work2/06191/tg854905/stampede2/Pro2_PSU_MW/'
 
     #--------Configuration------------
-    Storms = ['HARVEY','JOSE','IRMA','MARIA']
+    Storms = ['JOSE','IRMA','MARIA']
     DA = ['CONV','IR','IR+MW']
-    MP = ['THO',] #
+    MP = ['WSM6','THO'] #
 
     # if operate over the same number of samples for all forecasts
     sameNum_sample = False
@@ -317,15 +468,16 @@ if __name__ == '__main__':
         fc_run_hrs = 60
 
     # Track: number of concentric circles and the radius increment
+    max_radii = 250.0
     num_circles = 5
-    radius_increment = 50
+    radius_increment = max_radii/num_circles
 
     # if calculate absolute error or signed error
     signed_error = True # absolute error
     
     # if plot population
     plot_ppl = True
-    plot_bin = True
+    plot_bin = False
 
     #------------------------------------
     wrf_dir = big_dir
@@ -348,13 +500,13 @@ if __name__ == '__main__':
     # If plot population distribution or statisitcal attributes
     if plot_ppl:
         # For one kind of experiment, assmble samples from all forecasts.
-        allFC_error = stack_error( Exper_error )
+        allFC_error = stack_FCs( Exper_error )
         # bin data if necessary
         if plot_bin:
-            plot_sys_errs_pdf( allFC_error )
-            #[R,Theta,hist_polar] = bin_Polar( allFC_error ) 
-        # plot distribution
-        #plot_sys_errs_pdf()
+            hist_HPI = bin_allFc( allFC_error ) 
+            plot_sys_errs_pdf( allFC_error,hist_HPI )
+        else:
+            scatter_sys_errs( allFC_error ) 
 
 
 
