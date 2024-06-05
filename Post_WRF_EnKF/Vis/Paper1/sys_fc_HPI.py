@@ -158,7 +158,7 @@ def bin_allFc( allFC_error ):
     minVmax_err = -60
     maxVmax_err = 60
     num_binsVmax = 25 #maxVmax_err-minVmax_err
-    #Vmax_edges = np.linspace(minVmax_err,maxVmax_err,num_binsVmax+1)
+    #Vmax_edges_cal = np.linspace(minVmax_err,maxVmax_err,num_binsVmax+1)
     #Vmax_range_mid = 0.5 * (Vmax_edges[:-1] + Vmax_edges[1:])
 
     # Assemble all samples for one kind (MP*DA)
@@ -172,11 +172,13 @@ def bin_allFc( allFC_error ):
     for imp in MP:
         hist_HPI['track'][imp] = {}
         hist_HPI['MSLP'][imp] = {}
+        hist_HPI['Vmax'][imp] = {}
         for ida in DA:
             all_storms = stack_storms[imp][ida]
             # track
             hist, r_edges, theta_edges = np.histogram2d(all_storms[0,:],np.mod(all_storms[1,:], 360), bins=[r_bins, theta_bins])  #np.mod(X, 360): Convert theta_data to the range [0, 360) 
-            hist_HPI['track'][imp][ida] = hist.T
+            percentages = 100 * hist.T / len(all_storms[0,:])
+            hist_HPI['track'][imp][ida] = percentages #hist.T
             # MSLP
             hist, MSLP_edges = np.histogram(all_storms[2,:],range=[minMSLPerr,maxMSLPerr],bins=num_binsMSLP)
             hist_HPI['MSLP'][imp][ida] = hist.T
@@ -336,29 +338,27 @@ def plot_sys_errs_pdf( allFC_error,hist_HPI ):
 
     # Set up figure
     fig = plt.figure( figsize=(6.5,8.5),dpi=200) # standard: 6.5,8.5
-    outer_grids = fig.add_gridspec(ncols=1,nrows=4,bottom=0.10,left=0.1)#,wspace=0.08,hspace=0.06)
+    outer_grids = fig.add_gridspec(ncols=1,nrows=2,top=0.93,left=0.1,hspace=0.09)
 
     ax = {}
     ax['wsm6_track'] = {}
     ax['tho_track'] = {}
     ax['mslp'] = {}
-	ax['vmax'] = {}
+    ax['vmax'] = {}
     # gridspec inside gridspec
-    r0_grid = outer_grids[0].subgridspec(1, 3, wspace=0.01, hspace=0.02)
-    r1_grid = outer_grids[1].subgridspec(1, 3, wspace=0.01, hspace=0.02)
-    r2_grid = outer_grids[2].subgridspec(1, 3, wspace=0.0, hspace=0.02)
-	r3_grid = outer_grids[3].subgridspec(1, 3, wspace=0.0, hspace=0.02)
+    track_grid = outer_grids[0].subgridspec(2, 3, wspace=0.05, hspace=0.14)
+    its_grid = outer_grids[1].subgridspec(2, 3, wspace=0.05, hspace=0.3)
 
     for ida in DA:
         ir = DA.index( ida )
         # Track: simulation relative to best track in a polar coordinate
-        ax['wsm6_track'][ida] = fig.add_subplot( r0_grid[ir],projection='polar' )
+        ax['wsm6_track'][ida] = fig.add_subplot( track_grid[0,ir],projection='polar' )
         plot_PolarCoord( ax['wsm6_track'][ida] )
-        ax['tho_track'][ida] = fig.add_subplot( r1_grid[ir],projection='polar' )
+        ax['tho_track'][ida] = fig.add_subplot( track_grid[1,ir],projection='polar' )
         plot_PolarCoord( ax['tho_track'][ida] ) 
         # Intensity
-        ax['mslp'][ida] = fig.add_subplot( r2_grid[ir] )
-		ax['vmax'][ida] = fig.add_subplot( r3_grid[ir] )
+        ax['mslp'][ida] = fig.add_subplot( its_grid[0,ir] )
+        ax['vmax'][ida] = fig.add_subplot( its_grid[1,ir] )
 
     # Customize color
     colors = {}
@@ -380,29 +380,86 @@ def plot_sys_errs_pdf( allFC_error,hist_HPI ):
 
     ax_margMSLP_x = {}
     ax_margMSLP_y = {}
+    ax_margVmax_x = {}
+    ax_margVmax_y = {}
     for ida in DA: # column
-        ax['wsm6_track'][ida].pcolormesh(Theta, R, hist_HPI['track']['WSM6'][ida], cmap='hot_r',shading='auto')
-        t_pdf = ax['tho_track'][ida].pcolormesh(Theta, R, hist_HPI['track']['THO'][ida], cmap='hot_r',shading='auto')
-        if plot_MSLP:
-            # Marginal histogram
-            # create inset axes for the marginal histograms
-            ax_margMSLP_x[ida] = inset_axes(ax['its'][ida], width="100%", height="20%", loc='lower center')
-            ax_margMSLP_x[ida].set_frame_on(False)
-            ax_margMSLP_y[ida] = inset_axes(ax['its'][ida], width="20%", height="100%", loc='center left')
-            ax_margMSLP_y[ida].set_frame_on(False)
-            # plot the marginal histogram
-            ax_margMSLP_y[ida].barh(mslp_rg_mid,hist_HPI['MSLP']['THO'][ida],height=np.diff(mslp_rg),color='gray', alpha=0.7)
-            ax_margMSLP_x[ida].bar(mslp_rg_mid,hist_HPI['MSLP']['WSM6'][ida],width=np.diff(mslp_rg), color='gray', alpha=0.7)
-			# scatter
-            for istorm in Storms:
-                # scatter
-                ax['its'][ida].plot(allFC_error[istorm]['WSM6'][ida][2,:],allFC_error[istorm]['THO'][ida][2,:],linestyle='',markersize=4,marker='o',color=colorset[istorm])
-            #i_pdf = ax['its'][ida].pcolormesh(mslp_Xrg, mslp_Yrg, hist_HPI['joint_MSLP'][ida], cmap='gist_heat_r',shading='auto')
+        ax['wsm6_track'][ida].pcolormesh(Theta, R, hist_HPI['track']['WSM6'][ida], cmap='gist_heat_r',vmin=0,vmax=15)
+        t_pdf = ax['tho_track'][ida].pcolormesh(Theta, R, hist_HPI['track']['THO'][ida], cmap='gist_heat_r',vmin=0,vmax=15)
+        # Marginal histogram for MSLP
+        # create inset axes for the marginal histograms
+        ax_margMSLP_x[ida] = inset_axes(ax['mslp'][ida], width="100%", height="20%", loc='lower center')
+        ax_margMSLP_x[ida].set_frame_on(False)
+        ax_margMSLP_y[ida] = inset_axes(ax['mslp'][ida], width="20%", height="100%", loc='center left')
+        ax_margMSLP_y[ida].set_frame_on(False)
+        # plot the marginal histogram
+        ax_margMSLP_y[ida].barh(mslp_rg_mid,hist_HPI['MSLP']['THO'][ida],height=np.diff(mslp_rg),color='gray', alpha=0.7)
+        ax_margMSLP_x[ida].bar(mslp_rg_mid,hist_HPI['MSLP']['WSM6'][ida],width=np.diff(mslp_rg), color='gray', alpha=0.7)
+		# scatter
+        for istorm in Storms:
+            # scatter
+            ax['mslp'][ida].plot(allFC_error[istorm]['WSM6'][ida][2,:],allFC_error[istorm]['THO'][ida][2,:],linestyle='',markersize=4,marker='o',color=colorset[istorm])
+       #i_pdf = ax['its'][ida].pcolormesh(mslp_Xrg, mslp_Yrg, hist_HPI['joint_MSLP'][ida], cmap='gist_heat_r',shading='auto')
+       # Add diagonal line
+        x = np.linspace(-75, 75, num=2)
+        ax['mslp'][ida].plot(x, x, color='gray',linewidth=1,alpha=0.5)
+        x = np.linspace(-60, 60, num=2) 
+        ax['vmax'][ida].plot(x, x, color='gray',linewidth=1,alpha=0.5)
+
+        # Marginal histogram for Vmax
+        # create inset axes for the marginal histograms
+        ax_margVmax_x[ida] = inset_axes(ax['vmax'][ida], width="100%", height="20%", loc='upper center')
+        ax_margVmax_x[ida].set_frame_on(False)
+        ax_margVmax_y[ida] = inset_axes(ax['vmax'][ida], width="20%", height="100%", loc='center right')
+        ax_margVmax_y[ida].set_frame_on(False)
+        # plot the marginal histogram
+        ax_margVmax_y[ida].barh(vmax_rg_mid,hist_HPI['Vmax']['THO'][ida],height=np.diff(vmax_rg),color='gray', alpha=0.7)
+        ax_margVmax_x[ida].bar(vmax_rg_mid,hist_HPI['Vmax']['WSM6'][ida],width=np.diff(vmax_rg), color='gray', alpha=0.7)
+        ax_margVmax_y[ida].invert_xaxis()
+        ax_margVmax_x[ida].invert_yaxis()
+        # scatter
+        for istorm in Storms:
+            # scatter
+            ax['vmax'][ida].plot(allFC_error[istorm]['WSM6'][ida][3,:],allFC_error[istorm]['THO'][ida][3,:],linestyle='',markersize=4,marker='o',color=colorset[istorm])
 
 
 	# Create a colorbar above the first row of subplots
-    cbar_ax = fig.add_axes([0.92, 0.35, 0.02, 0.55])
-    fig.colorbar(t_pdf, cax=cbar_ax, orientation='vertical')
+    cbar_ax = fig.add_axes([0.925, 0.52, 0.03, 0.43])
+    cbar = fig.colorbar(t_pdf, cax=cbar_ax, orientation='vertical')
+    cbar.set_ticks([0, 5, 10, 15])
+    cbar.set_ticklabels(['0%', '5%', '10%', '15%'])
+
+    # Add experiment name
+    for ida in DA:
+        if DA.index(ida) == 0:
+            fig.text(0.23,0.97,ida, fontsize=12, ha='center', va='center')
+        elif DA.index(ida) == 1:
+            fig.text(0.50,0.97,ida, fontsize=12, ha='center', va='center')
+        elif DA.index(ida) == 2:
+            fig.text(0.78,0.97,ida, fontsize=12, ha='center', va='center')
+	
+	# Add y label
+    fig.text(0.05,0.85,'WSM6: track', fontsize=10, ha='center', va='center',rotation='vertical') 
+    fig.text(0.05,0.63,'THO: track', fontsize=10, ha='center', va='center',rotation='vertical')
+    fig.text(0.05,0.42,'THO: MSLP', fontsize=10, ha='center', va='center' ,rotation='vertical')
+    fig.text(0.05,0.19,'THO: Vmax', fontsize=10, ha='center', va='center',rotation='vertical')
+
+	# Add circle (legend)
+    circle = plt.Circle((0.94, 0.46), 0.005, color=colorset['HARVEY'], transform=fig.transFigure, clip_on=False) 
+    fig.add_artist(circle)
+    fig.text(0.94,0.44,'HARVEY', fontsize=10, ha='center', va='center')
+
+    circle = plt.Circle((0.94, 0.38), 0.005, color=colorset['JOSE'], transform=fig.transFigure, clip_on=False) 
+    fig.add_artist(circle)
+    fig.text(0.94,0.36,'JOSE', fontsize=10, ha='center', va='center')
+
+    circle = plt.Circle((0.94, 0.23), 0.005, color=colorset['IRMA'], transform=fig.transFigure, clip_on=False) 
+    fig.add_artist(circle)
+    fig.text(0.94,0.21,'IRMA', fontsize=10, ha='center', va='center')
+
+    circle = plt.Circle((0.94, 0.16), 0.005, color=colorset['MARIA'], transform=fig.transFigure, clip_on=False) 
+    fig.add_artist(circle)
+    fig.text(0.94,0.14,'MARIA', fontsize=10, ha='center', va='center')
+
 
     # Set axis attributes
     yticks = np.linspace(0,max_radii,num_circles+1)
@@ -428,22 +485,49 @@ def plot_sys_errs_pdf( allFC_error,hist_HPI ):
             ax['tho_track'][ida].set_xticks(np.deg2rad([0,45,90,135,190,225,270,315]))
             ax['tho_track'][ida].set_xticklabels(['E','NE','', 'NW', '','SW', 'S', 'SE'])
 
-        # Intensity
-        ax['its'][ida].set_xlim([-75,75])
-        ax['its'][ida].set_ylim([-75,75])
+        # MSLP
+        ax['mslp'][ida].set_xlabel('WSM6: MSLP',fontsize='10')
+        mslp_ticks = np.linspace(-75, 75, num=7, dtype=int)  
+        ax['mslp'][ida].set_xticks(mslp_ticks)
+        ax['mslp'][ida].set_xticklabels([str(i) for i in mslp_ticks] )
+        ax['mslp'][ida].set_xlim([-75,75])
+        ax['mslp'][ida].set_ylim([-75,75])
         # set equal aspect ratio
-        ax['its'][ida].set_aspect('equal', 'box')
+        ax['mslp'][ida].set_aspect('equal', 'box')
         # set reference lines
-        ax['its'][ida].axvline(x=0, color='gray', linestyle='-',linewidth=1,alpha=0.5)
-        ax['its'][ida].axhline(y=0, color='gray', linestyle='-',linewidth=1,alpha=0.5)
+        ax['mslp'][ida].axvline(x=0, color='gray', linestyle='-',linewidth=1,alpha=0.5)
+        ax['mslp'][ida].axhline(y=0, color='gray', linestyle='-',linewidth=1,alpha=0.5)
         # minimize the use of y axis label
-        if DA.index( ida ) != 0:
-            ax['its'][ida].set_yticklabels([])
+        #if DA.index( ida ) != 0:
+        #    ax['mslp'][ida].set_yticklabels([])
         # hide the marginal axes labels
         ax_margMSLP_x[ida].xaxis.set_visible(False)
         ax_margMSLP_x[ida].yaxis.set_ticks([])
         ax_margMSLP_y[ida].yaxis.set_visible(False)
         ax_margMSLP_y[ida].xaxis.set_ticks([])
+
+        # Vmax
+        ax['vmax'][ida].set_xlabel('WSM6: Vmax', fontsize='10')
+        vmax_ticks = np.linspace(-60, 60, num=7, dtype=int)
+        ax['vmax'][ida].set_xticks(vmax_ticks)
+        ax['vmax'][ida].set_xticklabels([str(i) for i in vmax_ticks])
+        ax['vmax'][ida].set_xlim([-60,60])
+        ax['vmax'][ida].set_ylim([-60,60])
+        # set equal aspect ratio
+        ax['vmax'][ida].set_aspect('equal', 'box')
+        # set reference lines
+        ax['vmax'][ida].axvline(x=0, color='gray', linestyle='-',linewidth=1,alpha=0.5)
+        ax['vmax'][ida].axhline(y=0, color='gray', linestyle='-',linewidth=1,alpha=0.5)
+        # minimize the use of y axis label
+        #if DA.index( ida ) != 0:
+        #    ax['vmax'][ida].set_yticklabels([])
+        # hide the marginal axes labels
+        ax_margVmax_x[ida].xaxis.set_visible(False)
+        ax_margVmax_x[ida].yaxis.set_ticks([])
+        ax_margVmax_y[ida].yaxis.set_visible(False)
+        ax_margVmax_y[ida].xaxis.set_ticks([])
+
+
 
     # Save figure
     des_name = small_dir+'SYSTEMS/Vis_analyze/Paper1/sys_fc_HPI_pdf.png'
@@ -458,7 +542,7 @@ if __name__ == '__main__':
     small_dir = '/work2/06191/tg854905/stampede2/Pro2_PSU_MW/'
 
     #--------Configuration------------
-    Storms = ['JOSE','IRMA','MARIA']
+    Storms = ['HARVEY','JOSE','IRMA','MARIA']
     DA = ['CONV','IR','IR+MW']
     MP = ['WSM6','THO'] #
 
@@ -477,7 +561,7 @@ if __name__ == '__main__':
     
     # if plot population
     plot_ppl = True
-    plot_bin = False
+    plot_bin = True
 
     #------------------------------------
     wrf_dir = big_dir
