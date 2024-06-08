@@ -14,9 +14,10 @@ from cartopy.mpl.gridliner import LONGITUDE_FORMATTER, LATITUDE_FORMATTER
 import time
 import matplotlib.dates as mdates
 from matplotlib import pyplot
+import copy
 
 import Util_data as UD
-import Track_demo as Track
+import Track
 
 matplotlib.rcParams['xtick.direction'] = 'in'
 matplotlib.rcParams['ytick.direction'] = 'in'

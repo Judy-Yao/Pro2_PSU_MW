@@ -89,10 +89,10 @@ def plot_EnKF_HPI():
         ax[ist]['ax1'] = fig.add_subplot( grids[ir,1] )
         # plot TC vitals 
         if if_tcvital:
-            plot_one( ax[ist]['ax0'], ax[ist]['ax1'],  d_tcvHr[ist],  'black', '-', 3.5, 'TCvital')
+            plot_one( ax[ist]['ax0'], ax[ist]['ax1'],  d_tcvHr[ist],  'gray', '-', 3.5, 'TCvital')
         # plot btk
         if if_btk:
-            plot_one( ax[ist]['ax0'], ax[ist]['ax1'],  d_btkHr[ist],  'black', (0,(1,1)), 3.5, 'TCvital')
+            plot_one( ax[ist]['ax0'], ax[ist]['ax1'],  d_btkHr[ist],  'black', '-', 3.5, 'TCvital')
 
 
     # Plot analyses
