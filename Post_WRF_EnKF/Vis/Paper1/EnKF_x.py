@@ -301,7 +301,7 @@ if __name__ == '__main__':
     MP = ['WSM6','THO']
     DA = ['CONV','IR','IR+MW']
 
-    var = ['minSLP','Vmax']# 'Precip',
+    var = ['Precip',]# 'Precip', 'minSLP','Vmax'
 
     start_time_str = {'HARVEY':'201708221200','IRMA':'201709030000','JOSE':'201709050000','MARIA':'201709160000'}
     end_time_str = {'HARVEY':'201708231200','IRMA':'201709040000','JOSE':'201709060000','MARIA':'201709170000'}
@@ -313,13 +313,13 @@ if __name__ == '__main__':
     if_btk = True
 
     # EnKF HPI
-    if_plot_HPI = True
+    if_plot_HPI = False
     slp_xa = True
     Vmax_xa = True
     slp_xb = False
     Vmax_xb = False
 
-    if_plot_precip = False
+    if_plot_precip = True
 
     # Create experiment names
     Exper_names = {}

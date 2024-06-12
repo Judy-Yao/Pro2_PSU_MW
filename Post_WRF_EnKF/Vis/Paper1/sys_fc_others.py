@@ -129,12 +129,28 @@ def read_forecast(Storm,exp_dir):
     return d_fc
 
 
-def plot_one( ax, var, state, color, line, line_width, label, steps=1 ):
+def plot_one( ist, ida, ax, var, state, color, line, line_width, label, steps=3 ):
 
-    times = state['time'][::steps]  
+    # Process data to be plotted
+    if (ist == 'HARVEY') and (ida != 'CONV'): # Jerry's run. He saved forecasts every three hours. 
+        times = state['time'] 
+        v_to_plot = state[var]
+    else:
+        times = state['time'][::steps]
+        v_to_plot = state[var][::steps]
+
     dates = [datetime.strptime(i,"%Y%m%d%H%M") for i in times]
-    ax.plot(dates,state[var],color=color,linestyle=line,linewidth=line_width) # instead of plot_date
 
+    if time_accumulated:
+    # For each index i in the list, it calculates the sum of all elements from the start of the list up to (and including) index i.	
+        accumulated_sums = [sum(v_to_plot[:i+1]) for i in range(len(v_to_plot))]
+        ax.plot(dates,accumulated_sums,color=color,linestyle=line,linewidth=line_width)
+    else:
+        ax.plot(dates,v_to_plot,color=color,linestyle=line,linewidth=line_width) # instead of plot_date
+
+# ------------------------------------------------------------------------------------------------------
+#            Operation: Plot RAINNC (accumulated grid scale precipitation)
+# ------------------------------------------------------------------------------------------------------
 
 # simply test 
 def plot_single_storm( Storm, var):
@@ -190,8 +206,8 @@ def plot_single_storm( Storm, var):
     print( 'Saving the figure to '+des_name )
 
 
+# rows: storms; columns: DA methods
 def plot_4by3(  ):
-
 
     # Set up figure
     fig = plt.figure( figsize=(6.5,8.5),dpi=200) # standard: 6.5,8.5
@@ -282,7 +298,6 @@ def plot_4by3(  ):
             if DA.index( ida ) != 0:
                 ax[ist][ida].set_yticklabels([]) 
 
-
     # Add DA name
     for ida in DA:
         if DA.index(ida) == 0:
@@ -305,18 +320,18 @@ def plot_4by3(  ):
     plt.savefig( des_name )
     print( 'Saving the figure to '+des_name )
 
-
+# rows: storms; columns: microphysics schemes
 def plot_4by2(  ):
 
     # Set up figure
     fig = plt.figure( figsize=(6.5,8.5),dpi=200) # standard: 6.5,8.5
-    outer_grids = fig.add_gridspec(ncols=1,nrows=4,top=0.93,right=0.97,hspace=0.11)
+    outer_grids = fig.add_gridspec(ncols=1,nrows=4,top=0.968,right=0.95,hspace=0.11)
 
     ax = {}
     for ist in Storms:
         ax[ist] = {}
         ir = Storms.index(ist)
-        ist_grids = outer_grids[ir].subgridspec(1, 2, wspace=0.05)
+        ist_grids = outer_grids[ir].subgridspec(1, 2, wspace=0.02)
         for imp in MP:
             ax[ist][imp] = fig.add_subplot( ist_grids[MP.index(imp)] )
 
@@ -332,7 +347,7 @@ def plot_4by2(  ):
         # loop thru each MP
         for imp in MP:
             iCtg = MP.index(imp) #category
-            for ida in DA[1:]:
+            for ida in DA:
                 for it in range(len(fc_init)):
                     print(ist+': '+ida+'_'+imp+' '+fc_init[it])
                     if not os.path.exists( big_dir+'/'+ist+'/'+Exper_names[ist][imp][ida]+'/wrf_df/'+fc_init[it] ):
@@ -340,7 +355,8 @@ def plot_4by2(  ):
                         continue
                     # plot
                     d_fc = read_forecast(ist,big_dir+'/'+ist+'/'+Exper_names[ist][imp][ida]+'/wrf_df/'+fc_init[it]) #,fc_init[it], DF_model_end)
-                    plot_one( ax[ist][imp], var, d_fc, Color_set['c'+str(iCtg)][it], Line_types[ida], 2, fc_init[it], steps=1 )
+                    # Plot forecasted value every 3 hours (Jerry saved his HARVEY forecasts in this way.)
+                    plot_one( ist, ida, ax[ist][imp], var, d_fc, Color_set['c'+str(iCtg)][it], Line_types[ida], 1.5, fc_init[it], steps=3 ) 
 
     # Legends
     for ist in Storms:
@@ -349,25 +365,21 @@ def plot_4by2(  ):
 
         lines = ax[ist]['WSM6'].get_lines()
         lgd_0 = [it for it in fc_times]
-        legend0 = ax[ist]['WSM6'].legend([lines[i] for i in [0,]], lgd_0,fontsize='7',loc='upper left')
+        legend0 = ax[ist]['WSM6'].legend([lines[i] for i in [0,1,2,3]], lgd_0,fontsize='7',loc='upper left')
         legend0.set_alpha( 0.5 )
         # Add the first legend manually to the current Axes
         ax[ist]['WSM6'].add_artist(legend0)
         
-        #lgd_1 = ['CONV','IR','IR+MW']
-        #legend1 = ax[ist]['WSM6'].legend([lines[i] for i in [0,1,2]], lgd_1,fontsize='7',loc='lower right',ncol=3)
-        #legend1.set_alpha( 0.5 )
-
         lines = ax[ist]['THO'].get_lines()
         lgd_0 = [it for it in fc_times]
-        legend0 = ax[ist]['THO'].legend([lines[i] for i in [0,]], lgd_0,fontsize='7',loc='upper left')
+        legend0 = ax[ist]['THO'].legend([lines[i] for i in [0,1,2,3]], lgd_0,fontsize='7',loc='upper left')
         legend0.set_alpha( 0.5 )
 
     # Create proxy artists for the second legend
     proxy_artist1 = plt.Line2D((0, 1), (0, 0), color=Color_set['c0'][0], linestyle='-')
     proxy_artist2 = plt.Line2D((0, 1), (0, 0), color=Color_set['c0'][0], linestyle='--')
     proxy_artist3 = plt.Line2D((0, 1), (0, 0), color=Color_set['c0'][0], linestyle=':')
-    ax['HARVEY']['WSM6'].legend([proxy_artist1, proxy_artist2, proxy_artist3], ['CONV', 'IR', 'IR+MW'],fontsize='7',loc='lower right',ncol=3)
+    ax['HARVEY']['WSM6'].legend([proxy_artist1, proxy_artist2, proxy_artist3], ['CONV', 'IR', 'IR+MW'],fontsize='7',loc='lower right')
 
     # Set ticks/other attributes
     date_form = mdates.DateFormatter("%m-%d")
@@ -400,21 +412,30 @@ def plot_4by2(  ):
                 ax[ist][imp].xaxis.set_major_formatter(date_form)
                 ax[ist][imp].tick_params(axis='x',labelsize=8)
             # y axis
-            ax[ist][imp].set_yscale('log')
-            #ax[ist][imp].set_ylim([0,7]) # X*1e6
-            #if MP.index(imp) != 0:
-            #     ax[ist][imp].set_yticklabels([])
-            #ax[ist][imp].grid(True,linewidth=1, color='gray', alpha=0.3, linestyle='-')
+            if time_accumulated:
+                ax[ist][imp].set_ylim([0,120]) # X*1e6
+            else:
+                ax[ist][imp].set_ylim([0,7]) # X*1e6
+            if MP.index(imp) != 0:
+                 ax[ist][imp].set_yticklabels([])
+            ax[ist][imp].grid(True,linewidth=1, color='gray', alpha=0.3, linestyle='-')
 
     # Add y label
-    fig.text(0.03,0.51,'Area total grid scale precipitation ($10^6$ mm) ', fontsize=12, ha='center', va='center',rotation='vertical')
-    fig.text(0.08,0.85,'HARVEY', fontsize=10, ha='center', va='center',rotation='vertical')
-    fig.text(0.08,0.63,'JOSE', fontsize=10, ha='center', va='center',rotation='vertical')
-    fig.text(0.08,0.42,'IRMA', fontsize=10, ha='center', va='center' ,rotation='vertical')
-    fig.text(0.08,0.21,'MARIA', fontsize=10, ha='center', va='center',rotation='vertical')
+    fig.text(0.06,0.87,'HARVEY', fontsize=10, ha='center', va='center',rotation='vertical')
+    fig.text(0.06,0.65,'JOSE', fontsize=10, ha='center', va='center',rotation='vertical')
+    fig.text(0.06,0.44,'IRMA', fontsize=10, ha='center', va='center' ,rotation='vertical')
+    fig.text(0.06,0.21,'MARIA', fontsize=10, ha='center', va='center',rotation='vertical')
+
+    if time_accumulated:
+        fig.text(0.55,0.05,'Every 3 hours: time-accumulated area total grid scale precipitation ($10^6$ mm)', fontsize=10, ha='center', va='center')
+    else:
+        fig.text(0.55,0.05,'Every 3 hours: area total grid scale precipitation ($10^6$ mm)', fontsize=10, ha='center', va='center')
 
     # Save figure
-    des_name = small_dir+'/SYSTEMS/Vis_analyze/Paper1/sys_fc_precip.png'
+    if time_accumulated:
+        des_name = small_dir+'/SYSTEMS/Vis_analyze/Paper1/Time_accu_sys_fc_precip.png'
+    else:
+        des_name = small_dir+'/SYSTEMS/Vis_analyze/Paper1/sys_fc_precip.png'
     plt.savefig( des_name )
     print( 'Saving the figure to '+des_name )
 
@@ -448,14 +469,28 @@ def add_subplot_axes(ax,rect):
     return subax
 
 
-def plot_one_diff( ist, imp, conv_each, ax, var, state, color, line, line_width, label, steps=1 ):
+def plot_one_diff( ist, ida, conv_each, ax, var, state, color, line, line_width, label, steps=3 ):
 
-    times = state['time'][::steps]
-    dates = [datetime.strptime(i,"%Y%m%d%H%M") for i in times]
-    if ist == 'HARVEY':
-        ax.plot(dates,state[var]-conv_each[var][::3],color=color,linestyle=line,linewidth=line_width) # instead of plot_date
+    # Process data to be plotted
+    if ist == 'HARVEY': # Jerry's run. He saved forecasts every three hours. 
+        conv_plot = conv_each[var][::steps] # Harvey conv_each is stored hourly
+        
+        times = state['time'] # Harvey other is stored every 3 hours
+        state_plot = state[var] # Harvey other is stored every 3 hours
     else:
-        ax.plot(dates,state[var]-conv_each[var],color=color,linestyle=line,linewidth=line_width) # instead of plot_date
+        conv_plot = conv_each[var][::steps] 
+        times = state['time'][::steps]
+        state_plot = state[var][::steps]
+
+    dates = [datetime.strptime(i,"%Y%m%d%H%M") for i in times]
+
+    if time_accumulated:
+        v_to_plot = state_plot-conv_plot
+        accumulated_sums = [sum(v_to_plot[:i+1]) for i in range(len(v_to_plot))]
+        ax.plot(dates,accumulated_sums,color=color,linestyle=line,linewidth=line_width)
+    else:
+        v_to_plot = state_plot-conv_plot
+        ax.plot(dates,v_to_plot,color=color,linestyle=line,linewidth=line_width) # instead of plot_date
 
 def plot_4by2_diff(  ):
 
@@ -504,14 +539,19 @@ def plot_4by2_diff(  ):
                         continue
                     # plot
                     d_fc = read_forecast(ist,big_dir+'/'+ist+'/'+Exper_names[ist][imp][ida]+'/wrf_df/'+fc_init[it]) #,fc_init[it], DF_model_end)
-                    plot_one_diff( ist,imp, conv[ist][imp][fc_init[it]], ax[ist][imp], var, d_fc, Color_set['c'+str(iCtg)][it], Line_types[ida], 2, fc_init[it], steps=1 )
+                    plot_one_diff( ist,ida, conv[ist][imp][fc_init[it]], ax[ist][imp], var, d_fc, Color_set['c'+str(iCtg)][it], Line_types[ida], 2, fc_init[it], steps=3 )
                     if ist == 'JOSE' and imp == "THO":
-                        plot_one_diff( ist,imp, conv[ist][imp][fc_init[it]], subax, var, d_fc, Color_set['c'+str(iCtg)][it], Line_types[ida], 1, fc_init[it], steps=1 )
-                        subax.set_yticks( [-5,-2.5,0] )
-                        subax.set_ylim([-5,1])
-                        subax.set_yticklabels(['-5.0','-2.5','0.0'],fontsize=6)
-                        subax.set_xticklabels([''])
-
+                        plot_one_diff( ist,ida, conv[ist][imp][fc_init[it]], subax, var, d_fc, Color_set['c'+str(iCtg)][it], Line_types[ida], 1, fc_init[it], steps=3 )
+                        if time_accumulated:
+                            subax.set_yticks( [-90,-45,0] )
+                            subax.set_ylim([-90,1])
+                            subax.set_yticklabels(['-90','-45','0'],fontsize=6)
+                            subax.set_xticklabels([''])
+                        else:
+                            subax.set_yticks( [-5,-2.5,0] )
+                            subax.set_ylim([-5,1])
+                            subax.set_yticklabels(['-5.0','-2.5','0.0'],fontsize=6)
+                            subax.set_xticklabels([''])
     # Legends
     for ist in Storms:
         fc_init = fc_iniT( ist )
@@ -570,8 +610,10 @@ def plot_4by2_diff(  ):
                 ax[ist][imp].xaxis.set_major_formatter(date_form)
                 ax[ist][imp].tick_params(axis='x',labelsize=8)
             # y axis
-            #ax[ist][imp].set_yscale('log')
-            ax[ist][imp].set_ylim([-1.75,1.0]) # X*1e6
+            if time_accumulated:
+                ax[ist][imp].set_ylim([-30,15]) # X*1e6
+            else:
+                ax[ist][imp].set_ylim([-1.75,1.0]) # X*1e6
             if MP.index(imp) != 0:
                  ax[ist][imp].set_yticklabels([])
             ax[ist][imp].grid(True,linewidth=1, color='gray', alpha=0.3, linestyle='-')
@@ -582,10 +624,16 @@ def plot_4by2_diff(  ):
     fig.text(0.04,0.44,'IRMA', fontsize=10, ha='center', va='center' ,rotation='vertical')
     fig.text(0.04,0.21,'MARIA', fontsize=10, ha='center', va='center',rotation='vertical')
 
-    fig.text(0.55,0.05,'Difference of area total grid scale precipitation ($10^6$ mm):\n Experiment - CONV', fontsize=10, ha='center', va='center')
+    if time_accumulated:
+        fig.text(0.55,0.05,'Every 3 hours: time-accumulated difference \n of area total grid scale precipitation ($10^6$ mm):\n Experiment - CONV', fontsize=10, ha='center', va='center')
+    else:
+        fig.text(0.55,0.05,'Every 3 hours: Difference of area total grid scale precipitation ($10^6$ mm):\n Experiment - CONV', fontsize=10, ha='center', va='center')
 
     # Save figure
-    des_name = small_dir+'/SYSTEMS/Vis_analyze/Paper1/sys_fc_precip_diff.png'
+    if time_accumulated:
+        des_name = small_dir+'/SYSTEMS/Vis_analyze/Paper1/Time_accu_sys_fc_precip_diff.png'
+    else:
+        des_name = small_dir+'/SYSTEMS/Vis_analyze/Paper1/sys_fc_precip_diff.png'
     plt.savefig( des_name )
     print( 'Saving the figure to '+des_name )
 
@@ -607,8 +655,11 @@ if __name__ == '__main__':
         fc_run_hrs = 60
 
     single_storm = False
+    multi_storms = True
     distinct_colors = False
-    
+    difference = True
+    time_accumulated = False
+
     #------------------------------------
     wrf_dir = big_dir
 
@@ -628,8 +679,14 @@ if __name__ == '__main__':
 
         if single_storm:
             plot_single_storm( Storms[0],var )
-        else:
+        
+        if multi_storms:
+            #plot_4by3(  )
+            plot_4by2(  )
+
+        if difference:
             plot_4by2_diff()    
+        
 
     end_time = time.process_time()
     print('time needed: ', end_time-start_time, ' seconds')
