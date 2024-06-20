@@ -16,7 +16,7 @@ from matplotlib import pyplot
 from fast_histogram import histogram2d as hist2d
 from mpl_toolkits.axes_grid1.inset_locator import inset_axes
 from mpl_toolkits.axes_grid1 import make_axes_locatable
-import matplotlib.patches as mpatches
+import matplotlib.patches as patches
 
 import Util_data as UD
 import Track
@@ -186,21 +186,6 @@ def calculate_FSP():
 # ------------------------------------------------------------------------------------------------------
 
 
-# Custom handler for multiple markers in a row
-class HandlerMultipleMarkers:
-    def __init__(self, color, alphas):
-        self.alphas = alphas
-        self.color = color
-
-    def legend_artist(self, legend, orig_handle, fontsize, handlebox):
-        x0, y0 = handlebox.xdescent, handlebox.ydescent
-        width, height = handlebox.width, handlebox.height
-        for i, alpha in enumerate(self.alphas):
-            handlebox.add_artist(plt.Line2D([x0 + (i + 0.5) * width / len(self.alphas)], [y0 + height / 2], linestyle='',
-                                            marker='o', markersize=6, markerfacecolor=self.color, alpha=alpha))
-        return handlebox
-
-
 # layout:
 # WSM6_normMAE, WSM6_FSP
 # THO_normMAE, THO_FSP
@@ -221,11 +206,9 @@ def plot_2by2():
     # Customization
     colors = {}
     colorset = {'HARVEY':'#FF13EC','JOSE':'#0D13F6','MARIA':'#FFA500','IRMA':'#DB2824'}
-    alphas = np.linspace(0.2,1,4)
-    #marker_type= {'CONV':'o','IR':'P','IR+MW':'X'}
-    marker_type= {'CONV':'P','IR':'o','IR+MW':'s'}
-
-
+    alphas = np.linspace(0.3,1,8)
+    marker_type= {'CONV':'o','IR':'P','IR+MW':'X'}
+    
     # Plot simulations
     for imp in MP:
         for ist in Storms:
@@ -243,18 +226,18 @@ def plot_2by2():
                     ax[imp]['fsp'].set_aspect('equal', 'box')
                     if ida == 'CONV':
                         continue
-                    # add mpatches to distinguish inferior and superior area
+                    # add patches to distinguish inferior and superior area
                     if_corners = [(-0.02, -0.02), (0.5, -0.02), (0.5, 0.5),(-0.02, 0.5)]
                     sp_corners = [(0.5, 0.5), (1.02, 0.5), (1.02, 1.02),(0.5, 1.02)]
                     # Add a patch (polygon) to the figure based on the corners
-                    if_polygon = mpatches.Polygon(if_corners, closed=True, edgecolor='r', facecolor='none')
-                    sp_polygon = mpatches.Polygon(sp_corners, closed=True, edgecolor='b', facecolor='none')
+                    if_polygon = patches.Polygon(if_corners, closed=True, edgecolor='r', facecolor='none')
+                    sp_polygon = patches.Polygon(sp_corners, closed=True, edgecolor='b', facecolor='none')
                     ax[imp]['fsp'].add_patch(if_polygon)
                     ax[imp]['fsp'].add_patch(sp_polygon)
 
                     fsp_track = fsp[ist][imp][ida][fc_init][0]
                     fsp_mslp = fsp[ist][imp][ida][fc_init][1] # Vmax: [2]
-                    ax[imp]['fsp'].scatter(fsp_mslp,fsp_track,s=30,marker=marker_type[ida],facecolor=colorset[ist],alpha=alphas[fc_inits.index(fc_init)],label='_nolegend_')
+                    ax[imp]['fsp'].scatter(fsp_mslp,fsp_track,s=30,marker=marker_type[ida],facecolor=colorset[ist],alpha=alphas[fc_inits.index(fc_init)])
 
     # Add legends
     # DAs
@@ -263,29 +246,9 @@ def plot_2by2():
     # Add the first legend manually to the current Axes
     ax[MP[0]]['mae'].add_artist(legend_DA)
     # Storms
-    # function to create rows for the legend
-    def create_legend_rows(colors, alphas, labels):
-        rows = [{'color': color, 'alphas': alphas, 'label': label} for color, label in zip(colors, labels)]
-        return rows
-    # define colors, alphas, and labels for the legend rows
-    legend_colors = ['#FF13EC','#0D13F6','#FFA500','#DB2824']
-    legend_alphas = alphas
-    legend_labels = Storms
-    # create legend rows
-    rows = create_legend_rows(legend_colors, legend_alphas, legend_labels)
-
-    handles = []
-    for row in rows:
-        handle = mpatches.FancyBboxPatch((0, 0), 1, 1, color='none')  # Dummy handle
-        handles.append(handle) 
-
-    ax[MP[1]]['fsp'].legend(handles, [row['label'] for row in rows],
-          handler_map={handle: HandlerMultipleMarkers(row['color'], row['alphas']) for handle, row in zip(handles, rows)},
-          loc='upper right')
-
-    #scatter_storm = ax[MP[1]]['fsp'].collections
-    #legend_storm = ax[MP[1]]['fsp'].legend([scatter_storm[i] for i in [0,8,16,24]],Storms,fontsize='7',loc='upper right')
-    #ax[MP[1]]['fsp'].add_artist(legend_storm) 
+    scatter_storm = ax[MP[1]]['fsp'].collections
+    legend_storm = ax[MP[1]]['fsp'].legend([scatter_storm[i] for i in [0,8,16,24]],Storms,fontsize='7',loc='upper right')
+    ax[MP[1]]['fsp'].add_artist(legend_storm) 
 
     # Add texts
     for imp in MP:

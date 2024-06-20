@@ -102,10 +102,10 @@ program test
   deallocate( tb_conv )
 
   ! Output the simulation at NWP model resolution in nc format
-  do isensor = 1, obs_info%nsensors
-    call rt_result_output_nc(res(isensor), state, filename_out, error_status)
-    call rt_result_dealloc(res(isensor), error_status)
-  end do
+  !do isensor = 1, obs_info%nsensors
+  !  call rt_result_output_nc(res(isensor), state, filename_out, error_status)
+  !  call rt_result_dealloc(res(isensor), error_status)
+  !end do
   
   ! Finish the simulation
   if (my_proc_id == 0) print *, "SUCCESS"
