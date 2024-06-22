@@ -170,7 +170,7 @@ def generate_one_name( Storm,DA,MP ):
                 raise ValueError('No corresponding storm!')
         elif DA == 'CONV':
             if Storm == 'HARVEY':
-                return 'J_DA+J_WRF+J_init-SP-intel17-THO-24hr-hroi300'
+                return 'J_DA+J_WRF+J_init-Expanse-THO-24hr-hroi300'
             elif Storm == 'IRMA' or Storm == 'JOSE':
                 return 'J_DA+J_WRF+J_init-SP-intel17-THO-30hr-hroi900'
             elif Storm == 'MARIA':

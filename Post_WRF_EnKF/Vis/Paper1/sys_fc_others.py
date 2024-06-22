@@ -96,8 +96,26 @@ def cst_color():
     Color_set = {'c0':Color1, 'c1':Color2}
     return Color_set
 
-# Read fields for a forecast
-def read_forecast(Storm,exp_dir):
+def storm_color():
+    colorset = {'HARVEY':'#FFA500','IRMA':'#FF13EC','JOSE':'#0D13F6','MARIA':'#097969',}
+    return colorset
+
+def alpha_fc_init():
+    alphas = np.linspace(0.2,1,4)
+    return alphas
+
+def DA_marker():
+    marker_type= {'CONV':'P','IR':'o','IR+MW':'s'}
+    return marker_type
+
+# ------------------------------------------------------------------------------------------------------
+#            Operation: Data Processing
+# ------------------------------------------------------------------------------------------------------
+
+# Only read forecasts from one initialization time
+# Read field from forecasts listed with wildcard
+# Without constraints on names
+def read_listed_forecast(storm,exp_dir):
 
     times = []
     d_fc = {var:[] for var in varnames} 
@@ -128,12 +146,251 @@ def read_forecast(Storm,exp_dir):
 
     return d_fc
 
+# Read forecasts from all initialization times
+# Sample number are different across different forecasts 
+# I.e., sample numbers are decided by the start of, end of the forecast time, and interval
+def read_fc_eachInit( storm,exp_name,exper_inits,DF_model_end ):
+
+    d_fc = {}
+    # Loop over initialization time for each experiment
+    for init_t in exper_inits:
+        fc_dir = wrf_dir+storm+'/'+exp_name+'/wrf_df/'
+
+        # initialize container
+        d_fc[init_t] = {var:[] for var in varnames}
+        # generate the forecast time series every 3 hours
+        fc_times_str = UD.generate_times(init_t,DF_model_end,3)
+        run_times = len(fc_times_str)
+
+        # read thru each forecast
+        for it in fc_times_str:
+            wrfout = ( fc_dir + init_t +
+                "/wrfout_d03_" +
+                it[:4] + "-" +  # Year
+                it[4:6] + "-" +  # Month
+                it[6:8] + "_" +  # Day
+                it[8:10] + ":" +  # Hour
+                it[10:12] + ":00"  # Minute and seconds
+            ) 
+            # loop thru vars
+            for var in varnames:
+                if var == 'Precip':
+                    ncdir = nc.Dataset( wrfout )
+                    ppb = ncdir.variables['RAINNC'][0,:,:]
+                    # Make precipitation related to convection stand out
+                    #mask = ppb <= 0.5
+                    #ppb_masked = ma.masked_array(ppb, mask=mask)
+                    #x_pp.append( np.ma.mean(ppb) )
+
+                d_fc[init_t][var].append( (np.sum(ppb)/1e6) )  # /1e6
+
+        # convert to numpy array
+        d_fc[init_t][var] = np.array( d_fc[init_t][var] )
+
+    return d_fc
+
+
+# Exper_vars: storms * microphysics * DA * fc_init 
+# Store forecasts from all initialization times
+def Read_allFCs():
+
+    # Read vars with lead times of various length
+    Exper_vars = {}
+    for istorm in Storms:
+        Exper_vars[istorm] = {}
+        # Time range for model data
+        Exper_initTimes = fc_iniT( istorm )
+        DF_model_end = t_range_model( istorm )
+        for imp in MP:
+            Exper_vars[istorm][imp] = {}
+            for ida in DA:
+                Exper_vars[istorm][imp][ida] = {}
+                iExper = Exper_names[istorm][imp][ida]
+                if os.path.exists( wrf_dir+'/'+istorm+'/'+iExper ):
+                    print('Reading variable value for '+istorm+' :'+iExper)
+                    if sameNum_sample:
+                        pass
+                    else:
+                        Exper_vars[istorm][imp][ida] = read_fc_eachInit(istorm,iExper,Exper_initTimes,DF_model_end)
+                else:
+                    Exper_vars[istorm][imp][ida] = None
+
+    return Exper_vars
+
+# Exper_vars: storms * microphysics * DA * fc_init 
+def Time_accu_means():
+
+    Exper_vars = Read_allFCs()
+
+    # find the shortest forecast period
+    fc_srt_len = {}
+    for ist in Storms:
+        fc_inits = fc_iniT( ist )
+        fc_lens = [ len( Exper_vars[ist][MP[0]][DA[0]][fc_init][varnames[0]] ) for fc_init in fc_inits]
+        fc_srt_len[ist] = np.min( fc_lens )
+
+    # Average over storms
+    Means = {}
+    for istorm in Storms:
+        fc_inits = fc_iniT( istorm )
+        Means[istorm] = {}
+        for imp in MP:
+            Means[istorm][imp] = {}
+            for ida in DA:
+                Means[istorm][imp][ida] = {}
+                for var in varnames:
+                    # assemble values of forecasted attributes of len(fc_inits)
+                    across_value = np.empty((1,fc_srt_len[istorm]))
+                    for fc_init in fc_inits:
+                        # only assemble values to the end of the shortest forecast period
+                        fc_values = Exper_vars[istorm][imp][ida][fc_init][var][:fc_srt_len[istorm]]
+                        accumulated_sums = [sum(fc_values[:i+1]) for i in range(len(fc_values))]
+                        across_value = np.concatenate( (across_value,np.array(accumulated_sums).reshape(1,fc_srt_len[istorm])),axis=0)
+                across_value = across_value[1:,:] # remove the first empty row
+                # average over all forecasts for that forecast kind
+                Means[istorm][imp][ida][var] = np.nanmean(across_value,axis=0)
+
+    return fc_srt_len, Means 
+
+
+def MEAN_overStorms():
+
+    mean_sts = {}
+    for imp in MP:
+        mean_sts[imp] = {}
+        for ida in DA:
+            mean_sts[imp][ida] = {}
+            for var in varnames:
+                # initialize containers
+                across_value = np.full( (len(Storms),max(fc_srt_len.values())), np.nan)
+                # loop thru storms
+                for ist in Storms:
+                    across_value[Storms.index(ist),:fc_srt_len[ist]] = Means[ist][imp][ida][var]
+                # average
+                mean_sts[imp][ida][var] = np.nanmean(across_value,axis=0)
+
+    return mean_sts
+
+# ------------------------------------------------------------------------------------------------------
+#            Operation: Plot RAINNC (accumulated grid scale precipitation)
+# ------------------------------------------------------------------------------------------------------
+
+# layout
+# WSM6: time-accumulated rain, WSM6: time-accumulated rain diff
+# THO: time-accumulated rain , THO: time-accumulated rain diff
+def plot_2by2_Means():
+
+    # Set up figure
+    fig = plt.figure( figsize=(6.5,6),dpi=200) # standard: 6.5,8.5
+    outer_grids = fig.add_gridspec(ncols=1,nrows=2,top=0.93,right=0.96,hspace=0.03)
+
+    ax = {}
+    for imp in MP:
+        ax[imp] = {}
+        ir = MP.index(imp)
+        ist_grids = outer_grids[ir].subgridspec(1, 2, wspace=0.2)
+        ax[imp]['orig'] = fig.add_subplot( ist_grids[0] )
+        ax[imp]['diff'] = fig.add_subplot( ist_grids[1] )
+
+    # Customization
+    colorset = storm_color()
+    #marker_type= DA_marker()
+    line_width = {'HARVEY':1.5,'IRMA':1.5,'JOSE':1.5,'MARIA':1.5, 'Mean':2}
+    Line_types = {'CONV':'-','IR':'--','IR+MW':':'}
+    alphas = {'CONV':0.5,'IR':0.7,'IR+MW':0.9}
+
+    # Plot simulations
+    for imp in MP:
+        for ist in Storms:
+            lead_t = list(range(0,fc_srt_len[ist]))
+            # Plot original value
+            for ida in DA:
+                ax[imp]['orig'].plot(lead_t,Means[ist][imp][ida]['Precip'],Line_types[ida],color=colorset[ist],linewidth=line_width[ist],alpha=alphas[ida])
+            # plot Exper - CONV
+            ax[imp]['diff'].axhline(y=0, color='gray', linestyle='-',linewidth=1.5,alpha=0.5)
+            for ida in DA[1:]:
+                ax[imp]['diff'].plot(lead_t,Means[ist][imp][ida]['Precip']-Means[ist][imp]['CONV']['Precip'],Line_types[ida],color=colorset[ist],linewidth=2,alpha=alphas[ida])
+
+    # mean over storms
+    mean_sts = MEAN_overStorms()
+    lead_t = list(range(0,max(fc_srt_len.values())))
+    for imp in MP:
+        # Plot original value
+        for ida in DA:
+            ax[imp]['orig'].plot(lead_t,mean_sts[imp][ida]['Precip'],Line_types[ida],color='black',linewidth=2,alpha=alphas[ida])
+        # Plot Exper - CONV
+        #for ida in DA[1:]:
+        #    ax[imp]['diff'].plot(lead_t,mean_sts[imp][ida]['Precip']-mean_sts[imp]['CONV']['Precip'],Line_types[ida],color='black',linewidth=2,alpha=alphas[ida])
+
+
+    # Manully add legends
+    # create proxy artists for the legend with different line widths and colors
+    lgd_1 = Storms + ['Mean']
+    legend_colors = list(colorset.values())
+    legend_colors.append( 'black' )
+    list_widths = list(line_width.values())
+    proxy_artists = [plt.Line2D([0], [0], color=color, lw=lw) for color,lw in zip( legend_colors,list_widths )]
+    #legend0.set_alpha( 0.5 )fig.text(0.5, 0.5, 'Time-accumulated differences of precipitation: Experiment - CONV', ha='center', va='center', rotation='vertical', fontsize=10)
+    # Add the first legend manually to the current Axes
+    ax['THO']['orig'].legend(proxy_artists,lgd_1,fontsize='8',loc='upper left',ncol=1)
+
+    lines = ax['WSM6']['orig'].get_lines()
+    lgd_0 = DA
+    legend0 = ax['WSM6']['orig'].legend([lines[i] for i in [-3,-2,-1]], lgd_0,fontsize='8',loc='upper left')
+    #legend0.set_alpha( 0.5 )
+    # Add the first legend manually to the current Axes
+    ax['WSM6']['orig'].add_artist(legend0)
+
+    # Set axis attributes
+    for imp in MP:
+        # x axis
+        ax[imp]['orig'].set_xlim( [-0.1,max(fc_srt_len.values())-1] )
+        ax[imp]['diff'].set_xlim( [-0.1,max(fc_srt_len.values())-1] )
+        ax[imp]['orig'].set_xticks([0,8,16,24,32] )
+        ax[imp]['diff'].set_xticks([0,8,16,24,32] )
+        if MP.index(imp) != 0:
+            ax[imp]['orig'].set_xticklabels(['D0','D1','D2','D3','D4'])
+            ax[imp]['diff'].set_xticklabels(['D0','D1','D2','D3','D4'])
+            ax[imp]['orig'].set_xlabel('Forecast Time (days)')
+            ax[imp]['diff'].set_xlabel('Forecast Time (days)')
+        else:
+            ax[imp]['orig'].set_xticklabels(['','','','',''])
+            ax[imp]['diff'].set_xticklabels(['','','','',''])
+        # y axis
+        ax[imp]['orig'].set_ylim( [-0.1,85.1] )
+        ax[imp]['diff'].set_ylim( [-30.1,10.1] )
+        # y ticks
+        diff_yticks = list(range(-30,10+1,5))
+        ax[imp]['diff'].set_yticks( diff_yticks )
+        ax[imp]['diff'].set_yticklabels( [str(it) for it in diff_yticks] )
+        orig_yticks = list(range(0,85+1,10))
+        ax[imp]['orig'].set_yticks( orig_yticks)
+        ax[imp]['orig'].set_yticklabels( [str(it) for it in orig_yticks] )
+        # y label
+        #ax[imp]['orig'].set_ylabel(imp,fontsize=10)
+        #ax[imp]['mslp'].set_ylabel('MSLP: MAE (hPa)')
+        # grid lines 
+        ax[imp]['orig'].grid(True,linewidth=1, color='gray', alpha=0.3, linestyle='-')
+        ax[imp]['diff'].grid(True,linewidth=1, color='gray', alpha=0.3, linestyle='-')
+
+    fig.text(0.03,0.73,'WSM6', fontsize=12, ha='center', va='center',rotation='vertical')
+    fig.text(0.03,0.32,'THO', fontsize=12, ha='center', va='center',rotation='vertical')
+    fig.text(0.07, 0.5, 'Time-accumulated Precip (TAP; $10^6$ mm)', ha='center', va='center', rotation='vertical', fontsize=10)
+    fig.text(0.53, 0.5, 'Differences of TAP: Experiment - CONV ($10^6$ mm)', ha='center', va='center', rotation='vertical', fontsize=10)
+
+    # Save figure
+    des_name = small_dir+'/SYSTEMS/Vis_analyze/Paper1/sys_time_accumulated_fc_precip_withFCtime.png'
+    plt.savefig( des_name )
+    print( 'Saving the figure to '+des_name )
+
+
+
 
 def plot_one( ist, ida, ax, var, state, color, line, line_width, label, steps=3 ):
 
     # Process data to be plotted
     if (ist == 'HARVEY') and (ida != 'CONV'): # Jerry's run. He saved forecasts every three hours. 
-        times = state['time'] 
+        times = state['time']
         v_to_plot = state[var]
     else:
         times = state['time'][::steps]
@@ -142,15 +399,11 @@ def plot_one( ist, ida, ax, var, state, color, line, line_width, label, steps=3 
     dates = [datetime.strptime(i,"%Y%m%d%H%M") for i in times]
 
     if time_accumulated:
-    # For each index i in the list, it calculates the sum of all elements from the start of the list up to (and including) index i.	
+    # For each index i in the list, it calculates the sum of all elements from the start of the list up to (and including) index i. 
         accumulated_sums = [sum(v_to_plot[:i+1]) for i in range(len(v_to_plot))]
         ax.plot(dates,accumulated_sums,color=color,linestyle=line,linewidth=line_width)
     else:
         ax.plot(dates,v_to_plot,color=color,linestyle=line,linewidth=line_width) # instead of plot_date
-
-# ------------------------------------------------------------------------------------------------------
-#            Operation: Plot RAINNC (accumulated grid scale precipitation)
-# ------------------------------------------------------------------------------------------------------
 
 # simply test 
 def plot_single_storm( Storm, var):
@@ -186,7 +439,7 @@ def plot_single_storm( Storm, var):
                     print('Forecast does not exist!')
                     continue
                 # plot
-                d_fc = read_forecast(Storm,big_dir+'/'+Storm+'/'+Exper_names[Storm][imp][ida]+'/wrf_df/'+fc_init[it]) #,fc_init[it], DF_model_end)
+                d_fc = read_listed_forecast(Storm,big_dir+'/'+Storm+'/'+Exper_names[Storm][imp][ida]+'/wrf_df/'+fc_init[it]) #,fc_init[it], DF_model_end)
                 plot_one( ax[ida], var, d_fc, Color_set['c'+str(iCtg)][it], Line_types[iCtg], 1.5, Labels[iCtg]+fc_init[it], steps=1 )
 
     # Set ticks/other attributes for intensity subplots
@@ -240,7 +493,7 @@ def plot_4by3(  ):
                         print('Forecast does not exist!')
                         continue
                     # plot
-                    d_fc = read_forecast(ist,big_dir+'/'+ist+'/'+Exper_names[ist][imp][ida]+'/wrf_df/'+fc_init[it]) #,fc_init[it], DF_model_end)
+                    d_fc = read_listed_forecast(ist,big_dir+'/'+ist+'/'+Exper_names[ist][imp][ida]+'/wrf_df/'+fc_init[it]) #,fc_init[it], DF_model_end)
                     plot_one( ax[ist][ida], var, d_fc, Color_set['c'+str(iCtg)][it], Line_types[iCtg], 1.5, Labels[iCtg]+fc_init[it], steps=1 )
 
 
@@ -354,7 +607,7 @@ def plot_4by2(  ):
                         print('Forecast does not exist!')
                         continue
                     # plot
-                    d_fc = read_forecast(ist,big_dir+'/'+ist+'/'+Exper_names[ist][imp][ida]+'/wrf_df/'+fc_init[it]) #,fc_init[it], DF_model_end)
+                    d_fc = read_listed_forecast(ist,big_dir+'/'+ist+'/'+Exper_names[ist][imp][ida]+'/wrf_df/'+fc_init[it]) #,fc_init[it], DF_model_end)
                     # Plot forecasted value every 3 hours (Jerry saved his HARVEY forecasts in this way.)
                     plot_one( ist, ida, ax[ist][imp], var, d_fc, Color_set['c'+str(iCtg)][it], Line_types[ida], 1.5, fc_init[it], steps=3 ) 
 
@@ -451,7 +704,7 @@ def add_subplot_axes(ax,rect):
     fig = plt.gcf()
     box = ax.get_position()
     width = box.width
-    height = box.height
+    height = rbox.height
     inax_position  = ax.transAxes.transform(rect[0:2])
     transFigure = fig.transFigure.inverted()
     infig_position = transFigure.transform(inax_position)    
@@ -503,7 +756,7 @@ def plot_4by2_diff(  ):
             conv[ist][imp] = {}
             for it in fc_init:
                 print('Reading CONV experiment: '+imp+' '+it)
-                conv[ist][imp][it] = read_forecast(ist,big_dir+'/'+ist+'/'+Exper_names[ist][imp]['CONV']+'/wrf_df/'+it) 
+                conv[ist][imp][it] = read_listed_forecast(ist,big_dir+'/'+ist+'/'+Exper_names[ist][imp]['CONV']+'/wrf_df/'+it) 
 
     # Set up figure
     fig = plt.figure( figsize=(6.5,8.5),dpi=200) # standard: 6.5,8.5
@@ -538,7 +791,7 @@ def plot_4by2_diff(  ):
                         print('Forecast does not exist!')
                         continue
                     # plot
-                    d_fc = read_forecast(ist,big_dir+'/'+ist+'/'+Exper_names[ist][imp][ida]+'/wrf_df/'+fc_init[it]) #,fc_init[it], DF_model_end)
+                    d_fc = read_listed_forecast(ist,big_dir+'/'+ist+'/'+Exper_names[ist][imp][ida]+'/wrf_df/'+fc_init[it]) #,fc_init[it], DF_model_end)
                     plot_one_diff( ist,ida, conv[ist][imp][fc_init[it]], ax[ist][imp], var, d_fc, Color_set['c'+str(iCtg)][it], Line_types[ida], 2, fc_init[it], steps=3 )
                     if ist == 'JOSE' and imp == "THO":
                         plot_one_diff( ist,ida, conv[ist][imp][fc_init[it]], subax, var, d_fc, Color_set['c'+str(iCtg)][it], Line_types[ida], 1, fc_init[it], steps=3 )
@@ -556,7 +809,6 @@ def plot_4by2_diff(  ):
     for ist in Storms:
         fc_init = fc_iniT( ist )
         fc_times = copy.deepcopy( fc_init )
-
         lines = ax[ist]['WSM6'].get_lines()
         lgd_0 = [it for it in fc_times]
         legend0 = ax[ist]['WSM6'].legend([lines[i] for i in [0,1,2,3]], lgd_0,fontsize='7',loc='lower center',ncol=2)
@@ -643,7 +895,7 @@ if __name__ == '__main__':
     small_dir = '/work2/06191/tg854905/stampede2/Pro2_PSU_MW/'
 
     #--------Configuration------------
-    Storms = ['HARVEY','JOSE','IRMA','MARIA']
+    Storms = ['HARVEY','IRMA','JOSE','MARIA']
     DA = ['CONV','IR','IR+MW']
     MP = ['WSM6','THO'] #
 
@@ -655,10 +907,11 @@ if __name__ == '__main__':
         fc_run_hrs = 60
 
     single_storm = False
-    multi_storms = True
+    multi_storms = False
     distinct_colors = False
-    difference = True
+    difference = False
     time_accumulated = False
+    Mean_timeAccu_wrt_time = True
 
     #------------------------------------
     wrf_dir = big_dir
@@ -671,6 +924,13 @@ if __name__ == '__main__':
             Exper_names[istorm][imp] = {}
             for ida in DA:
                 Exper_names[istorm][imp][ida] = UD.generate_one_name( istorm,ida,imp )
+
+    # Calculate the time-accumulated values and average over storms
+    # Fig should look like MAE_wrt_time
+    if Mean_timeAccu_wrt_time:
+        # calculate with same samples
+        fc_srt_len, Means = Time_accu_means()
+        plot_2by2_Means()
 
     # Plot
     start_time=time.process_time()
@@ -686,7 +946,6 @@ if __name__ == '__main__':
 
         if difference:
             plot_4by2_diff()    
-        
 
     end_time = time.process_time()
     print('time needed: ', end_time-start_time, ' seconds')
