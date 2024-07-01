@@ -440,6 +440,255 @@ def plot_2by2():
     print( 'Saving the figure to '+des_name )
 
 
+# layout:
+# WSM6_normMAE, WSM6_FSP
+# THO_normMAE, THO_FSP
+# Different DA is distinguished thru colors
+def plot_2by2_byColor():
+
+    # Set up figure
+    fig = plt.figure( figsize=(6.5,6),dpi=200) # standard: 6.5,8.5
+    outer_grids = fig.add_gridspec(ncols=1,nrows=2,top=0.93,right=0.95,hspace=0.09)
+
+    ax = {}
+    for imp in MP:
+        ax[imp] = {}
+        ir = MP.index(imp)
+        ist_grids = outer_grids[ir].subgridspec(1, 2, wspace=0.0)
+        ax[imp]['mae'] = fig.add_subplot( ist_grids[0] )
+        ax[imp]['fsp'] = fig.add_subplot( ist_grids[1] )
+
+    # Customization
+    colorset = storm_color()
+    alphas = alpha_fc_init()
+    colorset= {'CONV':'black','IR':'red','IR+MW':'blue'}   #DA_marker()
+
+    # Plot simulations
+    for imp in MP:
+        ax[imp]['mae'].set_aspect('equal', 'box')
+        x = np.linspace(-0.02,1.02)
+        ax[imp]['mae'].plot(x, x, color='grey', linestyle='-', linewidth=1)
+
+        ax[imp]['fsp'].set_aspect('equal', 'box')
+        # add mpatches to distinguish inferior and superior area
+        if_corners = [(-0.02, -0.02), (0.5, -0.02), (0.5, 0.5),(-0.02, 0.5)]
+        sp_corners = [(0.5, 0.5), (1.02, 0.5), (1.02, 1.02),(0.5, 1.02)]
+        # Add a patch (polygon) to the figure based on the corners
+        if_polygon = mpatches.Polygon(if_corners, closed=True, edgecolor='gray', facecolor='none')
+        sp_polygon = mpatches.Polygon(sp_corners, closed=True, edgecolor='black', facecolor='none')
+        ax[imp]['fsp'].add_patch(if_polygon)
+        ax[imp]['fsp'].add_patch(sp_polygon)
+
+        for ist in Storms:
+            fc_inits = fc_iniT( ist )
+            for ida in DA:
+                for fc_init in fc_inits:
+                    # Plot MAE
+                    mae_track = normMAE[ist][imp][fc_init][ida][0]
+                    mae_mslp = normMAE[ist][imp][fc_init][ida][1] # Vmax: [2]
+                    ax[imp]['mae'].scatter(mae_mslp,mae_track,s=30,facecolor=colorset[ida],alpha=0.6)
+                    # Plot FSP
+                    ax[imp]['fsp'].set_aspect('equal', 'box')
+                    if ida == 'CONV':
+                        continue
+                    fsp_track = fsp[ist][imp][ida][fc_init][0]
+                    fsp_mslp = fsp[ist][imp][ida][fc_init][1] # Vmax: [2]
+                    ax[imp]['fsp'].scatter(fsp_mslp,fsp_track,s=30,facecolor=colorset[ida],alpha=0.6)
+
+    # Add legends
+    # DAs
+    scatter_DA = ax[MP[0]]['mae'].collections
+    legend_DA = ax[MP[0]]['mae'].legend([scatter_DA[i] for i in [3,7,11]],DA,fontsize='7',loc='upper left')
+    # Add the first legend manually to the current Axes
+    ax[MP[0]]['mae'].add_artist(legend_DA)
+
+    # Add texts
+    for imp in MP:
+        ax[imp]['fsp'].text(0.38,0.05,'inferior', horizontalalignment='center', fontsize=10, color='gray')
+        ax[imp]['fsp'].text(0.88,0.55,'superior', horizontalalignment='center', fontsize=10, color='black')
+
+    fig.text(0.05,0.73,'WSM6', fontsize=10, ha='center', va='center',rotation='vertical')
+    fig.text(0.05,0.32,'THO', fontsize=10, ha='center', va='center',rotation='vertical')
+
+    # Set attributes
+    for imp in MP:
+        # limitation
+        ax[imp]['mae'].set_xlim([-0.02,1.02])
+        ax[imp]['mae'].set_ylim([-0.02,1.02])
+        ax[imp]['fsp'].set_xlim([-0.02,1.02])
+        ax[imp]['fsp'].set_ylim([-0.02,1.02])
+        # hide yticklabel
+        ax[imp]['fsp'].set_yticklabels([])
+
+        # X/Y labels
+        ax[imp]['mae'].set_ylabel('Track: Normalized MAE')
+        ax[imp]['fsp'].set_ylabel('Track: FSP')
+        if MP.index( imp ) == 1:
+            ax[imp]['mae'].set_xlabel('MSLP: Normalized MAE')
+            ax[imp]['fsp'].set_xlabel('MSLP: FSP')
+
+
+    # Save figure
+    des_name = small_dir+'/SYSTEMS/Vis_analyze/Paper1/sys_fc_HPI_absError_byColor.png'
+    plt.savefig( des_name )
+    print( 'Saving the figure to '+des_name )
+
+    return None
+
+
+# layout:
+# WSM6_normMAE, WSM6_FSP
+# THO_normMAE, THO_FSP
+# Above: different DA is distinguished thru colors
+# WSM6_FSP_overIR, THO_FSP_overIR
+# Different colors+transparencies to indicate FSP_overIR
+def plot_3by2():
+
+    matplotlib.rcParams['font.size'] = 10
+
+    # Set up figure
+    fig = plt.figure( figsize=(6.5,8.5),dpi=200) # standard: 6.5,8.5
+    outer_grids = fig.add_gridspec(ncols=1,nrows=3,top=0.95,right=0.95,hspace=0.12)
+
+    row = ['mae','fsp','fsp_ir']
+
+    ax = {}
+    for i in range(3):
+        ax[row[i]] = {}
+        for imp in MP:
+            ir = MP.index(imp)
+            ist_grids = outer_grids[i].subgridspec(1, 2, wspace=0.05)
+            ax[row[i]][imp] = fig.add_subplot( ist_grids[ir] )
+
+    # Customization
+    storm_colors = storm_color()
+    alphas = alpha_fc_init()
+    DA_color= {'CONV':'black','IR':'red','IR+MW':'blue'} 
+
+    # Plot simulations
+    for imp in MP:
+        #ax['mae'][imp].set_aspect('equal', 'box')
+        x = np.linspace(-0.02,1.02)
+        ax['mae'][imp].plot(x, x, color='grey', linestyle='-', linewidth=1)
+
+        #ax['fsp'][imp].set_aspect('equal', 'box')
+        # add mpatches to distinguish inferior and superior area
+        if_corners = [(-0.02, -0.02), (0.5, -0.02), (0.5, 0.5),(-0.02, 0.5)]
+        sp_corners = [(0.5, 0.5), (1.02, 0.5), (1.02, 1.02),(0.5, 1.02)]
+        # Add a patch (polygon) to the figure based on the corners
+        if_polygon = mpatches.Polygon(if_corners, closed=True, edgecolor='gray', facecolor='none')
+        sp_polygon = mpatches.Polygon(sp_corners, closed=True, edgecolor='black', facecolor='none')
+        ax['fsp'][imp].add_patch(if_polygon)
+        ax['fsp'][imp].add_patch(sp_polygon)
+
+		# Plot MAE and FSP relative to CONV
+        for ist in Storms:
+            fc_inits = fc_iniT( ist )
+            for ida in DA:
+                for fc_init in fc_inits:
+                    # Plot MAE
+                    mae_track = normMAE[ist][imp][fc_init][ida][0]
+                    mae_mslp = normMAE[ist][imp][fc_init][ida][1] # Vmax: [2]
+                    ax['mae'][imp].scatter(mae_mslp,mae_track,s=30,facecolor=DA_color[ida],alpha=0.6)
+                    # Plot FSP relative to CONV
+                    if ida == 'CONV':
+                        continue
+                    fsp_track = fsp[ist][imp][ida][fc_init][0]
+                    fsp_mslp = fsp[ist][imp][ida][fc_init][1] # Vmax: [2]
+                    ax['fsp'][imp].scatter(fsp_mslp,fsp_track,s=30,facecolor=DA_color[ida],alpha=0.6)
+
+		# Plot FSP relative to IR
+        for ist in Storms:
+            fc_inits = fc_iniT( ist )
+            #ax['fsp_ir'][imp].set_aspect('equal', 'box')
+            # add mpatches to distinguish inferior and superior area
+            if_corners = [(-0.02, -0.02), (0.5, -0.02), (0.5, 0.5),(-0.02, 0.5)]
+            sp_corners = [(0.5, 0.5), (1.02, 0.5), (1.02, 1.02),(0.5, 1.02)]
+            # Add a patch (polygon) to the figure based on the corners
+            if_polygon = mpatches.Polygon(if_corners, closed=True, edgecolor='r', facecolor='none')
+            sp_polygon = mpatches.Polygon(sp_corners, closed=True, edgecolor='b', facecolor='none')
+            ax['fsp_ir'][imp].add_patch(if_polygon)
+            ax['fsp_ir'][imp].add_patch(sp_polygon)
+
+            for fc_init in fc_inits:
+                fsp_track = fsp_ir[ist][imp]['IR+MW'][fc_init][0]
+                fsp_mslp = fsp_ir[ist][imp]['IR+MW'][fc_init][1] # Vmax: [2]
+                ax['fsp_ir'][imp].scatter(fsp_mslp,fsp_track,s=30,marker='o',facecolor=storm_colors[ist],alpha=alphas[fc_inits.index(fc_init)],label='_nolegend_')			
+	
+    # Add legends
+    # DAs
+    scatter_DA = ax['mae'][MP[0]].collections
+    legend_DA = ax['mae'][MP[0]].legend([scatter_DA[i] for i in [3,7,11]],DA,fontsize='10',loc='upper left')
+    # Add the first legend manually to the current Axes
+    ax['mae'][MP[0]].add_artist(legend_DA)
+
+    # Storms
+    # function to create rows for the legend
+    def create_legend_rows(colors, alphas, labels):
+        rows = [{'color': color, 'alphas': alphas, 'label': label} for color, label in zip(colors, labels)]
+        return rows
+        
+    # define colors, alphas, and labels for the legend rows
+    legend_colors = list(storm_colors.values()) #['#FFA500','#0D13F6','#FF13EC','#097969'] ##097969
+    legend_alphas = alphas
+    legend_labels = Storms
+    # create legend rows
+    rows = create_legend_rows(legend_colors, legend_alphas, legend_labels)
+
+    handles = []
+    for row in rows:
+        handle = mpatches.FancyBboxPatch((0, 0), 1, 1, color='none')  # Dummy handle
+        handles.append(handle)
+
+    ax['fsp_ir'][MP[1]].legend(handles, [row['label'] for row in rows],
+          handler_map={handle: HandlerMultipleMarkers(row['color'], row['alphas']) for handle, row in zip(handles, rows)},
+          loc='lower right',fontsize=8)
+
+    # Add texts
+    for imp in MP:
+        ax['fsp'][imp].text(0.38,0.05,'inferior', horizontalalignment='center', fontsize=10, color='gray')
+        ax['fsp_ir'][imp].text(0.38,0.05,'inferior', horizontalalignment='center', fontsize=10, color='gray')
+        ax['fsp'][imp].text(0.64,0.55,'superior', horizontalalignment='center', fontsize=10, color='black')
+        ax['fsp_ir'][imp].text(0.64,0.55,'superior', horizontalalignment='center', fontsize=10, color='black')
+    
+    # Add title
+    for imp in MP:
+        ax['mae'][imp].set_title( imp,fontsize=12 )
+
+    # Set attributes
+    for imp in MP:
+        # limitation
+        ax['mae'][imp].set_xlim([-0.02,1.02])
+        ax['mae'][imp].set_ylim([-0.02,1.02])
+        ax['fsp'][imp].set_xlim([-0.02,1.02])
+        ax['fsp'][imp].set_ylim([-0.02,1.02])
+        ax['fsp_ir'][imp].set_xlim([-0.02,1.02])
+        ax['fsp_ir'][imp].set_ylim([-0.02,1.02])
+        # hide yticklabel
+        ax['fsp'][imp].set_xticklabels([])
+        ax['mae'][imp].set_xticklabels([])
+        if MP.index( imp ) == 1:
+            ax['fsp_ir'][imp].set_yticklabels([])
+            ax['fsp'][imp].set_yticklabels([])
+            ax['mae'][imp].set_yticklabels([])
+        # X/Y labels
+        if MP.index( imp ) == 0:
+            ax['mae'][imp].set_ylabel('Track: Normalized MAE',fontsize=10)
+            ax['fsp'][imp].set_ylabel('Track: FSP (rel. CONV)',fontsize=10)
+            ax['fsp_ir'][imp].set_ylabel('Track: FSP (rel. IR)',fontsize=10)
+        ax['mae'][imp].set_xlabel('MSLP: Normalized MAE',fontsize=10)
+        ax['fsp'][imp].set_xlabel('MSLP: FSP (rel. CONV)',fontsize=10)
+        ax['fsp_ir'][imp].set_xlabel('MSLP: FSP (rel. IR)',fontsize=10)
+
+
+    # Save figure
+    des_name = small_dir+'/SYSTEMS/Vis_analyze/Paper1/sys_fc_HPI_absError_3by2.png'
+    plt.savefig( des_name )
+    print( 'Saving the figure to '+des_name )
+
+
+
+
 # Add a smaller subplot in a subplot.
 # See: https://stackoverflow.com/questions/17458580/embedding-small-plots-inside-subplots-in-matplotlib
 def add_subplot_axes(ax,rect):
@@ -584,8 +833,9 @@ def plot_2by2_MAEs():
 
     # Save figure
     des_name = small_dir+'/SYSTEMS/Vis_analyze/Paper1/sys_fc_HPI_absError_MAEs_withFCtime.png'
-    plt.savefig( des_name )
     print( 'Saving the figure to '+des_name )
+
+    return None
 
 # layout:
 # WSM6_FSP_overIR, THO_FSP_overIR
@@ -686,9 +936,9 @@ if __name__ == '__main__':
     if sameNum_sample:
         fc_run_hrs = 60
 
-    normMAE_FSP = False
-    MAE_wrt_time = True
-    FSP_IR = False
+    normMAE_FSP = True
+    MAE_wrt_time = False
+    FSP_IR = True
     #------------------------------------
     wrf_dir = big_dir
 
@@ -704,14 +954,15 @@ if __name__ == '__main__':
     # Calculate error
     Exper_error = calculate_abs_error()
     
-    if normMAE_FSP:
+    if normMAE_FSP and not FSP_IR:
         # Calculate normalized MAE
         normMAE = normalize_MAE()
 
         # Calculate FSP
         fsp = FSP_overCONV()
 
-        plot_2by2()
+        plot_2by2_byColor()
+        #plot_2by2()
 
     if MAE_wrt_time:
         # Calculate MAE with same samples
@@ -719,9 +970,22 @@ if __name__ == '__main__':
 
         plot_2by2_MAEs()
 
-    if FSP_IR:
+    if FSP_IR and not normMAE_FSP:
         fsp = FSP_overIR()
         plot_1by2()
+
+    if normMAE_FSP and FSP_IR:
+        # Calculate normalized MAE
+        normMAE = normalize_MAE()
+
+        # Calculate FSP relative to CONV
+        fsp = FSP_overCONV()
+
+        # Calculate FSP relative to IR
+        fsp_ir = FSP_overIR()
+    
+        plot_3by2()
+
 
     #plot_4by2():unable to plot it with 6.5 inch wide and 8.5 inch tall
     # layout:
