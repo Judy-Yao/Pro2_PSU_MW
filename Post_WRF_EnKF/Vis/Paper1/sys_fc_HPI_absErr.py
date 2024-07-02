@@ -605,8 +605,8 @@ def plot_3by2():
             if_corners = [(-0.02, -0.02), (0.5, -0.02), (0.5, 0.5),(-0.02, 0.5)]
             sp_corners = [(0.5, 0.5), (1.02, 0.5), (1.02, 1.02),(0.5, 1.02)]
             # Add a patch (polygon) to the figure based on the corners
-            if_polygon = mpatches.Polygon(if_corners, closed=True, edgecolor='r', facecolor='none')
-            sp_polygon = mpatches.Polygon(sp_corners, closed=True, edgecolor='b', facecolor='none')
+            if_polygon = mpatches.Polygon(if_corners, closed=True, edgecolor='gray', facecolor='none')
+            sp_polygon = mpatches.Polygon(sp_corners, closed=True, edgecolor='black', facecolor='none')
             ax['fsp_ir'][imp].add_patch(if_polygon)
             ax['fsp_ir'][imp].add_patch(sp_polygon)
 
@@ -685,8 +685,6 @@ def plot_3by2():
     des_name = small_dir+'/SYSTEMS/Vis_analyze/Paper1/sys_fc_HPI_absError_3by2.png'
     plt.savefig( des_name )
     print( 'Saving the figure to '+des_name )
-
-
 
 
 # Add a smaller subplot in a subplot.

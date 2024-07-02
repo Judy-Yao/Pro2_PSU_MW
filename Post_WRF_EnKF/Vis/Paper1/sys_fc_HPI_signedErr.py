@@ -17,6 +17,7 @@ from matplotlib import pyplot
 from fast_histogram import histogram2d as hist2d
 from mpl_toolkits.axes_grid1.inset_locator import inset_axes
 from mpl_toolkits.axes_grid1 import make_axes_locatable
+from scipy.stats import linregress
 
 import Util_data as UD
 import Track
@@ -597,15 +598,32 @@ def plot_mslpVSvmax( allFC_error,hist_HPI ):
         ax_wsm6_margVmax[ida].barh(vmax_rg_mid,hist_HPI['Vmax']['WSM6'][ida],height=np.diff(vmax_rg),color='gray', alpha=0.7)
         ax_wsm6_margMSLP[ida].bar(mslp_rg_mid,hist_HPI['MSLP']['WSM6'][ida],width=np.diff(mslp_rg), color='gray', alpha=0.7)
         # scatter
+        stack_sts = np.zeros((4,1))
         for istorm in Storms:
             # scatter
             ax['wsm6'][ida].plot(allFC_error[istorm]['WSM6'][ida][2,:],allFC_error[istorm]['WSM6'][ida][3,:],linestyle='',markersize=4,marker='o',color=colorset[istorm],alpha=alphas[istorm])
-       #i_pdf = ax['its'][ida].pcolormesh(mslp_Xrg, mslp_Yrg, hist_HPI['joint_MSLP'][ida], cmap='gist_heat_r',shading='auto')
-       # Add diagonal line
+            # stack
+            stack_sts = np.concatenate((stack_sts,allFC_error[istorm]['WSM6'][ida]),axis=1)
+
+        stack_wsm6 = stack_sts[:,1:] #remove the first empty column
+        # remove data point (column) if any element is nan
+        nan_mask = np.isnan(stack_wsm6).any(axis=0) # identify nan elements using a boolean mask
+        clean_wsm6 = stack_wsm6[:,~nan_mask] # remove NaN elements by inverting the mask
+        # Fit the least squares line
+        slope, intercept, r_value, p_value, std_err = linregress(clean_wsm6[2,:], clean_wsm6[3,:]) # linear regression
+        # Generate y values for the fitted line
         x = np.linspace(-75, 75, num=2)
-        ax['wsm6'][ida].plot(x, x, color='gray',linewidth=1,alpha=0.5)
-        x = np.linspace(-75, 75, num=2)
-        ax['tho'][ida].plot(x, x, color='gray',linewidth=1,alpha=0.5)
+        y_fit = slope * x + intercept
+        ax['wsm6'][ida].plot(x, y_fit, color='black',linewidth=1,alpha=0.5)
+        ax['wsm6'][ida].text(-50,50,"y="+f"{slope:.2f}"+"*x+"+f"({intercept:.2f})",fontsize=8,horizontalalignment='left')
+        ax['wsm6'][ida].text(10,30,"$\mathregular{R^2}$: "+f"{r_value**2:.2f}")
+
+        #i_pdf = ax['its'][ida].pcolormesh(mslp_Xrg, mslp_Yrg, hist_HPI['joint_MSLP'][ida], cmap='gist_heat_r',shading='auto')
+        # Add diagonal line
+        #x = np.linspace(-75, 75, num=2)
+        #ax['wsm6'][ida].plot(x, x, color='gray',linewidth=1,alpha=0.5)
+        #x = np.linspace(-75, 75, num=2)
+        #ax['tho'][ida].plot(x, x, color='gray',linewidth=1,alpha=0.5)
 
         # Marginal histogram for Vmax
         # create inset axes for the marginal histograms
@@ -619,9 +637,24 @@ def plot_mslpVSvmax( allFC_error,hist_HPI ):
         #ax_tho_margVmax[ida].invert_xaxis()
         #ax_tho_margMSLP[ida].invert_yaxis()
         # scatter
+        stack_sts = np.zeros((4,1))
         for istorm in Storms:
             # scatter
             ax['tho'][ida].plot(allFC_error[istorm]['THO'][ida][2,:],allFC_error[istorm]['THO'][ida][3,:],linestyle='',markersize=4,marker='o',color=colorset[istorm],alpha=alphas[istorm])
+            # stack
+            stack_sts = np.concatenate((stack_sts,allFC_error[istorm]['THO'][ida]),axis=1)
+        
+        stack_tho = stack_sts[:,1:] #remove the first empty column
+        nan_mask = np.isnan(stack_tho).any(axis=0) # identify nan elements using a boolean mask
+        clean_tho = stack_tho[:,~nan_mask] # remove NaN elements by inverting the mask
+        # Fit the least squares line
+        slope, intercept, r_value, p_value, std_err = linregress(clean_tho[2,:], clean_tho[3,:])  # 1 means fitting a line (degree 1 polynomial)
+        # Generate y values for the fitted line
+        x = np.linspace(-75, 75, num=2)
+        y_fit = slope * x + intercept
+        ax['tho'][ida].plot(x, y_fit, color='black',linewidth=1,alpha=0.5)
+        ax['tho'][ida].text(-50,50,"y="+f"{slope:.2f}"+"*x+"+f"({intercept:.2f})",fontsize=8,horizontalalignment='left')
+        ax['tho'][ida].text(10,30,"$\mathregular{R^2}$: "+f"{r_value**2:.2f}")
 
     # Create a colorbar above the first row of subplots
     cbar_ax = fig.add_axes([0.925, 0.52, 0.03, 0.43])
@@ -686,7 +719,7 @@ def plot_mslpVSvmax( allFC_error,hist_HPI ):
             ax['tho_track'][ida].set_xticklabels(['E','NE','', 'NW', '','SW', 'S', 'SE'])
 
         # WSM6 intensity
-        ax['wsm6'][ida].set_xlabel('WSM6: MSLP',fontsize='10')
+        horizontalalignment='center',ax['wsm6'][ida].set_xlabel('WSM6: MSLP',fontsize='10')
         mslp_ticks = np.linspace(-75, 75, num=7, dtype=int)
         ax['wsm6'][ida].set_xticks(mslp_ticks)
         ax['wsm6'][ida].set_xticklabels([str(i) for i in mslp_ticks] )
@@ -787,8 +820,8 @@ if __name__ == '__main__':
         # bin data if necessary
         if plot_bin:
             hist_HPI = bin_allFc( allFC_error ) 
-            plot_mslpVSmslp( allFC_error,hist_HPI )
-            #plot_mslpVSvmax( allFC_error,hist_HPI )
+            #plot_mslpVSmslp( allFC_error,hist_HPI )
+            plot_mslpVSvmax( allFC_error,hist_HPI )
         else:
             pass
             #scatter_sys_errs( allFC_error ) 
