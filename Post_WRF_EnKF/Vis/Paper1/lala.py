@@ -631,13 +631,13 @@ def plot_mslpVSvmax( allFC_error,hist_HPI ):
         y_fit = slope * x + intercept
         ax['wsm6'][ida].plot(x, y_fit, color='black',linewidth=1,alpha=0.5)
         #ax['wsm6'][ida].text(-50,50,"y="+f"{slope:.2f}"+"*x+"+f"({intercept:.2f})",fontsize=8,horizontalalignment='left')
-        ax['wsm6'][ida].text(10,20,"$\mathregular{R^2}$: "+f"{r_value**2:.2f}")
+        ax['wsm6'][ida].text(10,30,"$\mathregular{R^2}$: "+f"{r_value**2:.2f}")
         
         # calculate mean and median over all storms
         mean_all = np.mean(clean_wsm6,axis=1)
         median_all = np.median(clean_wsm6,axis=1)
-        ax['wsm6'][ida].scatter(mean_all[2],mean_all[3],marker='o',edgecolor='black',facecolors='none',s=25,alpha=0.6)
-        ax['wsm6'][ida].scatter(median_all[2],median_all[3],marker='+',facecolors='black',linewidths=1,s=25)
+        ax['wsm6'][ida].scatter(mean_all[2],mean_all[3],marker='o',edgecolor='black',facecolors='none',s=15,alpha=0.6)
+        ax['wsm6'][ida].scatter(median_all[2],median_all[3],marker='+',facecolors='black',linewidths=1,s=15)
 
         #i_pdf = ax['its'][ida].pcolormesh(mslp_Xrg, mslp_Yrg, hist_HPI['joint_MSLP'][ida], cmap='gist_heat_r',shading='auto')
         # Add diagonal line
@@ -659,13 +659,11 @@ def plot_mslpVSvmax( allFC_error,hist_HPI ):
         #ax_tho_margMSLP[ida].invert_yaxis()
         # scatter
         stack_sts = np.zeros((4,1))
-        for ist in Storms:
-            # scatter the mean and median
-            ax['tho'][ida].scatter(mm[ist]['THO'][ida]['mean'][2],mm[ist]['THO'][ida]['mean'][3],marker='o',edgecolor=colorset[ist],facecolors='none',s=25,alpha=0.6)
-            ax['tho'][ida].scatter(mm[ist]['THO'][ida]['median'][2],mm[ist]['THO'][ida]['median'][3],linewidths=1,marker='+',facecolor=colorset[ist],s=25)
-            #ax['tho'][ida].plot(allFC_error[istorm]['THO'][ida][2,:],allFC_error[istorm]['THO'][ida][3,:],linestyle='',markersize=4,marker='o',color=colorset[istorm],alpha=alphas[istorm])
+        for istorm in Storms:
+            # scatter
+            ax['tho'][ida].plot(allFC_error[istorm]['THO'][ida][2,:],allFC_error[istorm]['THO'][ida][3,:],linestyle='',markersize=4,marker='o',color=colorset[istorm],alpha=alphas[istorm])
             # stack
-            stack_sts = np.concatenate((stack_sts,allFC_error[ist]['THO'][ida]),axis=1)
+            stack_sts = np.concatenate((stack_sts,allFC_error[istorm]['THO'][ida]),axis=1)
         
         stack_tho = stack_sts[:,1:] #remove the first empty column
         nan_mask = np.isnan(stack_tho).any(axis=0) # identify nan elements using a boolean mask
@@ -676,26 +674,14 @@ def plot_mslpVSvmax( allFC_error,hist_HPI ):
         x = np.linspace(-75, 75, num=2)
         y_fit = slope * x + intercept
         ax['tho'][ida].plot(x, y_fit, color='black',linewidth=1,alpha=0.5)
-        #ax['tho'][ida].text(-50,50,"y="+f"{slope:.2f}"+"*x+"+f"({intercept:.2f})",fontsize=8,horizontalalignment='left')
-        ax['tho'][ida].text(10,20,"$\mathregular{R^2}$: "+f"{r_value**2:.2f}")
-
-        # calculate mean and median over all storms
-        mean_all = np.mean(clean_tho,axis=1)
-        median_all = np.median(clean_tho,axis=1)
-        ax['tho'][ida].scatter(mean_all[2],mean_all[3],marker='o',edgecolor='black',facecolors='none',s=25,alpha=0.6)
-        ax['tho'][ida].scatter(median_all[2],median_all[3],marker='+',facecolors='black',linewidths=1,s=25)
+        ax['tho'][ida].text(-50,50,"y="+f"{slope:.2f}"+"*x+"+f"({intercept:.2f})",fontsize=8,horizontalalignment='left')
+        ax['tho'][ida].text(10,30,"$\mathregular{R^2}$: "+f"{r_value**2:.2f}")
 
     # Create a colorbar above the first row of subplots
     cbar_ax = fig.add_axes([0.925, 0.52, 0.03, 0.43])
     cbar = fig.colorbar(t_pdf, cax=cbar_ax, orientation='vertical')
     cbar.set_ticks([0, 5, 10, 15, 20])
     cbar.set_ticklabels(['0%', '5%', '10%', '15%', '20%'])
-
-    # Add legend
-    scatter_DA = ax['wsm6'][DA[0]].collections
-    legend_DA = ax['wsm6'][DA[0]].legend([scatter_DA[i] for i in [-2,-1]],['Mean','Median'],fontsize='7',loc='upper center')
-    scatter_DA = ax['tho'][DA[0]].collections
-    legend_DA = ax['tho'][DA[0]].legend([scatter_DA[i] for i in [-2,-1]],['Mean','Median'],fontsize='7',loc='upper center')
 
     # Add experiment name
     for ida in DA:

@@ -298,11 +298,11 @@ def set_range( ivar):
     elif ivar == 'V': #V-component of Wind on Mass Points
         return -3, 3 #3.5
     elif ivar == 'W': #W-component of Wind on Mass Points
-        return -0.05, 0.05 #0.05
+        return -0.06, 0.06 #0.05
     elif ivar == 'T': #Temperature in Kelvin
-        return -2,2 #-2,3
+        return -2.1,2.1 #-2,3
     elif ivar == 'QVAPOR':
-        return  -0.002,0.001
+        return  -0.002,0.0013
     elif ivar == 'REFL_10CM':
         return -22,22 #-15, 18
     else:
@@ -390,7 +390,7 @@ def plot_sameMP_diffDA( h_count,imp,list_da ):
 
     # Set up figure
     fig = plt.figure( figsize=(6.5,8.5),dpi=200) # standard: 6.5,8.5
-    outer_grids = fig.add_gridspec(ncols=1,nrows=2,top=0.93,left=0.1,hspace=0.09)
+    outer_grids = fig.add_gridspec(ncols=1,nrows=2,top=0.93,left=0.15,hspace=0.09)
 
     # reshape 1by6 list to 2by3 list
     vars_2by3 = [var_names[i:i+3] for i in range(0, len(var_names), 3)]
@@ -426,14 +426,15 @@ def plot_sameMP_diffDA( h_count,imp,list_da ):
             ax[ida][iv].invert_yaxis()
 
     # Create a colorbar above the first row of subplots
-    cbar_ax = fig.add_axes([0.92, 0.1, 0.02, 0.8]) #fig.add_axes([0.925, 0.52, 0.03, 0.43])
-    cbar = fig.colorbar(im, cax=cbar_ax, orientation='vertical')
+    cbar_ax = fig.add_axes([0.15, 0.05, 0.75, 0.02]) 
+    cbar = fig.colorbar(im, cax=cbar_ax, orientation='horizontal',extend='max')
     cbar.set_ticks([0, 5, 10, 15, 20])
     cbar.set_ticklabels(['0%', '5%', '10%', '15%', '20%'])
 
     # axes attributes
     for ida in list_da:
         for iv in var_names:
+            # y axis
             ax[ida][iv].set_ylim([900,100])
             y_ticks = [900,700,500,300,100]
             ax[ida][iv].set_yticks( y_ticks )
@@ -441,10 +442,43 @@ def plot_sameMP_diffDA( h_count,imp,list_da ):
                 ax[ida][iv].set_yticklabels([str(it) for it in y_ticks])
             else:
                 ax[ida][iv].set_yticklabels([])
+            # x axis
+            if iv == 'QVAPOR':
+                x_ticks = [-1.5e-3,0,1.0e-3]
+                ax[ida][iv].set_xticks( x_ticks )
+                ax[ida][iv].set_xticklabels( ['-1.5$\mathregular{e^{-3}}$','0','1.0$\mathregular{e^{-3}}$'], fontsize=9)
 
+    # Add texts
+    for ida in list_da:
+        for ivar in var_names:
+            if ivar == 'U': #U-component of Wind on Mass Points
+                x = 2.3
+            elif ivar == 'V': #V-component of Wind on Mass Points
+                x = 2.3
+            elif ivar == 'W': #W-component of Wind on Mass Points
+                x = 0.045
+            elif ivar == 'T': #Temperature in Kelvin
+                x = 1.6
+            elif ivar == 'QVAPOR':
+                x = 0.0008
+            elif ivar == 'REFL_10CM':
+                x = 12
+            else:
+                pass
+
+            if ivar == 'REFL_10CM':
+                ax[ida][ivar].text(x,850,'REFL')
+            elif ivar == 'QVAPOR':
+                ax[ida][ivar].text(x,850,'Qv')
+            else:
+                ax[ida][ivar].text(x,850,ivar)
+
+    # y label
+    fig.text(0.05,0.75,'IR_'+imp+' - CONV_'+imp, fontsize=11, ha='center', va='center',rotation='vertical')
+    fig.text(0.05,0.30,'IR_'+imp+' - CONV_'+imp, fontsize=11, ha='center', va='center',rotation='vertical')
 
     # Save figure
-    des_name = small_dir+'SYSTEMS/Vis_analyze/Paper1/sys_pdf_Xa_diff_'+exp_control+'_'+imp+'.png'
+    des_name = small_dir+'SYSTEMS/Vis_analyze/Paper1/sys_pdf_XaDiff_relto_'+exp_control+'_'+imp+'.png'
     plt.savefig( des_name )
     print( 'Saving the figure to '+des_name )
 
@@ -485,14 +519,15 @@ def plot_sameDA_betweenDiffMP( h_count,ida ):
             ax[imp+'_'+exp_control][iv].invert_yaxis()
 
     # Create a colorbar above the first row of subplots
-    cbar_ax = fig.add_axes([0.92, 0.1, 0.02, 0.8]) #fig.add_axes([0.925, 0.52, 0.03, 0.43])
-    cbar = fig.colorbar(im, cax=cbar_ax, orientation='vertical')
+    cbar_ax = fig.add_axes([0.92, 0.11, 0.02, 0.82]) #fig.add_axes([0.925, 0.52, 0.03, 0.43])
+    cbar = fig.colorbar(im, cax=cbar_ax, orientation='vertical',extend='max')
     cbar.set_ticks([0, 5, 10, 15, 20])
     cbar.set_ticklabels(['0%', '5%', '10%', '15%', '20%'])
 
     # axes attributes
     for imp in list_mp:
         for iv in var_names:
+            # y axis
             ax[imp+'_'+exp_control][iv].set_ylim([900,100])
             y_ticks = [900,700,500,300,100]
             ax[imp+'_'+exp_control][iv].set_yticks( y_ticks )
@@ -500,7 +535,38 @@ def plot_sameDA_betweenDiffMP( h_count,ida ):
                 ax[imp+'_'+exp_control][iv].set_yticklabels([str(it) for it in y_ticks])
             else:
                 ax[imp+'_'+exp_control][iv].set_yticklabels([])
+            # x axis
+            if iv == 'QVAPOR':
+                x_ticks = [-1.5e-3,0,1.0e-3]
+                ax[imp+'_'+exp_control][iv].set_xticks( x_ticks )
+                ax[imp+'_'+exp_control][iv].set_xticklabels( ['-1.5$\mathregular{e^{-3}}$','0','1.0$\mathregular{e^{-3}}$'], fontsize=9)
 
+    # y label
+    fig.text(0.05,0.5,'CONV_WSM6 - CONV_THO', fontsize=11, ha='center', va='center',rotation='vertical')
+
+    # Add texts
+    for ivar in var_names:
+        if ivar == 'U': #U-component of Wind on Mass Points
+            x = 2.3
+        elif ivar == 'V': #V-component of Wind on Mass Points
+            x = 2.3
+        elif ivar == 'W': #W-component of Wind on Mass Points
+            x = 0.045
+        elif ivar == 'T': #Temperature in Kelvin
+            x = 1.6
+        elif ivar == 'QVAPOR':
+            x = 0.0008
+        elif ivar == 'REFL_10CM':
+            x = 12
+        else:
+            pass
+
+        if ivar == 'REFL_10CM':
+            ax[MP[0]+'_'+exp_control][ivar].text(x,850,'REFL')
+        elif ivar == 'QVAPOR':
+            ax[MP[0]+'_'+exp_control][ivar].text(x,850,'Qv')
+        else:
+            ax[MP[0]+'_'+exp_control][ivar].text(x,850,ivar)
 
     # Save figure
     des_name = small_dir+'SYSTEMS/Vis_analyze/Paper1/sys_pdf_Xa_'+ida+'_diff_'+list_mp[0]+'_'+exp_control+'.png'
@@ -543,8 +609,8 @@ if __name__ == '__main__':
     calculate_ave = False # default
     #!!!!!!!!!!!!!!!!!!!!!!
 
-    exp_DAdiff = False
-    exp_MPdiff = True
+    exp_DAdiff = True
+    exp_MPdiff = False
 
     if exp_DAdiff and not exp_MPdiff:
         exp_control = 'CONV'
