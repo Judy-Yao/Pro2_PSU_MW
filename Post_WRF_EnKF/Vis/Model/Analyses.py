@@ -25,6 +25,7 @@ import numpy.ma as ma
 
 import Util_data as UD
 
+
 # setting font sizeto 30
 plt.rcParams.update({'font.size': 15})
 
@@ -175,31 +176,6 @@ def IC_water( Storm, Exper_name, DAtimes, big_dir, small_dir ):
 # ------------------------------------------------------------------------------------------------------
 #           Operation: Read, process, and plot slp per snapshot
 # ------------------------------------------------------------------------------------------------------
-def read_slp( wrf_dir ):
-
-    # set file names for background and analysis
-    mean_dir = [wrf_dir+'/wrf_enkf_input_d03_mean',wrf_dir+'/wrf_enkf_output_d03_mean']
-    # read the shared variables: lat/lon
-    ncdir = nc.Dataset( mean_dir[0] )
-    lat = ncdir.variables['XLAT'][0,:,:]
-    lon = ncdir.variables['XLONG'][0,:,:]
-    # read UV10 and slp
-    slp_original = np.zeros( [len(mean_dir), np.size(lat,0), np.size(lat,1)] )
-    slp_smooth = np.zeros( [len(mean_dir), np.size(lat,0), np.size(lat,1)] )
-    for i in range(len(mean_dir)):
-        file_name = mean_dir[i]
-        ncdir = nc.Dataset( file_name )
-        # sea level pressure
-        slp = getvar(ncdir, 'slp')
-        slp_values = slp.values
-        slp_smt = sp.ndimage.gaussian_filter(slp_values, [3,3]) #[11,11]
-        slp_smt[slp_smt > 1020] = np.nan
-        slp_smooth[i,:,:] = slp_smt
-        slp_values[slp_values > 1020] = np.nan
-        slp_original[i,:,:] = slp_values
-
-    d_slp = {'lat':lat,'lon':lon,'slp':slp_original,'slp_smooth':slp_smooth}
-    return d_slp
 
 def slp_plt( Storm, Exper_name, DAtime, wrf_dir, plot_dir ):
 
@@ -214,11 +190,15 @@ def slp_plt( Storm, Exper_name, DAtime, wrf_dir, plot_dir ):
     else:
         if_btk_exist = False
     # ------ Read WRFout -------------------
-    d_field = read_slp( wrf_dir )
+    d_field = read_UV10_slp( DAtime, wrf_dir )
     lat = d_field['lat']
     lon = d_field['lon']
     slp = d_field['slp']
     slp_smooth = d_field['slp_smooth']
+    lat_minslp = d_field['lat_minslp']
+    lon_minslp = d_field['lon_minslp']
+    mslp = d_field['min_slp']
+
     lat_min = np.amin( lat )
     lon_min = np.amin( lon )
     lat_max = np.amax( lat )
@@ -239,9 +219,9 @@ def slp_plt( Storm, Exper_name, DAtime, wrf_dir, plot_dir ):
         # Mark the best track
         if if_btk_exist:
             ax[i].scatter(dict_btk['lon'][idx_btk],dict_btk['lat'][idx_btk], 20, 'green', marker='*',transform=ccrs.PlateCarree())
-        # min slp location
-        idx = np.nanargmin( slp[i,:,:] )
-        ax[i].scatter(lon.flatten()[idx],lat.flatten()[idx], 20, 'blue', marker='o',transform=ccrs.PlateCarree())
+        
+        # Mask the simulated storm center
+        ax[i].scatter(lon_minslp[i],lat_minslp[i],20, 'green', marker='s',transform=ccrs.PlateCarree())
 
     # Adding the colorbar
     caxes = fig.add_axes([0.2, 0.05, 0.6, 0.02])
@@ -250,18 +230,8 @@ def slp_plt( Storm, Exper_name, DAtime, wrf_dir, plot_dir ):
     #rtvo_bar.ax.tick_params(labelsize='10')
 
     # Title
-    if Storm == 'HARVEY':
-        mask = lat < 18 # lat > 18 will be True
-        for i in range(2):
-            slp_masked = ma.masked_array(slp[i,:,:], mask=mask)
-            min_slp = np.nanmin( slp_masked )
-            if i == 0:
-                ax[i].set_title( 'Xb--min slp: '+str("{0:.3f}".format(min_slp))+' hPa',  fontweight='bold')
-            elif i == 1:
-                ax[i].set_title( 'Xa--min slp: '+str("{0:.3f}".format(min_slp))+' hPa',  fontweight='bold')
-    else:
-        ax[0].set_title( 'Xb--min slp: '+str("{0:.3f}".format(np.nanmin( slp[0,:,:] )))+' hPa',  fontweight='bold') #, fontsize=12)
-        ax[1].set_title( 'Xa--min slp: '+str("{0:.3f}".format(np.nanmin( slp[1,:,:] )))+' hPa',  fontweight='bold') #, fontsize=12)
+    ax[0].set_title( 'Xb--min slp: '+str("{0:.3f}".format(mslp[0]))+' hPa',  fontweight='bold') #, fontsize=12)
+    ax[1].set_title( 'Xa--min slp: '+str("{0:.3f}".format(mslp[1]))+' hPa',  fontweight='bold') #, fontsize=12)
     fig.suptitle(Storm+': '+Exper_name+'('+DAtime+')', fontsize=12, fontweight='bold')
 
     # Axis labels
@@ -308,7 +278,7 @@ def plot_slp( Storm, Exper_name, DAtimes, big_dir, small_dir ):
 # ------------------------------------------------------------------------------------------------------
 #           Operation: Read, process, and plot UV10_slp per snapshot
 # ------------------------------------------------------------------------------------------------------
-def read_UV10_slp( wrf_dir ):
+def read_UV10_slp( DAtime, wrf_dir ):
 
     # set file names for background and analysis
     mean_dir = [wrf_dir+'/wrf_enkf_input_d03_mean',wrf_dir+'/wrf_enkf_output_d03_mean']
@@ -319,6 +289,10 @@ def read_UV10_slp( wrf_dir ):
     # read UV10 and slp
     slp_original = np.zeros( [len(mean_dir), np.size(lat,0), np.size(lat,1)] )
     slp_smooth = np.zeros( [len(mean_dir), np.size(lat,0), np.size(lat,1)] )
+    lat_minslp =  []
+    lon_minslp = []
+    minslp = []
+
     U10 = np.zeros( [len(mean_dir), np.size(lat,0), np.size(lat,1)] )
     V10 = np.zeros( [len(mean_dir), np.size(lat,0), np.size(lat,1)] )
     windspeed = np.zeros( [len(mean_dir), np.size(lat,0), np.size(lat,1)] )
@@ -326,14 +300,48 @@ def read_UV10_slp( wrf_dir ):
         file_name = mean_dir[i]
         ncdir = nc.Dataset( file_name )
         # sea level pressure
-        slp_original[i,:,:] = getvar(ncdir, 'slp')
-        slp_smooth[i,:,:] = sp.ndimage.gaussian_filter(slp_original[i,:,:], [11,11])
+        slp = getvar(ncdir, 'slp')
+        # original SLP
+        slp_values = slp.values
+        slp_values[slp_values > 1030] = np.nan
+        slp_original[i,:,:] = slp_values
+        # smoothed SLP
+        slp_smt_values = sp.ndimage.gaussian_filter(slp, [11,11]) #[11,11]
+        slp_smt_values[slp_smt_values > 1030] = np.nan
+        slp_smooth[i,:,:] = slp_smt_values
+        # simulated storm center
+        if Storm == 'HARVEY': # Harvey is special with its location near land!
+
+            # eyeball where the storm is
+            if DAtime <= '201708221600': 
+                lat_mask = lat <= 18
+                lon_mask = lon <= -91.5
+                mask = lat_mask | lon_mask
+            elif (DAtime >= '201708221700') & (DAtime <= '201708222300'):
+                lat_mask = lat <= 18
+                lon_mask =  (lon >= -88) | (lon <= -91.5)
+                mask = lat_mask | lon_mask
+            else:
+                mask = lat <= 18 
+            slp_masked = ma.masked_array(slp_values, mask=mask)
+            minslp.append( np.nanmin( slp_masked ) )
+
+            slp_smooth_masked = ma.masked_array(slp_smt_values, mask=mask)
+            idx = np.nanargmin( slp_smooth_masked )
+            lat_minslp.append( lat.flatten()[idx] )
+            lon_minslp.append( lon.flatten()[idx] )
+        else:
+            minslp.append( np.nanmin( slp_values ) )
+            idx = np.nanargmin( slp_smt_values )
+            lat_minslp.append( lat.flatten()[idx] )
+            lon_minslp.append( lon.flatten()[idx] )
+
         # UV10
         U10[i,:,:] = ncdir.variables['U10'][0,:,:]
         V10[i,:,:] = ncdir.variables['V10'][0,:,:]
         windspeed[i,:,:] = (U10[i,:,:] ** 2 + V10[i,:,:] ** 2) ** 0.5
 
-    d_UV10_slp = {'lat':lat,'lon':lon,'slp':slp_original,'slp_smooth':slp_smooth,'U10':U10,'V10':V10,'windspeed':windspeed}
+    d_UV10_slp = {'lat':lat,'lon':lon,'slp':slp_original,'slp_smooth':slp_smooth,'lat_minslp':lat_minslp,'lon_minslp':lon_minslp,'min_slp':minslp,'U10':U10,'V10':V10,'windspeed':windspeed}
     return d_UV10_slp
 
 def plot_UV10_slp( Storm, Exper_name, DAtime, wrf_dir, plot_dir ):
@@ -349,17 +357,21 @@ def plot_UV10_slp( Storm, Exper_name, DAtime, wrf_dir, plot_dir ):
     else:
         if_btk_exist = False
     # ------ Read WRFout -------------------
-    d_field = read_UV10_slp( wrf_dir )
+    d_field = read_UV10_slp( DAtime, wrf_dir )
     lat = d_field['lat']
     lon = d_field['lon']
     slp = d_field['slp']
     slp_smooth = d_field['slp_smooth']
+    lat_minslp = d_field['lat_minslp']
+    lon_minslp = d_field['lon_minslp']
+    mslp = d_field['min_slp']
+
     lat_min = np.amin( lat )
     lon_min = np.amin( lon )
     lat_max = np.amax( lat )
     lon_max = np.amax( lon )
-    min_slp = np.min( slp )
-    max_slp = np.max( slp )
+    min_slp = np.nanmin( slp )
+    max_slp = np.nanmax( slp )
 
     # ------ Plot Figure -------------------
     fig, ax=plt.subplots(1, 2, subplot_kw={'projection': ccrs.PlateCarree()}, gridspec_kw = {'wspace':0, 'hspace':0}, linewidth=0.5, sharex='all', sharey='all',  figsize=(12,6), dpi=400)
@@ -368,23 +380,28 @@ def plot_UV10_slp( Storm, Exper_name, DAtime, wrf_dir, plot_dir ):
         ax[i].set_extent([lon_min,lon_max,lat_min,lat_max], crs=ccrs.PlateCarree())
         ax[i].coastlines (resolution='10m', color='black', linewidth=1)
         # sea level pressure
-        start_level = max( np.amin(slp_smooth[0,:,:]), np.amin(slp_smooth[1,:,:]) )+0.1
-        end_level = min( np.amax(slp_smooth[0,:,:]), np.amax(slp_smooth[1,:,:]) )
+        start_level = max( np.nanmin(slp_smooth[0,:,:]), np.nanmin(slp_smooth[1,:,:]) )+0.1
+        end_level = min( np.nanmax(slp_smooth[0,:,:]), np.nanmax(slp_smooth[1,:,:]) )
         step = (end_level -start_level)/4
         level = np.arange(start_level, end_level,step)
         #slp_contour = ax[i].contour(lon,lat,slp_smooth[i,:,:],levels=level,cmap='Greys_r',vmin=min_slp,vmax=max_slp,transform=ccrs.PlateCarree())
-        slp_contour = ax[i].contour(lon,lat,slp_smooth[i,:,:],levels=level,cmap='winter',transform=ccrs.PlateCarree())
+        slp_contour = ax[i].contour(lon,lat,slp_smooth[i,:,:],levels=level,cmap='winter_r',transform=ccrs.PlateCarree())
         plt.clabel(slp_contour,level,inline=True, fmt="%i", use_clabeltext=True, fontsize=13)
         # Wind at 10 meters
         wind_smooth = sp.ndimage.gaussian_filter( d_field['windspeed'][i,:,:], [2,2])
-        min_wind = 10
-        max_wind = 60
-        bounds = np.linspace(min_wind, max_wind, 6)
+        min_wind = 2#10
+        max_wind = 24#60
+        bounds = np.arange(min_wind,max_wind+1,2)
         wind_contourf = ax[i].contourf(lon,lat,wind_smooth,cmap='hot_r',vmin=min_wind,vmax=max_wind,levels=bounds,extend='both',transform=ccrs.PlateCarree())
         ax[i].barbs(lon.flatten(), lat.flatten(), d_field['U10'][i,:,:].flatten(), d_field['V10'][i,:,:].flatten(), length=5, pivot='middle', color='royalblue', regrid_shape=20, transform=ccrs.PlateCarree())
+
         # Mark the best track
         if if_btk_exist:
-            ax[i].scatter(dict_btk['lon'][idx_btk],dict_btk['lat'][idx_btk], 20, 'green', marker='*',transform=ccrs.PlateCarree())
+            fig.text(0.50,0.05,'Best-Track MSLP:'+str("{0:.3f}".format(dict_btk['min_slp'][idx_btk]))+' hPa', fontsize=12, ha='center', va='center',fontweight='bold')
+            ax[i].scatter(dict_btk['lon'][idx_btk],dict_btk['lat'][idx_btk], 40, 'green', marker='*',transform=ccrs.PlateCarree())
+
+        # Mask the simulated storm center
+        ax[i].scatter(lon_minslp[i],lat_minslp[i],40, 'green', marker='s',transform=ccrs.PlateCarree())
 
     # Adding the colorbar
     cbaxes = fig.add_axes([0.01, 0.1, 0.03, 0.8])
@@ -393,8 +410,10 @@ def plot_UV10_slp( Storm, Exper_name, DAtime, wrf_dir, plot_dir ):
     wind_bar.ax.tick_params(labelsize='13')
 
     # Title
-    ax[0].set_title( 'Xb--min slp: '+str("{0:.3f}".format(np.min( slp[0,:,:] )))+' hPa',  fontweight='bold') #, fontsize=12)
-    ax[1].set_title( 'Xa--min slp: '+str("{0:.3f}".format(np.min( slp[1,:,:] )))+' hPa',  fontweight='bold') #, fontsize=12)
+    ax[0].set_title( 'Xb--min slp: '+str("{0:.3f}".format(mslp[0]))+' hPa',  fontweight='bold') #, fontsize=12)
+    ax[1].set_title( 'Xa--min slp: '+str("{0:.3f}".format(mslp[1]))+' hPa',  fontweight='bold') #, fontsize=12)
+    #ax[0].set_title( 'Xb--min slp: '+str("{0:.3f}".format(np.min( slp[0,:,:] )))+' hPa',  fontweight='bold') #, fontsize=12)
+    #ax[1].set_title( 'Xa--min slp: '+str("{0:.3f}".format(np.min( slp[1,:,:] )))+' hPa',  fontweight='bold') #, fontsize=12)
     fig.suptitle(Storm+': '+Exper_name+'('+DAtime+')', fontsize=12, fontweight='bold')
 
     # Axis labels
@@ -1007,11 +1026,11 @@ if __name__ == '__main__':
     # -------- Configuration -----------------
     Storm = 'HARVEY'
     DA = ['IR+MW']   
-    MP = 'THO' 
+    MP = 'WSM6' 
 
-    Plot_Precip = True       # Accumulated total grid scale precipitation
+    Plot_Precip = False       # Accumulated total grid scale precipitation
     Plot_slp = False
-    Plot_UV10_slp = False
+    Plot_UV10_slp = True
     Plot_IC_water = False
     Plot_minslp_evo = False
     Plot_rtvo = False
@@ -1019,8 +1038,8 @@ if __name__ == '__main__':
     # -----------------------------------------
 
     # Time range set up
-    start_time_str = '201708241200'
-    end_time_str = '201708241200'
+    start_time_str = '201708221200'
+    end_time_str = '201708231200'
     Consecutive_times = True
 
     if not Consecutive_times:
