@@ -24,7 +24,11 @@ function [ hr_btk,start_time,end_time ] = Hourly_Bestrack(istorm, control)
         bestrack{ir,2} = datetime(bestrack{ir,1},'InputFormat','yyyyMMddHHmm','TimeZone','UTC');
         %Latitude 
         bestrack_lat = record_substr(1,7); %Latitude for the DTG: 0 - 900 tenths of degrees (e.g.,161N)
-        bestrack{ir,3} = str2double(strrep(bestrack_lat,'N',''))/10; % 0 - 90 degree
+        if contains(bestrack_str{ir,3},'N')
+            bestrack_str{ir,3} = str2double(strrep(bestrack_lat,'N',''))/10; % 0 - 90 degree
+        else
+            bestrack_str{ir,3} = 0-str2double(strrep(bestrack_lat,'S',''))/10;
+        end
         %Longitude
         bestrack_lon = record_substr(1,8); %Longitude for the DTG: 0 - 1800 tenths of degrees (e.g.,269W)
         if contains(bestrack_lon,'W')

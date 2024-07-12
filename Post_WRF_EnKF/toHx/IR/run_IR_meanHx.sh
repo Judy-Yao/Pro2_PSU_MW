@@ -19,7 +19,7 @@ source util.sh
 
 # Fill in the storm name and experiment name
 Storm=HARVEY
-Exper=JerryRun/IR_WSM6
+Exper=J_DA+J_WRF+J_init-Expanse-WSM6-24hr-hroi300
 
 # Parent paths
 Big_dir=/scratch/06191/tg854905/Pro2_PSU_MW/
@@ -31,8 +31,8 @@ max_num_of_crtm=4  # Max number of CRTM.exe to run concurrently
                     # (make same as # of nodes requested)
 cores_per_crtm=48   # Number of cores given to each crtm.exe 
                     # (make same as # of cores per node)
-date_st=201708240100        # Start date  
-date_ed=201708241200        # End date (24 forecast hrs can be done in < 2 hr w/4 nodes on skx queues)
+date_st=201708221200        # Start date  
+date_ed=201708231200        # End date (24 forecast hrs can be done in < 2 hr w/4 nodes on skx queues)
 time_int=60         # Time interval btwn cycles in minutes
 nE=60               # Number of ens members
 dom=3                           # Domain you are running it on 

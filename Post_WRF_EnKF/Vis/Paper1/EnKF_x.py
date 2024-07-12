@@ -151,7 +151,7 @@ def bin_bias( d_all_obs,d_all_model ):
 
 def plot_hist_1by2():
 
-    var_its = ['track','minSLP',]#'Vmax']
+    var_its = ['minSLP','Vmax']
 
     # Set up figure
     fig = plt.figure( figsize=(6.5,4.25),dpi=200) # standard: 6.5,8.5
@@ -172,15 +172,16 @@ def plot_hist_1by2():
                 print(iv)
                 bin_edges = hist_var[imp][ida][iv]['bin_edges']
                 x_axis = (bin_edges[:-1]+bin_edges[1:])/2
-                ax[iv].plot(x_axis,hist_var[imp][ida][iv]['hist'],color=colors[imp],linestyle=lines[ida],linewidth='2',alpha=alphas[imp])
+                ax[iv].plot(x_axis,hist_var[imp][ida][iv]['hist'],color=colors[imp],linestyle=lines[ida],linewidth='2',alpha=alphas[imp],label=imp+':'+ida)
                 ax[iv].grid(True,linewidth=1, color='gray', alpha=0.5, linestyle='-')
 
     # Legend
-    lgd_1 = [MP[0]+':'+ida for ida in DA]
-    lgd_2 = [MP[1]+':'+ida for ida in DA]
-    lines_DA = ax[var_its[0]].get_lines()
-    legend1 = ax[var_its[0]].legend([lines_DA[i] for i in [0,1,2,]], lgd_1,fontsize='8',loc='upper left')
-    legend2 = ax[var_its[1]].legend([lines_DA[i] for i in [3,4,5,]], lgd_2,fontsize='8',loc='upper right') 
+    lgd = ax[var_its[0]].legend(loc='upper left',ncol=2,fontsize='8')
+    #lgd_1 = [MP[0]+':'+ida for ida in DA]
+    #lgd_2 = [MP[1]+':'+ida for ida in DA]
+    #lines_DA = ax[var_its[0]].get_lines()
+    #legend1 = ax[var_its[0]].legend([lines_DA[i] for i in [0,1,2,]], lgd_1,fontsize='8',loc='upper left')
+    #legend2 = ax[var_its[1]].legend([lines_DA[i] for i in [3,4,5,]], lgd_2,fontsize='8',loc='upper right') 
 
 
     # axes attributes
@@ -203,7 +204,7 @@ def plot_hist_1by2():
             ax[iv].set_ylabel( 'Vmax Bias (m $\mathregular{s^{-1}}$)',fontsize = 12 )
 
     # Save figure
-    des_name = small_dir+'SYSTEMS/Vis_analyze/Paper1/EnKF_HPI_hist_track.png'
+    des_name = small_dir+'SYSTEMS/Vis_analyze/Paper1/EnKF_HPI_hist.png'
     plt.savefig( des_name )
     print( 'Saving the figure to '+des_name )
 

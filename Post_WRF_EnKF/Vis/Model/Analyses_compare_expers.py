@@ -244,10 +244,10 @@ def plot_slp_timeseries( small_dir, Storm, Expers, DAtimes, Evo_slp ):
         # Customize labels
         labels = {}
         for imp in MP:
-            if imp == 'TuneWSM6':
-                labels[imp] = {'xa':'MD_DA','xb':'MD_FC'}
+            if imp == 'THO': #'TuneWSM6':
+                labels[imp] = {'xa':'THO_DA','xb':'THO_FC'} #{'xa':'MD_DA','xb':'MD_FC'}
             else:
-                labels[imp] = {'xa':'Ref_DA','xb':'Ref_FC'}
+                labels[imp] = {'xa':'WSM6_DA','xb':'WSM6_FC'} #{'xa':'Ref_DA','xb':'Ref_FC'}
 
         bias = {}
         rmse = {} 
@@ -266,7 +266,7 @@ def plot_slp_timeseries( small_dir, Storm, Expers, DAtimes, Evo_slp ):
                     line = '--'  
 
               # customize the line
-                if MP[iexper] == 'TuneWSM6':
+                if MP[iexper] == 'THO':
                     color = 'blue'
                     if i == 1:
                         ax.plot(dates_zip[i-1:i+1],slp_zip[i-1:i+1],color,linestyle=line,linewidth='4',label=labels[MP[iexper]]['xa'])
@@ -285,7 +285,7 @@ def plot_slp_timeseries( small_dir, Storm, Expers, DAtimes, Evo_slp ):
         # title
         bias_str = '\nBias: '
         rmse_str = '\nRMSE: '
-        suptt = Storm+';  IR_WSM6; Over '+str(len(DAtimes))+' Cycles; Min SLP (hPa)'
+        suptt = Storm+'; Over '+str(len(DAtimes))+' Cycles; Min SLP (hPa)'
         for imp in MP:
             bias_str= bias_str+labels[imp]['xb']+' '+'%.1f' %bias[imp]['xb']+'; ' 
             bias_str= bias_str+labels[imp]['xa']+' '+'%.1f' %bias[imp]['xa']+'; '
@@ -301,12 +301,12 @@ def plot_slp_timeseries( small_dir, Storm, Expers, DAtimes, Evo_slp ):
     ax.set_xlim( start_time, end_time)
     ax.tick_params(axis='x', labelrotation=45,labelsize=15)
     ax.set_ylabel('Minimum Sea Level Pressure (hPa)',fontsize=24)
-    ax.set_ylim(970,1020)  #( 900,1000 ) #(970,1020)
+    ax.set_ylim(920,1020)  #( 900,1000 ) #(970,1020)
 
     #ax.set_title( 'mim SLP (hPa)',fontweight="bold",fontsize='15' )
 
     # Save the figure
-    save_des = small_dir+Storm+'/'+Expers[1]+'/Vis_analyze/Model/minslp_'+DAtimes[0]+'_'+DAtimes[-1]+'.png'
+    save_des = small_dir+Storm+'/'+Expers[1]+'/Vis_analyze/Model/minslp_'+DAtimes[0]+'_'+DAtimes[-1]+'_WSM6_THO.png'
     plt.savefig( save_des )
     print( 'Saving the figure: ', save_des )
     plt.close()
@@ -573,12 +573,12 @@ if __name__ == '__main__':
 
     # ---------- Configuration -------------------------
     Storm = 'IRMA'
-    DA = ['IR','IR+MW']
-    MP = 'WSM6'
+    DA = ['CONV',]
+    MP = ['WSM6','THO']
 
-    slp_xa = False
-    slp_xb = False
-    Com_minslp_evo = False
+    slp_xa = True
+    slp_xb = True
+    Com_minslp_evo = True
 
     meanOverEns = False  # mean of H(ens) or H of mean(ens)
     Com_IC_water = False
@@ -586,14 +586,15 @@ if __name__ == '__main__':
 
     # Time range set up
     start_time_str = '201709030000'
-    end_time_str = '201709050000'
+    end_time_str = '201709040000'
     Consecutive_times = True
     # ------------------------------------------------------   
 
     # Create experiment names
     Expers = []
-    for ida in DA:
-        Expers.append( UD.generate_one_name( Storm,ida,MP ) )
+    for imp in MP:
+        for ida in DA:
+           Expers.append( UD.generate_one_name( Storm,ida,imp ) )
 
     if not Consecutive_times:
         DAtimes = ['201708231200']

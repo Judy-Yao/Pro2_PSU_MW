@@ -614,8 +614,8 @@ def plot_mslpVSvmax( allFC_error,hist_HPI ):
         stack_sts = np.zeros((4,1))
         for ist in Storms:
             # scatter the mean and median
-            ax['wsm6'][ida].scatter(mm[ist]['WSM6'][ida]['mean'][2],mm[ist]['WSM6'][ida]['mean'][3],marker='o',edgecolor=colorset[ist],facecolors='none',s=25,alpha=0.6)
-            ax['wsm6'][ida].scatter(mm[ist]['WSM6'][ida]['median'][2],mm[ist]['WSM6'][ida]['median'][3],linewidths=1,marker='+',facecolor=colorset[ist],s=25)
+            ax['wsm6'][ida].scatter(mm[ist]['WSM6'][ida]['mean'][2],mm[ist]['WSM6'][ida]['mean'][3],linewidths=1.5,marker='o',edgecolor=colorset[ist],facecolors='none',s=25,alpha=0.6)
+            ax['wsm6'][ida].scatter(mm[ist]['WSM6'][ida]['median'][2],mm[ist]['WSM6'][ida]['median'][3],linewidths=1.5,marker='+',facecolor=colorset[ist],s=25)
             #ax['wsm6'][ida].plot(allFC_error[istorm]['WSM6'][ida][2,:],allFC_error[istorm]['WSM6'][ida][3,:],linestyle='',markersize=4,marker='o',color=colorset[istorm],alpha=alphas[istorm])
             # stack
             stack_sts = np.concatenate((stack_sts,allFC_error[ist]['WSM6'][ida]),axis=1)
@@ -636,8 +636,8 @@ def plot_mslpVSvmax( allFC_error,hist_HPI ):
         # calculate mean and median over all storms
         mean_all = np.mean(clean_wsm6,axis=1)
         median_all = np.median(clean_wsm6,axis=1)
-        ax['wsm6'][ida].scatter(mean_all[2],mean_all[3],marker='o',edgecolor='black',facecolors='none',s=25,alpha=0.6)
-        ax['wsm6'][ida].scatter(median_all[2],median_all[3],marker='+',facecolors='black',linewidths=1,s=25)
+        ax['wsm6'][ida].scatter(mean_all[2],mean_all[3],marker='o',edgecolor='black',facecolors='none',linewidths=1.5,s=25,alpha=0.6)
+        ax['wsm6'][ida].scatter(median_all[2],median_all[3],marker='+',facecolors='black',linewidths=1.5,s=25)
 
         #i_pdf = ax['its'][ida].pcolormesh(mslp_Xrg, mslp_Yrg, hist_HPI['joint_MSLP'][ida], cmap='gist_heat_r',shading='auto')
         # Add diagonal line
@@ -661,8 +661,8 @@ def plot_mslpVSvmax( allFC_error,hist_HPI ):
         stack_sts = np.zeros((4,1))
         for ist in Storms:
             # scatter the mean and median
-            ax['tho'][ida].scatter(mm[ist]['THO'][ida]['mean'][2],mm[ist]['THO'][ida]['mean'][3],marker='o',edgecolor=colorset[ist],facecolors='none',s=25,alpha=0.6)
-            ax['tho'][ida].scatter(mm[ist]['THO'][ida]['median'][2],mm[ist]['THO'][ida]['median'][3],linewidths=1,marker='+',facecolor=colorset[ist],s=25)
+            ax['tho'][ida].scatter(mm[ist]['THO'][ida]['mean'][2],mm[ist]['THO'][ida]['mean'][3],marker='o',linewidths=1.5,edgecolor=colorset[ist],facecolors='none',s=25,alpha=0.6)
+            ax['tho'][ida].scatter(mm[ist]['THO'][ida]['median'][2],mm[ist]['THO'][ida]['median'][3],linewidths=1.5,marker='+',facecolor=colorset[ist],s=25)
             #ax['tho'][ida].plot(allFC_error[istorm]['THO'][ida][2,:],allFC_error[istorm]['THO'][ida][3,:],linestyle='',markersize=4,marker='o',color=colorset[istorm],alpha=alphas[istorm])
             # stack
             stack_sts = np.concatenate((stack_sts,allFC_error[ist]['THO'][ida]),axis=1)
@@ -682,8 +682,8 @@ def plot_mslpVSvmax( allFC_error,hist_HPI ):
         # calculate mean and median over all storms
         mean_all = np.mean(clean_tho,axis=1)
         median_all = np.median(clean_tho,axis=1)
-        ax['tho'][ida].scatter(mean_all[2],mean_all[3],marker='o',edgecolor='black',facecolors='none',s=25,alpha=0.6)
-        ax['tho'][ida].scatter(median_all[2],median_all[3],marker='+',facecolors='black',linewidths=1,s=25)
+        ax['tho'][ida].scatter(mean_all[2],mean_all[3],marker='o',edgecolor='black',facecolors='none',linewidths=1.5,s=25,alpha=0.6)
+        ax['tho'][ida].scatter(median_all[2],median_all[3],marker='+',facecolors='black',linewidths=1.5,s=25)
 
     # Create a colorbar above the first row of subplots
     cbar_ax = fig.add_axes([0.925, 0.52, 0.03, 0.43])
