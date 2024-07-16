@@ -1,7 +1,6 @@
-#!/usr/bin/env python3
 
 from numba import njit, prange
-import os
+import os,fnmatch # functions for interacting with the operating system
 import numpy as np
 import time
 import glob
@@ -9,6 +8,7 @@ import netCDF4 as nc
 import math
 from math import radians, sin, cos, sqrt, atan2
 from datetime import datetime, timedelta
+import pandas as pd
 
 # constants
 P1000MB = 100000.0
@@ -268,10 +268,11 @@ def destagger(var, stagger_dim, meta=False):
 #           Object: Post-storm track
 # ------------------------------------------------------------------------------------------------------
 # Read the post-storm best-track file of the storm at all times
-def read_bestrack(Storm):
+def read_bestrack( small_dir,Storm ):
 
-    Best_track_file = os.listdir('/work2/06191/tg854905/stampede2/Pro2_PSU_MW/' + Storm + '/Post_Storm_btk')
-    with open('/work2/06191/tg854905/stampede2/Pro2_PSU_MW/' + Storm + '/Post_Storm_btk/' + Best_track_file[0]) as f:
+    Best_track_path = sorted(fnmatch.filter(os.listdir(small_dir+Storm+'/TC_Guidance/'),'bal*'))
+    Best_track_file = small_dir+Storm+'/TC_Guidance/'+Best_track_path[0]
+    with open(Best_track_file, 'r') as f:
         all_lines = f.readlines()
 
     # Process all of records to our format/unit 
@@ -336,6 +337,100 @@ def btk_in_duration(Storm, Btk_start, Btk_end, hour_step):
     dict_btk = {'time': time_interest_str, 'lat': lat_btk, 'lon': lon_btk, 'max_ws': max_ws_btk, 'min_slp': min_slp_btk}
 
     return dict_btk
+
+
+# ------------------------------------------------------------------------------------------------------
+#           Object: Real-Time TC Guidance Project
+# ------------------------------------------------------------------------------------------------------
+# read model simulations (a-deck texts)
+#def read_adeck( Storm,model_name ):
+ 
+# subset forecasts that were generated for a specific model
+def subset_adeck( Storm,model_name ):   
+    
+    # specify input and output names    
+    input_path = sorted(fnmatch.filter(os.listdir(small_dir+Storm+'/TC_Guidance/'),'aal*'))
+    input_name = small_dir+Storm+'/TC_Guidance/'+input_path[0]
+    output_name = small_dir+Storm+'/TC_Guidance/'+model_name+'_'+input_path[0]
+    # subset
+    with open(input_name, 'r') as file, open(output_name, 'w') as output_file:
+        for line in file:
+            if model_name in line:
+                output_file.write(line)
+
+# read forecasts from a model
+def read_adeck_model( Storm,model_name ):
+    
+    # Read all lines
+    aal_name = sorted(fnmatch.filter(os.listdir(small_dir+Storm+'/TC_Guidance/'),'aal*'))
+    file_name = small_dir+Storm+'/TC_Guidance/'+model_name+'_'+aal_name[0]
+    with open(file_name,'r') as f:
+        all_lines = f.readlines()
+
+    # Read the file into a pandas DataFrame
+    df = pd.read_csv( file_name,delimiter=',',header=None, dtype=str )
+    # Find out all possible values
+    all_fc_init_times = df[2].values # get all records of forecast initialization time
+    fc_init_times = list(set(all_fc_init_times))
+    fc_init_times = [it.replace(" ","") for it in fc_init_times if " " in it ]#remove space
+    all_fc_lens =  df[5].values # get all records of forecast lengths (in hours)
+    fc_lens = list(set(all_fc_lens))
+    fc_lens = [int(it) for it in fc_lens]
+
+    # Set up dictionaries
+    fc = {}
+    for init in fc_init_times:
+        fc[init] = {}
+        # set up times
+        times_dt = [datetime.strptime(init,"%Y%m%d%H") + timedelta(hours=t) for t in fc_lens] 
+        times_str = [it.strftime("%Y%m%d%H") for it in times_dt]
+        fc[init]['time'] = times_str
+        fc[init]['lat'] = np.full(np.shape(times_str),np.nan)
+        fc[init]['lon'] = np.full(np.shape(times_str),np.nan)
+        fc[init]['MSLP'] = np.full(np.shape(times_str),np.nan)
+        fc[init]['Vmax'] = np.full(np.shape(times_str),np.nan)
+    
+    # Gather forecasted attributes 
+    for init in fc_init_times:
+        lat_all = []
+        lon_all = []
+        mslp_all = []
+        vmax_all = []
+        # Read forecasted attributes for a certain forecast
+        for line in all_lines:
+            if init in line:    
+                # split one record into different parts
+                split_line = line.split()
+                # Read latitude
+                lat_line = split_line[6].replace(',','')
+                if 'N' in lat_line:
+                    lat_all.append(float(lat_line.replace('N',''))/10)
+                else:
+                    lat_all.append(0-float(lat_line.replace('S',''))/10)
+                # Read longitute
+                lon_line = split_line[7].replace(',','')
+                if 'W' in lon_line:
+                    lon_all.append(0-float(lon_line.replace('W',''))/10)
+                else:
+                    lon_all.append(float(lon_line.replace('E',''))/10)
+                # Read max wind
+                vmax_all.append(float(split_line[8].replace(',',''))*0.51444) # knots to m/s
+                # Read min sea level pressure
+                mslp_all.append(float(split_line[9].replace(',',''))) # mb
+            else:
+                continue 
+        # fill in
+        fc[init]['lat'] = np.array(lat_all)
+        fc[init]['lon'] = np.array(lon_all)
+        fc[init]['mslp'] = np.array(mslp_all)
+        fc[init]['vmax'] = np.array(vmax_all)
+
+    # Sanity check
+    #print(fc['2020082718']['time'])
+    #print(fc['2020082718']['vmax'])
+
+    return fc
+
 
 # ------------------------------------------------------------------------------------------------------
 #           Object: TCvital
@@ -723,11 +818,11 @@ def compute_slp( ncdir ):
 
 
 if __name__ == '__main__':
-    
-    wrf_file = '/scratch/06191/tg854905/Pro2_PSU_MW/IRMA/IR-J_DA+J_WRF+J_init-SP-intel17-WSM6-30hr-hroi900/fc/201709041600/wrf_enkf_output_d03_mean'
+   
+    small_dir = '/expanse/lustre/projects/pen116/zuy121/Pro5_BP_OSSE/' 
     start_time=time.process_time()
-    ncdir = nc.Dataset( wrf_file )
-    sea_level_pressure = compute_slp( ncdir )
+    storm = 'Laura'
+    read_adeck_model( storm,'HWRF' )
     end_time = time.process_time()
     print ('time needed: ', end_time-start_time, ' seconds')
 
