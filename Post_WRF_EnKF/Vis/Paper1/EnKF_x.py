@@ -22,7 +22,7 @@ import numpy.ma as ma
 from scipy import interpolate
 
 import EnKF_Vmax as Vx #Vmax
-import EnKF_minSlp_track as SC #StormCenter
+import EnKF_minSLP_track as SC #StormCenter
 import Util_data as UD
 
 matplotlib.rcParams['xtick.direction'] = 'in'
@@ -53,6 +53,162 @@ def generate_times( Storms, start_time_str, end_time_str, interval ):
 # --------------------------------------------------------
 #    HPI
 # --------------------------------------------------------
+
+# stack obs over storms
+def stack_obs( d_obs,iv ):
+
+    if iv == 'track':
+        stacked = [[],[]] 
+        for ist in Storms:
+            stacked[0].extend( d_obs[ist][iv][0] ) # lon
+            stacked[1].extend( d_obs[ist][iv][1] ) # lat
+    else:
+        stacked = []
+        for ist in Storms:
+            stacked.extend( d_obs[ist][iv] )
+
+    return stacked
+
+# stack simulations over storms
+def stack_model( d_model ):
+
+    stacked_model = {}
+    for imp in MP:
+        stacked_model[imp] = {}
+        for ida in DA:
+            stacked_model[imp][ida] = {}
+            for iv in var:
+                if iv == 'track':
+                    stacked = [[],[]]
+                    for ist in Storms:
+                        stacked[0].extend( d_model[ist][imp][ida][iv][0] ) # lon
+                        stacked[1].extend( d_model[ist][imp][ida][iv][1] ) # lat 
+                else:
+                    stacked = []
+                    for ist in Storms:
+                        stacked.extend( d_model[ist][imp][ida][iv] )
+                # fill in value
+                stacked_model[imp][ida][iv] = stacked
+    return stacked_model
+
+
+# bin the bias
+def bin_bias( d_all_obs,d_all_model ):
+
+    # calculate the bias
+    bias = {}
+    for imp in MP:
+        bias[imp] = {}
+        for ida in DA:
+            bias[imp][ida] = {}
+            for iv in var:
+                if iv == 'track':
+                    distance = []
+                    # loop thru each DA time
+                    for idx in range( len(d_all_obs[iv][0]) ):
+                        lon_x = d_all_model[imp][ida][iv][0][idx]
+                        lat_x = d_all_model[imp][ida][iv][1][idx]
+                        lon_obs = d_all_obs[iv][0][idx]
+                        lat_obs = d_all_obs[iv][1][idx]
+                        dist, azi_btk = UD.twoP_inverse( lat_obs,lon_obs,lat_x,lon_x) #km
+                        distance.append( dist )
+                    bias[imp][ida][iv] = distance
+                else:
+                    bias[imp][ida][iv] = np.array(d_all_model[imp][ida][iv]) - np.array(d_all_obs[iv]) 
+
+    # bin the bias
+    num_bins = 20
+    minDist = 0
+    maxDist = 200 #km
+    minMSLP = -30
+    maxMSLP = 20
+    minVmax = -25
+    maxVmax = 25
+
+    # Marginally-bin data
+    hist_var = {}
+    for imp in MP:
+        hist_var[imp] = {}
+        for ida in DA:
+            hist_var[imp][ida] = {}
+            for iv in var:
+                hist_var[imp][ida][iv] = {}
+                if iv == 'track':
+                    hist, bin_edges = np.histogram(bias[imp][ida][iv],range=[minDist,maxDist],bins=num_bins,density=True)
+                elif iv == 'minSLP':
+                    hist, bin_edges = np.histogram(bias[imp][ida][iv],range=[minMSLP,maxMSLP],bins=num_bins,density=True)
+                elif iv == 'Vmax':
+                    hist, bin_edges = np.histogram(bias[imp][ida][iv],range=[minVmax,maxVmax],bins=num_bins,density=True)
+
+                hist_var[imp][ida][iv]['hist'] = hist
+                hist_var[imp][ida][iv]['bin_edges'] = bin_edges
+
+    return hist_var
+
+# --------------------------------------------------------
+#    Plot HPI
+# --------------------------------------------------------
+
+def plot_hist_1by2():
+
+    var_its = ['minSLP','Vmax']
+
+    # Set up figure
+    fig = plt.figure( figsize=(6.5,4.25),dpi=200) # standard: 6.5,8.5
+    grids = fig.add_gridspec(ncols=1,nrows=2,hspace=0.12)
+    ax = {}
+    for iv in var_its:
+        ax[iv] = fig.add_subplot( grids[ var_its.index(iv) ] )
+
+    # customization
+    colors = {'WSM6': '#FF3333','THO':'#3333FF'}
+    lines = {'CONV':'-','IR':'--','IR+MW':(0, (1, 1))}
+    alphas = {'WSM6':1,'THO':0.8}
+
+    # Plot
+    for iv in var_its:
+        for imp in MP:
+            for ida in DA:
+                print(iv)
+                bin_edges = hist_var[imp][ida][iv]['bin_edges']
+                x_axis = (bin_edges[:-1]+bin_edges[1:])/2
+                ax[iv].plot(x_axis,hist_var[imp][ida][iv]['hist'],color=colors[imp],linestyle=lines[ida],linewidth='2',alpha=alphas[imp],label=imp+':'+ida)
+                ax[iv].grid(True,linewidth=1, color='gray', alpha=0.5, linestyle='-')
+
+    # Legend
+    lgd = ax[var_its[0]].legend(loc='upper left',ncol=2,fontsize='8')
+    #lgd_1 = [MP[0]+':'+ida for ida in DA]
+    #lgd_2 = [MP[1]+':'+ida for ida in DA]
+    #lines_DA = ax[var_its[0]].get_lines()
+    #legend1 = ax[var_its[0]].legend([lines_DA[i] for i in [0,1,2,]], lgd_1,fontsize='8',loc='upper left')
+    #legend2 = ax[var_its[1]].legend([lines_DA[i] for i in [3,4,5,]], lgd_2,fontsize='8',loc='upper right') 
+
+
+    # axes attributes
+    for iv in var_its:
+        ax[iv].axvline(x=0, color='gray',linewidth=1.5, alpha=0.5)
+        ax[iv].set_xlim([np.amin(hist_var[MP[0]][DA[0]][iv]['bin_edges']),np.amax(hist_var[MP[0]][DA[0]][iv]['bin_edges'])])
+        ax[iv].set_ylim([-0.001,0.25])
+        if iv == 'Vmax':
+            x_ticks = np.linspace(np.amin(hist_var[MP[0]][DA[0]][iv]['bin_edges']),np.amax(hist_var[MP[0]][DA[0]][iv]['bin_edges']),5)
+            ax[iv].set_xticks( x_ticks )
+
+
+    # Set titles
+    for iv in var_its:
+        if iv == 'track':
+            ax[iv].set_ylabel( 'Track Bias (km)',fontsize = 12 )
+        elif iv == 'minSLP':
+            ax[iv].set_ylabel( 'MSLP Bias (hPa)',fontsize = 12 )
+        elif iv == 'Vmax':
+            ax[iv].set_ylabel( 'Vmax Bias (m $\mathregular{s^{-1}}$)',fontsize = 12 )
+
+    # Save figure
+    des_name = small_dir+'SYSTEMS/Vis_analyze/Paper1/EnKF_HPI_hist.png'
+    plt.savefig( des_name )
+    print( 'Saving the figure to '+des_name )
+
+
 
 # plot one 
 def plot_one( ax0,ax1,state,color,line,line_width,label):
@@ -89,10 +245,10 @@ def plot_EnKF_HPI():
         ax[ist]['ax1'] = fig.add_subplot( grids[ir,1] )
         # plot TC vitals 
         if if_tcvital:
-            plot_one( ax[ist]['ax0'], ax[ist]['ax1'],  d_tcvHr[ist],  'black', '-', 3.5, 'TCvital')
+            plot_one( ax[ist]['ax0'], ax[ist]['ax1'],  d_tcvHr[ist],  'gray', '-', 3.5, 'TCvital')
         # plot btk
         if if_btk:
-            plot_one( ax[ist]['ax0'], ax[ist]['ax1'],  d_btkHr[ist],  'black', (0,(1,1)), 3.5, 'TCvital')
+            plot_one( ax[ist]['ax0'], ax[ist]['ax1'],  d_btkHr[ist],  'black', '-', 3.5, 'TCvital')
 
 
     # Plot analyses
@@ -301,7 +457,7 @@ if __name__ == '__main__':
     MP = ['WSM6','THO']
     DA = ['CONV','IR','IR+MW']
 
-    var = ['minSLP','Vmax']# 'Precip',
+    var = ['track','minSLP','Vmax']
 
     start_time_str = {'HARVEY':'201708221200','IRMA':'201709030000','JOSE':'201709050000','MARIA':'201709160000'}
     end_time_str = {'HARVEY':'201708231200','IRMA':'201709040000','JOSE':'201709060000','MARIA':'201709170000'}
@@ -314,11 +470,14 @@ if __name__ == '__main__':
 
     # EnKF HPI
     if_plot_HPI = True
+    plot_histogram = False
+    plot_evo_wrt_time = True
     slp_xa = True
     Vmax_xa = True
     slp_xb = False
     Vmax_xb = False
 
+    # EnKF precip
     if_plot_precip = False
 
     # Create experiment names
@@ -347,20 +506,24 @@ if __name__ == '__main__':
                         d_model[ist][imp][ida][iv] = None
                 else:
                     for iv in var:
-                        if iv == 'minSLP':
-                            d_minslp = SC.model_minSLP(big_dir,ist,Exper_names[ist][imp][ida],d_hrs[ist],slp_xa,slp_xb )
-                            d_model[ist][imp][ida][iv] = d_minslp['xa_slp']
-                        elif iv == 'Vmax':
+                        if iv == 'Vmax':
                             d_vmax = Vx.model_Vmax(big_dir,ist,Exper_names[ist][imp][ida],d_hrs[ist],Vmax_xa,Vmax_xb )
                             d_model[ist][imp][ida][iv] = d_vmax['xa_vmax']
                         elif iv == 'Precip':
                             d_precip = model_ave_Precip( big_dir,ist,Exper_names[ist][imp][ida],d_hrs[ist])
                             d_model[ist][imp][ida][iv] = d_precip['x_precip']
-
+                        else:
+                            d_minslp = SC.model_minSLP(big_dir,ist,Exper_names[ist][imp][ida],d_hrs[ist],slp_xa,slp_xb )
+                            if iv == 'minSLP':
+                                d_model[ist][imp][ida][iv] = d_minslp['xa_slp']
+                            elif iv == 'track':
+                                d_model[ist][imp][ida][iv] = [d_minslp['xa_lon'],d_minslp['xa_lat']] # lon,lat
+    
     # plot HPI
     if if_plot_HPI:
         # Read TCvital data
         d_tcvHr = {}
+        # Read best-track data
         d_btkHr = {}
         for istorm in Storms:
             d_tcvHr[istorm] = {}
@@ -375,7 +538,7 @@ if __name__ == '__main__':
                         d_btkHr[istorm][iv] = Vx.Interpolate_hourly( istorm,d_6hrs,d_btk6Hrs,d_hrs)
                 else:
                     if if_tcvital:
-                        d_tcvital= SC.assimilated_obs( big_dir,istorm,Exper_names[istorm]['WSM6']['IR'], d_hrs[istorm],slp_xa,slp_xb=False )
+                        d_tcvital= SC.assimilated_obs( big_dir,istorm,Exper_names[istorm]['WSM6']['CONV'], d_hrs[istorm],slp_xa,slp_xb=False )
                         if iv == 'minSLP':
                             d_tcvHr[istorm][iv] = d_tcvital['minslp_obs']
                         elif iv == 'track':
@@ -383,12 +546,40 @@ if __name__ == '__main__':
                     if if_btk:
                         d_btk6Hrs = SC.MSLP_btk( small_dir,istorm,d_6hrs[istorm] )
                         if iv == 'minSLP':
-                            d_btkHr[istorm][iv] = Vx.Interpolate_hourly( istorm,d_6hrs,d_btk6Hrs,d_hrs)
+                            d_btkHr[istorm][iv] = Vx.Interpolate_hourly( istorm,d_6hrs,d_btk6Hrs['mslp'],d_hrs)
                         elif iv == 'track':
-                            pass
+                            interp_lat = Vx.Interpolate_hourly( istorm,d_6hrs,d_btk6Hrs['lat'],d_hrs)
+                            interp_lon = Vx.Interpolate_hourly( istorm,d_6hrs,d_btk6Hrs['lon'],d_hrs)
+                            d_btkHr[istorm][iv] = [interp_lon,interp_lat]   # lon, lat
 
-        # plot
-        plot_EnKF_HPI()
+        # plot evolution with respect to time
+        if plot_evo_wrt_time:
+            plot_EnKF_HPI()
+
+        # plot histogram over all storms 
+        if plot_histogram:
+            
+            # stack obs over storms
+            if if_tcvital:
+                d_tcvHr_stack = {}
+                for iv in var:
+                    d_tcvHr_stack[iv] = stack_obs( d_tcvHr,iv )
+            if if_btk:
+                d_btkHr_stack = {}
+                for iv in var:
+                    d_btkHr_stack[iv] = stack_obs( d_btkHr,iv )
+
+            # stack simulations over storms
+            d_model_stack = stack_model( d_model )
+
+            # calculate the bias: exp - obs
+            if if_tcvital:
+                hist_var = bin_bias( d_tcvHr_stack,d_model_stack )
+            if if_btk:
+                hist_var = bin_bias( d_btkHr_stack,d_model_stack )
+
+            # plot
+            plot_hist_1by2()
 
     # Note: EnKF does not update precip!!! 
     if if_plot_precip:

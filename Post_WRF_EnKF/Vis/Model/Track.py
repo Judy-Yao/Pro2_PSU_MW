@@ -139,7 +139,7 @@ def read_wrfout(Storm, Exper_name, directory, filename_pickle=None, force_reload
     return HPI
 
 
-# Read out a forecast's HPI from ATCF part in rsl.error.0000
+# Read out a forecast's hourly HPI from ATCF part in rsl.error.0000
 def read_rsl_error(Storm, Exper_name, directory, DF_start, DF_end):
     
     """
@@ -480,7 +480,8 @@ def plot_hpi_df( Config ):
 # ------------------------------------------------------------------------------------------------------
 #            Operation: Plot absolute errors and their mean
 # ------------------------------------------------------------------------------------------------------
-def error_eachInit(Storm,wrf_dir,exper,best_track,exper_inits,DF_model_end,run_hrs):
+# Sample number are the same across different forecasts
+def SameL_error_eachInit(Storm,wrf_dir,exper,best_track,exper_inits,DF_model_end,run_hrs):
     
     dict_Error = {}
     run_times = list(range(0, run_hrs+1, 6))
@@ -492,13 +493,14 @@ def error_eachInit(Storm,wrf_dir,exper,best_track,exper_inits,DF_model_end,run_h
         fc_times_dt = [datetime.strptime(init_t,"%Y%m%d%H%M") + timedelta(hours=t) for t in run_times]
         fc_times_str = [time_dt.strftime("%Y%m%d%H%M") for time_dt in fc_times_dt] 
         # read from wrf forecasts
-        HPI_model = read_rsl_error(Storm,exper,wrf_dir+'/'+Storm+'/'+exper+'/wrf_df/'+init_t, init_t, DF_model_end) 
+        if not os.path.exists( wrf_dir+'/'+Storm+'/'+exper+'/wrf_df/'+init_t ):
+            continue
         # calculate the error!!!
         Diff_start_next6x = HPI_model['Diff_start_next6x']
         for it in fc_times_str:
             idx_t = fc_times_str.index(it)
             # special treatment to t0
-            bool_t0 = (Diff_start_next6x != 6 and Diff_start_next6x != 0)
+            bool_t0 = Diff_start_next6x < 6
             if idx_t == 0 and bool_t0:
                 continue # value will be np.nan
             # index of the data point in best_track
@@ -506,10 +508,10 @@ def error_eachInit(Storm,wrf_dir,exper,best_track,exper_inits,DF_model_end,run_h
             idx_btk = int( np.where(bool_btk)[0] ) 
             # index of the data point in model
             bool_model = [ it == model_str for model_str in HPI_model['time'][:] ]
-            if not any(bool_model): # speical treatment to data at the end time
-                continue
-            else:
-                idx_m = int( np.where(bool_model)[0] )
+            #if not any(bool_model): # speical treatment to data at the end time
+            #    continue
+            #else:
+            idx_m = int( np.where(bool_model)[0] )
             # error of track
             distance_track = UD.mercator_distance(best_track['lon'][idx_btk],best_track['lat'][idx_btk],HPI_model['lon'][idx_m],HPI_model['lat'][idx_m]) # km
             error_perInit[0,idx_t] = distance_track
@@ -539,6 +541,53 @@ def error_eachInit(Storm,wrf_dir,exper,best_track,exper_inits,DF_model_end,run_h
 
     return dict_Error 
 
+# Sample number are different across different forecasts 
+# I.e., sample numbers are decided by the start and end of the forecast time
+def DiffL_error_eachInit(Storm,wrf_dir,exper,best_track,exper_inits,DF_model_end):
+
+    dict_Error = {}
+    # Loop over initialization time for each experiment
+    for init_t in exper_inits:
+		# generate the forecast time series every 6 hours
+        fc_times_str = UD.generate_times(init_t,DF_model_end,6) 
+        run_times = len(fc_times_str)
+		# initialize error array
+        error_perInit = np.zeros((4,run_times)) # position_distance,position_azimuth relative to the best track, min slp,max wind
+        error_perInit[:] = np.nan
+        # read from wrf forecasts
+        if not os.path.exists( wrf_dir+'/'+Storm+'/'+exper+'/wrf_df/'+init_t ):
+            continue
+        HPI_model = read_rsl_error(Storm,exper,wrf_dir+'/'+Storm+'/'+exper+'/wrf_df/'+init_t, init_t, DF_model_end)
+        # calculate the error!!!
+        Diff_start_next6x = HPI_model['Diff_start_next6x']
+
+        for it in fc_times_str:
+            idx_t = fc_times_str.index(it)
+            # special treatment to t0
+            bool_t0 = Diff_start_next6x < 6
+            if idx_t == 0 and bool_t0:
+                continue # value will be np.nan
+            # index of the data point in best_track
+            bool_btk = [ it == btk_str for btk_str in best_track['time'][:] ]
+            idx_btk = int( np.where(bool_btk)[0] )
+            # index of the data point in model
+            bool_model = [ it == model_str for model_str in HPI_model['time'][:] ]
+            #if not any(bool_model): # speical treatment to data at the end time
+            #    continue
+            #else:
+            idx_m = int( np.where(bool_model)[0] )
+            # error of track
+            dist, azi_btk = UD.twoP_inverse(best_track['lat'][idx_btk],best_track['lon'][idx_btk],HPI_model['lat'][idx_m],HPI_model['lon'][idx_m]) # km
+            error_perInit[0,idx_t] = dist #km
+            error_perInit[1,idx_t] = UD.azi_geo_to_math(azi_btk)  #math azimuth:degree
+            # error of min slp
+            error_perInit[2,idx_t] = HPI_model['min_slp'][idx_m]-best_track['min_slp'][idx_btk]
+            # error of max wind
+            error_perInit[3,idx_t] = HPI_model['max_ws'][idx_m]-best_track['max_ws'][idx_btk]
+        # assemble the dictionary
+        dict_Error[init_t] = error_perInit 
+
+    return dict_Error
 
 def plot_abs_err( Config ):
 
@@ -594,7 +643,7 @@ def plot_abs_err( Config ):
     for iExper in Exper:
         print(iExper)
         if Exper_content_lbl[iExper] is not None:
-            Exper_absError_lbl[iExper] = error_eachInit(Storm,wrf_dir,iExper,best_track,Exper_content_lbl[iExper],DF_model_end,run_hrs=fc_run_hrs)
+            Exper_absError_lbl[iExper] = SameL_error_eachInit(Storm,wrf_dir,iExper,best_track,Exper_content_lbl[iExper],DF_model_end,run_hrs=fc_run_hrs)
         else:
              Exper_absError_lbl[iExper] = None 
 

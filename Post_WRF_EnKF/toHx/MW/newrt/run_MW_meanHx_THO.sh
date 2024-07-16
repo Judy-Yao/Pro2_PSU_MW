@@ -9,24 +9,25 @@
 #SBATCH -J toMW
 #SBATCH -N 4
 #SBATCH --ntasks-per-node 48
-#SBATCH -p skx-normal
-#SBATCH -t 03:00:00
+#SBATCH -p skx
+#SBATCH -t 00:10:00
 #SBATCH -o out_mw
 #SBATCH -e error_mw
 #SBATCH --mail-type=ALL
 #SBATCH --mail-user=zuy121@psu.edu
 
-module purge
-module load intel/18.0.2
-module load impi/18.0.2
-module load parallel-netcdf/4.3.3.1
-module load phdf5/1.8.16
-module load libfabric/1.7.0
-module load python3/3.7.0 
+#module purge
+#module load intel/18.0.2
+#module load impi/18.0.2
+#module load parallel-netcdf/4.3.3.1
+#module load phdf5/1.8.16
+#module load libfabric/1.7.0
+#module load python3/3.7.0 
+module restore intel
 
 # Fill in the storm name and experiment name
 Storm=JOSE
-Exper=IR-TuneWSM6-J_DA+J_WRF+J_init-SP-intel17-WSM6-30hr-hroi900
+Exper=IR-J_DA+J_WRF+J_init-SP-intel17-WSM6-30hr-hroi900
 Exper_obs=IR+MW-J_DA+J_WRF+J_init-SP-intel17-WSM6-30hr-hroi900
 
 # Parent paths
@@ -35,8 +36,8 @@ Small_dir=/work2/06191/tg854905/stampede2/Pro2_PSU_MW
 Code_dir=/work2/06191/tg854905/stampede2/Pro2_PSU_MW/SourceCode/Post_WRF_EnKF/toHx/MW/newrt 
 
 ############ User control parameters
-date_st=201709061700        # Start date  
-date_ed=201709061700        # End date (24 forecast hrs can be done in < 2 hr w/4 nodes on skx queues
+date_st=201709050000        # Start date  
+date_ed=201709050000        # End date (24 forecast hrs can be done in < 2 hr w/4 nodes on skx queues
 nE=60               # Number of ens members
 dom=3                           # Domain you are running it on 
 state=("input" "output") # Input or output or both
@@ -113,9 +114,9 @@ nml_a_channels(:,1) = ${sensor_Chs[@]:1},
 nml_s_reff_method = 'mp_physics',
 nml_i_nicpu = 16,
 nml_i_njcpu = 12,
-nml_s_crtm_rainLUT='WSM6_RainLUT_-109z-1.bin',
-nml_s_crtm_snowLUT='WSM6_SnowLUT_-109z-1.bin',
-nml_s_crtm_graupelLUT='WSM6_GraupelLUT_-109z-1.bin',
+nml_s_crtm_rainLUT='Thompson08_RainLUT_-109z-1.bin',
+nml_s_crtm_snowLUT='Thompson08_SnowLUT_-109z-1.bin',
+nml_s_crtm_graupelLUT='Thompson08_GraupelLUT_-109z-1.bin',
 /
     
 \$rt_input

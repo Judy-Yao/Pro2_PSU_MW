@@ -23,6 +23,7 @@ from cartopy import crs as ccrs
 from cartopy.mpl.gridliner import LONGITUDE_FORMATTER, LATITUDE_FORMATTER
 from mpl_toolkits.axes_grid1 import make_axes_locatable
 import time
+from wrf import getvar 
 
 from Track_xbxa import read_HPI_model
 import Util_data as UD
@@ -43,7 +44,7 @@ def read_slp( wrf_dir ):
         file_name = mean_dir[i]
         ncdir = nc.Dataset( file_name )
         # sea level pressure
-        slp_original[i,:,:] = UD.compute_slp( ncdir )#getvar(ncdir, 'slp')
+        slp_original[i,:,:] = getvar(ncdir, 'slp')
         slp_smooth[i,:,:] = sp.ndimage.gaussian_filter(slp_original[i,:,:], [11,11])
 
     d_slp = {'lat':lat,'lon':lon,'slp':slp_original,'slp_smooth':slp_smooth}
@@ -75,20 +76,25 @@ def plot_slp( Storm, Exper_name, DAtime, wrf_dir, plot_dir ):
         ax[i].set_extent([lon_min,lon_max,lat_min,lat_max], crs=ccrs.PlateCarree())
         ax[i].coastlines (resolution='10m', color='black', linewidth=1)
         # sea level pressure
-        min_slp = 900
-        max_slp = 1020
+        min_slp = 940
+        max_slp = 1000
         bounds = np.linspace(min_slp, max_slp, 7)
         slp_contourf = ax[i].contourf(lon,lat,slp[i,:,:],cmap='magma',vmin=min_slp,vmax=max_slp,levels=bounds,transform=ccrs.PlateCarree())
+        # location of min slp
+        idx = np.nanargmin( slp[i,:,:] )
+        lat_minslp = lat.flatten()[idx]
+        lon_minslp = lon.flatten()[idx]
+        ax[i].scatter(lon_minslp,lat_minslp, 20, 'black', alpha=1,marker='o',transform=ccrs.PlateCarree())
         # Mark the best track
         if any( hh in DAtime[8:10] for hh in ['00','06','12','18'] ):
-            ax[i].scatter(tc_lon,tc_lat, 20, 'black', marker='*',transform=ccrs.PlateCarree())
+            ax[i].scatter(tc_lon,tc_lat, 20, 'black', marker='*',alpha=0.6, transform=ccrs.PlateCarree())
             ax[i].text(tc_lon-1,tc_lat-0.5,tc_slp,fontsize=12)
         #ax[i].add_patch(patches.Polygon(path,facecolor='none',edgecolor='black',linewidth=1.5 ))
 
     # Adding the colorbar
     cbaxes = fig.add_axes([0.01, 0.1, 0.02, 0.8])
     wind_bar = fig.colorbar(slp_contourf,cax=cbaxes,fraction=0.046, pad=0.04) #Make a colorbar for the ContourSet returned by the contourf call.
-    wind_bar.set_clim( vmin=min_slp, vmax=max_slp )
+    #wind_bar.set_clim( vmin=min_slp, vmax=max_slp )
     wind_bar.ax.set_ylabel('slp (hPa)',fontsize=12)
     wind_bar.ax.tick_params(labelsize='12')
 
@@ -96,7 +102,7 @@ def plot_slp( Storm, Exper_name, DAtime, wrf_dir, plot_dir ):
     ax[0].set_title( 'Xb--min slp: '+str("{0:.3f}".format(np.min( slp[0,:,:] )))+' hPa',  fontweight='bold', fontsize=13)
     ax[1].set_title( 'Xa--min slp: '+str("{0:.3f}".format(np.min( slp[1,:,:] )))+' hPa',  fontweight='bold', fontsize=13)
     if deep_slp_incre:
-        title_name = Storm+': '+Exper_name+' ('+DAtime+')'+'\nAbs of min SLP increment > '+str(incre_slp_th)+' hPa~200km_circle (yo-Hxb<0)'
+        title_name = Storm+': '+Exper_name+' ('+DAtime+')'+'\nAbs of min SLP increment > '+str(incre_slp_th)+' hPa'
         title_name = title_name #+ ' kick5error'
         fig.suptitle(title_name,fontsize=12, fontweight='bold')
     else:
@@ -122,7 +128,7 @@ def plot_slp( Storm, Exper_name, DAtime, wrf_dir, plot_dir ):
         gl.xlabel_style = {'size': 12}
         gl.ylabel_style = {'size': 12}
 
-    des = plot_dir+DAtime+'_slp_deep_incre_200km_circle_colderObs.png'
+    des = plot_dir+DAtime+'_slp_deep_incre_10hPa.png'
     plt.savefig( des, dpi=300 )
     print('Saving the figure: ', des)
     plt.close()
@@ -134,12 +140,12 @@ if __name__ == '__main__':
     small_dir =  '/work2/06191/tg854905/stampede2/Pro2_PSU_MW/'
     # ---------- Configuration -------------------------
     Storm = 'IRMA'
-    DA = 'IR+MW'
+    DA = 'CONV'
     MP = 'WSM6'
 
     # Time range set up
-    start_time_str = '201709030600'
-    end_time_str = '201709030700'
+    start_time_str = '201709030000'
+    end_time_str = '201709040000'
     Consecutive_times = True
 
     deep_slp_incre = True
@@ -148,7 +154,7 @@ if __name__ == '__main__':
     # -------------------------------------------------------   
 
     # Create experiment names
-    Exper_name = 'IR-TuneWSM6-J_DA+J_WRF+J_init-SP-intel17-WSM6-30hr-hroi900' #UD.generate_one_name( Storm,DA,MP )
+    Exper_name = UD.generate_one_name( Storm,DA,MP )
 
     if not Consecutive_times:
         DAtimes = ['201708251200',]

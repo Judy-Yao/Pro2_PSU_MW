@@ -123,39 +123,77 @@ def MSLP_btk( small_dir,Storm,DAt_6hrs ):
         lg = [itx == itobs for itobs in btk_times]
         idx_lines.append( np.where(lg)[0][0] ) # only choose the first occurrence 
 
-    # MSLP
+    # MSLP and location 
     d_obs6Hr = {}
+    d_obs6Hr['lat'] = {}
+    d_obs6Hr['lon'] = {}
+    d_obs6Hr['mslp'] = {}
     for i in idx_lines:
         line = btk_all[i]
         split_line = line.split()
         btk_time = split_line[2].replace(',','') + '00'
-        d_obs6Hr[btk_time] = float(split_line[9].replace(',','')) # mb
+        # Read latitude
+        lat_line = split_line[6].replace(',','')
+        if 'N' in lat_line:
+            d_obs6Hr['lat'][btk_time] = float(lat_line.replace('N',''))/10
+        else:
+            d_obs6Hr['lat'][btk_time] = 0-float(lat_line.replace('S',''))/10
+        # Read longitute
+        lon_line = split_line[7].replace(',','')
+        if 'W' in lon_line:
+            d_obs6Hr['lon'][btk_time] = 0-float(lon_line.replace('W',''))/10
+        else:
+            d_obs6Hr['lon'][btk_time] = float(lon_line.replace('E',''))/10
+        # Read min sea level pressure
+        d_obs6Hr['mslp'][btk_time] = float(split_line[9].replace(',','')) # mb
 
     return d_obs6Hr
 
 
-def find_minSLP( Storm, wrfout ):
-    
+def find_minSLP( Storm, wrfout, DAtime ):
+
     ncdir = nc.Dataset( wrfout )
+    # geographical 
+    lat = ncdir.variables['XLAT'][0,:,:]
+    lon = ncdir.variables['XLONG'][0,:,:]
+    # sea level pressure
     slp = getvar(ncdir, 'slp')
-    slp_smooth = sp.ndimage.gaussian_filter(slp, [11,11])
+    # original SLP
+    slp_values = slp.values
+    slp_values[slp_values > 1030] = np.nan
+    # smoothed SLP
+    slp_smt_values = sp.ndimage.gaussian_filter(slp, [11,11]) #[11,11]
+    slp_smt_values[slp_smt_values > 1030] = np.nan
+    # simulated storm center
     if Storm == 'HARVEY': # Harvey is special with its location near land!
-        lat = ncdir.variables['XLAT'][:]
-        mask = lat < 18 # lat > 18 will be True
-        slp_masked = ma.masked_array(slp, mask=mask)
-        slp_smooth_masked = ma.masked_array(slp_smooth, mask=mask)
-        min_slp = np.amin( slp_masked )
+
+        # eyeball where the storm is
+        if DAtime <= '201708221600':
+            lat_mask = lat <= 18
+            lon_mask = lon <= -91.5
+            mask = lat_mask | lon_mask
+        elif (DAtime >= '201708221700') & (DAtime <= '201708222300'):
+            lat_mask = lat <= 18
+            lon_mask =  (lon >= -88) | (lon <= -91.5)
+            mask = lat_mask | lon_mask
+        else:
+            mask = lat <= 18
+        slp_masked = ma.masked_array(slp_values, mask=mask)
+        minslp = np.nanmin( slp_masked ) 
+        
+        slp_smooth_masked = ma.masked_array(slp_smt_values, mask=mask)
         idx = np.nanargmin( slp_smooth_masked )
-        lat_minslp = ncdir.variables['XLAT'][:].flatten()[idx]
-        lon_minslp = ncdir.variables['XLONG'][:].flatten()[idx]
-        return [lat_minslp,lon_minslp,min_slp]
+        lat_minslp =  lat.flatten()[idx] 
+        lon_minslp = lon.flatten()[idx] 
     else:
-        min_slp = np.amin( slp )
-        slp_smooth = sp.ndimage.gaussian_filter(slp, [11,11])
-        idx = np.nanargmin( slp_smooth )
-        lat_minslp = ncdir.variables['XLAT'][:].flatten()[idx]
-        lon_minslp = ncdir.variables['XLONG'][:].flatten()[idx]
-        return [lat_minslp,lon_minslp,min_slp.values]
+        minslp = np.nanmin( slp_masked ) 
+        slp_smooth_masked = ma.masked_array(slp_smt_values, mask=mask)
+        idx = np.nanargmin( slp_smooth_masked )
+        lat_minslp =  lat.flatten()[idx] 
+        lon_minslp = lon.flatten()[idx]
+    
+    return [lat_minslp,lon_minslp,minslp]
+
 
 # Obtain min slp from WRF output
 def model_minSLP( big_dir,istorm,iExper,DAtimes,slp_xa,slp_xb=False ):
@@ -176,7 +214,7 @@ def model_minSLP( big_dir,istorm,iExper,DAtimes,slp_xa,slp_xb=False ):
         if slp_xa:
             xa_dir = big_dir+istorm+'/'+iExper+'/fc/'+DAtime+'/wrf_enkf_output_d03_mean'
             print('Reading the EnKF posterior mean from ', xa_dir)
-            list_xa = find_minSLP( istorm,xa_dir )
+            list_xa = find_minSLP( istorm,xa_dir,DAtime )
             xa_minslp_lat.append( list_xa[0] )
             xa_minslp_lon.append( list_xa[1] )
             xa_minslp_value.append( list_xa[2] )
@@ -184,7 +222,7 @@ def model_minSLP( big_dir,istorm,iExper,DAtimes,slp_xa,slp_xb=False ):
         if slp_xb:
             xb_dir = big_dir+istorm+'/'+iExper+'/fc/'+DAtime+'/wrf_enkf_input_d03_mean'
             print('Reading the EnKF prior mean from ', xb_dir)
-            list_xb = find_minSLP( istorm,xb_dir )
+            list_xb = find_minSLP( istorm,xb_dir,DAtime )
             xb_minslp_lat.append( list_xb[0] )
             xb_minslp_lon.append( list_xb[1] )
             xb_minslp_value.append( list_xb[2] )

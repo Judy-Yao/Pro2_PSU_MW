@@ -178,7 +178,8 @@ contains
     type(obs_info_type), intent(inout) :: obs_info
     character(len=*), intent(in) :: filename
     integer, intent(out) :: error_status
-    
+   
+    character (len=12)  :: so_time
     character (len=16)  :: sat_id
     integer             :: ch_info
     integer             :: iost
@@ -186,7 +187,7 @@ contains
 
 !...... get the data number
     do_get_raw_data_loop_read : do
-      read(10, '(a16,i12)', iostat = iost ) sat_id, ch_info
+      read(10, '(a12,a16,i12)', iostat = iost ) so_time, sat_id, ch_info
       if( iost .ne. 0 ) exit
       call obs_info_add(obs_info, trim(adjustl(sat_id)), ch_info)
     end do do_get_raw_data_loop_read
@@ -202,10 +203,11 @@ contains
     character (len=12)                  :: so_time
     character (len=16)                  :: sat_id
     integer                             :: i, n, iost, num
-    integer                             :: ch_info
-    real                                :: lat, lon, tb
+    integer                             :: ch_info,hroi_rad,hroi_drad
+    real                                :: lat, lon, tb, err
     real                                :: s, h, rx, ry, ir1, jr1, is, js
-    real                                :: zenith, efov_aScan, efov_cScan, azimuth_angle
+    real                                :: efov_aScan, efov_cScan, scan_angle, zenith_angle, azimuth_angle
+    real                                :: sat_lat, sat_lon, sat_alt
     open (10, file=filename, status='old', form='formatted', iostat=iost)
 
 !...... get the data number
@@ -224,10 +226,17 @@ contains
     allocate( microwave%ii( num ) )
     allocate( microwave%jj( num ) )
     allocate( microwave%tb( num ) )
-    allocate( microwave%zenith_angle( num ) )
+    allocate( microwave%hroi( num ) )
+    allocate( microwave%hroi_d( num ) )
+    allocate( microwave%err( num ) )
     allocate( microwave%efov_aScan( num ) )
     allocate( microwave%efov_cScan( num ) )
+    allocate( microwave%scan_angle( num ) )
+    allocate( microwave%zenith_angle( num ) )
     allocate( microwave%azimuth_angle( num ) )
+    allocate( microwave%sat_lat( num ) )
+    allocate( microwave%sat_lon( num ) )
+    allocate( microwave%sat_alt( num ) )
 
 !...... get data
     rewind(10)
@@ -235,8 +244,9 @@ contains
     do_get_raw_data_loop : do
 
 !......... Enkf with odd data, and verify with even data
-    read(10, '(a12,a16,i12,7f12.3)', iostat = iost ) &
-         so_time, sat_id, ch_info, lat, lon, tb, zenith, efov_aScan, efov_cScan, azimuth_angle
+    read(10, '(a12,a16,i12,3f12.3,2i12,9f12.3)', iostat = iost ) &
+         so_time, sat_id, ch_info, lat, lon, tb, hroi_rad, hroi_drad, err, &
+         efov_aScan, efov_cScan, scan_angle, zenith_angle, azimuth_angle, sat_lat, sat_lon, sat_alt
     if( iost .ne. 0 ) exit
 !......... calculate radar center's position according to wrf domain grid
     call latlon_to_ij( state%proj, lat, lon, is, js )
@@ -250,10 +260,17 @@ contains
       microwave%ii(num) = is
       microwave%jj(num) = js
       microwave%tb(num) = tb
-      microwave%zenith_angle(num) = zenith
+      microwave%hroi(num) = (hroi_rad*1000)/state%proj%dx
+      microwave%hroi_d(num) = (hroi_drad*1000)/state%proj%dx
+      microwave%err(num) = err
       microwave%efov_aScan(num) = efov_aScan
       microwave%efov_cScan(num) = efov_cScan
+      microwave%scan_angle(num) = scan_angle
+      microwave%zenith_angle(num) = zenith_angle
       microwave%azimuth_angle(num) = azimuth_angle
+      microwave%sat_lat(num) = sat_lat
+      microwave%sat_lon(num) = sat_lon
+      microwave%sat_alt(num) = sat_alt
     else
     endif
 

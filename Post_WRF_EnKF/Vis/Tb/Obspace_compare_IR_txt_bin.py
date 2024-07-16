@@ -609,16 +609,16 @@ if __name__ == '__main__':
     small_dir =  '/work2/06191/tg854905/stampede2/Pro2_PSU_MW/'
 
     # ---------- Configuration -------------------------
-    Storm = 'IRMA'
-    DA = 'IR'
-    MP = 'TuneWSM6'
+    Storm = 'HARVEY'
+    DA = 'CONV'
+    MP = 'WSM6'
  
     sensor = 'abi_gr'
     ch_list = ['8',]
     fort_v = ['obs_type','lat','lon','obs']
 
-    start_time_str = '201709040000' 
-    end_time_str = '201709050000'
+    start_time_str = '201708221200' 
+    end_time_str = '201708231200'
     Consecutive_times = True
     
     # limitations
@@ -633,7 +633,7 @@ if __name__ == '__main__':
     # Create experiment names
 
     Exper_name = UD.generate_one_name( Storm,DA,MP )
-    Exper_obs =  Exper_name#UD.generate_one_name( Storm,'IR',MP )
+    Exper_obs =  UD.generate_one_name( Storm,'IR',MP )
     
     if not Consecutive_times:
         IR_times = ['201709030100',]
