@@ -465,13 +465,13 @@ if __name__ == '__main__':
     lead_t = list(range(0, cycles, 1))
 
     # observation
-    if_tcvital = False
+    if_tcvital = True
     if_btk = True
 
     # EnKF HPI
     if_plot_HPI = True
-    plot_histogram = True
-    plot_evo_wrt_time = False
+    plot_histogram = False
+    plot_evo_wrt_time = True
     slp_xa = True
     Vmax_xa = True
     slp_xb = False

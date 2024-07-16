@@ -17,6 +17,7 @@ from fast_histogram import histogram2d as hist2d
 from mpl_toolkits.axes_grid1.inset_locator import inset_axes
 from mpl_toolkits.axes_grid1 import make_axes_locatable
 import matplotlib.patches as mpatches
+import matplotlib.lines as mlines
 
 import Util_data as UD
 import Track
@@ -870,9 +871,13 @@ def plot_2by2_MAEs():
         ax[imp]['mslp'] = fig.add_subplot( ist_grids[1] )
  
     # Customization
-    colorset = storm_color()
-    #marker_type= {'CONV':'o','IR':'P','IR+MW':'X'}
-    marker_type= DA_marker()
+    #colorset = storm_color()
+    #marker_type= DA_marker()
+   
+    # Option2 : DA by color; Storm by marker
+    colorset = {'CONV': 'black','IR':'red','IR+MW':'blue'}
+    marker_type = {'HARVEY':'|','IRMA':'x','JOSE':'_','MARIA':'.'}
+
     line_width = {'HARVEY':1,'IRMA':1,'JOSE':1,'MARIA':1,'Mean':1.5}
 
     # Plot individual simulations
@@ -883,13 +888,13 @@ def plot_2by2_MAEs():
         for ist in Storms:
             lead_t = list(range(0,fc_srt_len[ist]))
             for ida in DA:
-                ax[imp]['track'].plot(lead_t,MAEs[ist][imp][ida]['track'],color=colorset[ist],marker=marker_type[ida],markersize=5,linewidth=line_width[ist],alpha=0.4) 
-                ax[imp]['mslp'].plot(lead_t,MAEs[ist][imp][ida]['mslp'],color=colorset[ist],marker=marker_type[ida],markersize=5,linewidth=line_width[ist],alpha=0.4)
+                ax[imp]['track'].plot(lead_t,MAEs[ist][imp][ida]['track'],color=colorset[ida],marker=marker_type[ist],markersize=5,linewidth=line_width[ist],markeredgewidth=2,alpha=0.4) 
+                ax[imp]['mslp'].plot(lead_t,MAEs[ist][imp][ida]['mslp'],color=colorset[ida],marker=marker_type[ist],markersize=5,linewidth=line_width[ist],markeredgewidth=2,alpha=0.4)
                 if ist == 'JOSE' and imp == "THO":
                     if ida == 'CONV':
                         pass
                     else:
-                        subax_track.plot(lead_t,MAEs[ist][imp][ida]['track_all'],color=colorset[ist],marker=marker_type[ida],markersize=3,linewidth=line_width[ist],alpha=0.4)
+                        subax_track.plot(lead_t,MAEs[ist][imp][ida]['track_all'],color=colorset[ida],marker=marker_type[ist],markersize=3,linewidth=line_width[ist],markeredgewidth=2,alpha=0.4)
                         subax_track.set_xlim( [-0.1,max(fc_srt_len.values())-1] )
                         subax_track.set_yticks( [0,450,900,1350] )
                         subax_track.set_ylim([-0.1,1350.1])
@@ -898,7 +903,7 @@ def plot_2by2_MAEs():
                         subax_track.set_xticklabels(['D0','D1','D2','D3','D4'])
                         subax_track.grid(True,linewidth=0.8, color='gray', alpha=0.3, linestyle='-')
 
-                        subax_mslp.plot(lead_t,MAEs[ist][imp][ida]['mslp_all'],color=colorset[ist],marker=marker_type[ida],markersize=3,linewidth=line_width[ist],alpha=0.4)
+                        subax_mslp.plot(lead_t,MAEs[ist][imp][ida]['mslp_all'],color=colorset[ida],marker=marker_type[ist],markersize=3,linewidth=line_width[ist],markeredgewidth=2,alpha=0.4)
                         subax_mslp.set_xlim( [-0.1,max(fc_srt_len.values())-1] )
                         subax_mslp.set_yticks( [0,45,90] )
                         subax_mslp.set_ylim([-0.1,90])
@@ -913,20 +918,29 @@ def plot_2by2_MAEs():
     alphas = {'CONV':0.5,'IR':0.7,'IR+MW':0.9}
     for imp in MP:
         for ida in DA:
-            ax[imp]['track'].plot(lead_t,mae_sts[imp][ida]['track'],color='black',marker=marker_type[ida],markersize=6,linewidth=1.5,alpha=alphas[ida])
-            ax[imp]['mslp'].plot(lead_t,mae_sts[imp][ida]['mslp'],color='black',marker=marker_type[ida],markersize=6,linewidth=1.5,alpha=alphas[ida])
+            ax[imp]['track'].plot(lead_t,mae_sts[imp][ida]['track'],color=colorset[ida],linewidth=2)
+            ax[imp]['mslp'].plot(lead_t,mae_sts[imp][ida]['mslp'],color=colorset[ida],linewidth=2)
 
 
     # Manully add legends
     # create proxy artists for the legend with different line widths and colors
-    lgd_1 = Storms + ['Mean']
-    legend_colors = list(colorset.values())
-    legend_colors.append( 'black' )
-    list_widths = list(line_width.values())
-    proxy_artists = [plt.Line2D([0], [0], color=color, lw=lw) for color,lw in zip( legend_colors,list_widths )]
+
+    ## Option 1: DA by marker; Storm by color
+    #lgd_1 = Storms + ['Mean']
+    #legend_colors = list(colorset.values())
+    #legend_colors.append( 'black' )
+    #list_widths = list(line_width.values())
+    #proxy_artists = [plt.Line2D([0], [0], color=color, lw=lw) for color,lw in zip( legend_colors,list_widths )]
     #legend0.set_alpha( 0.5 )
     # Add the first legend manually to the current Axes
-    ax['WSM6']['track'].legend(proxy_artists,lgd_1,fontsize='8',loc='upper center',ncol=2)
+    #ax['WSM6']['track'].legend(proxy_artists,lgd_1,fontsize='8',loc='upper center',ncol=2)
+
+    ## Option 2: DA by color; Storm by marker
+    lines = ax['WSM6']['track'].get_lines()
+    lgd_0 = Storms + ['Mean']
+    legend = ax['WSM6']['track'].legend([lines[i] for i in [0,3,6,9,-3]], lgd_0,fontsize='8',loc='upper center',ncol=2)
+    # Add the first legend manually to the current Axes
+    ax['WSM6']['track'].add_artist(legend)
 
     lines = ax['WSM6']['mslp'].get_lines()
     lgd_0 = DA
@@ -973,6 +987,7 @@ def plot_2by2_MAEs():
 
     # Save figure
     des_name = small_dir+'/SYSTEMS/Vis_analyze/Paper1/sys_fc_HPI_absError_MAEs_withFCtime.png'
+    plt.savefig( des_name )
     print( 'Saving the figure to '+des_name )
 
     return None
@@ -1137,9 +1152,9 @@ if __name__ == '__main__':
         fc_run_hrs = 60
 
     MAE_only = False
-    normMAE_FSP = True
-    MAE_wrt_time = False
-    FSP_IR = True
+    normMAE_FSP = False
+    MAE_wrt_time = True
+    FSP_IR = False
     #------------------------------------
     wrf_dir = big_dir
 

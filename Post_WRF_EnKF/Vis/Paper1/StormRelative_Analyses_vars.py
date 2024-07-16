@@ -407,7 +407,7 @@ def plot_cycle_mean( ivar,imp ):
             if ivar == 'WIND':
                 if ist == 'IRMA':
                     bounds = np.arange(10,45+1,5)
-                    irma_ctf = ax[ida][ist].contourf( xcoor,ycoor,az_cycle_mean[ist][imp][ida][ivar],levels=bounds,extend='max',cmap='magma_r')
+                    irma_ctf = ax[ida][ist].contourf( xcoor,ycoor,az_cycle_mean[ist][imp][ida][ivar],levels=bounds,extend='both',cmap='magma_r')
                 elif ist == 'HARVEY': 
                     bounds = np.arange(0,10+1,1.5)
                     harvey_ctf = ax[ida][ist].contourf( xcoor,ycoor,az_cycle_mean[ist][imp][ida][ivar],levels=bounds,extend='max',cmap='cividis_r')
@@ -418,14 +418,17 @@ def plot_cycle_mean( ivar,imp ):
             ax[ida][ist].invert_yaxis()
 
     # Colorbar
-    cbar_ax = fig.add_axes([0.92, 0.1, 0.02, 0.8]) #fig.add_axes([0.925, 0.52, 0.03, 0.43])
+    cbar_ax = fig.add_axes([0.92, 0.12, 0.02, 0.8]) #fig.add_axes([0.925, 0.52, 0.03, 0.43])
     cbar_irma = fig.colorbar(irma_ctf, cax=cbar_ax, orientation='vertical')
+    cbar_irma.set_label('Wind Speed (m $\mathregular{s^{-1}}$)')
 
     cbar_ax = fig.add_axes([0.10, 0.05, 0.4, 0.02])
     cbar_harvey = fig.colorbar(harvey_ctf, cax=cbar_ax, orientation='horizontal')
+    cbar_harvey.set_label('Wind Speed (m $\mathregular{s^{-1}}$)')
 
     cbar_ax = fig.add_axes([0.52, 0.05, 0.40, 0.02])
     cbar_others = fig.colorbar(others_ctf, cax=cbar_ax, orientation='horizontal')
+    cbar_others.set_label('Wind Speed (m $\mathregular{s^{-1}}$)')
 
     # axes attributes
     for ida in DA:
@@ -470,7 +473,6 @@ def plot_cycle_mean( ivar,imp ):
     fig.text(0.03,0.79,DA[0], fontsize=11, ha='center', va='center',rotation='vertical')
     fig.text(0.03,0.52,DA[1], fontsize=11, ha='center', va='center',rotation='vertical')
     fig.text(0.03,0.25,DA[2], fontsize=11, ha='center', va='center',rotation='vertical')
-
 
 
     # Save figure

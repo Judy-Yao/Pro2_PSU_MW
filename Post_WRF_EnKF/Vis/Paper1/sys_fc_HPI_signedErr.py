@@ -687,7 +687,7 @@ def plot_mslpVSvmax( allFC_error,hist_HPI ):
 
     # Create a colorbar above the first row of subplots
     cbar_ax = fig.add_axes([0.925, 0.52, 0.03, 0.43])
-    cbar = fig.colorbar(t_pdf, cax=cbar_ax, orientation='vertical')
+    cbar = fig.colorbar(t_pdf, cax=cbar_ax, orientation='vertical',extend='max')
     cbar.set_ticks([0, 5, 10, 15, 20])
     cbar.set_ticklabels(['0%', '5%', '10%', '15%', '20%'])
 
@@ -707,10 +707,12 @@ def plot_mslpVSvmax( allFC_error,hist_HPI ):
             fig.text(0.78,0.97,ida, fontsize=12, ha='center', va='center')
 
     # Add y label
-    fig.text(0.05,0.85,'WSM6: track', fontsize=10, ha='center', va='center',rotation='vertical')
-    fig.text(0.05,0.63,'THO: track', fontsize=10, ha='center', va='center',rotation='vertical')
-    fig.text(0.05,0.42,'WSM6: Vmax', fontsize=10, ha='center', va='center' ,rotation='vertical')
-    fig.text(0.05,0.19,'THO: Vmax', fontsize=10, ha='center', va='center',rotation='vertical')
+    fig.text(0.05,0.85,'WSM6: Track Bias (km)', fontsize=10, ha='center', va='center',rotation='vertical')
+    fig.text(0.05,0.63,'THO: Track Bias (km)', fontsize=10, ha='center', va='center',rotation='vertical')
+    fig.text(0.03,0.42,'WSM6', fontsize=10, ha='center', va='center' ,rotation='vertical')
+    fig.text(0.06,0.42,'Vmax Bias (m $\mathregular{s^{-1}}$)', fontsize=8, ha='center', va='center' ,rotation='vertical')
+    fig.text(0.03,0.19,'THO', fontsize=10, ha='center', va='center',rotation='vertical')
+    fig.text(0.06,0.19,'Vmax Bias (m $\mathregular{s^{-1}}$)', fontsize=8, ha='center', va='center' ,rotation='vertical')
 
     # Add circle (legend)
     circle = plt.Circle((0.94, 0.46), 0.005, color=colorset['HARVEY'], alpha=alphas['HARVEY'], transform=fig.transFigure, clip_on=False)
@@ -759,7 +761,7 @@ def plot_mslpVSvmax( allFC_error,hist_HPI ):
             ax['tho_track'][ida].set_xticklabels(['E','NE','', 'NW', '','SW', 'S', 'SE'])
 
         # WSM6 intensity
-        horizontalalignment='center',ax['wsm6'][ida].set_xlabel('WSM6: MSLP',fontsize='10')
+        horizontalalignment='center',ax['wsm6'][ida].set_xlabel('MSLP Bias (hPa)',fontsize='9')
         mslp_ticks = np.linspace(-75, 75, num=7, dtype=int)
         ax['wsm6'][ida].set_xticks(mslp_ticks)
         ax['wsm6'][ida].set_xticklabels([str(i) for i in mslp_ticks] )
@@ -780,7 +782,7 @@ def plot_mslpVSvmax( allFC_error,hist_HPI ):
         ax_wsm6_margVmax[ida].xaxis.set_ticks([])
 
         # THO intensity
-        ax['tho'][ida].set_xlabel('THO: MSLP', fontsize='10')
+        ax['tho'][ida].set_xlabel('MSLP Bias (hPa)', fontsize='9')
         vmax_ticks = np.linspace(-75, 75, num=7, dtype=int)
         ax['tho'][ida].set_xticks(vmax_ticks)
         ax['tho'][ida].set_xticklabels([str(i) for i in vmax_ticks])
