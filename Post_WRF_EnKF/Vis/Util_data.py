@@ -289,7 +289,7 @@ def destagger(var, stagger_dim, meta=False):
 #           Object: Post-storm track
 # ------------------------------------------------------------------------------------------------------
 # Read the post-storm best-track file of the storm at all times
-def read_bestrack(Storm):
+def read_bestrack(small_dir,Storm):
 
     Best_track_file = os.listdir('/work2/06191/tg854905/stampede2/Pro2_PSU_MW/' + Storm + '/Post_Storm_btk')
     with open('/work2/06191/tg854905/stampede2/Pro2_PSU_MW/' + Storm + '/Post_Storm_btk/' + Best_track_file[0]) as f:
@@ -336,7 +336,7 @@ def btk_in_duration(Storm, Btk_start, Btk_end, hour_step):
     time_interest_dt = [datetime.strptime(Btk_start,"%Y%m%d%H%M") + timedelta(hours=t) for t in list(range(0, int(Btk_diff_hour+1), hour_step))]
     time_interest_str = [time_dt.strftime("%Y%m%d%H%M") for time_dt in time_interest_dt]
     # Read the complete best-track file
-    dict_all_btk = read_bestrack(Storm)
+    dict_all_btk = read_bestrack(small_dir,Storm)
     # Get the indices in the best-track file corresponded to the times of interest
     idx_in_btk = []
 
@@ -362,9 +362,9 @@ def btk_in_duration(Storm, Btk_start, Btk_end, hour_step):
 #           Object: TCvital
 # ------------------------------------------------------------------------------------------------------
 # Read the location of the storm from TCvital file
-def read_TCvitals(Storm, DAtime):
+def read_TCvitals(small_dir, Storm, DAtime):
  
-    tc_file = '/work2/06191/tg854905/stampede2/Pro2_PSU_MW/'+Storm+'/TCvitals/'+Storm+'_tcvitals'
+    tc_file = small_dir+Storm+'/TCvitals/'+Storm+'_tcvitals'
     with open(tc_file) as tmp:
         tc_all = tmp.readlines()
 
