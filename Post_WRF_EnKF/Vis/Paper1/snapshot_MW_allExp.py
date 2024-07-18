@@ -10,83 +10,55 @@ from cartopy.mpl.gridliner import LONGITUDE_FORMATTER, LATITUDE_FORMATTER
 import math
 from datetime import datetime, timedelta
 import time
+import pandas as pd
 
 import Util_data as UD
 import Util_Vis
 
-
-# Read observed IR obs
-def readIR_obs( Tb_file ):
-
-    lat_obs = []
-    lon_obs = []
-    ch_obs = []
-    Yo_obs = []
-
-    # Read records
-    print('Reading ', Tb_file)
-    with open(Tb_file) as f:
-        next(f)
-        all_lines = f.readlines()
-
-    for line in all_lines:
-        split_line = line.split()
-        lat_obs.append( float(split_line[0]) )
-        lon_obs.append( float(split_line[1]) )
-        ch_obs.append( int(split_line[2]) )
-        Yo_obs.append( float(split_line[3]) )
-
-    #if np.size(lat_obs) != dict_ss_len[sensor]:
-    #    raise ValueError('The length of post-processed file is not equal to the pre-processed file!')
-
-    lat_obs = np.array( lat_obs )
-    lon_obs = np.array( lon_obs )
-    ch_obs = np.array( ch_obs )
-    Yo_obs = np.array( Yo_obs )
+# Read observed MW obs
+def readMW_obs( ist ):
+    
+    # Read the file into a pandas DataFrame
+    Hx_dir = big_dir+ist+'/'+Exper_names[ist][MP[0]]['IR+MW']+'/Obs_Hx/MW/'+DAtime[ist]+'/'
+    file_name = 'mean_obs_res_d03_'+DAtime[ist]+'.tb.'+d_highf[ist]['sensor']+'.crtm.conv.txt'
+    # Read the file into a pandas DataFrame
+    df = pd.read_csv( Hx_dir+file_name,delim_whitespace=True,skiprows=1,header=None,dtype=str )
+    ch_obs = np.array( [int(it) for it in df[2].values] )
+    lat_obs = np.array( [float(it) for it in df[0].values] )
+    lon_obs = np.array( [float(it) for it in df[1].values] )
+    mw_obs = np.array( [float(it) for it in df[3].values] )
+    # Only take rows that are associated with the specified channel
+    lat_obs = lat_obs[ch_obs == d_highf[ist]['ch']]
+    lon_obs = lon_obs[ch_obs == d_highf[ist]['ch']]
+    mw_obs = mw_obs[ch_obs == d_highf[ist]['ch']]
 
     lat_min = np.min( lat_obs )
     lat_max = np.max( lat_obs )
     lon_min = np.min( lon_obs)
     lon_max = np.max( lon_obs )
 
-    d_IRobs = {'lat_obs':lat_obs, 'lon_obs':lon_obs, 'ch_obs':ch_obs, 'Yo_obs':Yo_obs,'lat_min':lat_min,'lat_max':lat_max,'lon_min':lon_min,'lon_max':lon_max}
-    return d_IRobs
+    d_MWobs = {'lat_obs':lat_obs, 'lon_obs':lon_obs, 'mw_obs':mw_obs,'lat_min':lat_min,'lat_max':lat_max,'lon_min':lon_min,'lon_max':lon_max}
+    return d_MWobs
 
 # Read simulated IR at obs resolution/location
-def read_simuIR_obsLoc( Tb_file ):
+def read_simuMW_obsLoc( ist,imp,ida ):
 
-    lat_obs = []
-    lon_obs = []
-    #ch_obs = []
-    #Yo_obs = []
-    meanYb_obs = []
-    meanYa_obs = []
+    # Read the file into a pandas DataFrame
+    Hx_dir = big_dir+ist+'/'+Exper_names[ist][imp][ida]+'/Obs_Hx/MW/'+DAtime[ist]+'/'
+    file_name = 'mean_obs_res_d03_'+DAtime[ist]+'.tb.'+d_highf[ist]['sensor']+'.crtm.conv.txt'
+    # Read the file into a pandas DataFrame
+    df = pd.read_csv( Hx_dir+file_name,delim_whitespace=True,skiprows=1,header=None,dtype=str )
+    ch_obs = np.array( [int(it) for it in df[2].values] )
+    lat_obs = np.array( [float(it) for it in df[0].values] )
+    lon_obs = np.array( [float(it) for it in df[1].values] )
+    mw_simu = np.array( [float(it) for it in df[5].values] )
+    # Only take rows that are associated with the specified channel
+    lat_obs = lat_obs[ch_obs == d_highf[ist]['ch']]
+    lon_obs = lon_obs[ch_obs == d_highf[ist]['ch']]
+    mw_simu = mw_simu[ch_obs == d_highf[ist]['ch']]
 
-    # Read records
-    print('Reading ', Tb_file)
-    with open(Tb_file) as f:
-        next(f)
-        all_lines = f.readlines()
-
-    for line in all_lines:
-        split_line = line.split()
-        lat_obs.append( float(split_line[0]) )
-        lon_obs.append( float(split_line[1]) )
-        #ch_obs.append( int(split_line[2]) )
-        #Yo_obs.append( float(split_line[3]) )
-        meanYb_obs.append( float(split_line[4]) )
-        meanYa_obs.append( float(split_line[5]) )
-
-    lat_obs = np.array( lat_obs )
-    lon_obs = np.array( lon_obs )
-    #ch_obs = np.array( ch_obs )
-    #Yo_obs = np.array( Yo_obs )
-    meanYb_obs = np.array( meanYb_obs )
-    meanYa_obs = np.array( meanYa_obs )
-    print('Number of NaN in meanYa_obs', sum(np.isnan(meanYa_obs)))
-
-    d_simu = {'lat_obs':lat_obs, 'lon_obs':lon_obs, 'meanYb_obs':meanYb_obs, 'meanYa_obs':meanYa_obs}
-    return d_simu
+    d_MWsimu = {'lat_obs':lat_obs, 'lon_obs':lon_obs, 'meanYa_obs':mw_simu}
+    return d_MWsimu
 
 #Layout:
 #Columns: storms
@@ -114,9 +86,10 @@ def plot_snapshot():
             ax['THO_'+ida][ist] = fig.add_subplot( grids[4+DA.index(ida),Storms.index(ist)],projection=ccrs.PlateCarree() )
 
     # Customization
-    min_tb = 185
-    max_tb = 325
-    IRcmap = Util_Vis.IRcmap( 0.5 )
+    max_tb=300
+    min_tb=80
+    min_Jet=150
+    MWJet = Util_Vis.newJet(300,80,150)
 
     # Set map
     row = ['obs',]
@@ -126,25 +99,25 @@ def plot_snapshot():
         row.append('THO_'+ida)
     for ir in row:
         for ist in Storms:
-            ax[ir][ist].set_extent([IR_obs[ist]['lon_min'],IR_obs[ist]['lon_max'],IR_obs[ist]['lat_min'],IR_obs[ist]['lat_max']], crs=ccrs.PlateCarree())
+            ax[ir][ist].set_extent([MW_obs[ist]['lon_min'],MW_obs[ist]['lon_max'],MW_obs[ist]['lat_min'],MW_obs[ist]['lat_max']], crs=ccrs.PlateCarree())
             ax[ir][ist].coastlines(resolution='10m', color='black',linewidth=0.5)
 
     # plot obs
     for ist in Storms:
-        obs_s = ax['obs'][ist].scatter(IR_obs[ist]['lon_obs'],IR_obs[ist]['lat_obs'],1.5,c=IR_obs[ist]['Yo_obs'],edgecolors='none', cmap=IRcmap, vmin=min_tb, vmax=max_tb,transform=ccrs.PlateCarree())
+        obs_s = ax['obs'][ist].scatter(MW_obs[ist]['lon_obs'],MW_obs[ist]['lat_obs'],1.5,c=MW_obs[ist]['mw_obs'],edgecolors='none', cmap=MWJet, vmin=min_tb, vmax=max_tb,transform=ccrs.PlateCarree())
     # plot analyzed Tb for WSM6
     for ida in DA:
         for ist in Storms:
-            ax['WSM6_'+ida][ist].scatter(IR_simu[ist]['WSM6'][ida]['lon_obs'],IR_simu[ist]['WSM6'][ida]['lat_obs'],1.5,c=IR_simu[ist]['WSM6'][ida]['meanYa_obs'],edgecolors='none', cmap=IRcmap, vmin=min_tb, vmax=max_tb,transform=ccrs.PlateCarree())
+            ax['WSM6_'+ida][ist].scatter(MW_simu[ist]['WSM6'][ida]['lon_obs'],MW_simu[ist]['WSM6'][ida]['lat_obs'],1.5,c=MW_simu[ist]['WSM6'][ida]['meanYa_obs'],edgecolors='none', cmap=MWJet, vmin=min_tb, vmax=max_tb,transform=ccrs.PlateCarree())
     # plot analyzed Tb for THO
     for ida in DA:
         for ist in Storms:
-            ax['THO_'+ida][ist].scatter(IR_simu[ist]['THO'][ida]['lon_obs'],IR_simu[ist]['THO'][ida]['lat_obs'],1.5,c=IR_simu[ist]['THO'][ida]['meanYa_obs'],edgecolors='none', cmap=IRcmap, vmin=min_tb, vmax=max_tb,transform=ccrs.PlateCarree())
+            ax['THO_'+ida][ist].scatter(MW_simu[ist]['THO'][ida]['lon_obs'],MW_simu[ist]['THO'][ida]['lat_obs'],1.5,c=MW_simu[ist]['THO'][ida]['meanYa_obs'],edgecolors='none', cmap=MWJet, vmin=min_tb, vmax=max_tb,transform=ccrs.PlateCarree())
 
     # colorbar
     cbar_ax = fig.add_axes([0.10, 0.06, 0.78, 0.015])
     cbar = fig.colorbar(obs_s, cax=cbar_ax, orientation='horizontal')
-    cbar.set_label('GOES-16 Ch8 Tb (K)')
+    cbar.set_label('GPM MW Tb (K)')
 
     # labels
     row = ['obs',]
@@ -167,7 +140,6 @@ def plot_snapshot():
         else:
             fig.text(0.8,0.96,ist, fontsize=12, ha='center', va='center')
             fig.text(0.8,0.94,DAtime[ist], fontsize=10, ha='center', va='center')
-
     # Add obs and experiment
     top_h = [0.88 - it for it in [0,0.12,0.24,0.35,0.48,0.58,0.71]]
     for ir in row:
@@ -179,8 +151,8 @@ def plot_snapshot():
 
     # axis
     for ist in Storms:
-        lon_ticks = list(range(math.ceil(IR_obs[ist]['lon_min'])-2, math.ceil(IR_obs[ist]['lon_max'])+2,2))
-        lat_ticks = list(range(math.ceil(IR_obs[ist]['lat_min'])-2, math.ceil(IR_obs[ist]['lat_max'])+2,2))
+        lon_ticks = list(range(math.ceil(MW_obs[ist]['lon_min'])-2, math.ceil(MW_obs[ist]['lon_max'])+2,2))
+        lat_ticks = list(range(math.ceil(MW_obs[ist]['lat_min'])-2, math.ceil(MW_obs[ist]['lat_max'])+2,2))
         for ir in row:
             gl = ax[ir][ist].gridlines(crs=ccrs.PlateCarree(),draw_labels=False,linewidth=0.5,alpha=0.7,color='gray',linestyle='--')
             gl.top_labels = False
@@ -190,7 +162,7 @@ def plot_snapshot():
                 gl.bottom_labels = True
             else:
                 gl.bottom_labels = False
-                
+
             gl.ylocator = mticker.FixedLocator(lat_ticks)
             gl.xlocator = mticker.FixedLocator(lon_ticks)
             gl.xformatter = LONGITUDE_FORMATTER
@@ -200,10 +172,9 @@ def plot_snapshot():
 
 
     # Save figure
-    des_name = small_dir+'SYSTEMS/Vis_analyze/Paper1/snapshot_IR_sameas_MW.png'
+    des_name = small_dir+'SYSTEMS/Vis_analyze/Paper1/snapshot_MW.png'
     plt.savefig( des_name )
     print( 'Saving the figure to '+des_name )
-
 
 if __name__ == '__main__':
 
@@ -214,12 +185,14 @@ if __name__ == '__main__':
     Storms = ['HARVEY','IRMA','JOSE','MARIA']
     MP = ['WSM6','THO']
     DA = ['CONV','IR','IR+MW']
-    # sensor
-    sensor = 'abi_gr'
-    ch_list = ['8',]
+    # sensor and channel
+    d_highf = {'HARVEY':{'sensor':'gmi_gpm_hf','ch':13},
+                'IRMA':{'sensor':'mhs_metop-b','ch':5},
+                'JOSE':{'sensor':'ssmis_f16','ch':9},
+                'MARIA':{'sensor':'saphir_meghat','ch':5}}
     # time
-    start_time_str = {'HARVEY':'201708221200','IRMA':'201709030000','JOSE':'201709050000','MARIA':'201709160000'}
-    t_incre = 1 # 1 hour
+    DAtime = {'HARVEY':'201708221300','IRMA':'201709030100','JOSE':'201709050600','MARIA':'201709160200'}
+
     #------------------------------------
     wrf_dir = big_dir
 
@@ -232,41 +205,22 @@ if __name__ == '__main__':
             for ida in DA:
                 Exper_names[istorm][imp][ida] = UD.generate_one_name( istorm,ida,imp )
 
-    # DA time of interest
-    DAtime = {'HARVEY':'201708221300','IRMA':'201709030100','JOSE':'201709050600','MARIA':'201709160200'}
-    #DAtime = {}
-    #for ist in Storms:
-    #    tmp_time = datetime.strptime(start_time_str[ist],"%Y%m%d%H%M") + timedelta(hours=t_incre)
-    #    DAtime[ist] = tmp_time.strftime("%Y%m%d%H%M") 
-
-    # Read observed IR radiances
-    IR_obs = {}
+    # Read observed MW radiances
+    MW_obs = {}
     for ist in Storms:
-        Hx_file = big_dir+ist+'/'+Exper_names[ist]['WSM6']['IR']+'/Obs_Hx/IR/'+DAtime[ist]+'/mean_obs_res_d03_'+DAtime[ist]+'_'+sensor+'.txt'
-        IR_obs[ist] = readIR_obs( Hx_file )  
+        MW_obs[ist] = readMW_obs( ist )
+
 
     # Read simulated IR radiances
-    IR_simu = {}
+    MW_simu = {}
     for ist in Storms:
-        IR_simu[ist] = {}
+        MW_simu[ist] = {}
         for imp in MP:
-            IR_simu[ist][imp] = {}
+            MW_simu[ist][imp] = {}
             for ida in DA:
-                Hx_file = big_dir+ist+'/'+Exper_names[ist][imp][ida]+'/Obs_Hx/IR/'+DAtime[ist]+'/mean_obs_res_d03_'+DAtime[ist]+'_'+sensor+'.txt'
-                IR_simu[ist][imp][ida] = read_simuIR_obsLoc( Hx_file ) 
+                MW_simu[ist][imp][ida] = read_simuMW_obsLoc( ist,imp,ida )
 
     plot_snapshot()
-
-
-
-
-
-
-
-
-
-
-
 
 
 
