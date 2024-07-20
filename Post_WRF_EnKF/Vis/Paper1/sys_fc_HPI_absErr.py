@@ -101,7 +101,7 @@ def calculate_abs_error():
         Exper_error[istorm] = {}
         # Read best-track data
         Btk_start, Btk_end = t_range_btk( istorm )
-        best_track = UD.btk_in_duration(istorm, Btk_start, Btk_end, hour_step=6)
+        best_track = UD.btk_in_duration(small_dir,istorm, Btk_start, Btk_end, hour_step=6)
         # Time range for model data
         Exper_initTimes = fc_iniT( istorm )
         DF_model_end = t_range_model( istorm )
@@ -878,7 +878,7 @@ def plot_2by2_MAEs():
     colorset = {'CONV': 'black','IR':'red','IR+MW':'blue'}
     marker_type = {'HARVEY':'|','IRMA':'x','JOSE':'_','MARIA':'.'}
 
-    line_width = {'HARVEY':1,'IRMA':1,'JOSE':1,'MARIA':1,'Mean':1.5}
+    line_width = {'HARVEY':1,'IRMA':1,'JOSE':1,'MARIA':1,'Mean':2.5}
 
     # Plot individual simulations
     subax_track = add_subplot_axes(ax['THO']['track'],[0.1,0.66,0.45,0.3]) # small subplot
@@ -918,8 +918,8 @@ def plot_2by2_MAEs():
     alphas = {'CONV':0.5,'IR':0.7,'IR+MW':0.9}
     for imp in MP:
         for ida in DA:
-            ax[imp]['track'].plot(lead_t,mae_sts[imp][ida]['track'],color=colorset[ida],linewidth=2)
-            ax[imp]['mslp'].plot(lead_t,mae_sts[imp][ida]['mslp'],color=colorset[ida],linewidth=2)
+            ax[imp]['track'].plot(lead_t,mae_sts[imp][ida]['track'],color=colorset[ida],linewidth=3)
+            ax[imp]['mslp'].plot(lead_t,mae_sts[imp][ida]['mslp'],color=colorset[ida],linewidth=3)
 
 
     # Manully add legends

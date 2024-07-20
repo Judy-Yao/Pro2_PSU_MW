@@ -94,7 +94,7 @@ def read_simuIR_obsLoc( Tb_file ):
 def plot_snapshot():
 
     # Set up figure
-    fig = plt.figure( figsize=(6.5,8.5),dpi=200) # standard: 6.5,8.5
+    fig = plt.figure( figsize=(6.5,8.5),dpi=300) # standard: 6.5,8.5
     grids = fig.add_gridspec(ncols=4,nrows=7,hspace=0.0,wspace=0.0,top=0.93,left=0.12,)
     ax = {}
     ax['obs'] = {}

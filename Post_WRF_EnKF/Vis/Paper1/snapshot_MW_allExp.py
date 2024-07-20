@@ -66,7 +66,7 @@ def read_simuMW_obsLoc( ist,imp,ida ):
 def plot_snapshot():
 
     # Set up figure
-    fig = plt.figure( figsize=(6.5,8.5),dpi=200) # standard: 6.5,8.5
+    fig = plt.figure( figsize=(6.5,8.5),dpi=300) # standard: 6.5,8.5
     grids = fig.add_gridspec(ncols=4,nrows=7,hspace=0.0,wspace=0.0,top=0.93,left=0.12,)
     ax = {}
     ax['obs'] = {}
@@ -186,7 +186,7 @@ if __name__ == '__main__':
     MP = ['WSM6','THO']
     DA = ['CONV','IR','IR+MW']
     # sensor and channel
-    d_highf = {'HARVEY':{'sensor':'gmi_gpm_hf','ch':13},
+    d_highf = {'HARVEY':{'sensor':'ssmis_f18','ch':9},
                 'IRMA':{'sensor':'mhs_metop-b','ch':5},
                 'JOSE':{'sensor':'ssmis_f16','ch':9},
                 'MARIA':{'sensor':'saphir_meghat','ch':5}}
