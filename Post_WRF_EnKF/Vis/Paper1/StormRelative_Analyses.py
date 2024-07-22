@@ -9,6 +9,7 @@ import matplotlib
 from scipy import interpolate
 matplotlib.use("agg")
 import matplotlib.ticker as mticker
+import matplotlib.colors as mcolors
 from matplotlib import pyplot as plt
 from cartopy.mpl.gridliner import LONGITUDE_FORMATTER, LATITUDE_FORMATTER
 from mpl_toolkits.axes_grid1 import make_axes_locatable
@@ -215,7 +216,10 @@ def Load_AZmean_3Dvar( Storm,exp_name,DAtimes,ivar):
         # file name
         if interp_P:
             if model_center:
-                save_des = small_dir+Storm+'/'+exp_name+'/Data_analyze/EnKF/Az_Mean/ModelCenter_Interp_'+ivar+'_'+DAtime+'_850hPa.pickle'
+                if plot_3Dmean:
+                    save_des = small_dir+Storm+'/'+exp_name+'/Data_analyze/EnKF/Az_Mean/ModelCenter_Interp_'+ivar+'_'+DAtime+'.pickle'#'_850hPa.pickle'
+                else:
+                    save_des = small_dir+Storm+'/'+exp_name+'/Data_analyze/EnKF/Az_Mean/ModelCenter_Interp_'+ivar+'_'+DAtime+'_850hPa.pickle'
             else:
                 save_des = small_dir+Storm+'/'+exp_name+'/Data_analyze/EnKF/Az_Mean/BTKCenter_Interp_'+ivar+'_'+DAtime+'.pickle'
         else:
@@ -400,35 +404,44 @@ def plot_cycle_mean( ivar,imp ):
     xcoor, ycoor = np.meshgrid( rad, yv )
 
     # Customization
+    # concatenate two colormaps
+    cmap1 = plt.get_cmap('ocean').reversed()
+    cmap2 = plt.get_cmap('magma').reversed()
+    colors1 = cmap1(np.linspace(0, 1, 128))
+    colors2 = cmap2(np.linspace(0, 1, 128))
+    colors = np.vstack((colors1, colors2))
+    concatenated_cmap = mcolors.LinearSegmentedColormap.from_list('concatenated_cmap', colors)
 
+    bound_weak = np.arange(0,18,2)
+    bound_strong = np.arange(18,48+1,5)
+    color_intervals = np.concatenate((bound_weak, bound_strong))
+    cmap = concatenated_cmap#plt.get_cmap('cubehelix').reversed() #concatenated_cmap
+    norm = mcolors.BoundaryNorm(color_intervals, cmap.N)
+    #norm = mcolors.Normalize(vmin=min(color_intervals), vmax=max(color_intervals))
+    # create a scalar mappable object for the colorbar
+    sm = plt.cm.ScalarMappable(cmap=cmap, norm=norm)
+    sm.set_array([])
+    
     # Plot 
     for ida in DA:
         for ist in Storms:
             if ivar == 'WIND':
-                if ist == 'IRMA':
-                    bounds = np.arange(10,45+1,5)
-                    irma_ctf = ax[ida][ist].contourf( xcoor,ycoor,az_cycle_mean[ist][imp][ida][ivar],levels=bounds,extend='both',cmap='magma_r')
-                elif ist == 'HARVEY': 
-                    bounds = np.arange(0,10+1,1.5)
-                    harvey_ctf = ax[ida][ist].contourf( xcoor,ycoor,az_cycle_mean[ist][imp][ida][ivar],levels=bounds,extend='max',cmap='cividis_r')
-                else:
-                    bounds = np.arange(4,18+1,2)
-                    others_ctf = ax[ida][ist].contourf( xcoor,ycoor,az_cycle_mean[ist][imp][ida][ivar],levels=bounds,extend='both',cmap='hot_r')
+                ctf = ax[ida][ist].contourf( xcoor,ycoor,az_cycle_mean[ist][imp][ida][ivar],levels=color_intervals,extend='max',cmap=cmap)
             # invert the y-axis
             ax[ida][ist].invert_yaxis()
 
     # Colorbar
     cbar_ax = fig.add_axes([0.92, 0.12, 0.02, 0.8]) #fig.add_axes([0.925, 0.52, 0.03, 0.43])
-    cbar_irma = fig.colorbar(irma_ctf, cax=cbar_ax, orientation='vertical')
-    cbar_irma.set_label('Wind Speed (m $\mathregular{s^{-1}}$)')
+    cbar = fig.colorbar(sm, cax=cbar_ax, orientation='vertical',ticks=color_intervals)
+    cbar.set_label('Wind Speed (m $\mathregular{s^{-1}}$)')
 
-    cbar_ax = fig.add_axes([0.10, 0.05, 0.4, 0.02])
-    cbar_harvey = fig.colorbar(harvey_ctf, cax=cbar_ax, orientation='horizontal')
-    cbar_harvey.set_label('Wind Speed (m $\mathregular{s^{-1}}$)')
+    #cbar_ax = fig.add_axes([0.10, 0.05, 0.4, 0.02])
+    #cbar_harvey = fig.colorbar(harvey_ctf, cax=cbar_ax, orientation='horizontal')
+    #cbar_harvey.set_label('Wind Speed (m $\mathregular{s^{-1}}$)')
 
-    cbar_ax = fig.add_axes([0.52, 0.05, 0.40, 0.02])
-    cbar_others = fig.colorbar(others_ctf, cax=cbar_ax, orientation='horizontal')
-    cbar_others.set_label('Wind Speed (m $\mathregular{s^{-1}}$)')
+    #cbar_ax = fig.add_axes([0.52, 0.05, 0.40, 0.02])
+    #cbar_others = fig.colorbar(others_ctf, cax=cbar_ax, orientation='horizontal')
+    #cbar_others.set_label('Wind Speed (m $\mathregular{s^{-1}}$)')
 
     # axes attributes
     for ida in DA:
@@ -519,14 +532,22 @@ def plot_2d( ivar ):
         ax[imp]['weak'].grid(True,linewidth=1, color='gray', alpha=0.5, linestyle='-')
         ax[imp]['IRMA'].grid(True,linewidth=1, color='gray', alpha=0.5, linestyle='-')
         # limitation
-        ax[imp]['weak'].set_xlim([0,200])
-        ax[imp]['IRMA'].set_xlim([0,200])
+        ax[imp]['weak'].set_xlim([5,200])
+        ax[imp]['IRMA'].set_xlim([5,200])
         ax[imp]['weak'].set_ylim([5,20])
         ax[imp]['IRMA'].set_ylim([15,45])
         # hide xticklabel
+        ticks = [5,25,50,75,100,125,150,175,200]
+        ax[imp]['weak'].set_xticks(ticks)
+        ax[imp]['IRMA'].set_xticks(ticks)
         if MP.index( imp ) == 0:
             ax[imp]['weak'].set_xticklabels([])
             ax[imp]['IRMA'].set_xticklabels([])
+        else:
+            tick_label = [0,25,50,75,100,125,150,175,200]
+            tick_label = [str(i) for i in tick_label]
+            ax[imp]['weak'].set_xticklabels(tick_label)
+            ax[imp]['IRMA'].set_xticklabels(tick_label)
         # X/Y labels
         ax[imp]['IRMA'].yaxis.tick_right()
         ax[imp]['IRMA'].yaxis.set_label_position("right")
@@ -557,7 +578,7 @@ def plot_2d( ivar ):
     fig.text(0.03,0.30,MP[1], fontsize=11, ha='center', va='center',rotation='vertical')
 
     # Add Storms information
-    fig.text(0.35,0.90,'Storms: Harvey, Jose, Maria', fontsize=11, ha='center', va='center')
+    fig.text(0.35,0.90,'Storms: HARVEY, JOSE, MARIA', fontsize=11, ha='center', va='center')
     fig.text(0.75,0.90,'Storm IRMA', fontsize=11, ha='center', va='center')
 
     # Save figure
@@ -585,7 +606,7 @@ if __name__ == '__main__':
 
     # vertical interpolation
     interp_P = True
-    P_interest = [850,] #list(range( 900,80,-20 )) # 900 to 10 hPa
+    P_interest = list(range( 900,80,-20 )) # 900 to 10 hPa  #[850,]
     interp_H = False
 
     # circle

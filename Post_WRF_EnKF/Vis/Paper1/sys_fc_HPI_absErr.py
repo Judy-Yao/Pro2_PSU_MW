@@ -949,6 +949,8 @@ def plot_2by2_MAEs():
     # Add the first legend manually to the current Axes
     ax['WSM6']['mslp'].add_artist(legend0)
 
+    fig.text(0.32,0.95,'Track', fontsize=12, ha='center', va='center',rotation='horizontal')
+    fig.text(0.78,0.95,'MSLP', fontsize=12, ha='center', va='center',rotation='horizontal')
     fig.text(0.03,0.73,'WSM6', fontsize=10, ha='center', va='center',rotation='vertical')
     fig.text(0.03,0.32,'THO', fontsize=10, ha='center', va='center',rotation='vertical')
 

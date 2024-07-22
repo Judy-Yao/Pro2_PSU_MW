@@ -1015,10 +1015,10 @@ def plot_mslpVSvmax_intensity( allFC_error,hist_HPI ):
             fig.text(0.78,0.93,ida, fontsize=12, ha='center', va='center')
 
     # Add y label
-    fig.text(0.03,0.75,'WSM6', fontsize=10, ha='center', va='center' ,rotation='vertical')
-    fig.text(0.06,0.75,'Vmax Bias (m $\mathregular{s^{-1}}$)', fontsize=8, ha='center', va='center' ,rotation='vertical')
-    fig.text(0.03,0.30,'THO', fontsize=10, ha='center', va='center',rotation='vertical')
-    fig.text(0.06,0.30,'Vmax Bias (m $\mathregular{s^{-1}}$)', fontsize=8, ha='center', va='center' ,rotation='vertical')
+    fig.text(0.02,0.75,'WSM6', fontsize=10, ha='center', va='center' ,rotation='vertical')
+    fig.text(0.05,0.75,'Vmax Bias (m $\mathregular{s^{-1}}$)', fontsize=8, ha='center', va='center' ,rotation='vertical')
+    fig.text(0.02,0.30,'THO', fontsize=10, ha='center', va='center',rotation='vertical')
+    fig.text(0.05,0.30,'Vmax Bias (m $\mathregular{s^{-1}}$)', fontsize=8, ha='center', va='center' ,rotation='vertical')
 
     # Add circle (legend)
     circle = plt.Circle((0.94, 0.85), 0.006, color=colorset['HARVEY'], alpha=0.5, transform=fig.transFigure, clip_on=False)

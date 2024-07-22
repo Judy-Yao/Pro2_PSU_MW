@@ -129,17 +129,21 @@ def plot_snapshot():
     # Add storm information
     for ist in Storms:
         if Storms.index(ist) == 0:
-            fig.text(0.21,0.96,ist, fontsize=12, ha='center', va='center')
-            fig.text(0.21,0.94,DAtime[ist], fontsize=10, ha='center', va='center')
+            fig.text(0.21,0.98,ist, fontsize=12, ha='center', va='center')
+            fig.text(0.21,0.96,DAtime[ist], fontsize=10, ha='center', va='center')
+            fig.text(0.21,0.94,d_highf[ist]['sensor'], fontsize=10, ha='center', va='center')
         elif Storms.index(ist) == 1:
-            fig.text(0.42,0.96,ist, fontsize=12, ha='center', va='center')
-            fig.text(0.42,0.94,DAtime[ist], fontsize=10, ha='center', va='center')
+            fig.text(0.42,0.98,ist, fontsize=12, ha='center', va='center')
+            fig.text(0.42,0.96,DAtime[ist], fontsize=10, ha='center', va='center')
+            fig.text(0.42,0.94,d_highf[ist]['sensor'], fontsize=10, ha='center', va='center')
         elif Storms.index(ist) == 2:
-            fig.text(0.61,0.96,ist, fontsize=12, ha='center', va='center')
-            fig.text(0.61,0.94,DAtime[ist], fontsize=10, ha='center', va='center')
+            fig.text(0.61,0.98,ist, fontsize=12, ha='center', va='center')
+            fig.text(0.61,0.96,DAtime[ist], fontsize=10, ha='center', va='center')
+            fig.text(0.61,0.94,d_highf[ist]['sensor'], fontsize=10, ha='center', va='center')
         else:
-            fig.text(0.8,0.96,ist, fontsize=12, ha='center', va='center')
-            fig.text(0.8,0.94,DAtime[ist], fontsize=10, ha='center', va='center')
+            fig.text(0.8,0.98,ist, fontsize=12, ha='center', va='center')
+            fig.text(0.8,0.96,DAtime[ist], fontsize=10, ha='center', va='center')
+            fig.text(0.8,0.94,d_highf[ist]['sensor'], fontsize=10, ha='center', va='center')
     # Add obs and experiment
     top_h = [0.88 - it for it in [0,0.12,0.24,0.35,0.48,0.58,0.71]]
     for ir in row:
