@@ -50,28 +50,28 @@ def generate_times( Storms, start_time_str, end_time_str, interval ):
     return dict_times
 
 # Read fields from WRF outputs
-def read_var( xa_ncdir,ivar ):
+def read_var( x_ncdir,ivar ):
 
     if ivar == 'U': #U-component of Wind on Mass Points
-        var = getvar( xa_ncdir,'ua',units='m s-1')
+        var = getvar( x_ncdir,'ua',units='m s-1')
         var = to_np( var ) #Convert to NumPy array
     elif ivar == 'V': #V-component of Wind on Mass Points
-        var = getvar( xa_ncdir,'va',units='m s-1')
+        var = getvar( x_ncdir,'va',units='m s-1')
         var = to_np( var ) #Convert to NumPy array
     elif ivar == 'WIND':
-        var = getvar( xa_ncdir,'wspd_wdir',units='m s-1')
+        var = getvar( x_ncdir,'wspd_wdir',units='m s-1')
         var = to_np( var ) #Convert to NumPy array
         var = var[0,:,:] # wind speed only
     elif ivar == 'W': #W-component of Wind on Mass Points
-        var = getvar( xa_ncdir,'wa',units='m s-1')
+        var = getvar( x_ncdir,'wa',units='m s-1')
         var = to_np( var ) #Convert to NumPy array
     elif ivar == 'T': #Temperature in Kelvin
-        var = getvar( xa_ncdir,'temp',units='K')
+        var = getvar( x_ncdir,'temp',units='K')
         var = to_np( var ) #Convert to NumPy array
     elif ivar == 'QVAPOR':
-        var = xa_ncdir.variables[ivar][0,:,:,:] # level,lat,lon
+        var = x_ncdir.variables[ivar][0,:,:,:] # level,lat,lon
     elif ivar == 'REFL_10CM':
-        var = xa_ncdir.variables[ivar][0,:,:,:] # level,lat,lon
+        var = x_ncdir.variables[ivar][0,:,:,:] # level,lat,lon
     else:
         pass
     return var
@@ -105,11 +105,11 @@ def calc_azimuthal_mean( itp_var, center):
     return var_azi_mean
 
 
-def itp2Pres_AzimuMean( xa_dir,r_bins,center_ij ):
+def itp2Pres_AzimuMean( x_dir,r_bins,center_ij ):
 
     # Read pressure levels
-    xa_ncdir = nc.Dataset( xa_dir, 'r')
-    pres = getvar(xa_ncdir, "pressure") # hPa
+    x_ncdir = nc.Dataset( x_dir, 'r')
+    pres = getvar(x_ncdir, "pressure") # hPa
 
     # Interpolate
     itp_vars_mean = {}
@@ -124,7 +124,7 @@ def itp2Pres_AzimuMean( xa_dir,r_bins,center_ij ):
             # Construct a new array at model level
             itp_vars_mean[ivar] = np.full( (nLevel,len(r_bins)-1), np.nan )
         # Read variable
-        var = read_var( xa_ncdir,ivar )
+        var = read_var( x_ncdir,ivar )
         # Interpolate 
         if interp_P:
             for ip in P_interest:
@@ -165,19 +165,23 @@ def azimuMean_3Dvar( Storm,Exper_name,DAtimes):
     for DAtime in DAtimes:
 
         print('At DAtime: '+DAtime)
-        xa_dir = big_dir+Storm+'/'+Exper_name+'/fc/'+DAtime+'/wrf_enkf_output_d03_mean'
+        if if_analysis:
+            x_dir = big_dir+Storm+'/'+Exper_name+'/fc/'+DAtime+'/wrf_enkf_output_d03_mean'
+        else:
+            x_dir = big_dir+Storm+'/'+Exper_name+'/fc/'+DAtime+'/wrf_enkf_input_d03_mean'
+
         # Get the time index
         t_idx = DAtimes.index( DAtime )
 
         # Find the storm center in grid space
-        xa_ncdir = nc.Dataset( xa_dir, 'r')
+        x_ncdir = nc.Dataset( x_dir, 'r')
         if model_center:
-            center_ij = ll_to_xy(xa_ncdir,d_model['xa_lat'][t_idx],d_model['xa_lon'][t_idx])
+            center_ij = ll_to_xy(x_ncdir,d_model['xa_lat'][t_idx],d_model['xa_lon'][t_idx])
         else:
-            center_ij = ll_to_xy(xa_ncdir,d_btkHr['lat'][t_idx],d_btkHr['lon'][t_idx]) 
+            center_ij = ll_to_xy(x_ncdir,d_btkHr['lat'][t_idx],d_btkHr['lon'][t_idx]) 
 
         # Read and calculate the mean
-        itp_vars_mean = itp2Pres_AzimuMean( xa_dir,r_bins,center_ij)
+        itp_vars_mean = itp2Pres_AzimuMean( x_dir,r_bins,center_ij)
 
         # Save data
         # Metadata
@@ -188,7 +192,10 @@ def azimuMean_3Dvar( Storm,Exper_name,DAtimes):
             if interp_P:
                 metadata = {'created_at':formatted_datetime, 'Interpolated_to': 'Pressure (hPa)','Interpolated_at':P_interest,'max_radius':max_radius,'r_interval':r_interval}
                 if model_center:
-                    save_des = small_dir+Storm+'/'+Exper_name+'/Data_analyze/EnKF/Az_Mean/ModelCenter_Interp_'+var_name+'_'+DAtime+'_850hPa.pickle'
+                    if if_analysis:
+                        save_des = small_dir+Storm+'/'+Exper_name+'/Data_analyze/EnKF/Az_Mean/ModelCenter_Interp_'+var_name+'_'+DAtime+'.pickle'
+                    else:
+                        save_des = small_dir+Storm+'/'+Exper_name+'/Data_analyze/EnKF/Az_Mean/Xb_ModelCenter_Interp_'+var_name+'_'+DAtime+'.pickle'
                 else:
                     save_des = small_dir+Storm+'/'+Exper_name+'/Data_analyze/EnKF/Az_Mean/BTKCenter_Interp_'+var_name+'_'+DAtime+'.pickle'
                 # create a dictionary with metadata and data
@@ -216,10 +223,13 @@ def Load_AZmean_3Dvar( Storm,exp_name,DAtimes,ivar):
         # file name
         if interp_P:
             if model_center:
-                if plot_3Dmean:
-                    save_des = small_dir+Storm+'/'+exp_name+'/Data_analyze/EnKF/Az_Mean/ModelCenter_Interp_'+ivar+'_'+DAtime+'.pickle'#'_850hPa.pickle'
-                else:
+                if plot_2Dmean:
                     save_des = small_dir+Storm+'/'+exp_name+'/Data_analyze/EnKF/Az_Mean/ModelCenter_Interp_'+ivar+'_'+DAtime+'_850hPa.pickle'
+                else:
+                    if if_analysis:
+                        save_des = small_dir+Storm+'/'+exp_name+'/Data_analyze/EnKF/Az_Mean/ModelCenter_Interp_'+ivar+'_'+DAtime+'.pickle'#'_850hPa.pickle'
+                    else:
+                        save_des = small_dir+Storm+'/'+exp_name+'/Data_analyze/EnKF/Az_Mean/Xb_ModelCenter_Interp_'+ivar+'_'+DAtime+'.pickle'
             else:
                 save_des = small_dir+Storm+'/'+exp_name+'/Data_analyze/EnKF/Az_Mean/BTKCenter_Interp_'+ivar+'_'+DAtime+'.pickle'
         else:
@@ -405,10 +415,10 @@ def plot_cycle_mean( ivar,imp ):
 
     # Customization
     # concatenate two colormaps
-    cmap1 = plt.get_cmap('ocean').reversed()
+    cmap1 = plt.get_cmap('Blues')
     cmap2 = plt.get_cmap('magma').reversed()
-    colors1 = cmap1(np.linspace(0, 1, 128))
-    colors2 = cmap2(np.linspace(0, 1, 128))
+    colors1 = cmap1(np.linspace(0, 1, 10))
+    colors2 = cmap2(np.linspace(0, 1, 7))
     colors = np.vstack((colors1, colors2))
     concatenated_cmap = mcolors.LinearSegmentedColormap.from_list('concatenated_cmap', colors)
 
@@ -421,7 +431,8 @@ def plot_cycle_mean( ivar,imp ):
     # create a scalar mappable object for the colorbar
     sm = plt.cm.ScalarMappable(cmap=cmap, norm=norm)
     sm.set_array([])
-    
+
+
     # Plot 
     for ida in DA:
         for ist in Storms:
@@ -492,6 +503,117 @@ def plot_cycle_mean( ivar,imp ):
     des_name = small_dir+'SYSTEMS/Vis_analyze/Paper1/Storms_AZmean_'+imp+'_'+ivar+'.png'
     plt.savefig( des_name )
     print( 'Saving the figure to '+des_name )
+
+
+def plot_cycle( ivar,imp,ic ):
+
+    # Set up figure
+    fig = plt.figure( figsize=(6.5,8.5),dpi=200) # standard: 6.5,8.5
+    grids = fig.add_gridspec(ncols=4,nrows=3,top=0.93,left=0.12,hspace=0.04,wspace=0.03)
+    ax = {}
+    for ida in DA:
+        ax[ida] = {}
+        for ist in Storms:
+            ax[ida][ist] = fig.add_subplot( grids[DA.index(ida),Storms.index(ist)] )
+
+    # Set x and y coord
+    r_bins = np.arange(0, max_radius, r_interval)
+    rad = (r_bins[:-1]+r_bins[1:])/2
+    if interp_P:
+        yv = P_interest
+    # make a mesh grid
+    xcoor, ycoor = np.meshgrid( rad, yv )
+
+    # Customization
+    # concatenate two colormaps
+    cmap1 = plt.get_cmap('Blues')
+    cmap2 = plt.get_cmap('magma').reversed()
+    colors1 = cmap1(np.linspace(0, 1, 10))
+    colors2 = cmap2(np.linspace(0, 1, 7))
+    colors = np.vstack((colors1, colors2))
+    concatenated_cmap = mcolors.LinearSegmentedColormap.from_list('concatenated_cmap', colors)
+
+    bound_weak = np.arange(0,18,2)
+    bound_strong = np.arange(18,48+1,5)
+    color_intervals = np.concatenate((bound_weak, bound_strong))
+    cmap = concatenated_cmap#plt.get_cmap('cubehelix').reversed() #concatenated_cmap
+    norm = mcolors.BoundaryNorm(color_intervals, cmap.N)
+    #norm = mcolors.Normalize(vmin=min(color_intervals), vmax=max(color_intervals))
+    # create a scalar mappable object for the colorbar
+    sm = plt.cm.ScalarMappable(cmap=cmap, norm=norm)
+    sm.set_array([])
+
+    # Plot 
+    for ida in DA:
+        for ist in Storms:
+            # time
+            time = d_hrs[ist][ic]
+
+            if ivar == 'WIND':
+                ctf = ax[ida][ist].contourf( xcoor,ycoor,az_mean[ist][imp][ida][ivar][time],levels=color_intervals,extend='max',cmap=cmap)
+            # invert the y-axis
+            ax[ida][ist].invert_yaxis()
+
+    # Colorbar
+    cbar_ax = fig.add_axes([0.92, 0.12, 0.02, 0.8]) #fig.add_axes([0.925, 0.52, 0.03, 0.43])
+    cbar = fig.colorbar(sm, cax=cbar_ax, orientation='vertical',ticks=color_intervals)
+    cbar.set_label('Wind Speed (m $\mathregular{s^{-1}}$)')
+
+    # axes attributes
+    for ida in DA:
+        for ist in Storms:
+            # y axis
+            ax[ida][ist].set_ylim([900,100])
+            y_ticks = [900,700,500,300,100]
+            ax[ida][ist].set_yticks( y_ticks )
+            if ist == 'HARVEY':
+                ax[ida][ist].set_yticklabels([str(it) for it in y_ticks])
+                ax[ida][ist].set_ylabel('Pressure (hPa)')
+            else:
+                ax[ida][ist].set_yticklabels([])
+            # x axis
+            ax[ida][ist].set_xlim([0,200])
+            if ist == DA[0]:
+                x_ticks = [0,50,100,150,200]
+                ax[ida][ist].set_xticks( x_ticks )
+                ax[ida][ist].set_xticklabels([str(it) for it in x_ticks])
+            else:
+                x_ticks = [50,100,150,200]
+                ax[ida][ist].set_xticks( x_ticks )
+                ax[ida][ist].set_xticklabels([str(it) for it in x_ticks])
+            if ida == DA[-1]:
+                ax[ida][ist].set_xlabel('Radius (km)')
+                ax[ida][ist].set_xticklabels([str(it) for it in x_ticks])
+            else:
+                ax[ida][ist].set_xticklabels([])
+
+    # Add storm information
+    for ist in Storms:
+        if Storms.index(ist) == 0:
+            fig.text(0.21,0.95,ist, fontsize=12, ha='center', va='center')
+        elif Storms.index(ist) == 1:
+            fig.text(0.42,0.95,ist, fontsize=12, ha='center', va='center')
+        elif Storms.index(ist) == 2:
+            fig.text(0.61,0.95,ist, fontsize=12, ha='center', va='center')
+        else:
+            fig.text(0.8,0.95,ist, fontsize=12, ha='center', va='center')
+
+    # Add DA information
+    fig.text(0.03,0.79,DA[0], fontsize=11, ha='center', va='center',rotation='vertical')
+    fig.text(0.03,0.52,DA[1], fontsize=11, ha='center', va='center',rotation='vertical')
+    fig.text(0.03,0.25,DA[2], fontsize=11, ha='center', va='center',rotation='vertical')
+
+
+    # Save figure
+    if if_analysis:
+        des_name = small_dir+'SYSTEMS/Vis_analyze/Paper1/Xa_AZmean_'+str(ic)+'hr_'+imp+'_'+ivar+'.png'
+    else:
+        des_name = small_dir+'SYSTEMS/Vis_analyze/Paper1/Xb_AZmean_'+str(ic)+'hr_'+imp+'_'+ivar+'.png'
+    plt.savefig( des_name )
+    plt.close()
+    print( 'Saving the figure to '+des_name )
+
+
 
 # layout
 # x axis: radius; y axis: var values
@@ -584,6 +706,7 @@ def plot_2d( ivar ):
     # Save figure
     des_name = small_dir+'SYSTEMS/Vis_analyze/Paper1/Sys_AZmean_850hPa_'+ivar+'.png'
     plt.savefig( des_name )
+    plt.close()
     print( 'Saving the figure to '+des_name )
 
 
@@ -596,10 +719,13 @@ if __name__ == '__main__':
     Storms = ['HARVEY','JOSE','MARIA','IRMA']
     MP = ['WSM6','THO']
     DA = ['CONV','IR','IR+MW']
+    # Xb or Xa
+    if_analysis = True
+
     # variables of interest
     var_names= ['WIND',]
     # time period
-    start_time_str = {'HARVEY':'201708221200','IRMA':'201709030000','JOSE':'201709050000','MARIA':'201709160000'}
+    start_time_str = {'HARVEY':'201708221800','IRMA':'201709030600','JOSE':'201709050600','MARIA':'201709160600'}
     end_time_str = {'HARVEY':'201708231200','IRMA':'201709040000','JOSE':'201709060000','MARIA':'201709170000'}
     cycles = 25
     lead_t = list(range(0, cycles, 1))
@@ -623,8 +749,9 @@ if __name__ == '__main__':
     mean_all_storms = False
 
     # Plot
-    plot_3Dmean = False
-    plot_2Dmean = True
+    plot_per_cycle = False
+    plot_3Dmean = True
+    plot_2Dmean = False
     #------------------------------------
     wrf_dir = big_dir
 
@@ -638,7 +765,7 @@ if __name__ == '__main__':
                 Exper_names[istorm][imp][ida] = UD.generate_one_name( istorm,ida,imp )
 
     # Identify DA times in the period of interest
-    d_hrs = generate_times( Storms, start_time_str, end_time_str, 1 )
+    d_hrs = generate_times( Storms, start_time_str, end_time_str, 6 )
 
     # Read and calculate azimuthal averages
     if calculate_ave:
@@ -664,6 +791,12 @@ if __name__ == '__main__':
                 az_mean[ist][imp][ida] = {}
                 for ivar in var_names:
                     az_mean[ist][imp][ida][ivar] = Load_AZmean_3Dvar( ist,Exper_names[ist][imp][ida],d_hrs[ist],ivar) 
+    # plot
+    if plot_per_cycle:
+        for imp in MP:
+            for ivar in var_names:
+                for ic in range(cycles):
+                    plot_cycle( ivar,imp,ic )
 
     # average az_mean_var (levels*radius bins) for all cycles
     if mean_all_cycles:
@@ -677,7 +810,6 @@ if __name__ == '__main__':
                     #for ivar in var_names:
                     #    test_plot( ist,imp,ida,ivar,az_cycle_mean )
 
-        # plot
         if plot_3Dmean:
             for imp in MP:
                 for ivar in var_names:

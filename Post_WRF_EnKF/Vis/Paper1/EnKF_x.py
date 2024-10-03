@@ -453,9 +453,9 @@ if __name__ == '__main__':
     small_dir = '/work2/06191/tg854905/stampede2/Pro2_PSU_MW/'
 
     # Configuration
-    Storms = ['HARVEY','IRMA','JOSE','MARIA']
+    Storms = ['HARVEY',]#'IRMA','JOSE','MARIA']
     MP = ['WSM6','THO']
-    DA = ['CONV','IR','IR+MW']
+    DA = ['CONV',]#'IR','IR+MW']
 
     var = ['track','minSLP','Vmax']
 

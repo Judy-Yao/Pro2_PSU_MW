@@ -69,8 +69,8 @@ def plot_one_hpi( ax0, ax1, ax2,  state, color, line, line_width, label, steps=6
         times = state['time']
         lon = state['lon']
         lat = state['lat']
-        x_min_slp = state['min_slp']
-        x_max_ws = state['max_ws']
+        x_mslp = state['mslp']
+        x_vmax = state['vmax']
 
         # track
         ax0.plot(lon, lat, marker='o',markersize=3, color=color,linewidth=3, label=label, linestyle=line, transform=ccrs.PlateCarree())
@@ -89,8 +89,8 @@ def plot_one_hpi( ax0, ax1, ax2,  state, color, line, line_width, label, steps=6
                 else:
                     ax0.annotate(it[6:8], xy=(lon[idx], lat[idx]), color=color, xycoords='data', transform=ccrs.PlateCarree())
         # intensity
-        ax1.plot_date(dates, x_min_slp, color, label=label, linewidth=3)
-        ax2.plot_date(dates, x_max_ws, color, label=label, linewidth=3)
+        ax1.plot_date(dates, x_mslp, color, label=label, linewidth=3)
+        ax2.plot_date(dates, x_vmax, color, label=label, linewidth=3)
 
     # Model simulation
     else:
@@ -105,20 +105,20 @@ def plot_one_hpi( ax0, ax1, ax2,  state, color, line, line_width, label, steps=6
             times = state['time'][idx_next6x::steps]
             lon = state['lon'][idx_next6x::steps]
             lat = state['lat'][idx_next6x::steps]
-            x_min_slp = state['min_slp'][idx_next6x::steps]
-            x_max_ws = state['max_ws'][idx_next6x::steps]
+            x_mslp = state['mslp'][idx_next6x::steps]
+            x_vmax = state['vmax'][idx_next6x::steps]
             # Approximate the HPI at initialization time with the 1st record in ATCF_rsl.error.0000
             times = np.insert(times,0,state['time'][0])
             lon = np.insert(lon,0,state['lon'][0])
             lat = np.insert(lat,0,state['lat'][0])
-            x_min_slp = np.insert(x_min_slp,0,state['min_slp'][0])
-            x_max_ws = np.insert(x_max_ws,0,state['max_ws'][0])
+            x_mslp = np.insert(x_mslp,0,state['mslp'][0])
+            x_vmax = np.insert(x_vmax,0,state['vmax'][0])
         else:
             times = state['time'][::steps]
             lon = state['lon'][::steps]
             lat = state['lat'][::steps]
-            x_min_slp = state['min_slp'][::steps]
-            x_max_ws = state['max_ws'][::steps]
+            x_mslp = state['mslp'][::steps]
+            x_vmax = state['vmax'][::steps]
 
         # track        
         ax0.plot(lon, lat, marker='o', markersize=3, color=color,linewidth=line_width, label=label, linestyle=line, transform=ccrs.PlateCarree())
@@ -139,8 +139,10 @@ def plot_one_hpi( ax0, ax1, ax2,  state, color, line, line_width, label, steps=6
 
         # intensity
         dates = [datetime.strptime(i,"%Y%m%d%H%M") for i in times]
-        ax1.plot_date(dates, x_min_slp, color=color,  linestyle=line, linewidth=line_width,)
-        ax2.plot_date(dates, x_max_ws, color=color, linestyle=line, linewidth=line_width,)
+        # MSLP
+        ax1.plot_date(dates, x_mslp, color=color,  linestyle=line, linewidth=line_width,)
+        # Vmax
+        ax2.plot_date(dates, x_vmax, color=color, linestyle=line, linewidth=line_width,)
 
 
 # Plot deterministic forecasts
@@ -182,7 +184,7 @@ def plot_hpi_df( ):
 
     # Best-track data
     Btk_start, Btk_end = btk_time( Storm )
-    best_track = UD.btk_in_duration(Storm, Btk_start, Btk_end, hour_step=6)
+    best_track = UD.btk_in_duration(small_dir, Storm, Btk_start, Btk_end, hour_step=6)
 
     # Set up figure
     fig = plt.figure( figsize=(6.5,8.5),dpi=200)
@@ -209,6 +211,23 @@ def plot_hpi_df( ):
             ax[ida]['ax0'].set_aspect(3.5)
         ax[ida]['ax1'] = fig.add_subplot( inner_grid[1] )
         ax[ida]['ax2'] = fig.add_subplot( inner_grid[2] )
+        # add Saffir-Simpson Scale
+        times = best_track['time']
+        dates = [datetime.strptime(i,"%Y%m%d%H%M") for i in times]
+        ax[ida]['ax2'].fill_between([dates[0], dates[-1]], 0, 80, color='#71797E',alpha=0.5) # steel gray
+        ax[ida]['ax2'].text(dates[1], 74, 'CAT 5', fontsize=6, fontweight='bold', color='white')
+        ax[ida]['ax2'].fill_between([dates[0], dates[-1]], 0, 70, color='#6082B6',alpha=0.5) # Glaucous
+        ax[ida]['ax2'].text(dates[1], 64, 'CAT 4', fontsize=6, fontweight='bold', color='white')
+        ax[ida]['ax2'].fill_between([dates[0], dates[-1]], 0, 58, color='#8A9A5B',alpha=0.5) # sage green
+        ax[ida]['ax2'].text(dates[1], 53.5, 'CAT 3', fontsize=6, fontweight='bold', color='white')
+        ax[ida]['ax2'].fill_between([dates[0], dates[-1]], 0, 49, color='#A9A9A9',alpha=0.5) # dark gray
+        ax[ida]['ax2'].text(dates[1], 45.5, 'CAT 2', fontsize=6, fontweight='bold', color='white')
+        ax[ida]['ax2'].fill_between([dates[0], dates[-1]], 0, 42, color='#7393B3',alpha=0.5) # blue gray
+        ax[ida]['ax2'].text(dates[1], 37, 'CAT 1', fontsize=6, fontweight='bold', color='white')
+        ax[ida]['ax2'].fill_between([dates[0], dates[-1]], 0, 32, color='#B2BEB5',alpha=0.5) # ash gray
+        ax[ida]['ax2'].text(dates[1], 24.5, 'TC Storm', fontsize=6, fontweight='bold', color='white')
+        ax[ida]['ax2'].fill_between([dates[0], dates[-1]], 0, 17, color='#E5E4E2',alpha=0.5) # Platinum
+        ax[ida]['ax2'].text(dates[0], 11.5, 'TC Depression', fontsize=6, fontweight='bold', color='white')
         # plot best track
         plot_one_hpi( ax[ida]['ax0'], ax[ida]['ax1'], ax[ida]['ax2'], best_track,  'black', '-', 4, 'Best track')
 
@@ -275,6 +294,7 @@ def plot_hpi_df( ):
         gl.xlabel_style = {'size': 8}
         gl.ylabel_style = {'size': 8}
 
+
     # Set ticks/other attributes for intensity subplots
     for ida in DA:
         date_form = mdates.DateFormatter("%m-%d")
@@ -339,7 +359,7 @@ if __name__ == '__main__':
     small_dir = '/work2/06191/tg854905/stampede2/Pro2_PSU_MW/'
 
     # Configuration
-    Storm = 'HARVEY'
+    Storm = 'MARIA'
     MP = ['WSM6','THO']
     DA = ['CONV','IR','IR+MW']
 

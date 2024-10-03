@@ -31,7 +31,7 @@ def plot_btk():
 
     # Create a colormap for track; marker colors for Vmax
     cmap = cm.get_cmap('nipy_spectral')
-    norm = Normalize(vmin=0, vmax=90)
+    norm = Normalize(vmin=10, vmax=85)
 
     ax = {}
     ax_mslp = {}
@@ -64,19 +64,19 @@ def plot_btk():
         # Plot Track
         ax[ist]['track'].plot(d_btk[ist]['lon'],d_btk[ist]['lat'],color='gray',linewidth=1.5,linestyle='-',transform=ccrs.PlateCarree())
         # colorcode markers
-        colors = cmap(norm(d_btk[ist]['max_ws']))
+        colors = cmap(norm(d_btk[ist]['vmax']))
         max_marker = 5
         min_marker = 2.5
-        slope = (max_marker -min_marker)/(90-0)
-        for i in range(len(d_btk[ist]['max_ws'])):
-            color = cmap(norm(d_btk[ist]['max_ws'][i]))
+        slope = (max_marker -min_marker)/(80-10)
+        for i in range(len(d_btk[ist]['vmax'])):
+            color = cmap(norm(d_btk[ist]['vmax'][i]))
             if time[i] == onse_RI[ist]:
                 marker = '+'
                 color = 'black'
                 markersize = 5
             else:
                 marker = 'o'
-                markersize=min_marker+slope*d_btk[ist]['max_ws'][i]
+                markersize=min_marker+slope*d_btk[ist]['vmax'][i]
             ax[ist]['track'].plot(d_btk[ist]['lon'][i],d_btk[ist]['lat'][i],marker=marker,
                 markersize=markersize,markeredgecolor=color,markerfacecolor=color,transform=ccrs.PlateCarree())
         # Mark EnKF window
@@ -103,8 +103,8 @@ def plot_btk():
         ax_mslp[ist] = ax[ist]['its'].twinx()
         dates = [datetime.strptime(i,"%Y%m%d%H%M") for i in d_btk[ist]['time']]
         # Saffir-Simpson scale
-        ax[ist]['its'].fill_between([dates[0], dates[-1]], 0, 90, color='#A12830')
-        ax[ist]['its'].text(dates[-5], 80, 'CAT 5', fontsize=6, fontweight='bold', color='blue')
+        ax[ist]['its'].fill_between([dates[0], dates[-1]], 0, 85, color='#A12830')
+        ax[ist]['its'].text(dates[-5], 78, 'CAT 5', fontsize=6, fontweight='bold', color='blue')
         ax[ist]['its'].fill_between([dates[0], dates[-1]], 0, 70, color='#DB1F2A')
         ax[ist]['its'].text(dates[-5], 64, 'CAT 4', fontsize=6, fontweight='bold', color='blue')
         ax[ist]['its'].fill_between([dates[0], dates[-1]], 0, 58, color='#DB4E4E')
@@ -112,24 +112,24 @@ def plot_btk():
         ax[ist]['its'].fill_between([dates[0], dates[-1]], 0, 49, color='#E26E6E')
         ax[ist]['its'].text(dates[-5], 45.5, 'CAT 2', fontsize=6, fontweight='bold', color='blue')
         ax[ist]['its'].fill_between([dates[0], dates[-1]], 0, 42, color='#F1B3B3')
-        ax[ist]['its'].text(dates[-5], 37, 'CAT 1', fontsize=6, fontweight='bold', color='blue')
+        ax[ist]['its'].text(dates[-5], 36, 'CAT 1', fontsize=6, fontweight='bold', color='blue')
         ax[ist]['its'].fill_between([dates[0], dates[-1]], 0, 32, color='#688FAD')
         ax[ist]['its'].text(dates[-6], 24.5, 'TC Storm', fontsize=6, fontweight='bold', color='blue')
         ax[ist]['its'].fill_between([dates[0], dates[-1]], 0, 17, color='#9FC1D3')
-        ax[ist]['its'].text(dates[-8], 8.5, 'TC Depression', fontsize=6, fontweight='bold', color='blue')
+        ax[ist]['its'].text(dates[-8], 12.5, 'TC Depression', fontsize=6, fontweight='bold', color='blue')
         # plot Vmax
-        ax[ist]['its'].plot(dates,d_btk[ist]['max_ws'],color='black',linewidth=2.5,linestyle='--',label='Vmax',zorder=1)
+        ax[ist]['its'].plot(dates,d_btk[ist]['vmax'],color='black',linewidth=2.5,linestyle='-',label='Vmax',zorder=1)
         ax[ist]['its'].set_ylabel('Vmax($\mathregular{ms^{-1}}$)',fontsize=7)
         # plot MSLP
-        ax_mslp[ist].plot(dates,d_btk[ist]['min_slp'],color='black',linewidth=2.5,linestyle='-',marker=None,label='MSLP',zorder=2)
+        ax_mslp[ist].plot(dates,d_btk[ist]['mslp'],color='black',linewidth=2.5,linestyle='--',marker=None,label='MSLP',zorder=2)
         ax_mslp[ist].set_ylabel( 'MSLP(hPa)',fontsize=7)
         # Mark onset of RI
         time_ri = datetime.strptime(onse_RI[ist],"%Y%m%d%H%M")
-        ax[ist]['its'].scatter(time_ri,d_btk[ist]['max_ws'][time==onse_RI[ist]],s=40,color='white',marker='+',zorder=3)
+        ax[ist]['its'].scatter(time_ri,d_btk[ist]['vmax'][time==onse_RI[ist]],s=40,color='white',marker='+',zorder=3)
         # Mark EnKF window
         da_st = datetime.strptime(da_st,"%Y%m%d%H%M")
         da_end = datetime.strptime(da_end,"%Y%m%d%H%M")
-        corners = [(da_st,0),(da_st,90),(da_end,90),(da_end,0)] 
+        corners = [(da_st,10),(da_st,85),(da_end,85),(da_end,10)] 
         # convert datetime objects to numerical format for plotting
         corners_num = [(mdates.date2num(c[0]), c[1]) for c in corners]
         polygon = patches.Polygon(corners_num,closed=True,linewidth=2,edgecolor='black',facecolor='gray',alpha=0.3)
@@ -140,8 +140,8 @@ def plot_btk():
     cbar_ax = fig.add_axes([0.10, 0.07, 0.25, 0.01])
     sm = plt.cm.ScalarMappable(cmap=cmap, norm=norm)
     cbar = fig.colorbar(sm, cax=cbar_ax, orientation='horizontal')
-    cbar.set_ticks([0, 30, 60, 90])
-    cbar.set_ticklabels(['0','30','60','90'])
+    cbar.set_ticks([10, 35, 60, 85])
+    cbar.set_ticklabels(['10','35','60','85'])
     fig.text(0.42,0.075,'Vmax (m $\mathregular{s^{-1}}$)', fontsize=9, ha='center', va='center',rotation='horizontal')
 
     # get the position of the subplot
@@ -149,11 +149,11 @@ def plot_btk():
     line_y = ax[Storms[-1]]['its'].get_position().y0-0.04
     line = plt.Line2D([pos.x0+0.02, pos.x0+0.09],[line_y, line_y],transform=fig.transFigure,color='black',linewidth=2.5,linestyle='-')
     fig.lines.append(line)
-    fig.text(pos.x0+0.14,line_y,'MSLP', fontsize=9, ha='center', va='center')
+    fig.text(pos.x0+0.14,line_y,'Vmax', fontsize=9, ha='center', va='center')
 
     line = plt.Line2D([pos.x1-0.15, pos.x1-0.08],[line_y, line_y],transform=fig.transFigure,color='black',linewidth=2.5,linestyle='--')
     fig.lines.append(line)
-    fig.text(pos.x1-0.03,line_y,'Vmax', fontsize=9, ha='center', va='center')
+    fig.text(pos.x1-0.03,line_y,'MSLP', fontsize=9, ha='center', va='center')
 
 
     # Set Minor ticks/labels for track subplot
@@ -192,8 +192,9 @@ def plot_btk():
         ax[ist]['its'].xaxis.set_major_formatter(date_form)
         ax[ist]['its'].tick_params(axis='x', labelrotation=20,labelsize=6)
         ax_mslp[ist].set_ylim([900,1025])     #([940, 1015])
-        ax[ist]['its'].set_ylim([0,90])        
-   
+        ax[ist]['its'].set_ylim([10,85])        
+        ax[ist]['its'].set_yticks([10,25,40,55,70,85]) 
+        ax[ist]['its'].set_yticklabels(['10','25','40','55','70','85'])
 
     # Add storm info
     for ist in Storms:
