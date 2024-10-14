@@ -337,7 +337,7 @@ def btk_in_duration(Storm, Btk_start, Btk_end, hour_step):
     time_interest_dt = [datetime.strptime(Btk_start,"%Y%m%d%H%M") + timedelta(hours=t) for t in list(range(0, int(Btk_diff_hour+1), hour_step))]
     time_interest_str = [time_dt.strftime("%Y%m%d%H%M") for time_dt in time_interest_dt]
     # Read the complete best-track file
-    dict_all_btk = read_bestrack(Storm)
+    dict_all_btk = read_bestrack(small_dir,Storm)
     # Get the indices in the best-track file corresponded to the times of interest
     idx_in_btk = []
 
