@@ -1,5 +1,5 @@
 #!/work2/06191/tg854905/stampede2/opt/anaconda3/lib/python3.7
-import os
+import os,fnmatch
 import glob
 import numba
 import numpy as np
@@ -107,8 +107,9 @@ def assimilated_obs(big_dir, storm,iExper,DAtimes,slp_xa,slp_xb=False  ):
 # Obtain minimum sea level pressure from best-track file (m/s)
 def MSLP_btk( small_dir,Storm,DAt_6hrs ):
 
-    btk_file = os.listdir(small_dir+Storm+'/Post_Storm_btk/')
-    with open (small_dir+Storm+'/Post_Storm_btk/'+btk_file[0]) as f:
+    Best_track_path = sorted(fnmatch.filter(os.listdir(small_dir+Storm+'/TC_Guidance/'),'bal*'))
+    Best_track_file = small_dir+Storm+'/TC_Guidance/'+Best_track_path[0]
+    with open(Best_track_file, 'r') as f:
         btk_all = f.readlines()
 
     # btk times
@@ -186,9 +187,8 @@ def find_minSLP( Storm, wrfout, DAtime ):
         lat_minslp =  lat.flatten()[idx] 
         lon_minslp = lon.flatten()[idx] 
     else:
-        minslp = np.nanmin( slp_masked ) 
-        slp_smooth_masked = ma.masked_array(slp_smt_values, mask=mask)
-        idx = np.nanargmin( slp_smooth_masked )
+        minslp = np.nanmin( slp_values ) 
+        idx = np.nanargmin( slp_smt_values )
         lat_minslp =  lat.flatten()[idx] 
         lon_minslp = lon.flatten()[idx]
     

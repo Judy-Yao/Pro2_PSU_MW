@@ -101,7 +101,7 @@ def calculate_abs_error():
         Exper_error[istorm] = {}
         # Read best-track data
         Btk_start, Btk_end = t_range_btk( istorm )
-        best_track = UD.btk_in_duration(istorm, Btk_start, Btk_end, hour_step=6)
+        best_track = UD.btk_in_duration(small_dir,istorm, Btk_start, Btk_end, hour_step=6)
         # Time range for model data
         Exper_initTimes = fc_iniT( istorm )
         DF_model_end = t_range_model( istorm )
@@ -878,11 +878,11 @@ def plot_2by2_MAEs():
     colorset = {'CONV': 'black','IR':'red','IR+MW':'blue'}
     marker_type = {'HARVEY':'|','IRMA':'x','JOSE':'_','MARIA':'.'}
 
-    line_width = {'HARVEY':1,'IRMA':1,'JOSE':1,'MARIA':1,'Mean':1.5}
+    line_width = {'HARVEY':1,'IRMA':1,'JOSE':1,'MARIA':1,'Mean':2.5}
 
     # Plot individual simulations
-    subax_track = add_subplot_axes(ax['THO']['track'],[0.1,0.66,0.45,0.3]) # small subplot
-    subax_mslp = add_subplot_axes(ax['THO']['mslp'],[0.1,0.66,0.45,0.3]) # small subplot
+    #subax_track = add_subplot_axes(ax['THO']['track'],[0.1,0.66,0.45,0.3]) # small subplot
+    #subax_mslp = add_subplot_axes(ax['THO']['mslp'],[0.1,0.66,0.45,0.3]) # small subplot
 
     for imp in MP:
         for ist in Storms:
@@ -893,24 +893,24 @@ def plot_2by2_MAEs():
                 if ist == 'JOSE' and imp == "THO":
                     if ida == 'CONV':
                         pass
-                    else:
-                        subax_track.plot(lead_t,MAEs[ist][imp][ida]['track_all'],color=colorset[ida],marker=marker_type[ist],markersize=3,linewidth=line_width[ist],markeredgewidth=2,alpha=0.4)
-                        subax_track.set_xlim( [-0.1,max(fc_srt_len.values())-1] )
-                        subax_track.set_yticks( [0,450,900,1350] )
-                        subax_track.set_ylim([-0.1,1350.1])
-                        subax_track.set_yticklabels(['0','450','900','1350'],fontsize=6)
-                        subax_track.set_xticks([0,4,8,12,16] )
-                        subax_track.set_xticklabels(['D0','D1','D2','D3','D4'])
-                        subax_track.grid(True,linewidth=0.8, color='gray', alpha=0.3, linestyle='-')
+                    #else:
+                        #subax_track.plot(lead_t,MAEs[ist][imp][ida]['track_all'],color=colorset[ida],marker=marker_type[ist],markersize=3,linewidth=line_width[ist],markeredgewidth=2,alpha=0.4)
+                        #subax_track.set_xlim( [-0.1,max(fc_srt_len.values())-1] )
+                        #subax_track.set_yticks( [0,450,900,1350] )
+                        #subax_track.set_ylim([-0.1,1350.1])
+                        #subax_track.set_yticklabels(['0','450','900','1350'],fontsize=6)
+                        #subax_track.set_xticks([0,4,8,12,16] )
+                        #subax_track.set_xticklabels(['D0','D1','D2','D3','D4'])
+                        #subax_track.grid(True,linewidth=0.8, color='gray', alpha=0.3, linestyle='-')
 
-                        subax_mslp.plot(lead_t,MAEs[ist][imp][ida]['mslp_all'],color=colorset[ida],marker=marker_type[ist],markersize=3,linewidth=line_width[ist],markeredgewidth=2,alpha=0.4)
-                        subax_mslp.set_xlim( [-0.1,max(fc_srt_len.values())-1] )
-                        subax_mslp.set_yticks( [0,45,90] )
-                        subax_mslp.set_ylim([-0.1,90])
-                        subax_mslp.set_yticklabels(['0','45','90'],fontsize=6)
-                        subax_mslp.set_xticks([0,4,8,12,16] )
-                        subax_mslp.set_xticklabels(['D0','D1','D2','D3','D4'])
-                        subax_mslp.grid(True,linewidth=0.8, color='gray', alpha=0.3, linestyle='-')
+                        #subax_mslp.plot(lead_t,MAEs[ist][imp][ida]['mslp_all'],color=colorset[ida],marker=marker_type[ist],markersize=3,linewidth=line_width[ist],markeredgewidth=2,alpha=0.4)
+                        #subax_mslp.set_xlim( [-0.1,max(fc_srt_len.values())-1] )
+                        #subax_mslp.set_yticks( [0,45,90] )
+                        #subax_mslp.set_ylim([-0.1,90])
+                        #subax_mslp.set_yticklabels(['0','45','90'],fontsize=6)
+                        #subax_mslp.set_xticks([0,4,8,12,16] )
+                        #subax_mslp.set_xticklabels(['D0','D1','D2','D3','D4'])
+                        #subax_mslp.grid(True,linewidth=0.8, color='gray', alpha=0.3, linestyle='-')
 
     # Plot mean over storms
     mae_sts = MAE_overStorms()
@@ -918,8 +918,8 @@ def plot_2by2_MAEs():
     alphas = {'CONV':0.5,'IR':0.7,'IR+MW':0.9}
     for imp in MP:
         for ida in DA:
-            ax[imp]['track'].plot(lead_t,mae_sts[imp][ida]['track'],color=colorset[ida],linewidth=2)
-            ax[imp]['mslp'].plot(lead_t,mae_sts[imp][ida]['mslp'],color=colorset[ida],linewidth=2)
+            ax[imp]['track'].plot(lead_t,mae_sts[imp][ida]['track'],color=colorset[ida],linewidth=3)
+            ax[imp]['mslp'].plot(lead_t,mae_sts[imp][ida]['mslp'],color=colorset[ida],linewidth=3)
 
 
     # Manully add legends
@@ -949,6 +949,8 @@ def plot_2by2_MAEs():
     # Add the first legend manually to the current Axes
     ax['WSM6']['mslp'].add_artist(legend0)
 
+    fig.text(0.32,0.95,'Track', fontsize=12, ha='center', va='center',rotation='horizontal')
+    fig.text(0.78,0.95,'MSLP', fontsize=12, ha='center', va='center',rotation='horizontal')
     fig.text(0.03,0.73,'WSM6', fontsize=10, ha='center', va='center',rotation='vertical')
     fig.text(0.03,0.32,'THO', fontsize=10, ha='center', va='center',rotation='vertical')
 

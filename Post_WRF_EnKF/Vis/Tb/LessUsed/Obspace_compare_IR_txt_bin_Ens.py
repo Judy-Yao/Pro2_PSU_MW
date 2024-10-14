@@ -609,19 +609,17 @@ if __name__ == '__main__':
             file_Diag = big_dir+Storm+'/'+Exper_name+'/run/'+DAtime+'/enkf/d03/fort.10000'
             d_obs = Diag.Find_IR( file_Diag, fort_v )
 
-            Hx_dir = '/scratch/06191/tg854905/Pro2_PSU_MW/'+Storm+'/'+Exper_name+'/Obs_Hx/IR/'+DAtime+'/'
+            Hx_dir = big_dir+Storm+'/'+Exper_name+'/Obs_Hx/IR/'+DAtime+'/'
             # List the Yb and Ya files
-            file_yb = ['/scratch/06191/tg854905/Pro2_PSU_MW/IRMA/IR-J_DA+J_WRF+J_init-SP-intel17-WSM6-30hr-hroi900/Obs_Hx/IR/201709030600/TB_GOES_CRTM_input_mem055_d03_2017-09-03_06:00.bin',]#sorted( glob.glob(Hx_dir + '/TB_GOES_CRTM_input_mem055.bin') ) 
-            for Hxb in file_yb:
-                print('Reading the Hxb: ' + Hxb)
-                Hxa = Hxb.replace( 'input','output')
-                # Interpolate HX in model resolution to obs location AND write it to a txt file
-                print('------------ Interpolate Hx in model resolution to obs location --------------')
-                # Read WRF domain
-                wrf_file = '/scratch/06191/tg854905/Pro2_PSU_MW/'+Storm+'/'+Exper_name+'/fc/'+DAtime+'/wrf_enkf_output_d03_mean'
-                d_wrf_d03 = read_wrf_domain( wrf_file )
-                interp_simu_to_obs_matlab( Hxb, sensor, DAtime, d_obs, d_wrf_d03 )
-                #time.sleep(60)
+            Hxb = sorted( glob.glob(Hx_dir + '/TB_GOES_CRTM_*') ) 
+            print('Reading the Hxb: ' + Hxb)
+            # Interpolate HX in model resolution to obs location AND write it to a txt file
+            print('------------ Interpolate Hx in model resolution to obs location --------------')
+            # Read WRF domain
+            wrf_file = big_dir+Storm+'/'+Exper_name+'/fc/'+DAtime+'/wrf_enkf_output_d03_mean'
+            d_wrf_d03 = read_wrf_domain( wrf_file )
+            interp_simu_to_obs_matlab( Hxb, sensor, DAtime, d_obs, d_wrf_d03 )
+            #time.sleep(60)
 
     # Plot
     if If_plot:

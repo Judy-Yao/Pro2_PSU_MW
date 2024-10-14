@@ -1,4 +1,4 @@
-import os
+import os,fnmatch
 import glob
 import numpy as np
 import netCDF4 as nc
@@ -70,8 +70,9 @@ def model_Vmax( big_dir,istorm,iExper,DAtimes,Vmax_xa,Vmax_xb=None ):
 # Obtain sustained max wind speed from best-track file (m/s)
 def Vmax_btk( small_dir,Storm,DAt_6hrs ):
 
-    btk_file = os.listdir(small_dir+Storm+'/Post_Storm_btk/')
-    with open (small_dir+Storm+'/Post_Storm_btk/'+btk_file[0]) as f:
+    Best_track_path = sorted(fnmatch.filter(os.listdir(small_dir+Storm+'/TC_Guidance/'),'bal*'))
+    Best_track_file = small_dir+Storm+'/TC_Guidance/'+Best_track_path[0]
+    with open(Best_track_file, 'r') as f:
         btk_all = f.readlines()
 
     # btk times

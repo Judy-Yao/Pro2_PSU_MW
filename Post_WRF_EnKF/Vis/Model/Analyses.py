@@ -180,7 +180,7 @@ def IC_water( Storm, Exper_name, DAtimes, big_dir, small_dir ):
 def slp_plt( Storm, Exper_name, DAtime, wrf_dir, plot_dir ):
 
     # Read storm center
-    dict_btk = UD.read_bestrack(Storm)
+    dict_btk = UD.read_bestrack(small_dir,Storm)
     # Find the best-track position
     btk_dt = [it_str for it_str in dict_btk['time'] ]#[datetime.strptime(it_str,"%Y%m%d%H%M") for it_str in dict_btk['time']]
     bool_match = [DAtime == it for it in btk_dt]
@@ -198,6 +198,8 @@ def slp_plt( Storm, Exper_name, DAtime, wrf_dir, plot_dir ):
     lat_minslp = d_field['lat_minslp']
     lon_minslp = d_field['lon_minslp']
     mslp = d_field['min_slp']
+
+    print( lon_minslp,lat_minslp )
 
     lat_min = np.amin( lat )
     lon_min = np.amin( lon )
@@ -254,7 +256,7 @@ def slp_plt( Storm, Exper_name, DAtime, wrf_dir, plot_dir ):
         gl.xlabel_style = {'size': 12}
         gl.ylabel_style = {'size': 12}
 
-    plt.savefig( plot_dir+DAtime+'_slp', dpi=300 )
+    plt.savefig( plot_dir+DAtime+'_slp.png', dpi=300 )
     print('Saving the figure: ', plot_dir+DAtime+'_slp.png')
     plt.close()
 
@@ -594,7 +596,7 @@ def read_IC_water( wrf_dir ):
 def plot_IC_water( Storm, Exper_name, DAtime, wrf_dir, plot_dir ):
 
     # Read storm center
-    dict_btk = UD.read_bestrack(Storm)
+    dict_btk = UD.read_bestrack(small_dir, Storm)
     # Find the best-track position
     btk_dt = [it_str for it_str in dict_btk['time'] ]#[datetime.strptime(it_str,"%Y%m%d%H%M") for it_str in dict_btk['time']]
     bool_match = [DAtime == it for it in btk_dt]
@@ -1024,27 +1026,26 @@ if __name__ == '__main__':
     small_dir = '/work2/06191/tg854905/stampede2/Pro2_PSU_MW/'
 
     # -------- Configuration -----------------
-    Storm = 'HARVEY'
-    DA = ['IR+MW']   
-    MP = 'WSM6' 
+    Storm = 'IRMA'
+    DA = ['IR']   
+    MP = 'THO' 
 
     Plot_Precip = False       # Accumulated total grid scale precipitation
     Plot_slp = False
-    Plot_UV10_slp = True
-    Plot_IC_water = False
+    Plot_UV10_slp = False
+    Plot_IC_water = True
     Plot_minslp_evo = False
     Plot_rtvo = False
     Plot_divergence = False
     # -----------------------------------------
 
     # Time range set up
-    start_time_str = '201708221200'
-    end_time_str = '201708231200'
+    start_time_str = '201709030000'
+    end_time_str = '201709030600'
     Consecutive_times = True
 
     if not Consecutive_times:
-        #DAtimes = ['201709041400','201709041600']
-        DAtimes = ['201708221200','201708221800','201708230000','201708230600','201708231200','201708231800','201708240000','201708240600','201708241200']
+        DAtimes = ['201708221200','201708221800','201708230000','201708230600','201708231200',]
         #DAtimes = ['201709031200','201709031800','201709040000','201709040600','201709041200','201709041800','201709050000']
         #DAtimes = ['201709161200','201709161800','201709170000','201709170600','201709171200','201709171800','201709180000']
     else:

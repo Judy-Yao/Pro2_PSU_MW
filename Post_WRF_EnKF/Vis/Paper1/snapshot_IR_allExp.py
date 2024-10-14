@@ -94,7 +94,7 @@ def read_simuIR_obsLoc( Tb_file ):
 def plot_snapshot():
 
     # Set up figure
-    fig = plt.figure( figsize=(6.5,8.5),dpi=200) # standard: 6.5,8.5
+    fig = plt.figure( figsize=(6.5,8.5),dpi=300) # standard: 6.5,8.5
     grids = fig.add_gridspec(ncols=4,nrows=7,hspace=0.0,wspace=0.0,top=0.93,left=0.12,)
     ax = {}
     ax['obs'] = {}
@@ -142,7 +142,7 @@ def plot_snapshot():
             ax['THO_'+ida][ist].scatter(IR_simu[ist]['THO'][ida]['lon_obs'],IR_simu[ist]['THO'][ida]['lat_obs'],1.5,c=IR_simu[ist]['THO'][ida]['meanYa_obs'],edgecolors='none', cmap=IRcmap, vmin=min_tb, vmax=max_tb,transform=ccrs.PlateCarree())
 
     # colorbar
-    cbar_ax = fig.add_axes([0.10, 0.06, 0.8, 0.015])
+    cbar_ax = fig.add_axes([0.10, 0.06, 0.78, 0.015])
     cbar = fig.colorbar(obs_s, cax=cbar_ax, orientation='horizontal')
     cbar.set_label('GOES-16 Ch8 Tb (K)')
 
@@ -156,13 +156,18 @@ def plot_snapshot():
     # Add storm information
     for ist in Storms:
         if Storms.index(ist) == 0:
-            fig.text(0.21,0.95,ist, fontsize=12, ha='center', va='center')
+            fig.text(0.21,0.96,ist, fontsize=12, ha='center', va='center')
+            fig.text(0.21,0.94,DAtime[ist], fontsize=10, ha='center', va='center')
         elif Storms.index(ist) == 1:
-            fig.text(0.42,0.95,ist, fontsize=12, ha='center', va='center')
+            fig.text(0.42,0.96,ist, fontsize=12, ha='center', va='center')
+            fig.text(0.42,0.94,DAtime[ist], fontsize=10, ha='center', va='center')
         elif Storms.index(ist) == 2:
-            fig.text(0.61,0.95,ist, fontsize=12, ha='center', va='center')
+            fig.text(0.61,0.96,ist, fontsize=12, ha='center', va='center')
+            fig.text(0.61,0.94,DAtime[ist], fontsize=10, ha='center', va='center')
         else:
-            fig.text(0.8,0.95,ist, fontsize=12, ha='center', va='center')
+            fig.text(0.8,0.96,ist, fontsize=12, ha='center', va='center')
+            fig.text(0.8,0.94,DAtime[ist], fontsize=10, ha='center', va='center')
+
     # Add obs and experiment
     top_h = [0.88 - it for it in [0,0.12,0.24,0.35,0.48,0.58,0.71]]
     for ir in row:
@@ -195,7 +200,7 @@ def plot_snapshot():
 
 
     # Save figure
-    des_name = small_dir+'SYSTEMS/Vis_analyze/Paper1/snapshot_IR_Cycle1.png'
+    des_name = small_dir+'SYSTEMS/Vis_analyze/Paper1/snapshot_IR_sameas_MW.png'
     plt.savefig( des_name )
     print( 'Saving the figure to '+des_name )
 
@@ -206,7 +211,7 @@ if __name__ == '__main__':
     small_dir = '/work2/06191/tg854905/stampede2/Pro2_PSU_MW/'
 
     #--------Configuration------------
-    Storms = ['HARVEY','JOSE','MARIA','IRMA']
+    Storms = ['HARVEY','IRMA','JOSE','MARIA']
     MP = ['WSM6','THO']
     DA = ['CONV','IR','IR+MW']
     # sensor
@@ -228,10 +233,11 @@ if __name__ == '__main__':
                 Exper_names[istorm][imp][ida] = UD.generate_one_name( istorm,ida,imp )
 
     # DA time of interest
-    DAtime = {}
-    for ist in Storms:
-        tmp_time = datetime.strptime(start_time_str[ist],"%Y%m%d%H%M") + timedelta(hours=t_incre)
-        DAtime[ist] = tmp_time.strftime("%Y%m%d%H%M") 
+    DAtime = {'HARVEY':'201708221300','IRMA':'201709030100','JOSE':'201709050600','MARIA':'201709160200'}
+    #DAtime = {}
+    #for ist in Storms:
+    #    tmp_time = datetime.strptime(start_time_str[ist],"%Y%m%d%H%M") + timedelta(hours=t_incre)
+    #    DAtime[ist] = tmp_time.strftime("%Y%m%d%H%M") 
 
     # Read observed IR radiances
     IR_obs = {}

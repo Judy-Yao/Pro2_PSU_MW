@@ -16,19 +16,18 @@
 #SBATCH --mail-type=ALL
 #SBATCH --mail-user=zuy121@psu.edu
 
-#module purge
-#module load intel/18.0.2
-#module load impi/18.0.2
-#module load parallel-netcdf/4.3.3.1
-#module load phdf5/1.8.16
+module purge
+module load intel/24.0 #intel/18.0.2
+module load impi/21.11 #impi/18.0.2
+module load parallel-netcdf/4.9.2 #parallel-netcdf/4.3.3.1
+module load phdf5/1.14.3 #phdf5/1.8.16
 #module load libfabric/1.7.0
 #module load python3/3.7.0 
-module restore intel
 
 # Fill in the storm name and experiment name
 Storm=JOSE
-Exper=IR-J_DA+J_WRF+J_init-SP-intel17-WSM6-30hr-hroi900
-Exper_obs=IR+MW-J_DA+J_WRF+J_init-SP-intel17-WSM6-30hr-hroi900
+Exper=IR-J_DA+J_WRF+J_init-SP-intel17-THO-30hr-hroi900
+Exper_obs=IR+MW-J_DA+J_WRF+J_init-SP-intel17-THO-30hr-hroi900
 
 # Parent paths
 Big_dir=/scratch/06191/tg854905/Pro2_PSU_MW/

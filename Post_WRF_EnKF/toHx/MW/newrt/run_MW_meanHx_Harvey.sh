@@ -9,8 +9,8 @@
 #SBATCH -J MW
 #SBATCH -N 4
 #SBATCH --ntasks-per-node 64
-#SBATCH -p icx-normal
-#SBATCH -t 00:30:00
+#SBATCH -p icx
+#SBATCH -t 05:00:00
 #SBATCH -o out_mw
 #SBATCH -e error_mw
 #SBATCH --mail-type=ALL
