@@ -3,10 +3,10 @@
 #SBATCH -J IR           # Job name
 #SBATCH -o IR.o%j       # Name of stdout output file
 #SBATCH -e IR.e%j       # Name of stderr error file
-#SBATCH -p skx-dev      # Queue (partition) name
-#SBATCH -N 4               # Total # of nodes 
+#SBATCH -p icx      # Queue (partition) name
+#SBATCH -N 1               # Total # of nodes 
 #SBATCH --ntasks-per-node 48
-#SBATCH -t 02:00:00        # Run time (hh:mm:ss)
+#SBATCH -t 00:20:00        # Run time (hh:mm:ss)
 #SBATCH --mail-user=zuy121@psu.edu
 #SBATCH --mail-type=all    # Send email at begin and end of job
 ##SBATCH -A myproject       # Allocation name (req'd if you have more than 1)
@@ -19,7 +19,7 @@ source util.sh
 
 # Fill in the storm name and experiment name
 Storm=HARVEY
-Exper=J_DA+J_WRF+J_init-Expanse-WSM6-24hr-hroi300
+Exper=J_DA+J_WRF+J_init-Expanse-THO-24hr-hroi300
 
 # Parent paths
 Big_dir=/scratch/06191/tg854905/Pro2_PSU_MW/
@@ -27,16 +27,16 @@ Small_dir=/work2/06191/tg854905/stampede2/Pro2_PSU_MW
 #Code_dir=/home1/06191/tg854905/Pro2_PSU_MW/Post_WRF_EnKF/toHx/IR
 
 ############ User control parameters
-max_num_of_crtm=4  # Max number of CRTM.exe to run concurrently 
+max_num_of_crtm=1  # Max number of CRTM.exe to run concurrently 
                     # (make same as # of nodes requested)
 cores_per_crtm=48   # Number of cores given to each crtm.exe 
                     # (make same as # of cores per node)
-date_st=201708221200        # Start date  
+date_st=201708231200        # Start date  
 date_ed=201708231200        # End date (24 forecast hrs can be done in < 2 hr w/4 nodes on skx queues)
 time_int=60         # Time interval btwn cycles in minutes
 nE=60               # Number of ens members
 dom=3                           # Domain you are running it on 
-state=( "input" "output") # Input or output or both
+state=( "input") # Input or output or both
 
 ##### Initialize counting variable to keep track of number of active CRTM.exe 
 num_crtm=0
@@ -70,7 +70,7 @@ while [[ $DAtime -le $date_ed ]]; do
 
     # Iterate thru ens
     #for mem in `seq -f "%03g" 44 44`; do
-    for mem in `seq -f "%03g" 1 $nE`; do
+    for mem in `seq -f "%03g" 59 $nE`; do
       wrffile=${Big_dir}/${Storm}/${Exper}/fc/${DAtime}/wrf_enkf_"$istate"_d0"$dom"_$mem 
       outfile=${outdir}/TB_GOES_CRTM_"$istate"_mem"$mem"_d0"$dom"_"$year"-"$month"-"$day"_"$hour":"$minute".bin
 

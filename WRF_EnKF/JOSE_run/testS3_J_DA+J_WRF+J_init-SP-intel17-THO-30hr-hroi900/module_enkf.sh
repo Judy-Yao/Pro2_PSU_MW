@@ -75,6 +75,8 @@ for n in $domlist; do
   fi
 
   # Lu YH
+  # If Radiance and Microwave both exist for one assimilation time, only assimilate IR
+  # for clear pixels and only assimilate MW for cloudy pixels
   if ( $USE_RADIANCE && $USE_MICROWAVE ); then
     if [ -e radiance_${DATE}_so  ] && [ -e microwave_${DATE}_so ] ; then
       
@@ -95,6 +97,8 @@ for n in $domlist; do
   export CRTM_OUT_DIR=${WORK_DIR}/run/${DATE}/enkf/${dm}/crtm_out_${CLOUDCOEFF1}
   echo $CRTM_OUT_DIR
   if [[ ! -d ${CRTM_OUT_DIR} ]]; then mkdir -p ${CRTM_OUT_DIR}; touch ${CRTM_OUT_DIR}/test; fi # SBS
+
+
 
   # updating non-Q variables every 1-hour
   if [[ ${DATE:10:2} == '00'  ]]; then

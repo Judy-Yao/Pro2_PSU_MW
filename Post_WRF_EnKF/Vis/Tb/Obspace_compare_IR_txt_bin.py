@@ -611,23 +611,23 @@ if __name__ == '__main__':
     # ---------- Configuration -------------------------
     Storm = 'HARVEY'
     DA = 'CONV'
-    MP = 'WSM6'
+    MP = 'THO'
  
     sensor = 'abi_gr'
     ch_list = ['8',]
     fort_v = ['obs_type','lat','lon','obs']
 
-    start_time_str = '201708221200' 
+    start_time_str = '201708231200'
     end_time_str = '201708231200'
     Consecutive_times = True
     
     # limitations
     limit = False
 
-    Interp_to_obs = False
-    plot_full = True
+    Interp_to_obs = True
+    plot_full = False
     plot_diff = False
-    plot_scatter = True
+    plot_scatter = False
     # ------------------------------------------------------   
 
     # Create experiment names
@@ -636,7 +636,7 @@ if __name__ == '__main__':
     Exper_obs =  UD.generate_one_name( Storm,'IR',MP )
     
     if not Consecutive_times:
-        IR_times = ['201709030100',]
+        IR_times = ['201708230400','201708231200']
         #['201709051200','201709051800','201709060000','201709060600','201709061200','201709061800','201709070000']
         #['201709030000','201709030600','201709031200','201709031800','201709040000','201709040600','201709041200','201709041800','201709050000']
     else:

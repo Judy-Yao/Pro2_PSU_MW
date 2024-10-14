@@ -10,8 +10,8 @@ function advance_time {
 export -f advance_time
 
 
-path_from=/scratch/02191/yuz31/HARVEY/IR_WSM6/fc/
-path_to=/scratch/06191/tg854905/Pro2_PSU_MW/HARVEY/JerryRun/IR_WSM6/fc/
+path_from=/scratch/02191/yuz31/HARVEY/MW_THO/fc/
+path_to=/scratch/06191/tg854905/Pro2_PSU_MW/HARVEY/JerryRun/MW_THO/fc/
 
 date_st=201708221200
 date_ed=201708241200

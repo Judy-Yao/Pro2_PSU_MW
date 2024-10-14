@@ -57,7 +57,7 @@ def read_HPI_analyses(Storm, Exper_name, wrf_dir, filename_analyses=None, force_
 
     DAtime_str = []
     max_wind = []
-    min_slp = []
+    mslp = []
     lat_storm = []
     lon_storm = []
        
@@ -77,7 +77,7 @@ def read_HPI_analyses(Storm, Exper_name, wrf_dir, filename_analyses=None, force_
             max_wind.append( np.max( ws ))
             # minimum sea level pressure
             slp = getvar(ncid, 'slp')
-            min_slp.append( np.min( slp )) 
+            mslp.append( np.min( slp )) 
             # location of the minimum slp
             slp_smooth = sp.ndimage.filters.gaussian_filter(slp, [11, 11] )
             idx = np.nanargmin( slp_smooth )
@@ -85,11 +85,11 @@ def read_HPI_analyses(Storm, Exper_name, wrf_dir, filename_analyses=None, force_
             lon_storm.append( ncid.variables['XLONG'][:].flatten()[idx]) 
 
     max_wind = np.array(max_wind)
-    min_slp = np.array(min_slp)
+    mslp = np.array(mslp)
     lat_storm = np.array(lat_storm)
     lon_storm = np.array(lon_storm)
 
-    HPI_analyses = {'Diff_start_next6x': 6,'time':DAtime_str, 'lat': lat_storm, 'lon':lon_storm, 'max_ws': max_wind, 'min_slp':min_slp}
+    HPI_analyses = {'Diff_start_next6x': 6,'time':DAtime_str, 'lat': lat_storm, 'lon':lon_storm, 'vmax': max_wind, 'mslp':mslp}
     print('Location of analysis at ', HPI_analyses['time'][0], ': ', HPI_analyses['lon'][0], ' ', HPI_analyses['lat'][0])
 
     return HPI_analyses
@@ -107,8 +107,8 @@ def read_wrfout(Storm, Exper_name, directory, filename_pickle=None, force_reload
         nstep = len(filenames)
         HPI = {}
         HPI['time'] = [datetime(2017,1,1) for i in range(nstep)]
-        HPI['max_ws'] = np.zeros( nstep )
-        HPI['min_slp'] = np.zeros( nstep )
+        HPI['vmax'] = np.zeros( nstep )
+        HPI['mslp'] = np.zeros( nstep )
         HPI['lat'] = np.zeros( nstep )
         HPI['lon'] = np.zeros( nstep )
         for ifile in range(nstep):
@@ -120,9 +120,9 @@ def read_wrfout(Storm, Exper_name, directory, filename_pickle=None, force_reload
                 time_file = start_time + dtime
                 HPI['time'][ifile] = time_file.strftime("%Y%m%d%H%M") 
                 ws = np.sqrt( ncid.variables['U10'][:]**2 + ncid.variables['V10'][:]**2 )
-                HPI['max_ws'][ifile] = np.max( ws )
+                HPI['vmax'][ifile] = np.max( ws )
                 slp = getvar(ncid, 'slp')
-                HPI['min_slp'][ifile] = np.min( slp )
+                HPI['mslp'][ifile] = np.min( slp )
                 
                 # smooth to find min slp location
                 slp_smooth = sp.ndimage.filters.gaussian_filter(slp, [11, 11] )
@@ -208,8 +208,8 @@ def read_rsl_error(Storm, Exper_name, directory, DF_start, DF_end):
     idx_sbs = []
     lat_sbs = []
     lon_sbs = []
-    max_ws_sbs = []
-    min_slp_sbs = []
+    vmax_sbs = []
+    mslp_sbs = []
 
     for time_str in time_interest_str[:-1]:
         boolean_compare = [ eachT  == time_str for eachT in time_all ]
@@ -221,14 +221,14 @@ def read_rsl_error(Storm, Exper_name, directory, DF_start, DF_end):
             idx_sbs.append(idx)
             lat_sbs.append( lat_all[idx] )
             lon_sbs.append( lon_all[idx] )
-            max_ws_sbs.append( maxV_all[idx] )
-            min_slp_sbs.append( minP_all[idx] )
+            vmax_sbs.append( maxV_all[idx] )
+            mslp_sbs.append( minP_all[idx] )
 
     # Add the last record (e.g.,2017-09-07_23:45:00) to approximate o' clock (e.g.,2017-09-08_00:00:00) 
     lat_sbs.append( lat_all[-1] )
     lon_sbs.append( lon_all[-1] )
-    max_ws_sbs.append( maxV_all[-1] )
-    min_slp_sbs.append( minP_all[-1] )  
+    vmax_sbs.append( maxV_all[-1] )
+    mslp_sbs.append( minP_all[-1] )  
 
     # Calculate the distance between the next 6x time and the DF_start_real
     # ---------------------------------- idea ---------------------------------- 
@@ -244,11 +244,11 @@ def read_rsl_error(Storm, Exper_name, directory, DF_start, DF_end):
 
     lat_sbs = np.array(lat_sbs)
     lon_sbs = np.array(lon_sbs)
-    max_ws_sbs = np.array(max_ws_sbs)
-    min_slp_sbs = np.array(min_slp_sbs)
+    vmax_sbs = np.array(vmax_sbs)
+    mslp_sbs = np.array(mslp_sbs)
 
     # Assemble the dictionary
-    dict_model = {'Diff_start_next6x': int(Diff_start_next6x), 'time': time_interest_str, 'lat': lat_sbs, 'lon': lon_sbs, 'max_ws': max_ws_sbs, 'min_slp': min_slp_sbs} 
+    dict_model = {'Diff_start_next6x': int(Diff_start_next6x), 'time': time_interest_str, 'lat': lat_sbs, 'lon': lon_sbs, 'vmax': vmax_sbs, 'mslp': mslp_sbs} 
     return dict_model
 
 
@@ -264,8 +264,8 @@ def plot_one_hpi( ax0, ax1, ax2,  state, color, line, line_width, label, steps=6
         times = state['time']
         lon = state['lon']
         lat = state['lat']
-        x_min_slp = state['min_slp']
-        x_max_ws = state['max_ws']
+        x_mslp = state['mslp']
+        x_vmax = state['vmax']
 
         # track
         ax0.plot(lon, lat, marker='o',markersize=3, color=color,linewidth=3, label=label, linestyle=line, transform=ccrs.PlateCarree())
@@ -277,8 +277,8 @@ def plot_one_hpi( ax0, ax1, ax2,  state, color, line, line_width, label, steps=6
                 ax0.scatter( lon[idx], lat[idx],s=5, marker='o',edgecolor="white",transform=ccrs.PlateCarree())
                 ax0.annotate(it[6:8], xy=(lon[idx], lat[idx]), color=color, xycoords='data', transform=ccrs.PlateCarree())
         # intensity
-        ax1.plot_date(dates, x_min_slp, color, label=label, linewidth=3)
-        ax2.plot_date(dates, x_max_ws, color, label=label, linewidth=3)
+        ax1.plot_date(dates, x_mslp, color, label=label, linewidth=3)
+        ax2.plot_date(dates, x_vmax, color, label=label, linewidth=3)
 
     # Model simulation
     else:
@@ -292,20 +292,20 @@ def plot_one_hpi( ax0, ax1, ax2,  state, color, line, line_width, label, steps=6
             times = state['time'][idx_next6x::steps]
             lon = state['lon'][idx_next6x::steps]
             lat = state['lat'][idx_next6x::steps]
-            x_min_slp = state['min_slp'][idx_next6x::steps]
-            x_max_ws = state['max_ws'][idx_next6x::steps]
+            x_mslp = state['mslp'][idx_next6x::steps]
+            x_vmax = state['vmax'][idx_next6x::steps]
             
             times = np.insert(times,0,state['time'][0])
             lon = np.insert(lon,0,state['lon'][0])
             lat = np.insert(lat,0,state['lat'][0])
-            x_min_slp = np.insert(x_min_slp,0,state['min_slp'][0])
-            x_max_ws = np.insert(x_max_ws,0,state['max_ws'][0])
+            x_mslp = np.insert(x_mslp,0,state['mslp'][0])
+            x_vmax = np.insert(x_vmax,0,state['vmax'][0])
         else:
             times = state['time'][::steps]
             lon = state['lon'][::steps]
             lat = state['lat'][::steps]
-            x_min_slp = state['min_slp'][::steps]
-            x_max_ws = state['max_ws'][::steps]
+            x_mslp = state['mslp'][::steps]
+            x_vmax = state['vmax'][::steps]
 
         # track        
         ax0.plot(lon, lat, marker='o', markersize=3, color=color,linewidth=line_width, label=label, linestyle=line, transform=ccrs.PlateCarree())
@@ -319,8 +319,8 @@ def plot_one_hpi( ax0, ax1, ax2,  state, color, line, line_width, label, steps=6
 
         # intensity
         dates = [datetime.strptime(i,"%Y%m%d%H%M") for i in times]
-        ax1.plot_date(dates, x_min_slp, color=color, label=label, linestyle=line, linewidth=line_width,)
-        ax2.plot_date(dates, x_max_ws, color=color, label=label, linestyle=line, linewidth=line_width,)
+        ax1.plot_date(dates, x_mslp, color=color, label=label, linestyle=line, linewidth=line_width,)
+        ax2.plot_date(dates, x_vmax, color=color, label=label, linestyle=line, linewidth=line_width,)
 
 
 def plot_hpi_df( Config ):
@@ -516,9 +516,9 @@ def SameL_error_eachInit(Storm,wrf_dir,exper,best_track,exper_inits,DF_model_end
             distance_track = UD.mercator_distance(best_track['lon'][idx_btk],best_track['lat'][idx_btk],HPI_model['lon'][idx_m],HPI_model['lat'][idx_m]) # km
             error_perInit[0,idx_t] = distance_track
             # error of min slp
-            error_perInit[1,idx_t] = HPI_model['min_slp'][idx_m]-best_track['min_slp'][idx_btk] 
+            error_perInit[1,idx_t] = HPI_model['mslp'][idx_m]-best_track['mslp'][idx_btk] 
             # error of max wind
-            error_perInit[2,idx_t] = HPI_model['max_ws'][idx_m]-best_track['max_ws'][idx_btk]
+            error_perInit[2,idx_t] = HPI_model['vmax'][idx_m]-best_track['vmax'][idx_btk]
         # assemble the dictionary
         dict_Error[init_t] = error_perInit
         # accumulate the abs error
@@ -581,9 +581,9 @@ def DiffL_error_eachInit(Storm,wrf_dir,exper,best_track,exper_inits,DF_model_end
             error_perInit[0,idx_t] = dist #km
             error_perInit[1,idx_t] = UD.azi_geo_to_math(azi_btk)  #math azimuth:degree
             # error of min slp
-            error_perInit[2,idx_t] = HPI_model['min_slp'][idx_m]-best_track['min_slp'][idx_btk]
+            error_perInit[2,idx_t] = HPI_model['mslp'][idx_m]-best_track['mslp'][idx_btk]
             # error of max wind
-            error_perInit[3,idx_t] = HPI_model['max_ws'][idx_m]-best_track['max_ws'][idx_btk]
+            error_perInit[3,idx_t] = HPI_model['vmax'][idx_m]-best_track['vmax'][idx_btk]
         # assemble the dictionary
         dict_Error[init_t] = error_perInit 
 

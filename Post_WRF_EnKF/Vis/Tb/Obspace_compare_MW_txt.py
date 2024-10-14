@@ -10,10 +10,10 @@ from matplotlib import pyplot as plt
 import matplotlib.ticker as mticker
 import cartopy.crs as ccrs
 from cartopy.mpl.gridliner import LONGITUDE_FORMATTER, LATITUDE_FORMATTER
-from global_land_mask import globe
 import math
 import time
 from datetime import datetime
+from global_land_mask import globe
 
 import Util_data as UD
 import Util_Vis
@@ -263,7 +263,7 @@ def plot_Tb(Storm, Exper_name, DAtime, sensor, dict_ss_len):
 
     # Read location from TCvitals
     if any( hh in DAtime[8:10] for hh in ['00','06','12','18']):
-        tc_lon, tc_lat, tc_slp = UD.read_TCvitals(Storm, DAtime)
+        tc_lon, tc_lat, tc_slp = UD.read_TCvitals(small_dir, Storm, DAtime)
         print( 'Location from TCvital: ', tc_lon, tc_lat )
 
     # ------------------ Plot -----------------------
@@ -372,18 +372,18 @@ def plot_Tb(Storm, Exper_name, DAtime, sensor, dict_ss_len):
             gl = ax[i,j].gridlines(crs=ccrs.PlateCarree(),draw_labels=False,linewidth=0.5, color='gray', alpha=0.7, linestyle='--')
             # Control if ticks are added to a certain side
             if i==0:
-                gl.xlabels_bottom = False
-                gl.xlabels_top = False
+                gl.bottom_labels = False
+                gl.top_labels = False
             else:
-                gl.xlabels_bottom = True
-                gl.xlabels_top = False        
+                gl.bottom_labels = True
+                gl.top_labels = False        
 
             if j==0:
-                gl.ylabels_left = True
-                gl.ylabels_right = False
+                gl.left_ylabels = True
+                gl.right_labels = False
             else:
-                gl.ylabels_left = False
-                gl.ylabels_right = False  
+                gl.left_ylabels = False
+                gl.right_labels = False  
             # Add ticks
             gl.ylocator = mticker.FixedLocator(lat_ticks)
             gl.xlocator = mticker.FixedLocator(lon_ticks)
@@ -414,7 +414,7 @@ def plot_Tb_diff(Storm, Exper_name, DAtime, sensor, dict_ss_len):
 
     # Read location from TCvitals
     if any( hh in DAtime[8:10] for hh in ['00','06','12','18']):
-        tc_lon, tc_lat, tc_slp = UD.read_TCvitals(Storm, DAtime)
+        tc_lon, tc_lat, tc_slp = UD.read_TCvitals(small_dir,Storm, DAtime)
         print( 'Location from TCvital: ', tc_lon, tc_lat )
 
     # Prepare to calculate RMSE between the Hx and Yo
@@ -546,18 +546,18 @@ def plot_Tb_diff(Storm, Exper_name, DAtime, sensor, dict_ss_len):
             gl = ax[i,j].gridlines(crs=ccrs.PlateCarree(),draw_labels=False,linewidth=0.5, color='gray', alpha=0.7, linestyle='--')
             # Control if ticks are added to a certain side
             if i==0:
-                gl.xlabels_bottom = False
-                gl.xlabels_top = False
+                gl.bottom_labels = False
+                gl.top_labels = False
             else:
-                gl.xlabels_bottom = True
-                gl.xlabels_top = False
+                gl.bottom_labels = True
+                gl.top_labels = False
 
             if j==0:
-                gl.ylabels_left = True
-                gl.ylabels_right = False
+                gl.left_ylabels = True
+                gl.right_labels = False
             else:
-                gl.ylabels_left = False
-                gl.ylabels_right = False
+                gl.left_ylabels = False
+                gl.right_labels = False
             # Add ticks
             gl.ylocator = mticker.FixedLocator(lat_ticks)
             gl.xlocator = mticker.FixedLocator(lon_ticks)
@@ -577,12 +577,12 @@ if __name__ == '__main__':
     small_dir =  '/work2/06191/tg854905/stampede2/Pro2_PSU_MW/'
 
     # ---------- Configuration -------------------------
-    Storm = 'JOSE'
-    DA = 'IR'
-    MP = 'WSM6'
+    Storm = 'HARVEY'
+    DA = 'IR+MW'
+    MP = 'THO'
 
-    start_time_str = '201709050000'
-    end_time_str = '201709070000'
+    start_time_str = '201708221300'
+    end_time_str = '201708221300'
     Consecutive_times = True
 
     plot_full = True

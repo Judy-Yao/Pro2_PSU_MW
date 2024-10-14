@@ -17,13 +17,22 @@ import matplotlib.patches as mpatches
 
 import Util_data as UD
 import Util_Vis
-import Diagnostics as Diag
 
+# Generate time series
+def generate_times( Storms, start_time_str, end_time_str, interval ):
+
+    dict_times = {}
+    for ist in Storms:
+        time_diff = datetime.strptime(end_time_str[ist],"%Y%m%d%H%M") - datetime.strptime(start_time_str[ist],"%Y%m%d%H%M")
+        time_diff_hour = time_diff.total_seconds() / 3600
+        time_interest_dt = [datetime.strptime(start_time_str[ist],"%Y%m%d%H%M") + timedelta(hours=t) for t in list(range(0, int(time_diff_hour)+interval, interval))]
+        dict_times[ist] = [time_dt.strftime("%Y%m%d%H%M") for time_dt in time_interest_dt]
+    return dict_times
 
 # Read variables at obs resolution/location for one experiment 
-def read_Tbs_obsRes_oneExper(istorm,imp,ida,Exper_names,d_times,sensor):
+def read_Tbs_obsRes_oneExper(big_dir,istorm,imp,ida,exp_name,d_times,sensor):
 
-    Hx_dir = big_dir+istorm+'/'+Exper_names[istorm]+'/Obs_Hx/IR/'
+    Hx_dir = big_dir+istorm+'/'+exp_name+'/Obs_Hx/IR/'
     dict_allTb = {}
 
     Yo_all = []
@@ -58,7 +67,7 @@ def read_Tbs_obsRes_oneExper(istorm,imp,ida,Exper_names,d_times,sensor):
 
     return dict_allTb
 
-def combine_storms_allTimes( Exper_Tb ):
+def combine_storms_allTimes( Storms, Exper_Tb ):
 
     allStorm_tb = {}
     all_Yo = []
@@ -229,7 +238,7 @@ if __name__ == '__main__':
     #--------Configuration------------
     Storms = ['IRMA','JOSE','MARIA','HARVEY']#['HARVEY','IRMA','JOSE','MARIA']
     DA = 'IR'
-    MP = 'WSM6'
+    MP = 'THO'
     sensor = 'abi_gr'
 
     start_time_str = {'HARVEY':'201708221200','IRMA':'201709030000','JOSE':'201709050000','MARIA':'201709160000'}
@@ -242,7 +251,7 @@ if __name__ == '__main__':
     min_Tbdiff_rg = -35
     max_Tbdiff_rg = 45
 
-    bin_BMO = True # background minue observation
+    bin_BMO = False # background minue observation
 
     # number of bins
     scale_factor = 2 # 1: 1k per bin; 2: 0.5k per bin
@@ -257,15 +266,15 @@ if __name__ == '__main__':
         Exper_names[istorm] = UD.generate_one_name( istorm,DA,MP )
 
     # Identify DA times in the period of interest
-    dict_times = UD.generate_times( Storms, start_time_str, end_time_str )
+    dict_times = generate_times( Storms, start_time_str, end_time_str, 1 )
 
     # Read obs, Hxb, and Hxa of all files
     Exper_Tb = {}
     for istorm in Storms:
-        Exper_Tb[istorm] = read_Tbs_obsRes_oneExper(istorm,MP,DA,Exper_names,dict_times,sensor)
+        Exper_Tb[istorm] = read_Tbs_obsRes_oneExper(big_dir,istorm,MP,DA,Exper_names[istorm],dict_times,sensor)
 
     # Combine data for all storms
-    Storms_Tb = combine_storms_allTimes( Exper_Tb )
+    Storms_Tb = combine_storms_allTimes( Storms, Exper_Tb )
 
     # Make bins
     dcount = {}

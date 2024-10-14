@@ -2,6 +2,7 @@
 from numba import njit, prange
 import os,fnmatch # functions for interacting with the operating system
 import numpy as np
+from wrf import getvar
 import time
 import glob
 import netCDF4 as nc
@@ -324,11 +325,11 @@ def read_bestrack( small_dir,Storm ):
         # Read min sea level pressure
         minP_all.append(float(split_line[9].replace(',',''))) # mb
 
-    dict_bestrack = {'time': time_all, 'lat': lat_all, 'lon': lon_all, 'max_ws': maxV_all, 'min_slp': minP_all}
+    dict_bestrack = {'time': time_all, 'lat': lat_all, 'lon': lon_all, 'vmax': maxV_all, 'mslp': minP_all}
     return dict_bestrack
 
 # Return records only at times of interest from the complete best-track file 
-def btk_in_duration(Storm, Btk_start, Btk_end, hour_step):
+def btk_in_duration(small_dir, Storm, Btk_start, Btk_end, hour_step):
 
     # Calculate the duration from the start to the end of deterministic forecast in hour
     Btk_diff = datetime.strptime(Btk_end,"%Y%m%d%H%M") - datetime.strptime(Btk_start,"%Y%m%d%H%M")
@@ -343,8 +344,8 @@ def btk_in_duration(Storm, Btk_start, Btk_end, hour_step):
 
     lat_btk = []
     lon_btk = []
-    max_ws_btk = []
-    min_slp_btk = []
+    vmax_btk = []
+    mslp_btk = []
     for time_str in time_interest_str:
         boolean_compare = [t_btk == time_str for t_btk in dict_all_btk['time'][:]]
         if any(boolean_compare):
@@ -352,10 +353,10 @@ def btk_in_duration(Storm, Btk_start, Btk_end, hour_step):
             idx_in_btk.append(idx)
             lat_btk.append(dict_all_btk['lat'][idx])
             lon_btk.append(dict_all_btk['lon'][idx])
-            max_ws_btk.append(dict_all_btk['max_ws'][idx])
-            min_slp_btk.append(dict_all_btk['min_slp'][idx])
+            vmax_btk.append(dict_all_btk['vmax'][idx])
+            mslp_btk.append(dict_all_btk['mslp'][idx])
 
-    dict_btk = {'time': time_interest_str, 'lat': lat_btk, 'lon': lon_btk, 'max_ws': max_ws_btk, 'min_slp': min_slp_btk}
+    dict_btk = {'time': np.array(time_interest_str), 'lat': np.array(lat_btk), 'lon':np.array(lon_btk), 'vmax': np.array(vmax_btk), 'mslp': np.array(mslp_btk)}
 
     return dict_btk
 
@@ -380,7 +381,7 @@ def subset_adeck( Storm,model_name ):
                 output_file.write(line)
 
 # read forecasts from a model
-def read_adeck_model( Storm,model_name ):
+def read_adeck_model( small_dir,Storm,model_name ):
     
     # Read all lines
     aal_name = sorted(fnmatch.filter(os.listdir(small_dir+Storm+'/TC_Guidance/'),'aal*'))
@@ -392,10 +393,10 @@ def read_adeck_model( Storm,model_name ):
     df = pd.read_csv( file_name,delimiter=',',header=None, dtype=str )
     # Find out all possible values
     all_fc_init_times = df[2].values # get all records of forecast initialization time
-    fc_init_times = list(set(all_fc_init_times))
+    fc_init_times = sorted(list(set(all_fc_init_times)))
     fc_init_times = [it.replace(" ","") for it in fc_init_times if " " in it ]#remove space
     all_fc_lens =  df[5].values # get all records of forecast lengths (in hours)
-    fc_lens = list(set(all_fc_lens))
+    fc_lens = sorted(list(set(all_fc_lens)))
     fc_lens = [int(it) for it in fc_lens]
 
     # Set up dictionaries
@@ -406,10 +407,10 @@ def read_adeck_model( Storm,model_name ):
         times_dt = [datetime.strptime(init,"%Y%m%d%H") + timedelta(hours=t) for t in fc_lens] 
         times_str = [it.strftime("%Y%m%d%H") for it in times_dt]
         fc[init]['time'] = times_str
-        fc[init]['lat'] = np.full(np.shape(times_str),np.nan)
-        fc[init]['lon'] = np.full(np.shape(times_str),np.nan)
-        fc[init]['MSLP'] = np.full(np.shape(times_str),np.nan)
-        fc[init]['Vmax'] = np.full(np.shape(times_str),np.nan)
+        #fc[init]['lat'] = np.full(np.shape(times_str),np.nan)
+        #fc[init]['lon'] = np.full(np.shape(times_str),np.nan)
+        #fc[init]['MSLP'] = np.full(np.shape(times_str),np.nan)
+        #fc[init]['Vmax'] = np.full(np.shape(times_str),np.nan)
     
     # Gather forecasted attributes 
     for init in fc_init_times:
@@ -418,10 +419,19 @@ def read_adeck_model( Storm,model_name ):
         mslp_all = []
         vmax_all = []
         # Read forecasted attributes for a certain forecast
+        fc_valid_times = []
         for line in all_lines:
             if init in line:    
                 # split one record into different parts
                 split_line = line.split()
+                # Forecast valid times
+                fc_len = int(split_line[5].replace(',',''))
+                fc_valid_t = datetime.strptime(init,"%Y%m%d%H") + timedelta(hours=fc_len)
+                fc_valid_t_str = fc_valid_t.strftime("%Y%m%d%H")
+                if fc_valid_t_str in fc_valid_times: # if the record is repeated, skip
+                    continue
+                else: # otherwise keep it
+                    fc_valid_times.append( fc_valid_t_str )
                 # Read latitude
                 lat_line = split_line[6].replace(',','')
                 if 'N' in lat_line:
@@ -492,6 +502,7 @@ def find_circle_area_ungrid( ct_lon, ct_lat, lon_location, lat_location, radius_
 
     lg_location = []
     for im in range(len(lon_location)):
+        #distance, azi = twoP_inverse( ct_lat,ct_lon, lat_location[im],lon_location[im] )
         distance = mercator_distance(ct_lon, ct_lat, lon_location[im], lat_location[im]) 
         lg_location.append( distance <= radius_th )
     # Get the indices where the elements are True
@@ -614,13 +625,59 @@ def compute_tk( full_p, theta ):
     assert res.any() != np.nan
     return res
 
-def read_wrf_domain( wrf_file ):
+# calculate the relative humidity with njit
+@njit(parallel=True)
+def njit_compute_rh( pres,t,qv ):
+
+    # specific constants for assumptions made in this routine:
+    SVP1 = 0.6112
+    SVP2 = 17.67
+    SVP3 = 29.65
+    SVPT0 = 273.1
+    R_D = 287
+    R_V = 461.6
+    EP_2 = R_D/R_V
+    EP_3 = 0.622
+
+    res = np.zeros( (t.shape[0],t.shape[1],t.shape[2]), )
+    for i in prange(t.shape[2]):
+        for j in range(t.shape[1]):
+            for k in range(t.shape[0]):
+                pressure = pres[k,j,i]
+                temperature = t[k,j,i]
+                es = 10.0*SVP1*np.exp(SVP2* (temperature-SVPT0)/(temperature-SVP3))
+                qvs = EP_3*es/ (0.01*pressure- (1.0-EP_3)*es)
+                res[k,j,i] = 100.0*max(min(qv[k,j,i]/qvs,1.0),0.0)
+
+    return res
+
+# compute relative humidity
+def compute_rh( ncdir ):
+
+    # Read data
+    # full pressure
+    pres = getvar(ncdir, 'pres', units='Pa').values # pressure: Pa
+    # full T in kelvin
+    t = getvar(ncdir, 'temp', units='K').values # temperature: K
+    # qvapor
+    qvapor = ncdir.variables['QVAPOR'][0,:,:,:]
+    qvapor_filled = qvapor.filled(np.nan)  # Replaces masked values with NaN
+
+    # relative humidity
+    rh = njit_compute_rh( pres,t,qvapor_filled )
+    #Assert that all elements are between 0 and 100 (inclusive)
+    assert np.all((rh >= 0) & (rh <= 100)), "Not all elements are between 0 and 100"
+
+    return rh
+
+
+def read_geog_domain( wrf_file ):
 
     print('Read domain info from: ' + wrf_file)
     ncdir = nc.Dataset(wrf_file, 'r')
 
-    Lat_x = ncdir.variables['XLAT'][0,:,:] #latitude: XLAT(time, y, x)
-    Lon_x = ncdir.variables['XLONG'][0,:,:] #longitude: XLONG(time, y, x)
+    Lat_x = ncdir.variables['XLAT_M'][0,:,:] #latitude: XLAT(time, y, x)
+    Lon_x = ncdir.variables['XLONG_M'][0,:,:] #longitude: XLONG(time, y, x)
 
     lat_min = np.min( Lat_x.flatten() )
     lat_max = np.max( Lat_x.flatten() )
@@ -628,6 +685,24 @@ def read_wrf_domain( wrf_file ):
     lon_max = np.max( Lon_x.flatten() )
 
     d_wrf_d = {'lat_min':lat_min, 'lat_max':lat_max, 'lon_min':lon_min, 'lon_max':lon_max}
+    return d_wrf_d
+
+
+def read_wrf_domain( wrf_file ):
+
+    print('Read domain info from: ' + wrf_file)
+    ncdir = nc.Dataset(wrf_file, 'r')
+
+    Lat_x = ncdir.variables['XLAT'][0,:,0] #latitude: XLAT(time, y, x)
+    Lon_x = ncdir.variables['XLONG'][0,0,:] #longitude: XLONG(time, y, x)
+
+    lat_min = np.min( Lat_x.flatten() )
+    lat_max = np.max( Lat_x.flatten() )
+    lon_min = np.min( Lon_x.flatten() )
+    lon_max = np.max( Lon_x.flatten() )
+
+    d_wrf_d = {'lon_1d':Lon_x,'lat_1d':Lat_x,'lat_min':lat_min,
+                'lat_max':lat_max, 'lon_min':lon_min, 'lon_max':lon_max}
     return d_wrf_d
 
 def calculate_convergence(u, v, dx, dy):

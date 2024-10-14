@@ -7,6 +7,8 @@ import sys
 # Do not filter MW
 # Do not use IR
 
+
+
 SFC_CHANNELS={
         'gmi_gpm_lf': [1,2,3,4,5,6,7,8,9],
         'ssmi_f15': [1,2,3,4,5,6,7],
@@ -69,6 +71,8 @@ def read_WRF(filename):
         wrf['ocean'] = np.logical_and(f['LANDMASK'][0,:,:]==0, f['LAKEMASK'][0,:,:]==0)
     print(wrf['DX'])
     return wrf
+
+
 
 
 #def find_valid_idx(ir_obs, mw, wrf, radius = 2):
