@@ -1,7 +1,7 @@
 
 import os # functions for interacting with the operating system
 import numpy as np
-import xarray as xr
+#import xarray as xr
 from datetime import datetime, timedelta
 import glob
 import netCDF4 as nc
@@ -18,10 +18,9 @@ from cartopy import crs as ccrs
 from cartopy.mpl.gridliner import LONGITUDE_FORMATTER, LATITUDE_FORMATTER
 from mpl_toolkits.axes_grid1 import make_axes_locatable
 import time
-import subprocess
-import metpy.calc as mpcalc
-from metpy.units import units
-import numpy.ma as ma
+#import metpy.calc as mpcalc
+#from metpy.units import units
+#import numpy.ma as ma
 
 import Util_data as UD
 
@@ -91,10 +90,11 @@ def plot_IC_water( Storm, Exper_name, DAtime, wrf_dir, plot_dir ):
 
     # Xb
     min_icwv = 30
-    max_icwv = 65
+    max_icwv = 80
     axs.flat[0].set_extent([lon_min,lon_max,lat_min,lat_max], crs=ccrs.PlateCarree())
     axs.flat[0].coastlines(resolution='10m', color='black',linewidth=0.5)
-    xb_wv = axs.flat[0].scatter(lon,lat,1.5,c=d_icwv['IC_water'][0,:,:],edgecolors='none', cmap='ocean_r', vmin=min_icwv, vmax=max_icwv,transform=ccrs.PlateCarree())
+    #xb_wv = axs.flat[0].scatter(lon,lat,1.5,c=d_icwv['IC_water'][0,:,:],edgecolors='none', cmap='rainbow_r',transform=ccrs.PlateCarree())
+    xb_wv = axs.flat[0].scatter(lon,lat,1.5,c=d_icwv['IC_water'][0,:,:],edgecolors='none', cmap='raibow_r', vmin=min_icwv, vmax=max_icwv,transform=ccrs.PlateCarree())
     # Mark the best track
     if if_btk_exist:
         axs.flat[0].scatter(dict_btk['lon'][idx_btk],dict_btk['lat'][idx_btk], 20, 'white', marker='*',transform=ccrs.PlateCarree())
@@ -102,7 +102,8 @@ def plot_IC_water( Storm, Exper_name, DAtime, wrf_dir, plot_dir ):
     # Xa
     axs.flat[1].set_extent([lon_min, lon_max, lat_min, lat_max], crs=ccrs.PlateCarree())
     axs.flat[1].coastlines(resolution='10m', color='black',linewidth=0.5)
-    xa_wv = axs.flat[1].scatter(lon,lat,1.5,c=d_icwv['IC_water'][1,:,:],edgecolors='none', cmap='ocean_r', vmin=min_icwv, vmax=max_icwv,transform=ccrs.PlateCarree())
+    #xa_wv = axs.flat[1].scatter(lon,lat,1.5,c=d_icwv['IC_water'][1,:,:],edgecolors='none', cmap='rainbow_r',transform=ccrs.PlateCarree())
+    xa_wv = axs.flat[1].scatter(lon,lat,1.5,c=d_icwv['IC_water'][1,:,:],edgecolors='none', cmap='rainbow_r', vmin=min_icwv, vmax=max_icwv,transform=ccrs.PlateCarree())
     # Mark the best track
     if if_btk_exist:
         axs.flat[1].scatter(dict_btk['lon'][idx_btk],dict_btk['lat'][idx_btk], 20, 'white', marker='*',transform=ccrs.PlateCarree())
@@ -620,10 +621,11 @@ def plot_IC_water( Storm, Exper_name, DAtime, wrf_dir, plot_dir ):
 
     # Xb
     min_icwv = 30
-    max_icwv = 65
+    max_icwv = 80
     axs.flat[0].set_extent([lon_min,lon_max,lat_min,lat_max], crs=ccrs.PlateCarree())
     axs.flat[0].coastlines(resolution='10m', color='black',linewidth=0.5)
-    xb_wv = axs.flat[0].scatter(lon,lat,1.5,c=d_icwv['IC_water'][0,:,:],edgecolors='none', cmap='ocean_r', vmin=min_icwv, vmax=max_icwv,transform=ccrs.PlateCarree())
+    #xb_wv = axs.flat[0].scatter(lon,lat,1.5,c=d_icwv['IC_water'][0,:,:],edgecolors='none', cmap='rainbow_r',transform=ccrs.PlateCarree())
+    xb_wv = axs.flat[0].scatter(lon,lat,1.5,c=d_icwv['IC_water'][0,:,:],edgecolors='none', cmap='rainbow_r', vmin=min_icwv, vmax=max_icwv,transform=ccrs.PlateCarree())
     # Mark the best track
     if if_btk_exist:
         axs.flat[0].scatter(dict_btk['lon'][idx_btk],dict_btk['lat'][idx_btk], 20, 'white', marker='*',transform=ccrs.PlateCarree())
@@ -631,13 +633,14 @@ def plot_IC_water( Storm, Exper_name, DAtime, wrf_dir, plot_dir ):
     # Xa
     axs.flat[1].set_extent([lon_min, lon_max, lat_min, lat_max], crs=ccrs.PlateCarree())
     axs.flat[1].coastlines(resolution='10m', color='black',linewidth=0.5)
-    xa_wv = axs.flat[1].scatter(lon,lat,1.5,c=d_icwv['IC_water'][1,:,:],edgecolors='none', cmap='ocean_r', vmin=min_icwv, vmax=max_icwv,transform=ccrs.PlateCarree())
+    #xa_wv = axs.flat[1].scatter(lon,lat,1.5,c=d_icwv['IC_water'][1,:,:],edgecolors='none', cmap='rainbow_r',transform=ccrs.PlateCarree())
+    xa_wv = axs.flat[1].scatter(lon,lat,1.5,c=d_icwv['IC_water'][1,:,:],edgecolors='none', cmap='rainbow_r', vmin=min_icwv, vmax=max_icwv,transform=ccrs.PlateCarree())
     # Mark the best track
     if if_btk_exist:
         axs.flat[1].scatter(dict_btk['lon'][idx_btk],dict_btk['lat'][idx_btk], 20, 'white', marker='*',transform=ccrs.PlateCarree())
     # Colorbar
     caxes = fig.add_axes([0.12, 0.1, 0.5, 0.02])
-    xwv_bar = fig.colorbar(xb_wv,ax=axs[0:2],orientation="horizontal", cax=caxes)
+    xwv_bar = fig.colorbar(xb_wv,ax=axs[0:2],orientation="horizontal", cax=caxes,extend='both')
     xwv_bar.ax.tick_params()
 
     # Xa-Xb (increment)
@@ -650,7 +653,7 @@ def plot_IC_water( Storm, Exper_name, DAtime, wrf_dir, plot_dir ):
     # Colorbar
     caxes = fig.add_axes([0.65, 0.1, 0.25, 0.02])
     cb_diff_ticks = np.linspace(min_incre, max_incre, 5, endpoint=True)
-    cbar = fig.colorbar(incre_wv, ax=axs[2:], ticks=cb_diff_ticks, orientation="horizontal", cax=caxes)
+    cbar = fig.colorbar(incre_wv, ax=axs[2:], ticks=cb_diff_ticks, orientation="horizontal", cax=caxes,extend='both')
     cbar.ax.tick_params()
 
     #subplot title
@@ -1022,13 +1025,13 @@ def diver( Storm, Exper_name, DAtimes, big_dir, small_dir ):
 
 if __name__ == '__main__':
 
-    big_dir = '/scratch/06191/tg854905/Pro2_PSU_MW/'
-    small_dir = '/work2/06191/tg854905/stampede2/Pro2_PSU_MW/'
+    big_dir = '/expanse/lustre/scratch/zuy121/temp_project/Pro2_PSU_MW/' #'/scratch/06191/tg854905/Pro2_PSU_MW/'
+    small_dir = '/expanse/lustre/projects/pen116/zuy121/Pro2_PSU_MW/' #'/work2/06191/tg854905/stampede2/Pro2_PSU_MW/'
 
     # -------- Configuration -----------------
     Storm = 'IRMA'
     DA = ['IR']   
-    MP = 'THO' 
+    MP = 'WSM6' 
 
     Plot_Precip = False       # Accumulated total grid scale precipitation
     Plot_slp = False

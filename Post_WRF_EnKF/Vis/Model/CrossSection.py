@@ -1,4 +1,3 @@
-#!/work2/06191/tg854905/stampede2/opt/anaconda3/lib/python3.7
 
 import pyproj
 import os # functions for interacting with the operating system
@@ -22,10 +21,23 @@ import time
 import math
 import warnings
 from matplotlib.cm import get_cmap
-from wrf import to_np, interp2dxy, ll_to_xy, xy_to_ll
+from wrf import getvar, to_np, interp2dxy, ll_to_xy, xy_to_ll
 
 import Util_wrfpython as UWP
 import Util_data as UD
+
+
+def distance_to_degrees_lat(distance_km):
+    """
+    Converts distance in kilometers to degrees of latitude.
+    """
+    return distance_km / 111.32
+
+def distance_to_degrees_lon(distance_km, latitude):
+    """
+    Converts distance in kilometers to degrees of longitude at a given latitude.
+    """
+    return distance_km / (111.32 * math.cos(math.radians(latitude)))
 
 def var_cross( var_name,wrf_files ):
 
@@ -34,20 +46,35 @@ def var_cross( var_name,wrf_files ):
     d_var['output'] = {}
     
     # ----- Create a cross line -------
-    # Find the storm center
     ncdir = nc.Dataset(wrf_files[1], 'r') # enkf output
-    slp = UD.compute_slp( ncdir ) # from enkf output
-    min_slp = np.min( slp )
-    slp_smooth = sp.ndimage.filters.gaussian_filter(slp, [11, 11] )
-    idx = np.nanargmin( slp_smooth )
-    lat_c = ncdir.variables['XLAT'][:].flatten()[idx]
-    lon_c = ncdir.variables['XLONG'][:].flatten()[idx]
+    lat = ncdir.variables['XLAT'][:].flatten()
+    lon = ncdir.variables['XLONG'][:].flatten()
+    # Find the storm center
+    # sea level pressure
+    slp = getvar(ncdir, 'slp')
+    # original SLP
+    slp_values = slp.values
+    slp_values[slp_values > 1030] = np.nan
+    slp_smt_values = sp.ndimage.gaussian_filter(slp, [11,11]) #[11,11]
+    minslp = np.nanmin( slp_values )
+    idx = np.nanargmin( slp_smt_values )
+    # identify the geolocation of the pivot point
+    lat_c = lat[idx]
+    lon_c = lon[idx]
     center = [lat_c,lon_c]
     # Create the start point and end point in lon/lat for the cross section
-    st_lat = lat_c
-    ed_lat = lat_c
-    st_lon = lon_c-2
-    ed_lon = lon_c+2
+    if cut_segment:
+        st_lat = lat_c # distance_to_degrees_lat(distance_km)
+        ed_lat = lat_c
+        lon_RtoD = distance_to_degrees_lon(radius, lat_c)
+        st_lon = lon_c - lon_RtoD
+        ed_lon = lon_c + lon_RtoD
+    else:
+        st_lat = lat_c
+        ed_lat = lat_c
+        st_lon = np.amin(lon) 
+        ed_lon = np.amax(lon)
+    
     # Create the  start point and end point in i/j
     st_ij = ll_to_xy(ncdir, st_lat, st_lon) # What ll_to_xy returns is not the xy coordinate itself but the grid index starting from 0. 
     st_i = st_ij.values[0]
@@ -233,17 +260,17 @@ def plot_var_cross( wrf_files,var_name,d_var ):
 
 if __name__ == '__main__':
 
-    big_dir = '/scratch/06191/tg854905/Pro2_PSU_MW/'
-    small_dir = '/work2/06191/tg854905/stampede2/Pro2_PSU_MW/'
+    big_dir = '/expanse/lustre/scratch/zuy121/temp_project/Pro2_PSU_MW/' #'/scratch/06191/tg854905/Pro2_PSU_MW/'
+    small_dir = '/expanse/lustre/projects/pen116/zuy121/Pro2_PSU_MW/' #'/work2/06191/tg854905/stampede2/Pro2_PSU_MW/'
 
     # ---------- Configuration -------------------------
     Storm = 'IRMA'
-    MP = 'WSM6'
+    MP = 'THO'
     DA = 'IR'
     v_interest = ['hroi_wind','W']
 
     start_time_str = '201709030000'
-    end_time_str = '201709030600'
+    end_time_str = '201709030000'
     Consecutive_times = True
 
     # model dimension
@@ -251,10 +278,14 @@ if __name__ == '__main__':
     ymax = 297
     nLevel = 42
 
+    #
+    cut_segment = False
+    radius = 200 #km
+
     use_pressure = False
     if_plot = True
     # ------------------------------------------------------- 
-    Exper_name = 'IR-updateW-J_DA+J_WRF+J_init-SP-intel17-WSM6-30hr-hroi900' #UD.generate_one_name( Storm,DA,MP )
+    Exper_name = UD.generate_one_name( Storm,DA,MP )
 
     # Identify DA times in the period of interest
     if not Consecutive_times:
