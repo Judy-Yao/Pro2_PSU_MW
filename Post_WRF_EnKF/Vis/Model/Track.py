@@ -382,7 +382,7 @@ def plot_hpi_df( Config ):
         pass
     
     # Plot HPI from post-storm analysis
-    best_track = UD.btk_in_duration(Storm, Btk_start, Btk_end, hour_step=6)
+    best_track = UD.btk_in_duration(small_dir, Storm, Btk_start, Btk_end, hour_step=6)
     plot_one_hpi( ax0, ax1, ax2, best_track,  'black', '-', 5, 'Best track')
 
     # Customize color maps
@@ -469,10 +469,10 @@ def plot_hpi_df( Config ):
     ax0.set_title( 'Track',fontsize = 15 )
     ax1.set_title( 'MSLP (hPa)',fontsize = 15 )
     ax2.set_title( 'Vmax ($\mathregular{ms^{-1}}$)',fontsize = 15 )
-    fig.suptitle('conv',fontsize = 15)
+    fig.suptitle('IRMA: CONV, WSM6',fontsize = 15)
 
     # Save figure
-    des_name = small_dir+Storm+'/'+Exper[1]+'/Vis_analyze/Model/'+Storm+'_forecast_conv_WSM6_THO.png'
+    des_name = small_dir+Storm+'/'+Exper[0]+'/Vis_analyze/Model/'+Storm+'_forecast_conv_WSM6.png'
     plt.savefig( des_name )
     print( 'Saving the figure to '+des_name )
 
@@ -722,8 +722,8 @@ if __name__ == '__main__':
 
     # Configuration
     Storm = 'IRMA'
-    MP = ['WSM6','THO']
-    DA = 'conv'
+    MP = ['WSM6']
+    DA = 'CONV'
     DF_model_start = '20170822180000' # Default value of DF_model_start. Especially useful when dealing with ensemble forecast
     mem_id = 'mean' # Default value of member id. Especially useful when dealing with deterministic forecast
     read_fc_wrfout = False # Feature that decides the way of reading HPI from model files

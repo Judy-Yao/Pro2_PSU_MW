@@ -572,11 +572,10 @@ def Precip( Storm, Exper_name, DAtimes, big_dir, small_dir ):
         else:
             plot_pp( Storm, Exper_name, DAtime, wrf_dir, plot_dir )
 
-
 # ------------------------------------------------------------------------------------------------------
-#           Operation: Read, process, and plot precipitable water per snapshot
+#           Operation: Read, process, and plot relative humidity per snapshot
 # ------------------------------------------------------------------------------------------------------
-def read_IC_water( wrf_dir ):
+def read_RH( wrf_dir, H_of_interest ):
 
     # set file names for background and analysis
     mean_dir = [wrf_dir+'/wrf_enkf_input_d03_mean',wrf_dir+'/wrf_enkf_output_d03_mean']
@@ -585,16 +584,38 @@ def read_IC_water( wrf_dir ):
     lat = ncdir.variables['XLAT'][0,:,:]
     lon = ncdir.variables['XLONG'][0,:,:]
     # calculate IC water
-    IC_water = np.zeros( [len(mean_dir), np.size(lat,0), np.size(lat,1)] )
+    rh_oneL = np.zeros( [len(mean_dir), np.size(lat,0), np.size(lat,1)] )
     for i in range(len(mean_dir)):
         file_name = mean_dir[i]
         ncdir = nc.Dataset( file_name )
-        IC_water[i,:,:] = getvar(ncdir, 'pw')
+        # full pressure
+        p = ncdir.variables['P'][0,:,:,:] # perturbation
+        pb = ncdir.variables['PB'][0,:,:,:]
+        full_p = p + pb
+        full_p = full_p.filled(np.nan)
+        # full T in kelvin
+        theta = ncdir.variables['T'][0,:,:,:] # theta perturbation
+        full_theta = theta + 300
+        full_theta = full_theta.filled(np.nan)
+        # temperature in Kelvin
+        tk = UD.compute_tk( full_p, full_theta )
+        # water vapor
+        qvapor = ncdir.variables['QVAPOR'][0,:,:,:]
+        qvapor_good = qvapor.filled(np.nan)
+        # dew point temperature
+        td = UD.compute_td( full_p, qvapor_good )
+        # relative humidity
+        tmp_rh = UD.compute_rh_fromTkTd( tk, td )
+        rh = tmp_rh.reshape(full_p.shape)
+        #rh = getvar(ncdir, 'rh') !!!!!!!! Malfunction !!!!!!!!!!!!!!!!
+        # interpolate
+        z = getvar(ncdir, 'z', units='km')
+        rh_oneL[i,:,:] = interplevel(rh, z, H_of_interest)
 
-    d_IC_water = {'lat':lat,'lon':lon,'IC_water':IC_water}
-    return d_IC_water
+    d_rh = {'lat':lat,'lon':lon,'rh':rh_oneL}
+    return d_rh
 
-def plot_IC_water( Storm, Exper_name, DAtime, wrf_dir, plot_dir ):
+def plot_RH( Storm, Exper_name, DAtime, wrf_dir, plot_dir ):
 
     # Read storm center
     dict_btk = UD.read_bestrack(small_dir, Storm)
@@ -608,9 +629,155 @@ def plot_IC_water( Storm, Exper_name, DAtime, wrf_dir, plot_dir ):
         if_btk_exist = False
 
     #------ Read WRFout -------------------
-    d_icwv = read_IC_water( wrf_dir )
-    lat = d_icwv['lat']
-    lon = d_icwv['lon']
+    d_rh = read_RH( wrf_dir,5 )
+    lat = d_rh['lat']
+    lon = d_rh['lon']
+    lat_min = np.amin( lat )
+    lon_min = np.amin( lon )
+    lat_max = np.amax( lat )
+    lon_max = np.amax( lon )
+
+    # ------------------ Plot -----------------------
+    new_map = mcolors.LinearSegmentedColormap.from_list(
+    'custom_cmap', 
+    [
+        (0.0, '#5b3d1f'),  # Dark brown at 10%
+        (0.375, '#e8c7a3'),  # Light brown at 40%
+        (0.5, '#ffffff'),  # White at 40-60%
+        (0.625, '#98df8a'),  # Light green at 60%
+        (1.0, '#2ca02c')   # Dark green at 90%
+    ])   
+
+    # Define the boundaries for each color section
+    bounds = [10, 20, 30, 40, 60, 70, 80, 90]
+    norm = mcolors.BoundaryNorm(bounds, new_map.N)
+    
+    fig, axs=plt.subplots(1, 3, subplot_kw={'projection': ccrs.PlateCarree()}, gridspec_kw = {'wspace':0, 'hspace':0}, linewidth=0.5, sharex='all', sharey='all',  figsize=(12,5), dpi=400)
+
+    # Xb
+    min_icwv = 10
+    max_icwv = 90
+    axs.flat[0].set_extent([lon_min,lon_max,lat_min,lat_max], crs=ccrs.PlateCarree())
+    axs.flat[0].coastlines(resolution='10m', color='black',linewidth=0.5)
+    #xb_rh = axs.flat[0].scatter(lon,lat,1.5,c=d_rh['rh'][0,:,:],edgecolors='none', cmap='Greens',transform=ccrs.PlateCarree())
+    #xb_rh = axs.flat[0].scatter(lon,lat,1.5,c=d_rh['rh'][0,:,:],edgecolors='none', cmap='Greens', vmin=min_icwv, vmax=max_icwv,transform=ccrs.PlateCarree())
+    xb_rh = axs.flat[0].contourf(lon,lat,d_rh['rh'][0,:,:],cmap=new_map,norm=norm,levels=bounds,extend='both',transform=ccrs.PlateCarree())
+    # Mark the best track
+    if if_btk_exist:
+        axs.flat[0].scatter(dict_btk['lon'][idx_btk],dict_btk['lat'][idx_btk], 20, 'white', marker='*',transform=ccrs.PlateCarree())
+
+    # Xa
+    axs.flat[1].set_extent([lon_min, lon_max, lat_min, lat_max], crs=ccrs.PlateCarree())
+    axs.flat[1].coastlines(resolution='10m', color='black',linewidth=0.5)
+    #xa_rh = axs.flat[1].scatter(lon,lat,1.5,c=d_rh['rh'][1,:,:],edgecolors='none', cmap='Greens',transform=ccrs.PlateCarree())
+    #xa_rh = axs.flat[1].scatter(lon,lat,1.5,c=d_rh['rh'][1,:,:],edgecolors='none', cmap='Greens', vmin=min_icwv, vmax=max_icwv,transform=ccrs.PlateCarree())
+    xa_rh = axs.flat[1].contourf(lon,lat,d_rh['rh'][1,:,:],cmap=new_map,norm=norm,levels=bounds,extend='both',transform=ccrs.PlateCarree())
+    # Mark the best track
+    if if_btk_exist:
+        axs.flat[1].scatter(dict_btk['lon'][idx_btk],dict_btk['lat'][idx_btk], 20, 'white', marker='*',transform=ccrs.PlateCarree())
+    # Colorbar
+    caxes = fig.add_axes([0.12, 0.1, 0.5, 0.02])
+    xrh_bar = fig.colorbar(xb_rh,ax=axs[0:2],orientation="horizontal", cax=caxes,extend='both')
+    xrh_bar.ax.tick_params()
+
+    # Xa-Xb (increment)
+    min_incre = -50
+    max_incre = 50
+    axs.flat[2].set_extent([lon_min, lon_max, lat_min, lat_max], crs=ccrs.PlateCarree())
+    axs.flat[2].coastlines(resolution='10m', color='black',linewidth=0.5)
+    icwv_incre = d_rh['rh'][1,:,:] - d_rh['rh'][0,:,:]
+    #incre_rh = axs.flat[2].scatter(lon,lat,1.5,c=icwv_incre,edgecolors='none', cmap='bwr',transform=ccrs.PlateCarree())
+    incre_rh = axs.flat[2].scatter(lon,lat,1.5,c=icwv_incre,edgecolors='none', cmap='bwr', vmin=min_incre, vmax=max_incre,transform=ccrs.PlateCarree())
+    # Colorbar
+    caxes = fig.add_axes([0.65, 0.1, 0.25, 0.02])
+    cb_diff_ticks = np.linspace(min_incre, max_incre, 5, endpoint=True)
+    cbar = fig.colorbar(incre_rh, ax=axs[2:], ticks=cb_diff_ticks, orientation="horizontal", cax=caxes,extend='both')
+    cbar.ax.tick_params()
+
+    #subplot title
+    axs.flat[0].set_title('Xb--RH (%)',fontweight='bold')
+    axs.flat[1].set_title('Xa--RH (%)',fontweight='bold')
+    axs.flat[2].set_title('Xa-Xb--RH (%)', fontweight='bold')    #title for all
+    fig.suptitle(Storm+': '+Exper_name+'('+DAtime+')', fontsize=13, fontweight='bold')
+
+    # Axis labels
+    lon_ticks = list(range(math.ceil(lon_min), math.ceil(lon_max),2))
+    lat_ticks = list(range(math.ceil(lat_min), math.ceil(lat_max),2))
+    for j in range(3):
+        gl = axs.flat[j].gridlines(crs=ccrs.PlateCarree(),draw_labels=False,linewidth=0.1, color='gray', alpha=0.5, linestyle='--')
+        gl.top_labels = False
+        gl.bottom_labels = True
+        if j==0:
+            gl.left_labels = True
+            gl.right_labels = False
+        else:
+            gl.left_labels = False
+            gl.right_labels = False
+        gl.ylocator = mticker.FixedLocator(lat_ticks)
+        gl.xlocator = mticker.FixedLocator(lon_ticks)
+        gl.xformatter = LONGITUDE_FORMATTER
+        gl.yformatter = LATITUDE_FORMATTER
+        gl.xlabel_style = {'size': 12}
+        gl.ylabel_style = {'size': 12}
+
+    plt.savefig( plot_dir+DAtime+'_RH.png', dpi=300 )
+    print('Saving the figure: ', plot_dir+DAtime+'_RH.png')
+    plt.close()
+
+def RH( Storm, Exper_name, DAtimes, big_dir, small_dir ):
+
+    # Loop through each DAtime/analysis
+    for DAtime in DAtimes:
+        wrf_dir = big_dir+Storm+'/'+Exper_name+'/fc/'+DAtime
+        print('Reading WRF background and analysis: ', wrf_dir)
+        DAtime_dt = datetime.strptime( DAtime, '%Y%m%d%H%M' )
+        # ------ Plot -------------------
+        plot_dir = small_dir+Storm+'/'+Exper_name+'/Vis_analyze/Model/RH/'
+        plotdir_exists = os.path.exists( plot_dir )
+        if plotdir_exists == False:
+            os.mkdir(plot_dir)
+            plot_RH( Storm, Exper_name, DAtime, wrf_dir, plot_dir )
+        else:
+            plot_RH( Storm, Exper_name, DAtime, wrf_dir, plot_dir )
+
+# ------------------------------------------------------------------------------------------------------
+#           Operation: Read, process, and plot QVAPOR per snapshot
+# ------------------------------------------------------------------------------------------------------
+def read_Qvapor( wrf_dir ):
+
+    # set file names for background and analysis
+    mean_dir = [wrf_dir+'/wrf_enkf_input_d03_mean',wrf_dir+'/wrf_enkf_output_d03_mean']
+    # read the shared variables: lat/lon
+    ncdir = nc.Dataset( mean_dir[0] )
+    lat = ncdir.variables['XLAT'][0,:,:]
+    lon = ncdir.variables['XLONG'][0,:,:]
+    # calculate IC water
+    Qvapor = np.zeros( [len(mean_dir), np.size(lat,0), np.size(lat,1)] ) 
+    for i in range(len(mean_dir)):
+        file_name = mean_dir[i]
+        ncdir = nc.Dataset( file_name )
+        Qvapor[i,:,:] = ncdir.variables['QVAPOR'][0,10,:,:]*1000 # convert from kg/kg to g/kg 
+
+    d_Qvapor = {'lat':lat,'lon':lon,'qv':Qvapor}
+    return d_Qvapor
+
+def plot_Qvapor( Storm, Exper_name, DAtime, wrf_dir, plot_dir ):
+
+    # Read storm center
+    dict_btk = UD.read_bestrack(small_dir, Storm)
+    # Find the best-track position
+    btk_dt = [it_str for it_str in dict_btk['time'] ]#[datetime.strptime(it_str,"%Y%m%d%H%M") for it_str in dict_btk['time']]
+    bool_match = [DAtime == it for it in btk_dt]
+    if True in bool_match:
+        if_btk_exist = True
+        idx_btk = np.where( bool_match )[0][0] # the second[0] is due to the possibility of multiple records at the same time
+    else:
+        if_btk_exist = False
+
+    #------ Read WRFout -------------------
+    d_qv = read_Qvapor( wrf_dir ) 
+    lat = d_qv['lat']
+    lon = d_qv['lon']
     lat_min = np.amin( lat )
     lon_min = np.amin( lon )
     lat_max = np.amax( lat )
@@ -620,12 +787,12 @@ def plot_IC_water( Storm, Exper_name, DAtime, wrf_dir, plot_dir ):
     fig, axs=plt.subplots(1, 3, subplot_kw={'projection': ccrs.PlateCarree()}, gridspec_kw = {'wspace':0, 'hspace':0}, linewidth=0.5, sharex='all', sharey='all',  figsize=(12,5), dpi=400)
 
     # Xb
-    min_icwv = 30
-    max_icwv = 80
+    min_qv = 30
+    max_qv = 80
     axs.flat[0].set_extent([lon_min,lon_max,lat_min,lat_max], crs=ccrs.PlateCarree())
     axs.flat[0].coastlines(resolution='10m', color='black',linewidth=0.5)
-    #xb_wv = axs.flat[0].scatter(lon,lat,1.5,c=d_icwv['IC_water'][0,:,:],edgecolors='none', cmap='rainbow_r',transform=ccrs.PlateCarree())
-    xb_wv = axs.flat[0].scatter(lon,lat,1.5,c=d_icwv['IC_water'][0,:,:],edgecolors='none', cmap='rainbow_r', vmin=min_icwv, vmax=max_icwv,transform=ccrs.PlateCarree())
+    xb_qv = axs.flat[0].scatter(lon,lat,1.5,c=d_qv['qv'][0,:,:],edgecolors='none', cmap='rainbow_r',transform=ccrs.PlateCarree())
+    #xb_qv = axs.flat[0].scatter(lon,lat,1.5,c=d_qv['qv'][0,:,:],edgecolors='none', cmap='rainbow_r', vmin=min_qv, vmax=max_qv,transform=ccrs.PlateCarree())
     # Mark the best track
     if if_btk_exist:
         axs.flat[0].scatter(dict_btk['lon'][idx_btk],dict_btk['lat'][idx_btk], 20, 'white', marker='*',transform=ccrs.PlateCarree())
@@ -633,33 +800,33 @@ def plot_IC_water( Storm, Exper_name, DAtime, wrf_dir, plot_dir ):
     # Xa
     axs.flat[1].set_extent([lon_min, lon_max, lat_min, lat_max], crs=ccrs.PlateCarree())
     axs.flat[1].coastlines(resolution='10m', color='black',linewidth=0.5)
-    #xa_wv = axs.flat[1].scatter(lon,lat,1.5,c=d_icwv['IC_water'][1,:,:],edgecolors='none', cmap='rainbow_r',transform=ccrs.PlateCarree())
-    xa_wv = axs.flat[1].scatter(lon,lat,1.5,c=d_icwv['IC_water'][1,:,:],edgecolors='none', cmap='rainbow_r', vmin=min_icwv, vmax=max_icwv,transform=ccrs.PlateCarree())
+    xa_qv = axs.flat[1].scatter(lon,lat,1.5,c=d_qv['qv'][1,:,:],edgecolors='none', cmap='rainbow_r',transform=ccrs.PlateCarree())
+    #xa_qv = axs.flat[1].scatter(lon,lat,1.5,c=d_qv['qv'][1,:,:],edgecolors='none', cmap='rainbow_r', vmin=min_qv, vmax=max_qv,transform=ccrs.PlateCarree())
     # Mark the best track
     if if_btk_exist:
         axs.flat[1].scatter(dict_btk['lon'][idx_btk],dict_btk['lat'][idx_btk], 20, 'white', marker='*',transform=ccrs.PlateCarree())
     # Colorbar
     caxes = fig.add_axes([0.12, 0.1, 0.5, 0.02])
-    xwv_bar = fig.colorbar(xb_wv,ax=axs[0:2],orientation="horizontal", cax=caxes,extend='both')
-    xwv_bar.ax.tick_params()
+    xqv_bar = fig.colorbar(xb_qv,ax=axs[0:2],orientation="horizontal", cax=caxes,extend='both')
+    xqv_bar.ax.tick_params()
 
     # Xa-Xb (increment)
     min_incre = -10
     max_incre = 10
     axs.flat[2].set_extent([lon_min, lon_max, lat_min, lat_max], crs=ccrs.PlateCarree())
     axs.flat[2].coastlines(resolution='10m', color='black',linewidth=0.5)
-    icwv_incre = d_icwv['IC_water'][1,:,:] - d_icwv['IC_water'][0,:,:]
-    incre_wv = axs.flat[2].scatter(lon,lat,1.5,c=icwv_incre,edgecolors='none', cmap='bwr', vmin=min_incre, vmax=max_incre,transform=ccrs.PlateCarree())
+    qv_incre = d_qv['qv'][1,:,:] - d_qv['qv'][0,:,:]
+    incre_qv = axs.flat[2].scatter(lon,lat,1.5,c=qv_incre,edgecolors='none', cmap='bwr', vmin=min_incre, vmax=max_incre,transform=ccrs.PlateCarree())
     # Colorbar
     caxes = fig.add_axes([0.65, 0.1, 0.25, 0.02])
     cb_diff_ticks = np.linspace(min_incre, max_incre, 5, endpoint=True)
-    cbar = fig.colorbar(incre_wv, ax=axs[2:], ticks=cb_diff_ticks, orientation="horizontal", cax=caxes,extend='both')
+    cbar = fig.colorbar(incre_qv, ax=axs[2:], ticks=cb_diff_ticks, orientation="horizontal", cax=caxes,extend='both')
     cbar.ax.tick_params()
 
     #subplot title
-    axs.flat[0].set_title('Xb--ICWV ($\mathregular{kgm^{-2}}$)',fontweight='bold')
-    axs.flat[1].set_title('Xa--ICWV ($\mathregular{kgm^{-2}}$)',fontweight='bold')
-    axs.flat[2].set_title('Xa-Xb--ICWV ($\mathregular{kgm^{-2}}$)', fontweight='bold')    #title for all
+    axs.flat[0].set_title('Xb--Qvapor ($\mathregular{kgm^{-2}}$)',fontweight='bold')
+    axs.flat[1].set_title('Xa--Qvapor($\mathregular{kgm^{-2}}$)',fontweight='bold')
+    axs.flat[2].set_title('Xa-Xb--Qvapor ($\mathregular{kgm^{-2}}$)', fontweight='bold')    #title for all
     fig.suptitle(Storm+': '+Exper_name+'('+DAtime+')', fontsize=13, fontweight='bold')
 
     # Axis labels
@@ -686,7 +853,8 @@ def plot_IC_water( Storm, Exper_name, DAtime, wrf_dir, plot_dir ):
     print('Saving the figure: ', plot_dir+DAtime+'_ICWV.png')
     plt.close()
 
-def IC_water( Storm, Exper_name, DAtimes, big_dir, small_dir ):
+
+def Qvapor( Storm, Exper_name, DAtimes, big_dir, small_dir ):
 
     # Loop through each DAtime/analysis
     for DAtime in DAtimes:
@@ -694,13 +862,303 @@ def IC_water( Storm, Exper_name, DAtimes, big_dir, small_dir ):
         print('Reading WRF background and analysis: ', wrf_dir)
         DAtime_dt = datetime.strptime( DAtime, '%Y%m%d%H%M' )
         # ------ Plot -------------------
-        plot_dir = small_dir+Storm+'/'+Exper_name+'/Vis_analyze/Model/IC_water/'
+        plot_dir = small_dir+Storm+'/'+Exper_name+'/Vis_analyze/Model/Qvapor/'
         plotdir_exists = os.path.exists( plot_dir )
         if plotdir_exists == False:
             os.mkdir(plot_dir)
-            plot_IC_water( Storm, Exper_name, DAtime, wrf_dir, plot_dir )
+            plot_Qvapor( Storm, Exper_name, DAtime, wrf_dir, plot_dir )
         else:
-            plot_IC_water( Storm, Exper_name, DAtime, wrf_dir, plot_dir )
+            plot_Qvapor( Storm, Exper_name, DAtime, wrf_dir, plot_dir )
+
+# ------------------------------------------------------------------------------------------------------
+#           Operation: Read, process, and plot temperature per snapshot
+# ------------------------------------------------------------------------------------------------------
+
+def read_Temp( wrf_dir, H_of_interest ):
+
+    # set file names for background and analysis
+    mean_dir = [wrf_dir+'/wrf_enkf_input_d03_mean',wrf_dir+'/wrf_enkf_output_d03_mean']
+    # read the shared variables: lat/lon
+    ncdir = nc.Dataset( mean_dir[0] )
+    lat = ncdir.variables['XLAT'][0,:,:]
+    lon = ncdir.variables['XLONG'][0,:,:]
+    # calculate IC water
+    temp_oneL = np.zeros( [len(mean_dir), np.size(lat,0), np.size(lat,1)] )
+    for i in range(len(mean_dir)):
+        file_name = mean_dir[i]
+        ncdir = nc.Dataset( file_name )
+        z = getvar(ncdir, 'z', units='km')
+        #pres = getvar(ncdir, 'pres', units='pa')
+        # full pressure
+        p = ncdir.variables['P'][0,:,:,:] # perturbation
+        pb = ncdir.variables['PB'][0,:,:,:]
+        full_p = p + pb
+        full_p = full_p.filled(np.nan) 
+        # full T in kelvin
+        theta = ncdir.variables['T'][0,:,:,:] # theta perturbation
+        full_theta = theta + 300
+        full_theta = full_theta.filled(np.nan)
+        tmp_temp = UD.compute_tk( full_p, full_theta )
+        temp = tmp_temp.reshape(full_theta.shape)
+        temp_oneL[i,:,:] = interplevel(temp, z, H_of_interest)
+    
+    d_temp = {'lat':lat,'lon':lon,'temp':temp_oneL}
+    return d_temp
+
+def plot_Temp( Storm, Exper_name, DAtime, wrf_dir, plot_dir ):
+
+    # Read storm center
+    dict_btk = UD.read_bestrack(small_dir, Storm)
+    # Find the best-track position
+    btk_dt = [it_str for it_str in dict_btk['time'] ]#[datetime.strptime(it_str,"%Y%m%d%H%M") for it_str in dict_btk['time']]
+    bool_match = [DAtime == it for it in btk_dt]
+    if True in bool_match:
+        if_btk_exist = True
+        idx_btk = np.where( bool_match )[0][0] # the second[0] is due to the possibility of multiple records at the same time
+    else:
+        if_btk_exist = False
+
+    #------ Read WRFout -------------------
+    d_temp = read_Temp( wrf_dir, 5)
+    lat = d_temp['lat']
+    lon = d_temp['lon']
+    lat_min = np.amin( lat )
+    lon_min = np.amin( lon )
+    lat_max = np.amax( lat )
+    lon_max = np.amax( lon )
+
+    # ------------------ Plot -----------------------
+    fig, axs=plt.subplots(1, 3, subplot_kw={'projection': ccrs.PlateCarree()}, gridspec_kw = {'wspace':0, 'hspace':0}, linewidth=0.5, sharex='all', sharey='all',  figsize=(12,5), dpi=400)
+
+    # Xb
+    min_temp = 200
+    max_temp = 300
+    axs.flat[0].set_extent([lon_min,lon_max,lat_min,lat_max], crs=ccrs.PlateCarree())
+    axs.flat[0].coastlines(resolution='10m', color='black',linewidth=0.5)
+    xb_temp = axs.flat[0].scatter(lon,lat,1.5,c=d_temp['temp'][0,:,:],edgecolors='none', cmap='rainbow_r', transform=ccrs.PlateCarree())
+    #xb_temp = axs.flat[0].scatter(lon,lat,1.5,c=d_temp['temp'][0,:,:],edgecolors='none', cmap='rainbow_r', vmin=min_temp, vmax=max_temp,transform=ccrs.PlateCarree())
+    # Mark the best track
+    if if_btk_exist:
+        axs.flat[0].scatter(dict_btk['lon'][idx_btk],dict_btk['lat'][idx_btk], 20, 'white', marker='*',transform=ccrs.PlateCarree())
+
+    # Xa
+    axs.flat[1].set_extent([lon_min, lon_max, lat_min, lat_max], crs=ccrs.PlateCarree())
+    axs.flat[1].coastlines(resolution='10m', color='black',linewidth=0.5)
+    xa_temp = axs.flat[1].scatter(lon,lat,1.5,c=d_temp['temp'][1,:,:],edgecolors='none', cmap='rainbow_r',transform=ccrs.PlateCarree())
+    #xa_temp = axs.flat[1].scatter(lon,lat,1.5,c=d_temp['temp'][1,:,:],edgecolors='none', cmap='rainbow_r', vmin=min_temp, vmax=max_temp,transform=ccrs.PlateCarree())
+    # Mark the best track
+    if if_btk_exist:
+        axs.flat[1].scatter(dict_btk['lon'][idx_btk],dict_btk['lat'][idx_btk], 20, 'white', marker='*',transform=ccrs.PlateCarree())
+
+    # Colorbar
+    caxes = fig.add_axes([0.12, 0.1, 0.5, 0.02])
+    xtemp_bar = fig.colorbar(xb_temp,ax=axs[0:2],orientation="horizontal", cax=caxes,extend='both')
+    xtemp_bar.ax.tick_params()
+
+    # Xa-Xb (increment)
+    min_incre = -50
+    max_incre = 50
+    axs.flat[2].set_extent([lon_min, lon_max, lat_min, lat_max], crs=ccrs.PlateCarree())
+    axs.flat[2].coastlines(resolution='10m', color='black',linewidth=0.5)
+    ictemp_incre = d_temp['temp'][1,:,:] - d_temp['temp'][0,:,:]
+    incre_temp = axs.flat[2].scatter(lon,lat,1.5,c=ictemp_incre,edgecolors='none', cmap='bwr',transform=ccrs.PlateCarree())
+    #incre_temp = axs.flat[2].scatter(lon,lat,1.5,c=ictemp_incre,edgecolors='none', cmap='bwr', vmin=min_incre, vmax=max_incre,transform=ccrs.PlateCarree())
+    # Colorbar
+    caxes = fig.add_axes([0.65, 0.1, 0.25, 0.02])
+    #cb_diff_ticks = np.linspace(min_incre, max_incre, 5, endpoint=True)
+    #cbar = fig.colorbar(incre_temp, ax=axs[2:], ticks=cb_diff_ticks, orientation="horizontal", cax=caxes,extend='both')
+    #cbar.ax.tick_params()
+
+    #subplot title
+    axs.flat[0].set_title('Xb--Temperature (K)',fontweight='bold')
+    axs.flat[1].set_title('Xa--Temperature (K)',fontweight='bold')
+    axs.flat[2].set_title('Xa-Xb--Temperature (K)', fontweight='bold')    #title for all
+    fig.suptitle(Storm+': '+Exper_name+'('+DAtime+')', fontsize=13, fontweight='bold')
+
+    # Axis labels
+    lon_ticks = list(range(math.ceil(lon_min), math.ceil(lon_max),2))
+    lat_ticks = list(range(math.ceil(lat_min), math.ceil(lat_max),2))
+    for j in range(3):
+        gl = axs.flat[j].gridlines(crs=ccrs.PlateCarree(),draw_labels=False,linewidth=0.1, color='gray', alpha=0.5, linestyle='--')
+        gl.top_labels = False
+        gl.bottom_labels = True
+        if j==0:
+            gl.left_labels = True
+            gl.right_labels = False
+        else:
+            gl.left_labels = False
+            gl.right_labels = False
+        gl.ylocator = mticker.FixedLocator(lat_ticks)
+        gl.xlocator = mticker.FixedLocator(lon_ticks)
+        gl.xformatter = LONGITUDE_FORMATTER
+        gl.yformatter = LATITUDE_FORMATTER
+        gl.xlabel_style = {'size': 12}
+        gl.ylabel_style = {'size': 12}
+
+    plt.savefig( plot_dir+DAtime+'_temp.png', dpi=300 )
+    print('Saving the figure: ', plot_dir+DAtime+'_temp.png')
+    plt.close()
+
+def Temp( Storm, Exper_name, DAtimes, big_dir, small_dir ):
+
+    # Loop through each DAtime/analysis
+    for DAtime in DAtimes:
+        wrf_dir = big_dir+Storm+'/'+Exper_name+'/fc/'+DAtime
+        print('Reading WRF background and analysis: ', wrf_dir)
+        DAtime_dt = datetime.strptime( DAtime, '%Y%m%d%H%M' )
+        # ------ Plot -------------------
+        plot_dir = small_dir+Storm+'/'+Exper_name+'/Vis_analyze/Model/Temp/'
+        plotdir_exists = os.path.exists( plot_dir )
+        if plotdir_exists == False:
+            os.mkdir(plot_dir)
+            plot_Temp( Storm, Exper_name, DAtime, wrf_dir, plot_dir )
+        else:
+            plot_Temp( Storm, Exper_name, DAtime, wrf_dir, plot_dir )
+
+# ------------------------------------------------------------------------------------------------------
+#           Operation: Read, process, and plot dew point temperature per snapshot
+# ------------------------------------------------------------------------------------------------------
+def read_dewPoint( wrf_dir, H_of_interest ):
+
+    # set file names for background and analysis
+    mean_dir = [wrf_dir+'/wrf_enkf_input_d03_mean',wrf_dir+'/wrf_enkf_output_d03_mean']
+    # read the shared variables: lat/lon
+    ncdir = nc.Dataset( mean_dir[0] )
+    lat = ncdir.variables['XLAT'][0,:,:]
+    lon = ncdir.variables['XLONG'][0,:,:]
+    # calculate dew point temperature
+    td_oneL = np.zeros( [len(mean_dir), np.size(lat,0), np.size(lat,1)] )
+    for i in range(len(mean_dir)):
+        file_name = mean_dir[i]
+        ncdir = nc.Dataset( file_name )
+        z = getvar(ncdir, 'z', units='km')
+        # full pressure
+        p = ncdir.variables['P'][0,:,:,:] # perturbation
+        pb = ncdir.variables['PB'][0,:,:,:]
+        full_p = p + pb
+        full_p = full_p.filled(np.nan)
+        # water vapor
+        qvapor = ncdir.variables['QVAPOR'][0,:,:,:] 
+        qvapor_good = qvapor.filled(np.nan)
+        # dew point temperature 
+        tmp_td = UD.compute_td( full_p, qvapor_good )
+        td = tmp_td.reshape(full_p.shape)
+        td_oneL[i,:,:] = interplevel(td, z, H_of_interest)
+
+    d_td = {'lat':lat,'lon':lon,'td':td_oneL}
+    return d_td
+
+def plot_dewPoint( Storm, Exper_name, DAtime, wrf_dir, plot_dir ):
+
+    # Read storm center
+    dict_btk = UD.read_bestrack(small_dir, Storm)
+    # Find the best-track position
+    btk_dt = [it_str for it_str in dict_btk['time'] ]#[datetime.strptime(it_str,"%Y%m%d%H%M") for it_str in dict_btk['time']]
+    bool_match = [DAtime == it for it in btk_dt]
+    if True in bool_match:
+        if_btk_exist = True
+        idx_btk = np.where( bool_match )[0][0] # the second[0] is due to the possibility of multiple records at the same time
+    else:
+        if_btk_exist = False
+
+    #------ Read WRFout -------------------
+    d_td = read_dewPoint( wrf_dir, 5)
+    lat = d_td['lat']
+    lon = d_td['lon']
+    lat_min = np.amin( lat )
+    lon_min = np.amin( lon )
+    lat_max = np.amax( lat )
+    lon_max = np.amax( lon )
+
+    # ------------------ Plot -----------------------
+    fig, axs=plt.subplots(1, 3, subplot_kw={'projection': ccrs.PlateCarree()}, gridspec_kw = {'wspace':0, 'hspace':0}, linewidth=0.5, sharex='all', sharey='all',  figsize=(12,5), dpi=400)
+
+    # Xb
+    min_td = 200
+    max_td = 300
+    axs.flat[0].set_extent([lon_min,lon_max,lat_min,lat_max], crs=ccrs.PlateCarree())
+    axs.flat[0].coastlines(resolution='10m', color='black',linewidth=0.5)
+    xb_td = axs.flat[0].scatter(lon,lat,1.5,c=d_td['td'][0,:,:],edgecolors='none', cmap='rainbow_r', transform=ccrs.PlateCarree())
+    #xb_td = axs.flat[0].scatter(lon,lat,1.5,c=d_td['td'][0,:,:],edgecolors='none', cmap='rainbow_r', vmin=min_td, vmax=max_td,transform=ccrs.PlateCarree())
+    # Mark the best track
+    if if_btk_exist:
+        axs.flat[0].scatter(dict_btk['lon'][idx_btk],dict_btk['lat'][idx_btk], 20, 'white', marker='*',transform=ccrs.PlateCarree())
+
+    # Xa
+    axs.flat[1].set_extent([lon_min, lon_max, lat_min, lat_max], crs=ccrs.PlateCarree())
+    axs.flat[1].coastlines(resolution='10m', color='black',linewidth=0.5)
+    xa_td = axs.flat[1].scatter(lon,lat,1.5,c=d_td['td'][1,:,:],edgecolors='none', cmap='rainbow_r',transform=ccrs.PlateCarree())
+    #xa_td = axs.flat[1].scatter(lon,lat,1.5,c=d_td['td'][1,:,:],edgecolors='none', cmap='rainbow_r', vmin=min_td, vmax=max_td,transform=ccrs.PlateCarree())
+    # Mark the best track
+    if if_btk_exist:
+        axs.flat[1].scatter(dict_btk['lon'][idx_btk],dict_btk['lat'][idx_btk], 20, 'white', marker='*',transform=ccrs.PlateCarree())
+
+    # Colorbar
+    caxes = fig.add_axes([0.12, 0.1, 0.5, 0.02])
+    xtd_bar = fig.colorbar(xb_td,ax=axs[0:2],orientation="horizontal", cax=caxes,extend='both')
+    xtd_bar.ax.tick_params()
+
+    # Xa-Xb (increment)
+    min_incre = -50
+    max_incre = 50
+    axs.flat[2].set_extent([lon_min, lon_max, lat_min, lat_max], crs=ccrs.PlateCarree())
+    axs.flat[2].coastlines(resolution='10m', color='black',linewidth=0.5)
+    td_incre = d_td['td'][1,:,:] - d_td['td'][0,:,:]
+    incre_td = axs.flat[2].scatter(lon,lat,1.5,c=td_incre,edgecolors='none', cmap='bwr',transform=ccrs.PlateCarree())
+    #incre_td = axs.flat[2].scatter(lon,lat,1.5,c=td_incre,edgecolors='none', cmap='bwr', vmin=min_incre, vmax=max_incre,transform=ccrs.PlateCarree())
+    # Colorbar
+    caxes = fig.add_axes([0.65, 0.1, 0.25, 0.02])
+    #cb_diff_ticks = np.linspace(min_incre, max_incre, 5, endpoint=True)
+    #cbar = fig.colorbar(incre_td, ax=axs[2:], ticks=cb_diff_ticks, orientation="horizontal", cax=caxes,extend='both')
+    #cbar.ax.tick_params()
+
+    #subplot title
+    axs.flat[0].set_title('Xb--Dew Point (K)',fontweight='bold')
+    axs.flat[1].set_title('Xa--Dew Point (K)',fontweight='bold')
+    axs.flat[2].set_title('Xa-Xb--Dew Point (K)', fontweight='bold')    #title for all
+    fig.suptitle(Storm+': '+Exper_name+'('+DAtime+')', fontsize=13, fontweight='bold')
+
+    # Axis labels
+    lon_ticks = list(range(math.ceil(lon_min), math.ceil(lon_max),2))
+    lat_ticks = list(range(math.ceil(lat_min), math.ceil(lat_max),2))
+    for j in range(3):
+        gl = axs.flat[j].gridlines(crs=ccrs.PlateCarree(),draw_labels=False,linewidth=0.1, color='gray', alpha=0.5, linestyle='--')
+        gl.top_labels = False
+        gl.bottom_labels = True
+        if j==0:
+            gl.left_labels = True
+            gl.right_labels = False
+        else:
+            gl.left_labels = False
+            gl.right_labels = False
+        gl.ylocator = mticker.FixedLocator(lat_ticks)
+        gl.xlocator = mticker.FixedLocator(lon_ticks)
+        gl.xformatter = LONGITUDE_FORMATTER
+        gl.yformatter = LATITUDE_FORMATTER
+        gl.xlabel_style = {'size': 12}
+        gl.ylabel_style = {'size': 12}
+
+    plt.savefig( plot_dir+DAtime+'_td.png', dpi=300 )
+    print('Saving the figure: ', plot_dir+DAtime+'_td.png')
+    plt.close()
+
+
+def DewPoint( Storm, Exper_name, DAtimes, big_dir, small_dir ):
+
+    # Loop through each DAtime/analysis
+    for DAtime in DAtimes:
+        wrf_dir = big_dir+Storm+'/'+Exper_name+'/fc/'+DAtime
+        print('Reading WRF background and analysis: ', wrf_dir)
+        DAtime_dt = datetime.strptime( DAtime, '%Y%m%d%H%M' )
+        # ------ Plot -------------------
+        plot_dir = small_dir+Storm+'/'+Exper_name+'/Vis_analyze/Model/dewPoint/'
+        plotdir_exists = os.path.exists( plot_dir )
+        if plotdir_exists == False:
+            os.mkdir(plot_dir)
+            plot_dewPoint( Storm, Exper_name, DAtime, wrf_dir, plot_dir )
+        else:
+            plot_dewPoint( Storm, Exper_name, DAtime, wrf_dir, plot_dir )
+
 
 # ------------------------------------------------------------------------------------------------------
 #           Operation: Read, process, and plot relative vorticity per snapshot
@@ -1025,26 +1483,32 @@ def diver( Storm, Exper_name, DAtimes, big_dir, small_dir ):
 
 if __name__ == '__main__':
 
-    big_dir = '/expanse/lustre/scratch/zuy121/temp_project/Pro2_PSU_MW/' #'/scratch/06191/tg854905/Pro2_PSU_MW/'
-    small_dir = '/expanse/lustre/projects/pen116/zuy121/Pro2_PSU_MW/' #'/work2/06191/tg854905/stampede2/Pro2_PSU_MW/'
+    big_dir = '/scratch/06191/tg854905/Pro2_PSU_MW/'
+    small_dir = '/work2/06191/tg854905/stampede2/Pro2_PSU_MW/'
 
     # -------- Configuration -----------------
-    Storm = 'IRMA'
+    Storm = 'HARVEY'
     DA = ['IR']   
     MP = 'WSM6' 
 
     Plot_Precip = False       # Accumulated total grid scale precipitation
+    Plot_IC_water = False
+    Plot_RH = True
+    Plot_qvapor = False
+    Plot_Temp = False
+    Plot_dewT = False
+
     Plot_slp = False
     Plot_UV10_slp = False
-    Plot_IC_water = True
     Plot_minslp_evo = False
     Plot_rtvo = False
     Plot_divergence = False
+
     # -----------------------------------------
 
     # Time range set up
-    start_time_str = '201709030000'
-    end_time_str = '201709030600'
+    start_time_str = '201708221200' #'201709030000'
+    end_time_str = '201708221200' #'201709030000'
     Consecutive_times = True
 
     if not Consecutive_times:
@@ -1070,6 +1534,11 @@ if __name__ == '__main__':
             plot_slp( Storm, iExper, DAtimes, big_dir, small_dir )
             end_time = time.process_time()
             print ('time needed: ', end_time-start_time, ' seconds')
+
+    # Plot the evolution of minimum sea level pressure
+    if Plot_minslp_evo:
+        Evo_slp = Gather_slp( Storm, Expers, DAtimes, big_dir )
+        plot_slp_timeseries( small_dir, Storm, Expers, DAtimes, Evo_slp )
 
     # Plot low-level circulation
     if Plot_UV10_slp:
@@ -1112,12 +1581,37 @@ if __name__ == '__main__':
             end_time = time.process_time()
             print ('time needed: ', end_time-start_time, ' seconds')
 
-    # Plot the evolution of minimum sea level pressure
-    if Plot_minslp_evo:
-        Evo_slp = Gather_slp( Storm, Expers, DAtimes, big_dir )
-        plot_slp_timeseries( small_dir, Storm, Expers, DAtimes, Evo_slp )
-    
+    # Plot relative humidity
+    if Plot_RH:
+        for iExper in Expers:
+            start_time=time.process_time()
+            RH( Storm, iExper, DAtimes, big_dir, small_dir )
+            end_time = time.process_time()
+            print ('time needed: ', end_time-start_time, ' seconds')
 
+    # Plot temperature
+    if Plot_Temp:
+        for iExper in Expers:
+            start_time=time.process_time()
+            Temp( Storm, iExper, DAtimes, big_dir, small_dir )
+            end_time = time.process_time()
+            print ('time needed: ', end_time-start_time, ' seconds')
+
+    # Plot dew point temperature
+    if Plot_dewT:
+        for iExper in Expers:
+            start_time=time.process_time()
+            DewPoint( Storm, iExper, DAtimes, big_dir, small_dir )
+            end_time = time.process_time()
+            print ('time needed: ', end_time-start_time, ' seconds')
+
+    # Plot qvapor
+    if Plot_qvapor:
+        for iExper in Expers:
+            start_time=time.process_time()
+            Qvapor( Storm, iExper, DAtimes, big_dir, small_dir )
+            end_time = time.process_time()
+            print ('time needed: ', end_time-start_time, ' seconds')
 
 
 

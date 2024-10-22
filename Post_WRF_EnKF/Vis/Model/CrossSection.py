@@ -45,7 +45,7 @@ def var_cross( var_name,wrf_files ):
     d_var['input'] = {}
     d_var['output'] = {}
     
-    # ----- Create a cross line -------
+    # ----- Create a cross line and Identify the start and end points -------
     ncdir = nc.Dataset(wrf_files[1], 'r') # enkf output
     lat = ncdir.variables['XLAT'][:].flatten()
     lon = ncdir.variables['XLONG'][:].flatten()
@@ -63,17 +63,30 @@ def var_cross( var_name,wrf_files ):
     lon_c = lon[idx]
     center = [lat_c,lon_c]
     # Create the start point and end point in lon/lat for the cross section
-    if cut_segment:
-        st_lat = lat_c # distance_to_degrees_lat(distance_km)
-        ed_lat = lat_c
-        lon_RtoD = distance_to_degrees_lon(radius, lat_c)
-        st_lon = lon_c - lon_RtoD
-        ed_lon = lon_c + lon_RtoD
+    if along_lon: # cross section is along the longitude centered at one latitude
+        if cut_segment:
+            st_lat = lat_c # distance_to_degrees_lat(distance_km)
+            ed_lat = lat_c
+            lon_RtoD = distance_to_degrees_lon(radius, lat_c)
+            st_lon = lon_c - lon_RtoD
+            ed_lon = lon_c + lon_RtoD
+        else:
+            st_lat = lat_c
+            ed_lat = lat_c
+            st_lon = np.amin(lon) 
+            ed_lon = np.amax(lon)
     else:
-        st_lat = lat_c
-        ed_lat = lat_c
-        st_lon = np.amin(lon) 
-        ed_lon = np.amax(lon)
+        if cut_segment:
+            st_lon = lon_c # distance_to_degrees_lat(distance_km)
+            ed_lon = lon_c
+            lat_RtoD = distance_to_degrees_lat( radius )
+            st_lat = lat_c - lat_RtoD
+            ed_lat = lat_c + lat_RtoD
+        else:
+            st_lon = lon_c
+            ed_lon = lon_c
+            st_lat = np.amin(lat)
+            ed_lat = np.amax(lat)
     
     # Create the  start point and end point in i/j
     st_ij = ll_to_xy(ncdir, st_lat, st_lon) # What ll_to_xy returns is not the xy coordinate itself but the grid index starting from 0. 
@@ -87,6 +100,7 @@ def var_cross( var_name,wrf_files ):
     #xlat = ncdir.variables['XLAT'][0,:,:].flatten()  #[0,:,0]
     #xlon = ncdir.variables['XLONG'][0,:,:].flatten()
 
+    # ----- Read variable values and Obtain values along the cross section -----
     # loop thro enkf input and output
     for wrf_file in wrf_files:
         print('Reading '+wrf_file)
@@ -114,11 +128,19 @@ def var_cross( var_name,wrf_files ):
         elif var_name == 'W':
             tmp = ncdir.variables['W'][0,:,:,:]
             var = (tmp[:-1,:,:]+tmp[1:,:,:])/2
+        elif var_name == 'rh':
+            td = getvar(ncdir, 'td', units='K') 
+            temp = getvar(ncdir, 'temp', units='K')
+        elif var_name == 'QVAPOR':
+            var = getvar(ncdir, 'QVAPOR')
+        elif var_name == 'PT':
+            tmp = ncdir.variables['T'][0,:,:,:] # potential temperature 
+            var = tmp + 300 # potential temperature  
 
         # Get a line in ij space connecting the start and end point 
         xy_line = UWP.xy_edit(var, start_point=st_p, end_point=ed_p) # return: [[i,j]]
     
-        # Compute the vertical cross-section interpolation
+        # Compute the vertical cross-section interpolation for var and for coordinate
         var_cross = interp2dxy(var, xy_line)
         ver_coor = interp2dxy(ver_coor_tmp, xy_line)
         ver_coor = np.mean(ver_coor,axis=1)
@@ -148,18 +170,20 @@ def plot_var_cross( wrf_files,var_name,d_var ):
     for wrf_file in wrf_files:
         i = wrf_files.index(wrf_file)
         # x axis
-        center = d_var['input']['center']
+        center = d_var['input']['center'] #center = [lat_c,lon_c]
         if 'input' in wrf_file:
             ll_pair = d_var['input']['ll_pair']
             ver_coor = d_var['input']['ver_coor']
         else:
             ll_pair = d_var['output']['ll_pair']
             ver_coor = d_var['output']['ver_coor']
-        x_axis_rg = range(len(ll_pair))
-        dis_center = []
-        for it in ll_pair:
-            dis_center.append( (it[0]-center[0])**2+(it[1]-center[1])**2)
-        idx_center = np.argmin( dis_center )
+        
+        if along_lon: 
+            x_axis_rg = range(len(ll_pair))
+            dis_center = []
+            for it in ll_pair:
+                dis_center.append( (it[0]-center[0])**2+(it[1]-center[1])**2)
+            idx_center = np.argmin( dis_center )
 
         # y axis: model vertical coordinate
         if use_pressure:
@@ -192,6 +216,12 @@ def plot_var_cross( wrf_files,var_name,d_var ):
         elif 'Q' in var_name:
             bounds = 10.**np.arange(-6,0,1)
             cmap = 'ocean_r'
+        elif 'rh' in var_name:
+            bounds = [40,50,60,70,80,90,100] 
+            cmap = 'Greens'
+        elif 'PT' in var_name:
+            bounds = [290,300,310,320,330]
+            cmap = 'jet'
 
         # Plot
         if 'input' in wrf_file:
@@ -199,6 +229,7 @@ def plot_var_cross( wrf_files,var_name,d_var ):
         else:
             value = d_var['output'][var_name] 
         xc = ax[i].contourf( xcoor,ycoor,to_np(value),cmap=cmap,levels=bounds,extend='both')
+        #xc = ax[i].contourf( xcoor,ycoor,to_np(value),cmap=cmap,)
         ax[i].axvline(x=idx_center,color='k',linestyle='-',linewidth=2)
 
         # Set the x-ticks to use latitude and longitude labels.
@@ -239,6 +270,12 @@ def plot_var_cross( wrf_files,var_name,d_var ):
     elif 'Q' in var_name:
         xb_title = 'Xb:'+var_name+' (kg/kg)'
         xa_title = 'Xa:'+var_name+' (kg/kg)'
+    elif 'rh' in var_name:
+        xb_title = 'Xb:'+var_name+' (%)'
+        xa_title = 'Xa:'+var_name+' (%)'    
+    elif 'PT' in var_name:
+        xb_title = 'Xb: Potential Temp (K)'
+        xa_title = 'Xa: Potential Temp (K)'
 
     ax[0].set_title( xb_title, fontsize = 15, fontweight='bold')
     ax[1].set_title( xa_title, fontsize = 15, fontweight='bold')
@@ -260,14 +297,14 @@ def plot_var_cross( wrf_files,var_name,d_var ):
 
 if __name__ == '__main__':
 
-    big_dir = '/expanse/lustre/scratch/zuy121/temp_project/Pro2_PSU_MW/' #'/scratch/06191/tg854905/Pro2_PSU_MW/'
-    small_dir = '/expanse/lustre/projects/pen116/zuy121/Pro2_PSU_MW/' #'/work2/06191/tg854905/stampede2/Pro2_PSU_MW/'
+    big_dir = '/scratch/06191/tg854905/Pro2_PSU_MW/'
+    small_dir = '/work2/06191/tg854905/stampede2/Pro2_PSU_MW/'
 
     # ---------- Configuration -------------------------
     Storm = 'IRMA'
-    MP = 'THO'
+    MP = 'WSM6'
     DA = 'IR'
-    v_interest = ['hroi_wind','W']
+    v_interest = ['PT'] #['hroi_wind','rh']
 
     start_time_str = '201709030000'
     end_time_str = '201709030000'
@@ -278,13 +315,15 @@ if __name__ == '__main__':
     ymax = 297
     nLevel = 42
 
-    #
+    # Specify cross section location
     cut_segment = False
     radius = 200 #km
+    along_lon = True
 
     use_pressure = False
     if_plot = True
     # ------------------------------------------------------- 
+    
     Exper_name = UD.generate_one_name( Storm,DA,MP )
 
     # Identify DA times in the period of interest

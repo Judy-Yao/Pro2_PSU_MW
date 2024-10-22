@@ -609,6 +609,50 @@ def read_IRsimu_mean_Hx(Hx_dir, ch_list):
 # ------------------------------------------------------------------------------------------------------
 #           Object: Model 
 # ------------------------------------------------------------------------------------------------------
+@njit(parallel=True)
+# compute relative humidity from temperature and dew point
+def compute_rh_fromTkTd( tk, td ):
+
+    tk_flat = tk.flatten()
+    td_flat = td.flatten()
+    res = np.zeros( (len(tk_flat)) )
+    res[:] = np.nan
+    for im in prange( len(tk_flat) ):
+        # Convert Kelvin to Celsius for the formula
+        dew_point = td_flat[im] - 273.15
+        temperature = tk_flat[im] - 273.15
+        # Calculate the saturation vapor pressure for the dew point
+        e_dew = 6.112 * np.exp((17.67 * dew_point) / (dew_point + 243.5))
+        # Calculate the saturation vapor pressure for the temperature
+        e_temp = 6.112 * np.exp((17.67 * temperature) / (temperature + 243.5))
+        # Calculate relative humidity
+        res[im] = relative_humidity = 100 * (e_dew / e_temp)
+
+    # make sure all values are reasonable
+    assert res.any() != np.nan
+    return res
+
+@njit(parallel=True)
+# compute dew point temperature in kelvin
+def compute_td( full_p, vapor ):
+
+    p_flat = full_p.flatten() 
+    vapor_flat = vapor.flatten()
+    res = np.zeros( (len(vapor_flat)) )
+    res[:] = np.nan
+    for im in prange( len(vapor_flat) ):
+        pressure = p_flat[im] / 100 # hPa
+        qv = max(vapor_flat[im],0.0)
+        # vapor pressure
+        tdc = qv*pressure/ (0.622 + qv)
+        # avoid problems near zero
+        tdc = max(tdc,0.001)
+        tmp_res = (243.50*np.log(tdc)-440.80)/ (19.480-np.log(tdc)) #calculating the natural logarithm of 10
+        res[im] = tmp_res + 273.15
+
+    # make sure all values are reasonable
+    assert res.any() != np.nan
+    return res
 
 @njit(parallel=True)
 # compute temperature in kelvin
