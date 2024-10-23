@@ -454,14 +454,17 @@ def cal_pert_stddev_obsRes_Hxb( DAtime, sensor, Hx_dir, If_save, fort_v,  wrf_di
     return None
 
 
-def cal_pert_stddev_xb( DAtime, wrf_dir, var_name, If_save ):
+def cal_pert_stddev_xb( DAtime, wrf_dir, var_name, If_save, dim=None ):
   
     # Number of ensemble members
     num_ens = 60
     # Dimension of the domain
     xmax = 297
     ymax = 297
-    nLevel = 42
+    if dim == '3D':
+        nLevel = 42
+    elif dim == '2D':
+        nLevel = 1
 
     ### ------------------------- Perturbation -------------------------
     print("Read the ensemble and calculate the perturbations for Xb...")
@@ -482,9 +485,13 @@ def cal_pert_stddev_xb( DAtime, wrf_dir, var_name, If_save ):
         xb_coriolis_sin = ncdir.variables['F'][0,:,:]/1e-5 #units: 10-5 s-1
         xb_rtvo = np.array(xb_avo - xb_coriolis_sin) #relative vorticity, units: 10-5 s-1 
         var = xb_rtvo.reshape(nLevel,xmax*ymax)
-    else:
+    elif dim == '3D':
         var = ncdir.variables[var_name][0,:,:,:]
         var = var.reshape(nLevel,xmax*ymax)
+    elif dim == '2D':
+        var = ncdir.variables[var_name][0,:,:]
+        var = var.reshape(nLevel,xmax*ymax)
+
     xb_ens_pert[:,num_ens,:] = var.reshape(nLevel,xmax*ymax)
     # read the ensemble of xb
     file_xb = sorted( glob.glob(wrf_dir + '/wrf_enkf_input_d03_0*') )
@@ -501,9 +508,13 @@ def cal_pert_stddev_xb( DAtime, wrf_dir, var_name, If_save ):
             xb_coriolis_sin = ncdir.variables['F'][0,:,:]/1e-5 #units: 10-5 s-1
             xb_rtvo = np.array(xb_avo - xb_coriolis_sin) #relative vorticity, units: 10-5 s-1 
             var = xb_rtvo.reshape(nLevel,xmax*ymax)
-        else:
+        elif dim == '3D':
             var = ncdir.variables[var_name][0,:,:,:]
             var = var.reshape(nLevel,xmax*ymax)
+        elif dim == '2D':
+            var = ncdir.variables[var_name][0,:,:]
+            var = var.reshape(nLevel,xmax*ymax)
+
         xb_ens_pert[:,idx,:] = var - xb_ens_pert[:,num_ens,:]
     
     # Check if there are any NaN values using assert
@@ -614,13 +625,13 @@ if __name__ == '__main__':
     DA = 'IR'
     MP = 'THO'
 
-    v_interest = [ 'QVAPOR']
+    v_interest = [ 'PSFC']
     sensor = 'abi_gr'
     ch_list = ['8',]
     fort_v = ['obs_type','lat','lon','obs']
 
-    start_time_str = '201709030500'
-    end_time_str = '201709030500'
+    start_time_str = '201709030000'
+    end_time_str = '201709040000'
     Consecutive_times = True
 
     # Number of ensemble members
@@ -673,7 +684,7 @@ if __name__ == '__main__':
             # Xb
             wrf_dir = big_dir+Storm+'/'+Exper_name+'/fc/'+DAtime+'/'
             for var_name in v_interest:
-                cal_pert_stddev_xb( DAtime, wrf_dir, var_name, If_save )
+                cal_pert_stddev_xb( DAtime, wrf_dir, var_name, If_save, '2D')
 
     # Calculate correlations
     #if If_cal_corr:
