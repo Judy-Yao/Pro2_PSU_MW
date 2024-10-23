@@ -683,6 +683,34 @@ def njit_compute_rh( pres,t,qv ):
     EP_2 = R_D/R_V
     EP_3 = 0.622
 
+    pres_flat = pres.flatten()
+    t_flat = t.flatten()
+    qv_flat = qv.flatten()
+
+    res = np.zeros( (len(t_flat)) )
+    for i in prange( len(t_flat) ):
+        pressure = pres_flat[i]
+        temperature = t_flat[i]
+        es = 10.0*SVP1*np.exp(SVP2* (temperature-SVPT0)/(temperature-SVP3))
+        qvs = EP_3*es/ (0.01*pressure- (1.0-EP_3)*es)
+        res[i] = 100.0*max(min(qv_flat[i]/qvs,1.0),0.0)
+
+    return res
+
+# calculate the 3d relative humidity with njit
+@njit(parallel=True)
+def njit_compute_3d_rh( pres,t,qv ):
+
+    # specific constants for assumptions made in this routine:
+    SVP1 = 0.6112
+    SVP2 = 17.67
+    SVP3 = 29.65
+    SVPT0 = 273.1
+    R_D = 287
+    R_V = 461.6
+    EP_2 = R_D/R_V
+    EP_3 = 0.622
+
     res = np.zeros( (t.shape[0],t.shape[1],t.shape[2]), )
     for i in prange(t.shape[2]):
         for j in range(t.shape[1]):
@@ -696,19 +724,26 @@ def njit_compute_rh( pres,t,qv ):
     return res
 
 # compute relative humidity
-def compute_rh( ncdir ):
+def compute_3d_rh( ncdir ):
 
     # Read data
     # full pressure
-    pres = getvar(ncdir, 'pres', units='Pa').values # pressure: Pa
+    p = ncdir.variables['P'][0,:,:,:] # perturbation
+    pb = ncdir.variables['PB'][0,:,:,:]
+    full_p = p + pb
+    full_p = full_p.filled(np.nan)
     # full T in kelvin
-    t = getvar(ncdir, 'temp', units='K').values # temperature: K
+    theta = ncdir.variables['T'][0,:,:,:] # theta perturbation
+    full_theta = theta + 300
+    full_theta = full_theta.filled(np.nan)
+    # temperature in Kelvin
+    tmp_tk = compute_tk( full_p, full_theta )
+    tk = tmp_tk.reshape(full_p.shape)
     # qvapor
     qvapor = ncdir.variables['QVAPOR'][0,:,:,:]
     qvapor_filled = qvapor.filled(np.nan)  # Replaces masked values with NaN
-
     # relative humidity
-    rh = njit_compute_rh( pres,t,qvapor_filled )
+    rh = njit_compute_3d_rh( full_p,tk,qvapor_filled )
     #Assert that all elements are between 0 and 100 (inclusive)
     assert np.all((rh >= 0) & (rh <= 100)), "Not all elements are between 0 and 100"
 

@@ -604,229 +604,6 @@ def calculate_corr( DAtime, Hx_dir, sensor, wrf_dir, var_name, idx_xb, idx_hxb):
         print('Save '+des_path)
     return corr_xb_hxb
 
-
-# ------------------------------------------------------------------------------------------------------
-#           Operation: find obs of interest
-# ------------------------------------------------------------------------------------------------------
-
-# Collect indices that are cloudy for all ensemble members (not very useful for Hxb ens at obs location )
-def find_cloudy_allEns( DAtime, sensor, Hx_dir):
-
-    print("Looking for regions that are cloudy for all ensemble members...")
-    start_time=time.process_time()
-
-    ens_Tb_file = Hx_dir + "/Hxb_ens_obs_res_d03_" + DAtime + '_' +  sensor + '.txt'
-    print('Reading the ensemble of Hx: ', ens_Tb_file,'...')
-    d_obspace = read_ens_obspace( ens_Tb_file, sensor )
-    Tb_ens = d_obspace['hxb_ens']
-    # Find the Tb threshold when all ens mems are cloudy
-    cold_Tb_start = 80
-    cold_Tb = cold_Tb_start
-    common_idx = None
-    while common_idx is None:
-        idx_cloud_ens = np.where(Tb_ens<cold_Tb) # technique to save memory: sparisity
-        # idea: any member should have at least one sample that meets the first requirement ( its value is less than the threshold)
-        if not np.any( idx_cloud_ens ): # no member meets the 1st requirement
-            common_idx = None
-            cold_Tb = cold_Tb + 1
-            continue
-        elif len(np.unique(idx_cloud_ens[0])) != num_ens: # not all members meet the 1st requirement
-            common_idx = None
-            cold_Tb = cold_Tb + 1
-            continue
-        else: # all members meet the 1st requirement
-            idx_mem1 = np.where(idx_cloud_ens[0]==0)[0]
-            idx_mem2 = np.where(idx_cloud_ens[0]==1)[0]
-            common_ini = list(set( idx_cloud_ens[1][idx_mem1] ).intersection( idx_cloud_ens[1][idx_mem2] ))
-            for imem in range(1,num_ens-1):
-                    if imem == 1:
-                        common_idx = common_ini
-                    idx_mem = np.where(idx_cloud_ens[0]==imem)[0]
-                    common_idx = list(set( common_idx ).intersection( idx_cloud_ens[1][idx_mem] ))
-            if not np.any( common_idx ): # not all members are cloudy at the same location(s)
-                common_idx = None
-                cold_Tb = cold_Tb + 1
-                continue
-            else:
-                print('The Tb threshold when all members are cloudy at the same locations is: ' +str(cold_Tb)+ ' K!'  )
-                print('Indices of cloudy region:'+str(common_idx))
-                return common_idx
-
-
-def find_coldest_obs( DAtime, sensor, Hx_dir ):
-
-    print("Looking for cloudy regions based on observations...")
-    idx_cloud = []
-    # Read assimilated obs 
-    file_Diag = big_dir+Storm+'/'+Exper_name+'/run/'+DAtime+'/enkf/d03/fort.10000'
-    d_obs = Diag.Find_IR( file_Diag, fort_v )
-    coldest_Tb = np.amin( d_obs['obs'] )
-    print('The coldest Tb is '+str(coldest_Tb)+ ' K!')
-    idx_cloud.append( d_obs['obs'].index( coldest_Tb ))
-    print('Indices of cloudy region:'+str(idx_cloud))
-    return idx_cloud,d_obs
-
-
-# ------------------------------------------------------------------------------------------------------
-#           Operation: Plot the correlation between the specified Tb and the 3D model (at specified levels)
-# ------------------------------------------------------------------------------------------------------
-def plot_corr_cloud_3Dmodel(big_dir, small_dir, Storm, Exper_name, var_name, DAtime, sensor, P_of_interest, d_model_res, cloud_idx ):
-
-    # Read WRF domain
-    wrf_file = big_dir+Storm+'/'+Exper_name+'/fc/'+DAtime+'/wrf_enkf_output_d03_mean'
-    d_wrf_d03 = ROIR.read_wrf_domain( wrf_file )
-
-    # Read Tbs of Hxb
-    Tb_file = big_dir+Storm+'/'+Exper_name+'/Obs_Hx/IR/'+DAtime+'/' + "/mean_obs_res_d03" + DAtime + '_' +  sensor + '.txt'
-    d_all = ROIR.read_allTb(Tb_file, sensor )
-
-    # Read location from TCvitals
-    if any( hh in DAtime[8:10] for hh in ['00','06','12','18']):
-        tc_lon, tc_lat = ROIR.read_TCvitals(small_dir+Storm+'/TCvitals/'+Storm+'_tcvitals', DAtime)
-        print( 'Location from TCvital: ', tc_lon, tc_lat )
-
-    # ------------------ Plot -----------------------
-    fig, ax=plt.subplots(2, 2, subplot_kw={'projection': ccrs.PlateCarree()}, gridspec_kw = {'wspace':0, 'hspace':0}, linewidth=0.5, sharex='all', sharey='all',  figsize=(6.5,6.5), dpi=400)
-
-    # Define the domain
-    lat_min = d_wrf_d03['lat_min']
-    lat_max = d_wrf_d03['lat_max']
-    lon_min = d_wrf_d03['lon_min']
-    lon_max = d_wrf_d03['lon_max']
-
-    ### ---Plot Hxb---
-    #Define Tb threshold
-    min_T = 185
-    max_T = 325
-    IRcmap = Util_Vis.IRcmap( 0.5 )
-    ax[0,0].set_extent([lon_min,lon_max,lat_min,lat_max], crs=ccrs.PlateCarree())
-    ax[0,0].coastlines(resolution='10m', color='black',linewidth=0.5)
-    xb_Tb = ax[0,0].scatter(d_all['lon_obs'],d_all['lat_obs'],4,c=d_all['meanYb_obs'],edgecolors='none', cmap=IRcmap, vmin=min_T, vmax=max_T,transform=ccrs.PlateCarree()) 
-    if any( hh in DAtime[8:10] for hh in ['00','06','12','18'] ):
-        ax[0,0].scatter(tc_lon, tc_lat, s=3, marker='*', edgecolors='white', transform=ccrs.PlateCarree())
-    # Colorbar
-    #caxes = fig.add_axes([0.12, 0.1, 0.45, 0.02])
-    #Tb_bar = fig.colorbar(xb_Tb,ax=ax[0,0],orientation="horizontal", cax=caxes)
-    #Tb_bar.ax.tick_params()
-
-    ### ---Plot correlation---
-    min_corr = -1
-    max_corr = 1
-    for isub in range(1,4):
-        ax.flat[isub].set_extent([lon_min, lon_max, lat_min, lat_max], crs=ccrs.PlateCarree())
-        ax.flat[isub].coastlines(resolution='10m', color='black',linewidth=0.5)
-        cs = ax.flat[isub].scatter(d_model_res['lon_model'],d_model_res['lat_model'],1.5,c=d_model_res['corr'][isub-1,:],\
-                edgecolors='none', cmap='RdBu_r', vmin=min_corr, vmax=max_corr, transform=ccrs.PlateCarree())
-        ax.flat[isub].scatter(d_all['lon_obs'][cloud_idx[0]],d_all['lat_obs'][cloud_idx[0]],2.5,c='black',edgecolors='none', transform=ccrs.PlateCarree())
-
-    # Colorbar
-    caxes = fig.add_axes([0.2, 0.05, 0.6, 0.02])
-    #cb_corr_ticks = np.linspace(min_corr, max_corr, 5, endpoint=True)
-    corr_bar = fig.colorbar(cs, ax=ax.flat[2:], orientation="horizontal", cax=caxes)
-    corr_bar.ax.tick_params()
-
-    #subplot title
-    font = {'size':8,}
-    ax.flat[0].set_title('H(xb)', font, fontweight='bold')
-    for isub in range(1,4):
-        ax.flat[isub].set_title( str(P_of_interest[isub-1])+' hPa', font, fontweight='bold')
-
-    #title for all
-    fig.suptitle(Storm+': '+Exper_name+'(corr of Qvapor&Tb)', fontsize=8, fontweight='bold')
-
-    # Axis labels
-    lon_ticks = list(range(math.ceil(lon_min)-2, math.ceil(lon_max)+2,2))
-    lat_ticks = list(range(math.ceil(lat_min)-2, math.ceil(lat_max)+2,2))
-
-    for j in range(4):
-        gl = ax.flat[j].gridlines(crs=ccrs.PlateCarree(),draw_labels=False,linewidth=0.1, color='gray', alpha=0.5, linestyle='--')
-
-        gl.xlabels_top = False
-        gl.xlabels_bottom = True
-        if j==0 or j==2:
-            gl.ylabels_left = True
-            gl.ylabels_right = False
-        else:
-            gl.ylabels_left = False
-            gl.ylabels_right = False
-
-        if j==2 or j==3:
-            gl.xlabels_bottom = True
-            gl.xlabels_top = False
-        else:
-            gl.xlabels_bottom = False
-            gl.xlabels_top = False
-
-
-        gl.ylocator = mticker.FixedLocator(lat_ticks)
-        gl.xlocator = mticker.FixedLocator(lon_ticks)
-        gl.xformatter = LONGITUDE_FORMATTER
-        gl.yformatter = LATITUDE_FORMATTER
-        gl.xlabel_style = {'size': 8}
-        gl.ylabel_style = {'size': 8}
-
-    # Save figures
-    des_name = small_dir+Storm+'/'+Exper_name+'/Vis_analyze/Corr/IR/corr_'+DAtime+'_'+var_name+'_'+sensor+'.png'
-    plt.savefig( des_name, dpi=300)
-    print('Saving the figure: ', des_name)
-    plt.close()
-    return None
-
-
-def corr_cloud_3Dmodel( DAtime, Hx_dir, sensor, wrf_dir, small_dir, Storm, Exper_name, var_name ):
- 
-    # Calculate the correlation
-    idx_xb = np.arange(xmax*ymax)
-    # Find cloudy region
-    #cloud_hxb = find_cloudy_allEns( DAtime, sensor, Hx_dir)
-    #cloud_hxb,d_obs = find_coldest_obs( DAtime, sensor, Hx_dir )
-    cloud_hxb = [5000,]
-    corr_xb_hxb = calculate_corr( DAtime, Hx_dir, sensor, wrf_dir, var_name, idx_xb, cloud_hxb)
-    print('Shape of corr_xb_hxb: '+ str(np.shape(corr_xb_hxb)))
-
-    # Average the correlation of the cloudy area
-    corr_xb_hxb_cloud = np.mean(corr_xb_hxb, axis=2)
-    print('Shape of corr_xb_hxb_cloud: '+ str(np.shape(corr_xb_hxb_cloud)))
-
-    # Read model attributes
-    nLevel = corr_xb_hxb.shape[0] 
-    mean_xb = wrf_dir + '/wrf_enkf_input_d03_mean'
-    ncdir = nc.Dataset( mean_xb, 'r')
-    # pressure levels
-    PB = ncdir.variables['PB'][0,:,:,:]
-    P = ncdir.variables['P'][0,:,:,:]
-    P_hpa = (PB + P)/100 # 0 dimension: bottom to top
-    P_hpa = P_hpa.reshape(nLevel,xmax*ymax)
-    # lon and lat
-    lon = ncdir.variables['XLONG'][0,:,:].flatten()
-    lat = ncdir.variables['XLAT'][0,:,:].flatten()
-    print('Locations for cloudy points:')
-    for idx in cloud_hxb:
-        print(str(lon[idx])+','+str(lat[idx]))
-
-    # Specify pressure levels of interest
-    P_of_interest = [100,500,850]
-    
-    # Calculate the corr at specified levels
-    start_time=time.process_time()
-    corr_xb_hxb_cloud_P = np.zeros( (len(P_of_interest),corr_xb_hxb.shape[1]),  )
-    corr_xb_hxb_cloud_P[:] = np.nan
-    for im in range( corr_xb_hxb.shape[1] ):
-        f_interp = interpolate.interp1d( P_hpa[:,im], corr_xb_hxb_cloud[:,im])
-        corr_xb_hxb_cloud_P[:,im] = f_interp( P_of_interest )
-    #corr_xb_hxb_cloud_P = corr_xb_hxb_cloud[:3,:] # test....
-    end_time = time.process_time()
-    print ('time needed for the interpolation: ', end_time-start_time, ' seconds')
-    print('Min of correlation: '+str(np.amin( corr_xb_hxb_cloud_P )))
-    print('Max of correlation: '+str(np.amax( corr_xb_hxb_cloud_P )))
-
-    d_model_res = {'lon_model':lon,'lat_model':lat,'corr':corr_xb_hxb_cloud_P}
-
-    # Plot the correlation
-    plot_corr_cloud_3Dmodel(big_dir, small_dir, Storm, Exper_name, var_name, DAtime, sensor, P_of_interest, d_model_res, cloud_hxb )
-
-
-
 if __name__ == '__main__':
 
     big_dir = '/scratch/06191/tg854905/Pro2_PSU_MW/'
@@ -837,13 +614,13 @@ if __name__ == '__main__':
     DA = 'IR'
     MP = 'THO'
 
-    v_interest = [ 'QICE','QCLOUD','QRAIN','QSNOW','QGRAUP','QVAPOR']
+    v_interest = [ 'QVAPOR']
     sensor = 'abi_gr'
     ch_list = ['8',]
     fort_v = ['obs_type','lat','lon','obs']
 
-    start_time_str = '201709042300'
-    end_time_str = '201709050000'
+    start_time_str = '201709030500'
+    end_time_str = '201709030500'
     Consecutive_times = True
 
     # Number of ensemble members
@@ -852,10 +629,10 @@ if __name__ == '__main__':
     xmax = 297
     ymax = 297
 
-    to_obs_res = True
-    ens_Interp_to_obs = True
+    to_obs_res = False
+    ens_Interp_to_obs = False
    
-    If_cal_pert_stddev = False
+    If_cal_pert_stddev = True
     If_save = True
     If_plot = False
     # -------------------------------------------------------    
@@ -907,16 +684,6 @@ if __name__ == '__main__':
     #        for var_name in v_interest:
     #            calculate_corr( DAtime, Hx_dir, sensor, ch_list, wrf_dir, var_name, If_save )
    
-    # Plot the correlations
-    if If_plot:
-        print('------------ Plot the correlation --------------')
-        for DAtime in IR_times:
-            Hx_dir = big_dir+Storm+'/'+Exper_name+'/Obs_Hx/IR/'+DAtime+'/'
-            wrf_dir = big_dir+Storm+'/'+Exper_name+'/fc/'+DAtime+'/'
-            print('At '+DAtime)
-            for var_name in v_interest:
-                print('Plot '+var_name+'...')
-                corr_cloud_3Dmodel( DAtime, Hx_dir, sensor, wrf_dir, small_dir, Storm, Exper_name, var_name )
 
 
 

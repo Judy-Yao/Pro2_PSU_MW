@@ -588,29 +588,29 @@ def read_RH( wrf_dir, H_of_interest ):
     for i in range(len(mean_dir)):
         file_name = mean_dir[i]
         ncdir = nc.Dataset( file_name )
+        z = getvar(ncdir, 'z', units='km')
+        #rh = getvar(ncdir, 'rh') !!!!!!!! Malfunction !!!!!!!!!!!!!!!!
         # full pressure
         p = ncdir.variables['P'][0,:,:,:] # perturbation
         pb = ncdir.variables['PB'][0,:,:,:]
-        full_p = p + pb
-        full_p = full_p.filled(np.nan)
+        full_p = (p + pb).filled(np.nan)
+        itp_p = interplevel(full_p, z, H_of_interest)
+        itp_p_np = itp_p.values
         # full T in kelvin
         theta = ncdir.variables['T'][0,:,:,:] # theta perturbation
-        full_theta = theta + 300
-        full_theta = full_theta.filled(np.nan)
+        full_theta = (theta + 300).filled(np.nan)
+        itp_theta = interplevel(full_theta, z, H_of_interest)
+        itp_theta_np = itp_theta.values
         # temperature in Kelvin
-        tk = UD.compute_tk( full_p, full_theta )
-        # water vapor
+        tmp_tk = UD.compute_tk( itp_p_np, itp_theta_np )
+        itp_tk = tmp_tk.reshape(itp_p.shape)
+        # qvapor
         qvapor = ncdir.variables['QVAPOR'][0,:,:,:]
-        qvapor_good = qvapor.filled(np.nan)
-        # dew point temperature
-        td = UD.compute_td( full_p, qvapor_good )
+        qvapor_filled = qvapor.filled(np.nan)  # Replaces masked values with NaN
+        itp_qv = interplevel(qvapor_filled, z, H_of_interest)
         # relative humidity
-        tmp_rh = UD.compute_rh_fromTkTd( tk, td )
-        rh = tmp_rh.reshape(full_p.shape)
-        #rh = getvar(ncdir, 'rh') !!!!!!!! Malfunction !!!!!!!!!!!!!!!!
-        # interpolate
-        z = getvar(ncdir, 'z', units='km')
-        rh_oneL[i,:,:] = interplevel(rh, z, H_of_interest)
+        tmp_rh = UD.njit_compute_rh( itp_p_np,itp_tk,itp_qv.values )
+        rh_oneL[i,:,:] = tmp_rh.reshape(itp_p.shape) 
 
     d_rh = {'lat':lat,'lon':lon,'rh':rh_oneL}
     return d_rh
@@ -1487,7 +1487,7 @@ if __name__ == '__main__':
     small_dir = '/work2/06191/tg854905/stampede2/Pro2_PSU_MW/'
 
     # -------- Configuration -----------------
-    Storm = 'HARVEY'
+    Storm = 'IRMA'
     DA = ['IR']   
     MP = 'WSM6' 
 
@@ -1507,8 +1507,8 @@ if __name__ == '__main__':
     # -----------------------------------------
 
     # Time range set up
-    start_time_str = '201708221200' #'201709030000'
-    end_time_str = '201708221200' #'201709030000'
+    start_time_str = '201709030000'
+    end_time_str = '201709030000'
     Consecutive_times = True
 
     if not Consecutive_times:

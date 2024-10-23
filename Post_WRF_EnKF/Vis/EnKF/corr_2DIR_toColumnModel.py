@@ -1,4 +1,3 @@
-#!/usr/bin/env python3
 
 from numba import njit, prange
 import os,sys,stat # functions for interacting with the operating system
@@ -19,7 +18,7 @@ from mpl_toolkits.axes_grid1 import make_axes_locatable
 import time
 import pickle
 import warnings
-import random
+from wrf import getvar, interplevel
 
 import Util_Vis
 import Util_data as UD
@@ -219,7 +218,7 @@ def plot_corr_snapshot( lat,lon,Interp_corr,ver_coor ):
 
     # Read location from TCvitals
     if any( hh in DAtime[8:10] for hh in ['00','06','12','18']):
-        tc_lon, tc_lat, tc_slp = UD.read_TCvitals(Storm, DAtime)
+        tc_lon, tc_lat, tc_slp = UD.read_TCvitals(small_dir,Storm, DAtime)
 
     # ------------------ Plot -----------------------
     fig, ax=plt.subplots(2, 3, subplot_kw={'projection': ccrs.PlateCarree()}, gridspec_kw = {'wspace':0, 'hspace':0}, linewidth=0.5, sharex='all', sharey='all',  figsize=(9.75,6.5), dpi=400)
@@ -230,8 +229,8 @@ def plot_corr_snapshot( lat,lon,Interp_corr,ver_coor ):
     lon_min = d_wrf_d03['lon_min']
     lon_max = d_wrf_d03['lon_max']
 
-    min_corr = -0.5
-    max_corr = 0.5
+    min_corr = -1
+    max_corr = 1
     for isub in range(6):
         ax.flat[isub].set_extent([lon_min, lon_max, lat_min, lat_max], crs=ccrs.PlateCarree())
         ax.flat[isub].coastlines(resolution='10m', color='black',linewidth=0.5)
@@ -322,29 +321,35 @@ def corr_snapshot( DAtime,var_name ):
    # Make interpolation
     if interp_H and not interp_P:
         ncdir = nc.Dataset( mean_xb, 'r')
-        H_of_interest = [1.0,3.0,5.0,7.0,9.0,11.0]
-        #H_of_interest = [3.5,4.0,5.0,7.0,9.0,11.0]
-        Interp_corr_xb_hxb = np.zeros( [len(H_of_interest),len(idx_xb)] )
-        PHB = ncdir.variables['PHB'][0,:,:,:]
-        PH = ncdir.variables['PH'][0,:,:,:]
-        geoHkm = (PHB+PH)/9.8/1000 # in km
-        geoHkm = geoHkm.reshape( geoHkm.shape[0],-1)
-        geoHkm_half_eta = (geoHkm[:-1]+geoHkm[1:])/2
-        geoHkm_half_eta = np.ma.getdata(geoHkm_half_eta)
+        #H_of_interest = [1.0,3.0,5.0,7.0,9.0,11.0]
+        H_of_interest = [1,2,3,4,5,6]
+        #Interp_corr_xb_hxb = np.zeros( [len(H_of_interest),len(idx_xb)] )
+        z = getvar(ncdir, 'z', units='km')
+        Interp_corr_xb_hxb = np.zeros( (len(H_of_interest),z.shape[1],z.shape[2]) )
+        #PHB = ncdir.variables['PHB'][0,:,:,:]
+        #PH = ncdir.variables['PH'][0,:,:,:]
+        #geoHkm = (PHB+PH)/9.8/1000 # in km
+        #geoHkm = geoHkm.reshape( geoHkm.shape[0],-1)
+        #geoHkm_half_eta = (geoHkm[:-1]+geoHkm[1:])/2
+        #geoHkm_half_eta = np.ma.getdata(geoHkm_half_eta)
         #print(np.amin(geoHkm_half_eta[0,:]),np.amax(geoHkm_half_eta[0,:]))
-        xlon = ncdir.variables['XLONG'][0,:,:].flatten()
-        xlat = ncdir.variables['XLAT'][0,:,:].flatten()
+        xlon = ncdir.variables['XLONG'][0,:,:]#.flatten()
+        xlat = ncdir.variables['XLAT'][0,:,:]#.flatten()
+        corr_colxb_hxb =  corr_colxb_hxb.reshape( (z.shape) )
         start_time=time.process_time()
-        for im in range( len(idx_xb) ):
-            f_interp = interpolate.interp1d( geoHkm_half_eta[:,im], corr_colxb_hxb[:,im])
-            Interp_corr_xb_hxb[:,im] = f_interp( H_of_interest )
+        for ih in H_of_interest:
+            Interp_corr_xb_hxb[H_of_interest.index(ih),:,:] = interplevel(corr_colxb_hxb, z, ih)
+        #for im in range( len(idx_xb) ):
+        #    f_interp = interpolate.interp1d( geoHkm_half_eta[:,im], corr_colxb_hxb[:,im])
+        #    Interp_corr_xb_hxb[:,im] = f_interp( H_of_interest )
         end_time = time.process_time()
         print ('time needed for the interpolation: ', end_time-start_time, ' seconds')
         print('Min of correlation: '+str(np.amin( Interp_corr_xb_hxb )))
         print('Max of correlation: '+str(np.amax( Interp_corr_xb_hxb )))        
 
         if If_plot_corr_snapshot:
-            plot_corr_snapshot( xlat[idx_xb],xlon[idx_xb],Interp_corr_xb_hxb,H_of_interest )
+            #plot_corr_snapshot( xlat[idx_xb],xlon[idx_xb],Interp_corr_xb_hxb,H_of_interest )
+            plot_corr_snapshot( xlat,xlon,Interp_corr_xb_hxb,H_of_interest )
     
     elif interp_P and not interp_H:
         # pressure levels
@@ -657,15 +662,15 @@ if __name__ == '__main__':
     # ---------- Configuration -------------------------
     Storm = 'IRMA'
     DA = 'IR'
-    MP = 'WSM6'
+    MP = 'THO'
 
-    v_interest = [ 'QCLOUD','QICE','QRAIN','QSNOW','QGRAUP','QVAPOR','W',]#'rt_vo']
+    v_interest = [ 'QVAPOR',]#'rt_vo']
     sensor = 'abi_gr'
     ch_list = ['8',]
     fort_v = ['obs_type','lat','lon','obs']
 
-    start_time_str = '201709030000'
-    end_time_str = '201709031200'
+    start_time_str = '201709030500'
+    end_time_str = '201709030500'
     Consecutive_times = True
 
     # Number of ensemble members
@@ -675,7 +680,7 @@ if __name__ == '__main__':
     ymax = 297
    
     # field on model/obs locations 
-    to_obs_res = True
+    to_obs_res = False
 
     interp_P = False
     P_range = np.arange( 995,49,-20 )
@@ -683,19 +688,18 @@ if __name__ == '__main__':
     H_range = np.arange(0,31,1)
 
     # limitations
-    limit = True
+    limit = False
     if limit:  
         num_limit = 3
 
-    If_cal_corr = False
+    If_cal_corr = True
     If_save = True
 
-    If_plot_corr_snapshot = False
-    If_plot_meanCorr = True
+    If_plot_corr_snapshot = True
+    If_plot_meanCorr = False
     # -------------------------------------------------------    
     
-    Exper_name = 'IR-updateW-J_DA+J_WRF+J_init-SP-intel17-WSM6-30hr-hroi900'#UD.generate_one_name( Storm,DA,MP )
-    # 'IR-updateW-J_DA+J_WRF+J_init-SP-intel17-WSM6-30hr-hroi900'
+    Exper_name = UD.generate_one_name( Storm,DA,MP )
 
     if not Consecutive_times:
         DAtimes = ['201709160600','201709161200','201709161800','201709170000','201709170600','201709171200','201709171800','201709180000']
@@ -704,37 +708,6 @@ if __name__ == '__main__':
         time_diff_hour = time_diff.total_seconds() / 3600
         time_interest_dt = [datetime.strptime(start_time_str,"%Y%m%d%H%M") + timedelta(hours=t) for t in list(range(0, int(time_diff_hour)+1, 1))]
         DAtimes = [time_dt.strftime("%Y%m%d%H%M") for time_dt in time_interest_dt]
-
-
-    ## Interpolate simulated Tb at model resolution to obs resolution
-    #if ens_Interp_to_obs:
-    #    print('------- For all members, interpolate Hx in model resolution to obs location ------')
-    #    for DAtime in DAtimes:
-    #        # Read assimilated obs 
-    #        file_Diag = big_dir+Storm+'/'+Exper_name+'/run/'+DAtime+'/enkf/d03/fort.10000'
-    #        d_obs = Diag.Find_IR( file_Diag, fort_v )
-    #        # Interpolate
-    #        Hx_dir = big_dir+Storm+'/'+Exper_name+'/Obs_Hx/IR/'+DAtime+'/'
-    #        stat_3D.interp_simu_to_obs_matlab_ens( d_obs, Hx_dir, sensor, ch_list,  DAtime )
-
-    ## Calculate ensemble perturbations and variances
-    #if If_cal_pert_stddev:
-    #    print('------------ Calculate the ensemble perturbations --------------')
-    #    for DAtime in DAtimes:
-    #        # Hxb
-    #        Hx_dir = big_dir+Storm+'/'+Exper_name+'/Obs_Hx/IR/'+DAtime+'/'
-    #        wrf_dir = big_dir+Storm+'/'+Exper_name+'/fc/'+DAtime+'/'
-    #        if to_obs_res:
-    #            print('At obs space...')
-    #            stat_3D.cal_pert_stddev_obsRes_Hxb( DAtime, sensor, Hx_dir, If_save, fort_v, to_obs_res, wrf_dir)
-    #        else:
-    #            print('At model space...')
-    #            stat_3D.cal_pert_stddev_modelRes_Hxb( DAtime, sensor, Hx_dir, If_save, wrf_dir)
-    #        # Xb
-    #        wrf_dir = big_dir+Storm+'/'+Exper_name+'/fc/'+DAtime+'/'
-    #        for var_name in v_interest:
-    #            stat_3D.cal_pert_stddev_xb( DAtime, wrf_dir, var_name, If_save )
-
 
     # Calculate correlations between obs and their nearest model columns
     if If_cal_corr:

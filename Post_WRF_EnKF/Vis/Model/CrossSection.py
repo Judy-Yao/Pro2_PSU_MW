@@ -118,6 +118,11 @@ def var_cross( var_name,wrf_files ):
             geoHkm_half = (geoHkm[:-1,:,:]+geoHkm[1:,:,:])/2
             ver_coor_tmp = np.ma.getdata(geoHkm_half)
 
+        # Get a line in ij space connecting the start and end point 
+        xy_line = UWP.xy_edit(ver_coor_tmp, start_point=st_p, end_point=ed_p) # return: [[i,j]]
+        ver_coor = interp2dxy(ver_coor_tmp, xy_line)
+        ver_coor = np.mean(ver_coor,axis=1)
+
         # Variable of interest
         if var_name == 'hroi_wind':
             u_tmp = ncdir.variables['U'][0,:,:,:]
@@ -125,25 +130,40 @@ def var_cross( var_name,wrf_files ):
             v_tmp = ncdir.variables['V'][0,:,:,:]
             v_var = (v_tmp[:,:-1,:]+v_tmp[:,1:,:])/2
             var = (u_var ** 2 + v_var ** 2) ** 0.5
+            var_cross = interp2dxy(var, xy_line)
         elif var_name == 'W':
             tmp = ncdir.variables['W'][0,:,:,:]
             var = (tmp[:-1,:,:]+tmp[1:,:,:])/2
-        elif var_name == 'rh':
-            td = getvar(ncdir, 'td', units='K') 
-            temp = getvar(ncdir, 'temp', units='K')
+            var_cross = interp2dxy(var, xy_line)
+        elif var_name == 'RH':
+            # full pressure
+            p = ncdir.variables['P'][0,:,:,:] # perturbation
+            pb = ncdir.variables['PB'][0,:,:,:]
+            full_p = (p + pb).filled(np.nan)
+            itp_p = interp2dxy(full_p, xy_line)
+            itp_p_np = itp_p.values
+            # full T in kelvin
+            theta = ncdir.variables['T'][0,:,:,:] # theta perturbation
+            full_theta = (theta + 300).filled(np.nan)
+            itp_theta = interp2dxy(full_theta, xy_line)
+            itp_theta_np = itp_theta.values
+            # temperature in Kelvin
+            tmp_tk = UD.compute_tk( itp_p_np, itp_theta_np )
+            itp_tk = tmp_tk.reshape(itp_p.shape)
+            # qvapor
+            qvapor = ncdir.variables['QVAPOR'][0,:,:,:]
+            qvapor_filled = qvapor.filled(np.nan)  # Replaces masked values with NaN
+            itp_qv = interp2dxy(qvapor_filled, xy_line)
+            # relative humidity
+            var = UD.njit_compute_rh( itp_p_np,itp_tk,itp_qv.values )
+            var_cross = var.reshape(itp_p.shape)
         elif var_name == 'QVAPOR':
             var = getvar(ncdir, 'QVAPOR')
+            var_cross = interp2dxy(var, xy_line)
         elif var_name == 'PT':
             tmp = ncdir.variables['T'][0,:,:,:] # potential temperature 
             var = tmp + 300 # potential temperature  
-
-        # Get a line in ij space connecting the start and end point 
-        xy_line = UWP.xy_edit(var, start_point=st_p, end_point=ed_p) # return: [[i,j]]
-    
-        # Compute the vertical cross-section interpolation for var and for coordinate
-        var_cross = interp2dxy(var, xy_line)
-        ver_coor = interp2dxy(ver_coor_tmp, xy_line)
-        ver_coor = np.mean(ver_coor,axis=1)
+            var_cross = interp2dxy(var, xy_line)
 
         # Transform from ij space to lat/lon space
         ll_pair = [] #lat/lon
@@ -178,12 +198,12 @@ def plot_var_cross( wrf_files,var_name,d_var ):
             ll_pair = d_var['output']['ll_pair']
             ver_coor = d_var['output']['ver_coor']
         
-        if along_lon: 
-            x_axis_rg = range(len(ll_pair))
-            dis_center = []
-            for it in ll_pair:
-                dis_center.append( (it[0]-center[0])**2+(it[1]-center[1])**2)
-            idx_center = np.argmin( dis_center )
+        x_axis_rg = range(len(ll_pair))
+
+        dis_center = []
+        for it in ll_pair:
+            dis_center.append( (it[0]-center[0])**2+(it[1]-center[1])**2)
+        idx_center = np.argmin( dis_center )
 
         # y axis: model vertical coordinate
         if use_pressure:
@@ -216,9 +236,22 @@ def plot_var_cross( wrf_files,var_name,d_var ):
         elif 'Q' in var_name:
             bounds = 10.**np.arange(-6,0,1)
             cmap = 'ocean_r'
-        elif 'rh' in var_name:
-            bounds = [40,50,60,70,80,90,100] 
-            cmap = 'Greens'
+        elif 'RH' in var_name:
+            bounds = [0,10, 20, 30, 40, 60, 70, 80, 90,100]
+            cmap = mcolors.LinearSegmentedColormap.from_list(
+                'custom_cmap',
+                [
+                    (0.0, '#8b6c5c'),  # Darker brown for values below 10%
+                    (1/7, '#bca89f'),  # Dark brown at 10%
+                    (2/7, '#d8cbc4'),  # Light brown at 40%
+                    (3/7, '#ffffff'),  # White at 40-60%
+                    (4/7, '#cce7c9'),  # Light green at 60%
+                    (5/7, '#8bca84'),  # Dark green at 90%
+                    (6/7, '#5bb450'),   # Darker green for values above 90%
+                    (1.0, '#276221')
+                ]
+            )
+            norm = mcolors.BoundaryNorm(bounds, cmap.N)
         elif 'PT' in var_name:
             bounds = [290,300,310,320,330]
             cmap = 'jet'
@@ -228,16 +261,29 @@ def plot_var_cross( wrf_files,var_name,d_var ):
             value = d_var['input'][var_name]
         else:
             value = d_var['output'][var_name] 
-        xc = ax[i].contourf( xcoor,ycoor,to_np(value),cmap=cmap,levels=bounds,extend='both')
-        #xc = ax[i].contourf( xcoor,ycoor,to_np(value),cmap=cmap,)
+        
+        if 'RH' in var_name:
+            xc = ax[i].contourf( xcoor,ycoor,to_np(value),cmap=cmap,norm=norm,levels=bounds)
+            # Add the color bar
+            cbaxes = fig.add_axes([0.92, 0.1, 0.03, 0.8])
+            cbar = fig.colorbar(xc,cax=cbaxes,fraction=0.046, pad=0.04)
+            cbar.ax.tick_params(labelsize=15)
+        else:
+            xc = ax[i].contourf( xcoor,ycoor,to_np(value),cmap=cmap,levels=bounds,extend='both')
+            #xc = ax[i].contourf( xcoor,ycoor,to_np(value),cmap=cmap,)
+            # Add the color bar
+            cbaxes = fig.add_axes([0.92, 0.1, 0.03, 0.8])
+            cbar = fig.colorbar(xc,cax=cbaxes,fraction=0.046, pad=0.04)
+            cbar.ax.tick_params(labelsize=15)
+
         ax[i].axvline(x=idx_center,color='k',linestyle='-',linewidth=2)
 
         # Set the x-ticks to use latitude and longitude labels.
         x_ticks = x_axis_rg
         fmt="{:.1f}, {:.1f}"
         x_labels = [fmt.format(pair[0],pair[1]) for pair in np.array(ll_pair)]
-        ax[i].set_xticks(x_ticks[::20])
-        ax[i].set_xticklabels(x_labels[::20], rotation=15, fontsize=12)
+        ax[i].set_xticks(x_ticks[::40])
+        ax[i].set_xticklabels(x_labels[::40], rotation=15, fontsize=12)
 
         f_yinterp = interpolate.interp1d( y_range, y_axis_rg)
         y_ticks = f_yinterp( ver_coor )
@@ -256,11 +302,6 @@ def plot_var_cross( wrf_files,var_name,d_var ):
         ax[i].set_ylim(ymin=0,ymax=20) # cut off data above 25km   
 
 
-    # Add the color bar
-    cbaxes = fig.add_axes([0.92, 0.1, 0.03, 0.8])
-    cbar = fig.colorbar(xc,cax=cbaxes,fraction=0.046, pad=0.04)
-    cbar.ax.tick_params(labelsize=15)
-
     if 'hroi_wind' in var_name:
         xb_title = 'Xb:'+var_name+' (m/s)'
         xa_title = 'Xa:'+var_name+' (m/s)'
@@ -270,7 +311,7 @@ def plot_var_cross( wrf_files,var_name,d_var ):
     elif 'Q' in var_name:
         xb_title = 'Xb:'+var_name+' (kg/kg)'
         xa_title = 'Xa:'+var_name+' (kg/kg)'
-    elif 'rh' in var_name:
+    elif 'RH' in var_name:
         xb_title = 'Xb:'+var_name+' (%)'
         xa_title = 'Xa:'+var_name+' (%)'    
     elif 'PT' in var_name:
@@ -289,10 +330,14 @@ def plot_var_cross( wrf_files,var_name,d_var ):
     fig.suptitle(title_name, fontsize=15, fontweight='bold')
 
     # Save figures
-    figure_des=plot_dir+DAtime+'_'+var_name+'_CrossSection.png'
+    if along_lon:
+        figure_des=plot_dir+DAtime+'_'+var_name+'_CrossSection_alongLon.png'
+    else:
+        figure_des=plot_dir+DAtime+'_'+var_name+'_CrossSection_alongLat.png'
     plt.savefig(figure_des, dpi=400)
     print('Saving the figure: ', figure_des)
 
+    plt.close()
 
 
 if __name__ == '__main__':
@@ -303,11 +348,11 @@ if __name__ == '__main__':
     # ---------- Configuration -------------------------
     Storm = 'IRMA'
     MP = 'WSM6'
-    DA = 'IR'
-    v_interest = ['PT'] #['hroi_wind','rh']
+    DA = 'CONV'
+    v_interest = ['RH'] #['hroi_wind','RH']
 
     start_time_str = '201709030000'
-    end_time_str = '201709030000'
+    end_time_str = '201709031200'
     Consecutive_times = True
 
     # model dimension
@@ -318,7 +363,7 @@ if __name__ == '__main__':
     # Specify cross section location
     cut_segment = False
     radius = 200 #km
-    along_lon = True
+    along_lon = False
 
     use_pressure = False
     if_plot = True
