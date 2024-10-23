@@ -8,7 +8,6 @@ import Util_data as UD
 
 
 
-
 # Generate time series
 def generate_times( Storms, start_time_str, end_time_str, interval ):
 
@@ -129,15 +128,15 @@ if __name__ == '__main__':
     small_dir = '/work2/06191/tg854905/stampede2/Pro2_PSU_MW/'
 
     # ------------Configuration------------------
-    Storms = ['HARVEY','IRMA','JOSE','MARIA']
-    MP = ['WSM6','THO']
-    DA = ['CONV','IR','IR+MW']
+    Storms =  ['IRMA',] #['HARVEY','IRMA','JOSE','MARIA']
+    MP = ['WSM6',] #'THO']
+    DA = ['IR',] #['CONV','IR','IR+MW']
 
-    start_time_str = {'HARVEY':'201708231200','IRMA':'201709040000','JOSE':'201709060000','MARIA':'201709170000'}
-    end_time_str = {'HARVEY':'201708241200','IRMA':'201709050000','JOSE':'201709070000','MARIA':'201709180000'}
+    start_time_str = {'HARVEY':'201708231200','IRMA':'201709030000','JOSE':'201709060000','MARIA':'201709170000'}
+    end_time_str = {'HARVEY':'201708241200','IRMA':'201709040000','JOSE':'201709070000','MARIA':'201709180000'}
 
     # action
-    analysis = False
+    analysis = True
 
     # -------------------------------------------
 

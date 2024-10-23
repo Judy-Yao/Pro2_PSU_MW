@@ -927,25 +927,27 @@ def compute_slp( ncdir ):
     # full pressure
     p = ncdir.variables['P'][0,:,:,:] # perturbation
     pb = ncdir.variables['PB'][0,:,:,:]
-    full_p = p + pb 
+    full_p = p + pb
+    full_p = full_p.filled(np.nan)
     # full T in kelvin
     theta = ncdir.variables['T'][0,:,:,:] # theta perturbation
-    full_theta = theta + 300 
-    full_t = compute_tk( full_p, full_theta )
-    full_t = full_t.reshape( (theta.shape[0],theta.shape[1],theta.shape[2]) )
+    full_theta = theta + 300
+    full_theta = full_theta.filled(np.nan)
+    full_tk = compute_tk( full_p, full_theta )
     # geopotential height
     ph = ncdir.variables['PH'][0,:,:,:] # perturbation
     phb = ncdir.variables['PHB'][0,:,:,:]
     full_ph = (ph+phb)/G # in meter
     destag_ph = destagger(full_ph, -3) # destagger ph from nLevel=43 to nLevel=42
+    destag_ph = destag_ph.filled(np.nan)
     # qvapor
     qvapor = ncdir.variables['QVAPOR'][0,:,:,:] 
-    
+    qvapor_filled = qvapor.filled(np.nan)  # Replaces masked values with NaN 
     # prepare
     z = destag_ph
-    t = full_t
+    t = full_tk
     p = full_p
-    q = qvapor
+    q = qvapor_filled
 
     # Find least zeta level that is PCONST Pa above the surface.  We
     # later use this level to extrapolate a surface pressure and
@@ -990,8 +992,6 @@ def compute_slp( ncdir ):
     sea_level_pressure = sea_level_pressure.reshape( (NX,NY) )
     return sea_level_pressure
 
-
-
 if __name__ == '__main__':
    
     small_dir = '/expanse/lustre/projects/pen116/zuy121/Pro5_BP_OSSE/' 
@@ -1000,36 +1000,5 @@ if __name__ == '__main__':
     read_adeck_model( storm,'HWRF' )
     end_time = time.process_time()
     print ('time needed: ', end_time-start_time, ' seconds')
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 

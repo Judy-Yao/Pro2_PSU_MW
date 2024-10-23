@@ -391,8 +391,18 @@ if __name__ == '__main__':
     for DAtime in DAtimes:
         wrf_dir = big_dir+Storm+'/'+Exper_name+'/fc/'+DAtime+'/'
         wrf_files = [wrf_dir+'/wrf_enkf_input_d03_mean',wrf_dir+'/wrf_enkf_output_d03_mean']
-        start_time=time.process_time()
+
+    # Loop through each DAtime/analysis
+    for DAtime in DAtimes:
+        wrf_dir = big_dir+Storm+'/'+Exper_name+'/fc/'+DAtime
+        print('Reading WRF background and analysis: ', wrf_dir)
+        DAtime_dt = datetime.strptime( DAtime, '%Y%m%d%H%M' )
+
         for var_name in v_interest:
-            var_cross( var_name,wrf_files ) 
-        end_time = time.process_time()
-        print ('time needed: ', end_time-start_time, ' seconds')
+            # ------ Plot -------------------
+            plot_dir = plot_dir+var_name
+            plotdir_exists = os.path.exists( plot_dir )
+            if plotdir_exists == False:
+                os.mkdir(plot_dir)
+
+                var_cross( var_name,wrf_files ) 

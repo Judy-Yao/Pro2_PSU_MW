@@ -18,6 +18,7 @@ from cartopy import crs as ccrs
 from cartopy.mpl.gridliner import LONGITUDE_FORMATTER, LATITUDE_FORMATTER
 from mpl_toolkits.axes_grid1 import make_axes_locatable
 import time
+import subprocess
 #import metpy.calc as mpcalc
 #from metpy.units import units
 #import numpy.ma as ma
@@ -41,6 +42,61 @@ def d03_domain( wrfout_d03 ):
 
     d03_list = [d03_lon_min, d03_lon_max, d03_lat_min, d03_lat_max]
     return d03_list
+
+# Obtain assimilated min slp from fort.10000
+def assimilated_obs(big_dir,storm,Exper_name,DAtime,d_field):
+
+    # collect assimilated min slp obs from TCvital record in fort.10000
+    diag_enkf = big_dir+storm+'/'+Exper_name+'/run/'+DAtime+'/enkf/d03/fort.10000'
+    print('Reading the EnKF diagnostics from ', diag_enkf)
+    enkf_minSlp = subprocess.run(["grep","slp",diag_enkf],stdout=subprocess.PIPE,text=True)
+    list_enkf_minSlp = enkf_minSlp.stdout.split()
+    # condition on the number of assimilated min slp
+    if list_enkf_minSlp.count('slp') == 0 :
+        raise ValueError('No min slp is assimilated!')
+    elif list_enkf_minSlp.count('slp') == 1 :
+        obs_mslp_lat =  float(list_enkf_minSlp[1]) 
+        obs_mslp_lon = float(list_enkf_minSlp[2]) 
+        obs_mslp =  float(list_enkf_minSlp[9])/100 
+    else : # at least two min slp records are assimilated
+        print('At least two min slp obs are assimilated!')
+        # find the index of the current time
+        idx_time = DAtimes.index( DAtime )
+        # assemble the diagnosed min slp from an analysis
+        xa_ms_lat = d_field['lon'] 
+        xa_ms_lon = d_field['lat']
+        # ---condition 1: find the nearest TCvital min slp from the analysis
+        # find the index/location of 'slp' in fort.10000
+        indices = [i for i ,e in enumerate(list_enkf_minSlp) if e == 'slp']
+        # assemble a pair of coordinate for each 'slp'
+        distances = []
+        obs_slp = []
+        for it in indices:
+            obs_slp.append( float(list_enkf_minSlp[it+9]) )
+            lon1 = float(list_enkf_minSlp[it+2])
+            lat1 = float(list_enkf_minSlp[it+1])
+            distances.append( UD.mercator_distance(lon1, lat1, xa_ms_lon, xa_ms_lat) )
+        min_distances = [np.amin(distances) == it for it in distances]
+        idx_nearest = min_distances.index(True)
+        # ---condition 2: the min slp
+        min_obs_slp = [np.amin(obs_slp) == it for it in obs_slp]
+        idx_min = min_obs_slp.index(True)
+        # ---combine the two conditions
+        if idx_min == idx_nearest:
+            idx_coor = idx_min
+            print('Storm center is choosed with two condtions met!')
+        else:
+            print('Not sure which obs is the storm center. Go with the min value one!')
+            idx_coor = idx_min
+        # gather this TCvital min slp
+        obs_mslp_lat = float(list_enkf_minSlp[indices[idx_coor]+1]) 
+        obs_mslp_lon = float(list_enkf_minSlp[indices[idx_coor]+2]) 
+        obs_mslp = float(list_enkf_minSlp[indices[idx_coor]+9])/100 
+
+    # Assemble the dictionary
+    d_obs = {'lon':obs_mslp_lon,'lat':obs_mslp_lat,'mslp':obs_mslp}
+    return d_obs
+
 
 # ------------------------------------------------------------------------------------------------------
 #           Operation: Read, process, and plot precipitable water per snapshot
@@ -174,6 +230,130 @@ def IC_water( Storm, Exper_name, DAtimes, big_dir, small_dir ):
         else:
             plot_IC_water( Storm, Exper_name, DAtime, wrf_dir, plot_dir )
 
+
+# ------------------------------------------------------------------------------------------------------
+#           Operation: Read, process, and plot psfc per snapshot
+# ------------------------------------------------------------------------------------------------------
+def read_PSFC( wrf_dir ):
+
+    # set file names for background and analysis
+    mean_dir = [wrf_dir+'/wrf_enkf_input_d03_mean',wrf_dir+'/wrf_enkf_output_d03_mean']
+    # read the shared variables: lat/lon
+    ncdir = nc.Dataset( mean_dir[0] )
+    lat = ncdir.variables['XLAT'][0,:,:]
+    lon = ncdir.variables['XLONG'][0,:,:]
+    # calculate IC water
+    psfc = np.zeros( [len(mean_dir), np.size(lat,0), np.size(lat,1)] )
+    for i in range(len(mean_dir)):
+        file_name = mean_dir[i]
+        ncdir = nc.Dataset( file_name )
+        psfc[i,:,:] = ncdir.variables['PSFC'][0,:,:]/100
+
+    d_psfc = {'lat':lat,'lon':lon,'psfc':psfc}
+    return d_psfc
+
+def plot_psfc( Storm, Exper_name, DAtime, wrf_dir, plot_dir ):
+
+    # Read storm center
+    dict_btk = UD.read_bestrack(small_dir,Storm)
+    # Find the best-track position
+    btk_dt = [it_str for it_str in dict_btk['time'] ]#[datetime.strptime(it_str,"%Y%m%d%H%M") for it_str in dict_btk['time']]
+    bool_match = [DAtime == it for it in btk_dt]
+    if True in bool_match:
+        if_btk_exist = True
+        idx_btk = np.where( bool_match )[0][0] # the second[0] is due to the possibility of multiple records at the same time
+    else:
+        if_btk_exist = False
+    
+    # ------ Read WRFout -------------------
+    d_field = read_PSFC( wrf_dir )
+
+    lat = d_field['lat']
+    lon = d_field['lon']
+    psfc = d_field['psfc']
+
+    lat_min = np.amin( lat )
+    lon_min = np.amin( lon )
+    lat_max = np.amax( lat )
+    lon_max = np.amax( lon )
+    min_psfc = np.min( psfc )
+    max_psfc = np.max( psfc )
+
+    # ------ Plot Figure -------------------
+    fig, ax=plt.subplots(1, 2, subplot_kw={'projection': ccrs.PlateCarree()}, gridspec_kw = {'wspace':0, 'hspace':0}, linewidth=0.5, sharex='all', sharey='all',  figsize=(12,6), dpi=400)
+
+    min_psfc = 950 #970
+    max_psfc = 1010 #1015
+    bounds = np.linspace(min_psfc, max_psfc, 7)
+
+    mpsfc = []
+    for i in range(2):
+        ax[i].set_extent([lon_min,lon_max,lat_min,lat_max], crs=ccrs.PlateCarree())
+        ax[i].coastlines (resolution='10m', color='black', linewidth=1)
+        psfc_contourf = ax[i].contourf(lon,lat,psfc[i,:,:],cmap='inferno',vmin=min_psfc,vmax=max_psfc,levels=bounds,extend='both',transform=ccrs.PlateCarree())
+        # Mark the best track
+        if if_btk_exist:
+            ax[i].scatter(dict_btk['lon'][idx_btk],dict_btk['lat'][idx_btk], 20, 'green', marker='*',transform=ccrs.PlateCarree())
+
+        # Mask the simulated storm center
+        mpsfc.append( np.nanmin( psfc[i,:,:] ))
+        idx = np.nanargmin( psfc[i,:,:].flatten() )
+        lat_min_psfc = lat.flatten()[idx] 
+        lon_min_psfc = lon.flatten()[idx] 
+        ax[i].scatter(lon_min_psfc,lat_min_psfc,20, 'green', marker='s',transform=ccrs.PlateCarree())
+
+    # Adding the colorbar
+    caxes = fig.add_axes([0.2, 0.05, 0.6, 0.02])
+    psfc_bar = fig.colorbar(psfc_contourf,  orientation="horizontal", cax=caxes)
+    #rtvo_bar.ax.set_xlabel('Sea Level Pressure (hPa)',fontsize=8)
+    #rtvo_bar.ax.tick_params(labelsize='10')
+
+    # Title
+    ax[0].set_title( 'Xb--min psfc: '+str("{0:.3f}".format(mpsfc[0]))+' hPa',  fontweight='bold') #, fontsize=12)   
+    ax[1].set_title( 'Xa--min psfc: '+str("{0:.3f}".format(mpsfc[1]))+' hPa',  fontweight='bold') #, fontsize=12)
+    fig.suptitle(Storm+': '+Exper_name+'('+DAtime+')', fontsize=12, fontweight='bold')
+
+    # Axis labels
+    lon_ticks = list(range(math.ceil(lon_min), math.ceil(lon_max),2))
+    lat_ticks = list(range(math.ceil(lat_min), math.ceil(lat_max),2))
+    for j in range(2):
+        gl = ax[j].gridlines(crs=ccrs.PlateCarree(),draw_labels=False,linewidth=0.1, color='gray', alpha=0.5, linestyle='--')
+        gl.top_labels = False
+        gl.bottom_labels = True
+        if j==0:
+            gl.left_labels = True
+            gl.right_labels = False
+        else:
+            gl.left_labels = False
+            gl.right_labels = False
+        gl.ylocator = mticker.FixedLocator(lat_ticks)
+        gl.xlocator = mticker.FixedLocator(lon_ticks)
+        gl.xformatter = LONGITUDE_FORMATTER
+        gl.yformatter = LATITUDE_FORMATTER
+        gl.xlabel_style = {'size': 12}
+        gl.ylabel_style = {'size': 12}
+
+    plt.savefig( plot_dir+DAtime+'_psfc.png', dpi=300 )
+    print('Saving the figure: ', plot_dir+DAtime+'_psfc.png')
+    plt.close()
+
+
+def PSFC( Storm, Exper_name, DAtimes, big_dir, small_dir ):
+
+    # Loop through each DAtime/analysis
+    for DAtime in DAtimes:
+        wrf_dir = big_dir+Storm+'/'+Exper_name+'/fc/'+DAtime
+        print('Reading WRF background and analysis: ', wrf_dir)
+        DAtime_dt = datetime.strptime( DAtime, '%Y%m%d%H%M' )
+        # ------ Plot -------------------
+        plot_dir = small_dir+Storm+'/'+Exper_name+'/Vis_analyze/Model/PSFC/'
+        plotdir_exists = os.path.exists( plot_dir )
+        if plotdir_exists == False:
+            os.mkdir(plot_dir)
+            plot_psfc( Storm, Exper_name, DAtime, wrf_dir, plot_dir )
+        else:
+            plot_psfc( Storm, Exper_name, DAtime, wrf_dir, plot_dir )
+
 # ------------------------------------------------------------------------------------------------------
 #           Operation: Read, process, and plot slp per snapshot
 # ------------------------------------------------------------------------------------------------------
@@ -200,8 +380,6 @@ def slp_plt( Storm, Exper_name, DAtime, wrf_dir, plot_dir ):
     lon_minslp = d_field['lon_minslp']
     mslp = d_field['min_slp']
 
-    print( lon_minslp,lat_minslp )
-
     lat_min = np.amin( lat )
     lon_min = np.amin( lon )
     lat_max = np.amax( lat )
@@ -209,22 +387,26 @@ def slp_plt( Storm, Exper_name, DAtime, wrf_dir, plot_dir ):
     min_slp = np.min( slp )
     max_slp = np.max( slp )
 
+    # ----- Read assimilated obs -----------
+    d_obs = assimilated_obs(big_dir,Storm,Exper_name,DAtime,d_field )
+
     # ------ Plot Figure -------------------
     fig, ax=plt.subplots(1, 2, subplot_kw={'projection': ccrs.PlateCarree()}, gridspec_kw = {'wspace':0, 'hspace':0}, linewidth=0.5, sharex='all', sharey='all',  figsize=(12,6), dpi=400)
 
-    min_slp = 990
-    max_slp = 1015
-    bounds = np.linspace(min_slp, max_slp, 6)
+    min_slp = 950 #970
+    max_slp = 1010 #1015
+    bounds = np.linspace(min_slp, max_slp, 7) 
     for i in range(2):
         ax[i].set_extent([lon_min,lon_max,lat_min,lat_max], crs=ccrs.PlateCarree())
         ax[i].coastlines (resolution='10m', color='black', linewidth=1)
         slp_contourf = ax[i].contourf(lon,lat,slp[i,:,:],cmap='inferno',vmin=min_slp,vmax=max_slp,levels=bounds,extend='both',transform=ccrs.PlateCarree())
         # Mark the best track
         if if_btk_exist:
-            ax[i].scatter(dict_btk['lon'][idx_btk],dict_btk['lat'][idx_btk], 20, 'green', marker='*',transform=ccrs.PlateCarree())
-        
+            ax[i].scatter(dict_btk['lon'][idx_btk],dict_btk['lat'][idx_btk], 20, 'blue', marker='*',transform=ccrs.PlateCarree())
+       # Mark the TCvital
+        ax[i].scatter(d_obs['lon'],d_obs['lat'], 20, 'green', marker='*',transform=ccrs.PlateCarree())
         # Mask the simulated storm center
-        ax[i].scatter(lon_minslp[i],lat_minslp[i],20, 'green', marker='s',transform=ccrs.PlateCarree())
+        ax[i].scatter(lon_minslp[i],lat_minslp[i],20, 'green', marker='o',transform=ccrs.PlateCarree())
 
     # Adding the colorbar
     caxes = fig.add_axes([0.2, 0.05, 0.6, 0.02])
@@ -303,13 +485,15 @@ def read_UV10_slp( DAtime, wrf_dir ):
         file_name = mean_dir[i]
         ncdir = nc.Dataset( file_name )
         # sea level pressure
-        slp = getvar(ncdir, 'slp')
+        #slp = getvar(ncdir, 'slp')
+        slp = UD.compute_slp( ncdir )
+        #print( np.amax( abs(slp - slp_getvar.values )) )
         # original SLP
-        slp_values = slp.values
+        slp_values = slp #slp.values
         slp_values[slp_values > 1030] = np.nan
         slp_original[i,:,:] = slp_values
         # smoothed SLP
-        slp_smt_values = sp.ndimage.gaussian_filter(slp, [11,11]) #[11,11]
+        slp_smt_values = slp #sp.ndimage.gaussian_filter(slp, [1,1]) #[11,11]
         slp_smt_values[slp_smt_values > 1030] = np.nan
         slp_smooth[i,:,:] = slp_smt_values
         # simulated storm center
@@ -1489,11 +1673,11 @@ if __name__ == '__main__':
     # -------- Configuration -----------------
     Storm = 'IRMA'
     DA = ['IR']   
-    MP = 'WSM6' 
+    MP = 'THO' 
 
     Plot_Precip = False       # Accumulated total grid scale precipitation
     Plot_IC_water = False
-    Plot_RH = True
+    Plot_RH = False
     Plot_qvapor = False
     Plot_Temp = False
     Plot_dewT = False
@@ -1501,6 +1685,7 @@ if __name__ == '__main__':
     Plot_slp = False
     Plot_UV10_slp = False
     Plot_minslp_evo = False
+    Plot_PSFC = True
     Plot_rtvo = False
     Plot_divergence = False
 
@@ -1508,7 +1693,7 @@ if __name__ == '__main__':
 
     # Time range set up
     start_time_str = '201709030000'
-    end_time_str = '201709030000'
+    end_time_str = '201709040000'
     Consecutive_times = True
 
     if not Consecutive_times:
@@ -1532,6 +1717,14 @@ if __name__ == '__main__':
         for iExper in Expers:
             start_time=time.process_time()
             plot_slp( Storm, iExper, DAtimes, big_dir, small_dir )
+            end_time = time.process_time()
+            print ('time needed: ', end_time-start_time, ' seconds')
+
+    # Plot PSFC (surface pressure)
+    if Plot_PSFC:
+        for iExper in Expers:
+            start_time=time.process_time()
+            PSFC( Storm, iExper, DAtimes, big_dir, small_dir )
             end_time = time.process_time()
             print ('time needed: ', end_time-start_time, ' seconds')
 

@@ -158,9 +158,10 @@ def find_minSLP( Storm, wrfout, DAtime ):
     lat = ncdir.variables['XLAT'][0,:,:]
     lon = ncdir.variables['XLONG'][0,:,:]
     # sea level pressure
-    slp = getvar(ncdir, 'slp')
+    slp = UD.compute_slp( ncdir )
+    #slp = getvar(ncdir, 'slp')
     # original SLP
-    slp_values = slp.values
+    slp_values = slp #slp.values
     slp_values[slp_values > 1030] = np.nan
     # smoothed SLP
     slp_smt_values = sp.ndimage.gaussian_filter(slp, [11,11]) #[11,11]

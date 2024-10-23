@@ -1,0 +1,1 @@
+Need more investigation: the diagnosed minslp is slightly different between using getvar('slp') and directly calculating slp. However, the field looks rather weird using getvar('slp') with wave-like pattern.
