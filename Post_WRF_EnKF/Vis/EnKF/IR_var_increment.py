@@ -181,11 +181,12 @@ if __name__ == '__main__':
     small_dir =  '/work2/06191/tg854905/stampede2/Pro2_PSU_MW/'
 
     # ---------- Configuration -------------------------
-    Storm = 'MARIA'
-    Exper_name = ['IR-J_DA+J_WRF+J_init-SP-intel17-WSM6-24hr-hroi900','J_DA+J_WRF+J_init-SP-intel17-WSM6-24hr-hroi900',]
+    Storm = 'IRMA'
+    DA = 'CONV'
+    MP = 'THO'
+
     v_interest = [ 'QVAPOR',]
-    DAtime = '201709160000'
-    MPS = 'WSM6'
+    DAtime = '201709030000'
 
     # Number of ensemble members
     num_ens = 60
@@ -201,6 +202,10 @@ if __name__ == '__main__':
     If_plot_snapshot = False
     If_plot = True
     # -------------------------------------------------------   
+    
+
+
+
     for var_name in v_interest:
         print('Plot '+var_name+'...')
         extraIncre_from_IR()

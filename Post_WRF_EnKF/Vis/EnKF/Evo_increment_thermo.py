@@ -666,18 +666,18 @@ def incre_snapshot( DAtime, wrf_dir, small_dir, Storm, Exper_name, var_name ):
 
 if __name__ == '__main__':
 
-    big_dir = '/scratch_S2/06191/tg854905/Pro2_PSU_MW/'
+    big_dir = '/scratch/06191/tg854905/Pro2_PSU_MW/'
     small_dir =  '/work2/06191/tg854905/stampede2/Pro2_PSU_MW/'
 
     # ---------- Configuration -------------------------
     Storm = 'IRMA'
-    MP = 'TuneWSM6'
-    DA = 'IR'
-    v_interest = ['QVAPOR',]#'QICE','QCLOUD','QRAIN','QSNOW','QGRAUP',]
+    MP = 'THO'
+    DA = 'CONV'
+    v_interest = ['QICE','QSNOW',]
     fort_v = ['obs_type','lat','lon','obs']
     
     start_time_str = '201709030000'
-    end_time_str = '201709050000'
+    end_time_str = '201709031200'
     Consecutive_times = True
     
     interp_P = True

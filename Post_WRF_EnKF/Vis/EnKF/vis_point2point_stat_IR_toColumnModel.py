@@ -1003,7 +1003,7 @@ if __name__ == '__main__':
     If_plot_stddev_hxb_snapshot = True
     If_plot_stddev_xb_snapshot = True
     
-    If_plot_corr_snapshot = True
+    If_plot_corr_snapshot = False
     If_plot_meanCorr = False
     # -------------------------------------------------------    
     
