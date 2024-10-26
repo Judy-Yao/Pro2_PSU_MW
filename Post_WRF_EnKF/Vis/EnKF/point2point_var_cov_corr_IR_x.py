@@ -543,10 +543,10 @@ if __name__ == '__main__':
 
     # ---------- Configuration -------------------------
     Storm = 'IRMA'
-    DA = 'IR'
+    DA = 'CONV'
     MP = 'THO'
 
-    v_interest = [ 'QSNOW']
+    v_interest = [ 'PSFC']
     sensor = 'abi_gr'
     ch_list = ['8',]
     fort_v = ['obs_type','lat','lon','obs']
@@ -605,7 +605,7 @@ if __name__ == '__main__':
             # Xb
             wrf_dir = big_dir+Storm+'/'+Exper_name+'/fc/'+DAtime+'/'
             for var_name in v_interest:
-                cal_pert_stddev_xb( DAtime, wrf_dir, var_name, If_save, '3D')
+                cal_pert_stddev_xb( DAtime, wrf_dir, var_name, If_save, '2D')
 
     # Calculate correlations
     #if If_cal_corr:

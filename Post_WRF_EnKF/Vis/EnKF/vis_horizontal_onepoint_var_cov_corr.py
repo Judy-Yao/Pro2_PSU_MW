@@ -7,7 +7,7 @@ import glob
 import netCDF4 as nc
 import math
 import matplotlib
-from wrf import getvar
+from wrf import getvar,interplevel
 from scipy import interpolate
 matplotlib.use("agg")
 import matplotlib.ticker as mticker
@@ -23,13 +23,15 @@ import random
 import Util_Vis
 import Util_data as UD
 import point2point_var_cov_corr_IR_x as p2p
-#import Read_Obspace_IR as ROIR
+import Read_Obspace_IR as ROIR
 import Diagnostics as Diag
 #import matlab.engine
 
-## Calculate the covariance*(N-1) between a Tb and a model variable over a 3D area (nlevel*lon*lat)
+## Calculate the ensemble covariance*(N-1) between a obs and a model variable over a 3D area (nLevel*nLon*nLat)
+# xb_ens: nLevel, num_ens, nLon*nLat
+# hxb_ens: nLevel,num_ens,
 @njit(parallel=True)
-def hor_obs_model( xb_ens,hxb_ens ):
+def hor_cov_obs_x( xb_ens,hxb_ens ):
     assert xb_ens.shape[1] == hxb_ens.shape[1]
     res = np.zeros( (xb_ens.shape[0],xb_ens.shape[2]),  )# levels, nobs
     res[:] = np.nan
@@ -37,8 +39,69 @@ def hor_obs_model( xb_ens,hxb_ens ):
     for n in prange( xb_ens.shape[2] ): # loop thru samples
         for i in range( xb_ens.shape[0] ): # loop thru model levels
             for m in range( xb_ens.shape[1] ): # loop thru ens
-                res[i,n] += xb_ens[i,m,n] * hxb_ens[m,n]
+                if not np.isnan(xb_ens[i,m,n]) and not np.isnan(hxb_ens[i,m]) and not np.isnan(res[i,n-1]):
+                    res[i,n] += xb_ens[i,m,n] * hxb_ens[i,m]
+                else:
+                    res[i,n] = np.nan
     return res
+
+## Calculate the correlation between an obs and a 3D variable (nLevel*nLon*nLat)
+# cov_xb_hxb: nLevel,nLon*nLat
+# stddev_xb: nLevel, nLon*nLat
+# stddev_hxb: 1
+#@njit(parallel=True)
+def hor_corr_obs_x( cov_xb_hxb,stddev_xb,stddev_hxb ): 
+    assert cov_xb_hxb.shape[0] == stddev_xb.shape[0]
+    assert cov_xb_hxb.shape[1] == stddev_xb.shape[1]
+    res = np.zeros( (cov_xb_hxb.shape[0],cov_xb_hxb.shape[1]) )
+    for n in prange(cov_xb_hxb.shape[1]):
+        for i in range(cov_xb_hxb.shape[0]):
+            if not np.isnan(cov_xb_hxb[i, n]) and not np.isnan(stddev_xb) and not np.isnan(stddev_hxb):
+                res[i,n] = cov_xb_hxb[i,n]/stddev_xb[i,n]
+                res[i,n] = res[i,n]/stddev_hxb
+            else:
+                res[i,n] = np.nan
+    return res
+
+# vertical interpolation
+def vertical_interp( ncdir,array,levels ):
+
+    if interp_H and not interp_P:
+        #Interp_corr_xb_hxb = np.zeros( [len(H_of_interest),len(idx_xb)] )
+        z = getvar(ncdir, 'z', units='km')
+        Interp_corr_xb_hxb = np.zeros( (len(levels),z.shape[1],z.shape[2]) )
+        array =  array.reshape( (z.shape) )
+        start_time=time.process_time()
+        for ih in levels:
+            Interp_corr_xb_hxb[levels.index(ih),:,:] = interplevel(array, z, ih)
+        end_time = time.process_time()
+        print ('time needed for the interpolation: ', end_time-start_time, ' seconds')
+        print('Min of correlation: '+str(np.nanmin( Interp_corr_xb_hxb )))
+        print('Max of correlation: '+str(np.nanmax( Interp_corr_xb_hxb )))
+        return Interp_corr_xb_hxb
+    elif interp_P and not interp_H:
+        # pressure levels
+        PB = ncdir.variables['PB'][0,:,:,:]
+        P = ncdir.variables['P'][0,:,:,:]
+        P_hpa_all = (PB + P)/100 # 0 dimension: bottom to top
+        P_hpa_all = P_hpa_all.reshape(nLevel,xmax*ymax)
+        P_hpa = P_hpa_all[:,idx_xb]
+        # Calculate the corr at specified levels
+        start_time=time.process_time()
+        array_P = np.zeros( (len(P_of_interest),array.shape[1]),  )
+        for im in range( array.shape[1] ):
+            f_interp = interpolate.interp1d( P_hpa[:,im], array[:,im])
+            Interp_corr_xb_hxb[:,im] = f_interp( P_of_interest )
+        #corr_colxb_hxb_cloud_P = corr_colxb_hxb_cloud[:3,:] # test....
+        end_time = time.process_time()
+        print ('time needed for the interpolation: ', end_time-start_time, ' seconds')
+        print('Min of correlation: '+str(np.nanmin( Interp_corr_xb_hxb )))
+        print('Max of correlation: '+str(np.nanmax( Interp_corr_xb_hxb )))
+
+    else:
+        pass
+
+
 
 
 ## For each obs loc, find the nearest model grid point (good for mercator)
@@ -100,18 +163,23 @@ def Find_nearest_grid( lon_obs,lat_obs ): #lon_obs,lat_obs: lists
 
     return Idx_nearest
 
-# Calculate the horizontal correlation centered at obs locations
-def cal_hor_corr( DAtime, var_name, obs_type, d_obs, dim=None ):
+# ---------------------------------------------------------------------------------------------------------------
+#           Object: ensemble horizontal correlations of one obs and 2D/3D model variable
+# ------------------------------------------------------------------------------------------------------------------
 
-    if dim == '3D':
+# Calculate the horizontal correlation centered at obs locations
+def cal_hor_corr( DAtime, var_name, obs_type, d_obs, xdim=None ):
+
+    if xdim == '3D':
         nLevel = 42
-    elif dim == '2D':
+    elif xdim == '2D':
         nLevel = 1
 
     # Find the flattened grid index near the obs
+    idx_obs_inX = []
     lon_obs = np.array( d_obs[DAtime]['lon'] )
     lat_obs = np.array( d_obs[DAtime]['lat'] )
-    idx_xb = Find_nearest_grid( lon_obs,lat_obs )
+    idx_obs_inX.append( Find_nearest_grid( lon_obs,lat_obs ) )
 
     # --- Find the model related statistics
     # Read ensemble perturbations of xb
@@ -139,23 +207,209 @@ def cal_hor_corr( DAtime, var_name, obs_type, d_obs, dim=None ):
             tmp_stddev_hxb = pickle.load( f )
 
     # --- Calculate covariance
-    cov_hor = np.zeros( (len(idx_xb),nLevel,xmax*ymax) )
+    print('Calculating the horizontal covariance between tho obs and ' + var_name + '.....' )
+    cov_hor = np.zeros( (len(idx_obs_inX),nLevel,xmax*ymax) )
     cov_hor[:] = np.nan
 
-    for iobs in range(len(idx_xb)): 
+    start = time.perf_counter()
+    for iobs in range(len(idx_obs_inX)): 
 
         # Find the ensemble perturbation/spread of obs at obs locations
         if obs_type == 'slp':
-            hxb_pert = tmp_hxb_pert[0,:num_ens,idx_xb[iobs]]
+            hxb_pert = tmp_hxb_pert[0,:num_ens,idx_obs_inX[iobs]]
             print('Shape of hxb_pert: '+ str(np.shape(hxb_pert)))
-            stddev_hxb = tmp_stddev_hxb[:,idx_xb[iobs]]
+            stddev_hxb = tmp_stddev_hxb[:,idx_obs_inX[iobs]]
             print('Shape of stddev_hxb: '+ str(np.shape(stddev_hxb)))
         else:
             pass
         # Calculate covariance
-        hro_cov[iobs,:,:] = hor_obs_model( xb_pert,hxb_pert )
+        print(np.shape(xb_pert),np.shape(hxb_pert))
+        tmp_cov_hor = hor_cov_obs_x( xb_pert,hxb_pert )
+        cov_hor[iobs,:,:] = tmp_cov_hor / ( num_ens-1 )
+    end = time.perf_counter()
+    print("Elapsed (after compilation) of covariance calculation = {}s".format((end - start)))
 
-    cov_hor = hor_obs_model( xb_pert,hxb_pert )
+    # Check if there are any NaN values using assert
+    #assert not np.isnan(cov_hor).any()
+
+    # --- Calculate correlation
+    print('Calculating the horizontal correlation between tho obs and ' + var_name + '.....' )
+    hori_corr = np.zeros( (len(idx_obs_inX),nLevel,xmax*ymax) )
+    hori_corr[:] = np.nan
+
+    start = time.perf_counter()
+    for iobs in range(len(idx_obs_inX)):
+
+        # Find the ensemble perturbation/spread of obs at obs locations
+        if obs_type == 'slp':
+            hxb_pert = tmp_hxb_pert[0,:num_ens,idx_obs_inX[iobs]]
+            print('Shape of hxb_pert: '+ str(np.shape(hxb_pert)))
+            stddev_hxb = tmp_stddev_hxb[:,idx_obs_inX[iobs]]
+            print('Shape of stddev_hxb: '+ str(np.shape(stddev_hxb)))
+        else:
+            pass
+        # Calculate covariance
+        hori_corr[iobs,:,:] = hor_corr_obs_x( cov_hor[iobs,:,:],stddev_xb,stddev_hxb )
+    end = time.perf_counter()
+    print("Elapsed (after compilation) of correlation calculation = {}s".format((end - start)))    
+
+    # sanity check
+    assert  0 <= abs(hori_corr).any() and abs(hori_corr).any() <= 1
+
+    # May save the correlation
+    if If_save:
+        des_path = wrf_dir+DAtime+"_d03_hroi_corr_Obs_" + obs_type +'_model_' +  var_name + '.pickle'
+        f = open( des_path, 'wb' )
+        pickle.dump( hori_corr, f )
+        f.close()
+        print('Save '+des_path)
+
+    return None
+
+def HroiCorr_snapshot( DAtime,var_name,xdim ):
+
+    if xdim == '3D':
+        nLevel = 42
+    elif xdim == '2D':
+        nLevel = 1
+
+    # Read correlations between a Tb and a column of model var
+    des_path = wrf_dir+DAtime+"_d03_hroi_corr_Obs_" + obs_type +'_model_' +  var_name + '.pickle'
+    with open( des_path,'rb' ) as f:
+        hori_corr = pickle.load( f )
+    print('Shape of hori_corr: '+ str(np.shape(hori_corr)))
+    print( np.shape(hori_corr ))
+
+    # Find the flattened grid index near the obs
+    idx_obs_inX = []
+    lon_obs = np.array( d_obs[DAtime]['lon'] )
+    lat_obs = np.array( d_obs[DAtime]['lat'] )
+    idx_obs_inX.append( Find_nearest_grid( lon_obs,lat_obs ) )
+
+    # Plot
+    # read model attributes
+    mean_xb = wrf_dir + '/wrf_enkf_input_d03_mean'
+    ncdir = nc.Dataset( mean_xb, 'r')
+    # read lon and lat
+    xlon = ncdir.variables['XLONG'][0,:,:].flatten()
+    xlat = ncdir.variables['XLAT'][0,:,:].flatten()
+
+    if xdim == '2D':
+        if If_plot_corr_snapshot:
+            for iobs in range(len(idx_obs_inX)):
+                plot_2Dcorr_snapshot( xlat,xlon,hori_corr[iobs,:,:],)
+    else:
+        if interp_H and not interp_P:
+            # interpolate
+            H_of_interest = [8,9,10,11,12,13]
+            if If_plot_corr_snapshot:
+                for iobs in range(len(idx_obs_inX)):
+                    Interp_hori_corr = vertical_interp( ncdir,hori_corr[iobs,:,:],H_of_interest )
+                    if If_plot_corr_snapshot:
+                        plot_3Dcorr_snapshot( xlat,xlon,hori_corr[iobs,25:31,:],H_of_interest )
+                        #plot_3Dcorr_snapshot( xlat,xlon,Interp_hori_corr,H_of_interest )
+        elif interp_P and not interp_H:
+
+            if If_plot_corr_snapshot:
+                plot_3Dcorr_snapshot( xlat,xlon,Interp_hori_corr,P_of_interest )
+        else:
+            pass
+
+    return None
+
+# ---------------------------------------------------------------------------------------------------------------
+#           Object: ensemble horizontal correlations of one obs and 2D/3D model variable;Operation: Plot the snapshot
+# ------------------------------------------------------------------------------------------------------------------
+# Plot 3Dcorr per snapshot
+def plot_3Dcorr_snapshot( lat,lon,Interp_corr,ver_coor ):
+
+    # Read WRF domain
+    wrf_file = big_dir+Storm+'/'+Exper_name+'/fc/'+DAtime+'/wrf_enkf_output_d03_mean'
+    d_wrf_d03 = ROIR.read_wrf_domain( wrf_file )
+
+    # Read location from TCvitals
+    #if any( hh in DAtime[8:10] for hh in ['00','06','12','18']):
+    #    tc_lon, tc_lat, tc_slp = UD.read_TCvitals(small_dir,Storm, DAtime)
+
+    # ------------------ Plot -----------------------
+    fig, ax=plt.subplots(2, 3, subplot_kw={'projection': ccrs.PlateCarree()}, gridspec_kw = {'wspace':0, 'hspace':0}, linewidth=0.5, sharex='all', sharey='all',  figsize=(9.75,6.5), dpi=400)
+
+    # Define the domain
+    lat_min = d_wrf_d03['lat_min']
+    lat_max = d_wrf_d03['lat_max']
+    lon_min = d_wrf_d03['lon_min']
+    lon_max = d_wrf_d03['lon_max']
+
+    min_corr = -1
+    max_corr = 1
+    for isub in range(6):
+        ax.flat[isub].set_extent([lon_min, lon_max, lat_min, lat_max], crs=ccrs.PlateCarree())
+        ax.flat[isub].coastlines(resolution='10m', color='black',linewidth=0.5)
+        
+
+        #cs = ax.flat[isub].scatter(lon,lat,5,Interp_corr[isub,:],cmap='RdBu_r',edgecolors='none',transform=ccrs.PlateCarree(),)
+        cs = ax.flat[isub].scatter(lon,lat,5,Interp_corr[isub,:],cmap='RdBu_r',edgecolors='none',vmin=min_corr,vmax=max_corr,transform=ccrs.PlateCarree(),)
+        # Mark the observed location
+        ax.flat[isub].scatter(lon,lat,5,Interp_corr[isub,:],cmap='RdBu_r',edgecolors='none',vmin=min_corr,vmax=max_corr,transform=ccrs.PlateCarree(),)
+        #    edgecolors='none', cmap='RdBu_r',transform=ccrs.PlateCarree())
+        #if any( hh in DAtime[8:10] for hh in ['00','06','12','18'] ):
+        #    ax.flat[isub].scatter(tc_lon, tc_lat, s=3, marker='*', edgecolors='black', transform=ccrs.PlateCarree())
+
+    # Colorbar
+    cbaxes = fig.add_axes([0.91, 0.1, 0.03, 0.8])
+    color_ticks = np.linspace(min_corr, max_corr, 5, endpoint=True)
+    cbar = fig.colorbar(cs, cax=cbaxes,fraction=0.046, pad=0.04, )
+    cbar.set_ticks( color_ticks )
+    cbar.ax.tick_params(labelsize=11)
+
+    #subplot title
+    font = {'size':15,}
+    for isub in range(6):
+        ax.flat[isub].set_title( str(ver_coor[isub])+' KM', font, fontweight='bold')
+
+    #title for all
+    title_name = Storm+': '+Exper_name+'(ver_corr of '+var_name+'&IR)'
+    fig.suptitle(title_name, fontsize=10, fontweight='bold')
+
+    # Axis labels
+    lon_ticks = list(range(math.ceil(lon_min)-2, math.ceil(lon_max)+2,2))
+    lat_ticks = list(range(math.ceil(lat_min)-2, math.ceil(lat_max)+2,2))
+    for j in range(6):
+        gl = ax.flat[j].gridlines(crs=ccrs.PlateCarree(),draw_labels=False,linewidth=0.5, color='gray', alpha=0.5, linestyle='--')
+
+        gl.top_labels = False
+        gl.bottom_labels = True
+        if j==0 or j==3:
+            gl.left_labels = True
+            gl.right_labels = False
+        else:
+            gl.left_labels = False
+            gl.right_labels = False
+
+        if j==3 or j==4 or j==5:
+            gl.bottom_labels = True
+            gl.top_labels = False
+        else:
+            gl.bottom_labels = False
+            gl.top_labels = False
+
+        gl.ylocator = mticker.FixedLocator(lat_ticks)
+        gl.xlocator = mticker.FixedLocator(lon_ticks)
+        gl.xformatter = LONGITUDE_FORMATTER
+        gl.yformatter = LATITUDE_FORMATTER
+        gl.xlabel_style = {'size': 10}
+        gl.ylabel_style = {'size': 12}
+
+    # Save the figure
+    save_des = small_dir+Storm+'/'+Exper_name+'/Vis_analyze/hori_Corr/Interp_H_HroiCorr_obs_' + obs_type +'_model_' +  var_name + '.png'
+    #save_des = small_dir+Storm+'/'+Exper_name+'/Vis_analyze/hori_Corr/Interp_H_corr_ms_'+DAtime+'_'+var_name+'_'+sensor+'.png'
+    plt.savefig( save_des )
+    print( 'Saving the figure: ', save_des )
+    plt.close()
+
+
+
+
 
 
 
@@ -168,7 +422,7 @@ if __name__ == '__main__':
 
     # ---------- Configuration -------------------------
     Storm = 'IRMA'
-    DA = 'IR'
+    DA = 'CONV'
     MP = 'THO'
     fort_v = ['obs_type','lat','lon','obs']
     sensor = 'abi_gr'
@@ -195,10 +449,16 @@ if __name__ == '__main__':
     #to_obs_res = False
     #ens_Interp_to_obs = False
 
+    # vertical interpolation if needed
+    interp_P = False
+    P_range = np.arange( 995,49,-20 )
+    interp_H = True
+    H_range = np.arange(0,31,1)
+
     If_cal_pert_stddev = False
-    If_cal_hor_corr = True
+    If_cal_hor_corr = False
     If_save = True
-    If_plot = False
+    If_plot_corr_snapshot = True
     # -------------------------------------------------------
     Exper_name = UD.generate_one_name( Storm,DA,MP )
 
@@ -232,7 +492,7 @@ if __name__ == '__main__':
             if obs_type == 'slp':
                 Hx_dir = big_dir+Storm+'/'+Exper_name+'/fc/'+DAtime+'/'
                 #!!!!!! only works in the open ocean: approximate slp with PSFC!!!!!
-                output_dir = wrf_dir+ "xb_d03_3D_ensPert_" + DAtime + '_PSFC.pickle'
+                output_dir = wrf_dir+ "xb_d03_2D_ensPert_" + DAtime + '_PSFC.pickle'
                 output_exists = os.path.exists( output_dir )
                 if output_exists == False:
                     p2p.cal_pert_stddev_xb( DAtime, wrf_dir, 'PSFC', If_save, '2D')
@@ -246,7 +506,7 @@ if __name__ == '__main__':
             # Xb
             wrf_dir = big_dir+Storm+'/'+Exper_name+'/fc/'+DAtime+'/'
             for var_name in v_interest:
-                output_dir = wrf_dir+ "xb_d03_3D_ensPert_" + DAtime + '_' + var_name + '.pickle'
+                output_dir = wrf_dir+ "xb_d03_2D_ensPert_" + DAtime + '_' + var_name + '.pickle'
                 output_exists = os.path.exists( output_dir )
                 if output_exists == False:
                     p2p.cal_pert_stddev_xb( DAtime, wrf_dir, var_name, If_save, '3D')
@@ -262,7 +522,17 @@ if __name__ == '__main__':
                 print('Calculate '+var_name+'...')
                 cal_hor_corr( DAtime, var_name, obs_type, d_obs, '3D')
 
+    # Plot the correlations per snapshot
+    if If_plot_corr_snapshot:
+        print('------------ Plot the horizontal correlation --------------')
+        for DAtime in DAtimes:
+            #Hx_dir = big_dir+Storm+'/'+Exper_name+'/Obs_Hx/IR/'+DAtime+'/'
+            wrf_dir = big_dir+Storm+'/'+Exper_name+'/fc/'+DAtime+'/'
+            print('At '+DAtime)
+            for var_name in model_v:
 
+                print('Plot horizontal correlation: '+var_name+'...')
+                HroiCorr_snapshot( DAtime,var_name,'3D' )
 
 
 
