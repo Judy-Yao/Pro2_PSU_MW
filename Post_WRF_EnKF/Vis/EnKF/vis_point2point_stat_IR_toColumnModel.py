@@ -907,7 +907,7 @@ def plot_2D_stddev_xb_snapshot( lat,lon,stddev_xb_2d ):
 
 
 
-def stddev_xb_snapshot( DAtime,var_name,var_dim ):
+def stddev_xb_snapshot( wrf_dir,DAtime,var_name,var_dim ):
 
     if var_dim == '3D':
         nLevel = 42
