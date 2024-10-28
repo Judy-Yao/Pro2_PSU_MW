@@ -334,7 +334,7 @@ def HroiCorr_snapshot( DAtime,var_name,xdim=None,ver_coor=None):
     if xdim == '2D':
         if If_plot_corr_snapshot:
             for iobs in range(len(idx_obs_inX)):
-                plot_2Dcorr_snapshot( xlat,xlon,hori_corr[iobs,:,:],)
+                plot_2Dcorr_snapshot( xlat,xlon,hori_corr[iobs,:,:],lon_obs,lat_obs)
     else:
         if interp_H and not interp_P:
             # interpolate
@@ -352,6 +352,74 @@ def HroiCorr_snapshot( DAtime,var_name,xdim=None,ver_coor=None):
             pass
 
     return None
+
+# Plot 2Dcorr per snapshot
+def plot_2Dcorr_snapshot( lat,lon,corr,lon_obs,lat_obs ):
+
+    # Read WRF domain
+    wrf_file = big_dir+Storm+'/'+Exper_name+'/fc/'+DAtime+'/wrf_enkf_output_d03_mean'
+    d_wrf_d03 = ROIR.read_wrf_domain( wrf_file )
+
+    # ------------------ Plot -----------------------
+    fig, ax=plt.subplots(1, 1, subplot_kw={'projection': ccrs.PlateCarree()}, gridspec_kw = {'wspace':0, 'hspace':0}, linewidth=0.5,figsize=(6.5,6), dpi=300)
+
+    # Define the domain
+    lat_min = d_wrf_d03['lat_min']
+    lat_max = d_wrf_d03['lat_max']
+    lon_min = d_wrf_d03['lon_min']
+    lon_max = d_wrf_d03['lon_max']
+
+    min_corr = -0.6
+    max_corr = 0.6
+    ax.set_extent([lon_min, lon_max, lat_min, lat_max], crs=ccrs.PlateCarree())
+    ax.coastlines(resolution='10m', color='black',linewidth=0.5)
+    #cs = ax.flat[isub].scatter(lon,lat,5,Interp_corr[isub,:],cmap='RdBu_r',edgecolors='none',transform=ccrs.PlateCarree(),)
+    cs = ax.scatter(lon,lat,5,corr,cmap='RdBu_r',edgecolors='none',vmin=min_corr,vmax=max_corr,transform=ccrs.PlateCarree(),)
+    # Mark the observed location
+    ax.scatter(lon_obs, lat_obs, c='red', s=5, marker='s', edgecolors='red', transform=ccrs.PlateCarree())
+    #if any( hh in DAtime[8:10] for hh in ['00','06','12','18'] ):
+    #    ax.flat[isub].scatter(tc_lon, tc_lat, s=3, marker='*', edgecolors='black', transform=ccrs.PlateCarree())
+
+    # Colorbar
+    cbaxes = fig.add_axes([0.91, 0.1, 0.03, 0.8])
+    color_ticks = np.linspace(min_corr, max_corr, 5, endpoint=True)
+    cbar = fig.colorbar(cs, cax=cbaxes,fraction=0.046, pad=0.04, extend='both')
+    cbar.set_ticks( color_ticks )
+    cbar.ax.tick_params(labelsize=12)
+
+    #subplot title
+    font = {'size':12,}
+    ax.set_title( 'Horizontal Corr: obs ' + obs_type +' & model ' +  var_name, font, fontweight='bold')
+
+    #title for all
+    title_name = Storm+': '+Exper_name
+    fig.suptitle(title_name, fontsize=10, fontweight='bold')
+
+    # Axis labels
+    lon_ticks = list(range(math.ceil(lon_min)-2, math.ceil(lon_max)+2,2))
+    lat_ticks = list(range(math.ceil(lat_min)-2, math.ceil(lat_max)+2,2))
+    gl = ax.gridlines(crs=ccrs.PlateCarree(),draw_labels=False,linewidth=0.5, color='gray', alpha=0.5, linestyle='--')
+
+    gl.top_labels = False
+    gl.bottom_labels = True
+    gl.left_labels = True
+    gl.right_labels = False
+
+    gl.ylocator = mticker.FixedLocator(lat_ticks)
+    gl.xlocator = mticker.FixedLocator(lon_ticks)
+    gl.xformatter = LONGITUDE_FORMATTER
+    gl.yformatter = LATITUDE_FORMATTER
+    gl.xlabel_style = {'size': 10}
+    gl.ylabel_style = {'size': 12}
+
+
+    # Save the figure
+    save_des = small_dir+Storm+'/'+Exper_name+'/Vis_analyze/hori_Corr/'+DAtime+'_HroiCorr_obs_' + obs_type +'_model_' +  var_name + '.png'
+    #save_des = small_dir+Storm+'/'+Exper_name+'/Vis_analyze/hori_Corr/Interp_H_corr_ms_'+DAtime+'_'+var_name+'_'+sensor+'.png'
+    plt.savefig( save_des )
+    print( 'Saving the figure: ', save_des )
+    plt.close()
+
 
 # Plot 3Dcorr per snapshot
 def plot_3Dcorr_snapshot( lat,lon,Interp_corr,ver_coor,lon_obs,lat_obs):
@@ -581,7 +649,6 @@ def plot_3Dcov_snapshot( lat,lon,Interp_cov,ver_coor ):
     plt.close()
 
 
-
 if __name__ == '__main__':
 
     big_dir = '/expanse/lustre/scratch/zuy121/temp_project/Pro2_PSU_MW/' #'/scratch/06191/tg854905/Pro2_PSU_MW/'
@@ -693,7 +760,8 @@ if __name__ == '__main__':
             for var_name in model_v:
 
                 print('Calculate '+var_name+'...')
-                cal_hor_corr( DAtime, var_name, obs_type, d_obs, '3D')
+                var_dim = def_vardim( var_name )
+                cal_hor_corr( DAtime, var_name, obs_type, d_obs, var_dim )
 
     # Plot the ensemble spread of xb per snapshot
     if If_plot_stddev_xb_snapshot:
@@ -709,6 +777,7 @@ if __name__ == '__main__':
             print('At '+DAtime)
             for var_name in model_v:
                 print('Plot '+var_name+'...')
+                var_dim = def_vardim( var_name )
                 stddev_xb_snapshot( wrf_dir,DAtime,var_name,var_dim )
 
 
