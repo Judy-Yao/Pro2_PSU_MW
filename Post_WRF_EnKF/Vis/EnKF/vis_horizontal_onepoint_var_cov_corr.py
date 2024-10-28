@@ -27,6 +27,12 @@ import Read_Obspace_IR as ROIR
 import Diagnostics as Diag
 #import matlab.engine
 
+def def_vardim( var_name ):
+    if var_name == 'PSFC':
+        return '2D'
+    elif 'Q' in var_name:
+        return '3D'
+
 ## Calculate the ensemble covariance*(N-1) between a obs and a model variable over a 3D area (nLevel*nLon*nLat)
 # xb_ens: nLevel, num_ens, nLon*nLat
 # hxb_ens: nLevel,num_ens,
@@ -594,7 +600,7 @@ if __name__ == '__main__':
         obs_type = 'slp' # Radiance
     
     # model variable
-    model_v = [ 'QVAPOR',]#'QSNOW','QCLOUD','QRAIN','QICE','QGRAUP']
+    model_v = [ 'PSFC',]#'QSNOW','QCLOUD','QRAIN','QICE','QGRAUP']
     
     # time
     start_time_str = '201709030000'
@@ -616,7 +622,7 @@ if __name__ == '__main__':
     interp_H = True
     H_range = list(np.arange(1,21,1))
 
-    If_cal_pert_stddev = True
+    If_cal_pert_stddev = False
     If_cal_hor_corr = True
     If_save = True
 
@@ -672,7 +678,8 @@ if __name__ == '__main__':
             # Xb
             wrf_dir = big_dir+Storm+'/'+Exper_name+'/fc/'+DAtime+'/'
             for var_name in model_v:
-                output_dir = wrf_dir+ "xb_d03_3D_ensPert_" + DAtime + '_' + var_name + '.pickle'
+                var_dim = def_vardim( var_name )
+                output_dir = wrf_dir+ 'xb_d03_'+var_dim+'_ensPert_' + DAtime + '_' + var_name + '.pickle'
                 output_exists = os.path.exists( output_dir )
                 if output_exists == False:
                     p2p.cal_pert_stddev_xb( DAtime, wrf_dir, var_name, If_save, '3D')
