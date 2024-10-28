@@ -8,7 +8,7 @@ import netCDF4 as nc
 import math
 import matplotlib
 from wrf import getvar,interplevel
-from scipy import interpolate
+#from scipy import interpolate
 matplotlib.use("agg")
 import matplotlib.ticker as mticker
 from matplotlib import pyplot as plt
@@ -594,7 +594,7 @@ if __name__ == '__main__':
         obs_type = 'slp' # Radiance
     
     # model variable
-    model_v = [ 'QSNOW']
+    model_v = [ 'QVAPOR',]#'QSNOW','QCLOUD','QRAIN','QICE','QGRAUP']
     
     # time
     start_time_str = '201709030000'
@@ -616,8 +616,8 @@ if __name__ == '__main__':
     interp_H = True
     H_range = list(np.arange(1,21,1))
 
-    If_cal_pert_stddev = False
-    If_cal_hor_corr = False
+    If_cal_pert_stddev = True
+    If_cal_hor_corr = True
     If_save = True
 
     If_plot_corr_snapshot = True
@@ -671,8 +671,8 @@ if __name__ == '__main__':
 
             # Xb
             wrf_dir = big_dir+Storm+'/'+Exper_name+'/fc/'+DAtime+'/'
-            for var_name in v_interest:
-                output_dir = wrf_dir+ "xb_d03_2D_ensPert_" + DAtime + '_' + var_name + '.pickle'
+            for var_name in model_v:
+                output_dir = wrf_dir+ "xb_d03_3D_ensPert_" + DAtime + '_' + var_name + '.pickle'
                 output_exists = os.path.exists( output_dir )
                 if output_exists == False:
                     p2p.cal_pert_stddev_xb( DAtime, wrf_dir, var_name, If_save, '3D')
@@ -687,6 +687,28 @@ if __name__ == '__main__':
 
                 print('Calculate '+var_name+'...')
                 cal_hor_corr( DAtime, var_name, obs_type, d_obs, '3D')
+
+    # Plot the ensemble spread of xb per snapshot
+    if If_plot_stddev_xb_snapshot:
+        print('------------ Plot the ensemble spread of xb --------------')
+        plot_dir = small_dir+Storm+'/'+Exper_name+'/Vis_analyze/Ens_stddev_xb/'
+        plotdir_exists = os.path.exists( plot_dir )
+        if plotdir_exists == False:
+            os.mkdir(plot_dir)
+
+        for DAtime in DAtimes:
+            wrf_dir = big_dir+Storm+'/'+Exper_name+'/fc/'+DAtime+'/'
+            #Hx_dir = big_dir+Storm+'/'+Exper_name+'/Obs_Hx/IR/'+DAtime+'/'
+            print('At '+DAtime)
+            for var_name in model_v:
+                print('Plot '+var_name+'...')
+                stddev_xb_snapshot( wrf_dir,DAtime,var_name,var_dim )
+
+
+
+
+
+
 
     # Plot the horizontal covariance per snapshot
     if If_plot_cov_snapshot:

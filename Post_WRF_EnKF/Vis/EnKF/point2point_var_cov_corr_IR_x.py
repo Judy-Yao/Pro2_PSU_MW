@@ -546,7 +546,7 @@ if __name__ == '__main__':
     DA = 'CONV'
     MP = 'THO'
 
-    v_interest = [ 'PSFC']
+    v_interest = [ 'QCLOUD','QRAIN','QICE','QGRAUP'] #[ 'PSFC']
     sensor = 'abi_gr'
     ch_list = ['8',]
     fort_v = ['obs_type','lat','lon','obs']

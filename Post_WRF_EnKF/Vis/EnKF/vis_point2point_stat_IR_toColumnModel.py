@@ -83,7 +83,7 @@ def vertical_interp( ncdir,array,levels ):
     if interp_H and not interp_P:
         #Interp_corr_xb_hxb = np.zeros( [len(H_of_interest),len(idx_xb)] )
         z = getvar(ncdir, 'z', units='km')
-        Interp_corr_xb_hxb = np.zeros( (len(H_of_interest),z.shape[1],z.shape[2]) )
+        Interp_corr_xb_hxb = np.zeros( (len(levels),z.shape[1],z.shape[2]) )
         array =  array.reshape( (z.shape) )
         start_time=time.process_time()
         for ih in levels:
@@ -905,9 +905,88 @@ def plot_2D_stddev_xb_snapshot( lat,lon,stddev_xb_2d ):
     print( 'Saving the figure: ', save_des )
     plt.close()
 
+# Plot 3Dcorr per snapshot
+def plot_3D_stddev_xb_snapshot( lat,lon,Interp_var,ver_coor,):
+
+    # Read WRF domain
+    wrf_file = big_dir+Storm+'/'+Exper_name+'/fc/'+DAtime+'/wrf_enkf_output_d03_mean'
+    d_wrf_d03 = ROIR.read_wrf_domain( wrf_file )
+
+    # Read location from TCvitals
+    #if any( hh in DAtime[8:10] for hh in ['00','06','12','18']):
+    #    tc_lon, tc_lat, tc_slp = UD.read_TCvitals(small_dir,Storm, DAtime)
+
+    # ------------------ Plot -----------------------
+    fig, ax=plt.subplots(4, 5, subplot_kw={'projection': ccrs.PlateCarree()}, gridspec_kw = {'wspace':0.05, 'hspace':0.05}, linewidth=0.5, sharex='all', sharey='all',  figsize=(15,12), dpi=200)
+
+    # Define the domain
+    lat_min = d_wrf_d03['lat_min']
+    lat_max = d_wrf_d03['lat_max']
+    lon_min = d_wrf_d03['lon_min']
+    lon_max = d_wrf_d03['lon_max']
+
+    #min_corr = -0.6
+    #max_corr = 0.6
+    for isub in range(20):
+        ax.flat[isub].set_extent([lon_min, lon_max, lat_min, lat_max], crs=ccrs.PlateCarree())
+        ax.flat[isub].coastlines(resolution='10m', color='black',linewidth=0.5)
+        cs = ax.flat[isub].scatter(lon,lat,5,Interp_var[isub,:],cmap='RdBu_r',edgecolors='none',transform=ccrs.PlateCarree(),)
+        #cs = ax.flat[isub].scatter(lon,lat,5,Interp_corr[isub,:],cmap='RdBu_r',edgecolors='none',vmin=min_corr,vmax=max_corr,transform=ccrs.PlateCarree(),)
+        #if any( hh in DAtime[8:10] for hh in ['00','06','12','18'] ):
+        #    ax.flat[isub].scatter(tc_lon, tc_lat, s=3, marker='*', edgecolors='black', transform=ccrs.PlateCarree())
+
+    # Colorbar
+    cbaxes = fig.add_axes([0.91, 0.1, 0.03, 0.8])
+    #color_ticks = np.linspace(min_corr, max_corr, 5, endpoint=True)
+    cbar = fig.colorbar(cs, cax=cbaxes,fraction=0.046, pad=0.04) #, extend='both')
+    #cbar.set_ticks( color_ticks )
+    #cbar.ax.tick_params(labelsize=18)
+
+    #subplot title
+    font = {'size':15,}
+    for isub in range(20):
+        ax.flat[isub].set_title( str(ver_coor[isub])+' KM', font, fontweight='bold')
+
+    #title for all
+    title_name = Storm+': '+Exper_name+'\nEnsemble Spread: '+var_name
+    fig.suptitle(title_name, fontsize=20, fontweight='bold')
+
+    # Axis labels
+    lon_ticks = list(range(math.ceil(lon_min)-2, math.ceil(lon_max)+2,2))
+    lat_ticks = list(range(math.ceil(lat_min)-2, math.ceil(lat_max)+2,2))
+    for i in range(4):
+        for j in range(5):
+            gl = ax[i,j].gridlines(crs=ccrs.PlateCarree(),draw_labels=False,linewidth=0.5, color='gray', alpha=0.5, linestyle='--')
+
+            gl.top_labels = False
+            gl.right_labels = False
+            if j == 0:
+                gl.left_labels = True
+            else:
+                gl.left_labels = False
+            if i == 3:
+                gl.bottom_labels = True
+            else:
+                gl.bottom_labels = False
+
+            gl.ylocator = mticker.FixedLocator(lat_ticks)
+            gl.xlocator = mticker.FixedLocator(lon_ticks)
+            gl.xformatter = LONGITUDE_FORMATTER
+            gl.yformatter = LATITUDE_FORMATTER
+            gl.xlabel_style = {'size': 10}
+            gl.ylabel_style = {'size': 15}
+
+    # Save the figure
+    if to_obs_res:
+        save_des = plot_dir+'stddev_xb_os_'+DAtime+'_'+var_name+'.png'
+    else:
+        save_des = plot_dir+'stddev_xb_ms_'+DAtime+'_'+var_name+'.png'
+    plt.savefig( save_des )
+    print( 'Saving the figure: ', save_des )
+    plt.close()
 
 
-def stddev_xb_snapshot( wrf_dir,DAtime,var_name,var_dim ):
+def stddev_xb_snapshot( wrf_dir,DAtime,var_name,var_dim,ver_coor=None):
 
     if var_dim == '3D':
         nLevel = 42
@@ -915,7 +994,7 @@ def stddev_xb_snapshot( wrf_dir,DAtime,var_name,var_dim ):
         nLevel = 1
 
     # Read ensemble standard deviation of xb
-    des_path = wrf_dir+ "xb_d03_3D_ensStddev_" + DAtime + '_' +  var_name + '.pickle'
+    des_path = wrf_dir+ "xb_d03_"+var_dim+"_ensStddev_" + DAtime + '_' +  var_name + '.pickle'
     with open( des_path,'rb' ) as f:
         stddev_xb = pickle.load( f )
     print('Shape of stddev_xb: '+ str(np.shape(stddev_xb)))
@@ -928,7 +1007,6 @@ def stddev_xb_snapshot( wrf_dir,DAtime,var_name,var_dim ):
 
     # Read WRF domain
     wrf_file = big_dir+Storm+'/'+Exper_name+'/fc/'+DAtime+'/wrf_enkf_input_d03_mean'
-    d_wrf_d03 = ROIR.read_wrf_domain( wrf_file )
     ncdir = nc.Dataset( wrf_file, 'r')
     # read lon and lat
     xlon = ncdir.variables['XLONG'][0,:,:].flatten()
@@ -936,15 +1014,15 @@ def stddev_xb_snapshot( wrf_dir,DAtime,var_name,var_dim ):
 
     if var_dim == '2D':
         if If_plot_stddev_xb_snapshot:
-            plot_2D_stddev_xb_snapshot( xlat[idx_xb],xlon[idx_xb],stddev_xb,)
+            plot_2D_stddev_xb_snapshot( xlat[idx_xb],xlon[idx_xb],stddev_xb[idx_xb],)
     else:
         if interp_H and not interp_P:
-            pass
             # interpolate
-            H_of_interest = [1,2,3,4,5,6]
-            #Interp_corr_xb_hxb = vertical_interp( ncdir,corr_colxb_hxb )
-            #if If_plot_stddev_xb_snapshot:
-            #    plot_3Dcorr_snapshot( xlat[idx_xb],xlon[idx_xb],Interp_corr_xb_hxb,H_of_interest )
+            Interp_cov = vertical_interp( ncdir,stddev_xb,ver_coor )
+            Interp_cov = Interp_cov.reshape( (len(ver_coor),xmax*ymax) )
+            print( np.shape( Interp_cov ) )
+            if If_plot_stddev_xb_snapshot:
+                plot_3D_stddev_xb_snapshot( xlat[idx_xb],xlon[idx_xb],Interp_cov[:,idx_xb],ver_coor)
         elif interp_P and not interp_H:
             pass
             #if If_plot_stddev_xb_snapshot:
@@ -958,15 +1036,15 @@ def stddev_xb_snapshot( wrf_dir,DAtime,var_name,var_dim ):
 
 if __name__ == '__main__':
 
-    big_dir = '/scratch/06191/tg854905/Pro2_PSU_MW/'
-    small_dir =  '/work2/06191/tg854905/stampede2/Pro2_PSU_MW/'
+    big_dir = '/expanse/lustre/scratch/zuy121/temp_project/Pro2_PSU_MW/' #'/scratch/06191/tg854905/Pro2_PSU_MW/'
+    small_dir = '/expanse/lustre/projects/pen116/zuy121/Pro2_PSU_MW/'  #'/work2/06191/tg854905/stampede2/Pro2_PSU_MW/'
 
     # ---------- Configuration -------------------------
     Storm = 'IRMA'
-    DA = 'IR'
+    DA = 'CONV'
     MP = 'THO'
 
-    v_interest = [ 'PSFC',]#'rt_vo']
+    v_interest = [ 'QVAPOR','QSNOW','QCLOUD','QRAIN','QICE','QGRAUP'] #[ 'PSFC',]#'rt_vo']
     sensor = 'abi_gr'
     ch_list = ['8',]
     fort_v = ['obs_type','lat','lon','obs']
@@ -985,12 +1063,12 @@ if __name__ == '__main__':
     to_obs_res = False
 
     # vertical interpolation if needed
-    var_dim = '2D'
+    var_dim = '3D'
     if var_dim == '3D':
         interp_P = False
         P_range = np.arange( 995,49,-20 )
         interp_H = True
-        H_range = np.arange(0,31,1)
+        H_range = list(np.arange(1,21,1))
 
     # limitations
     limit = False
@@ -1000,7 +1078,7 @@ if __name__ == '__main__':
     If_cal_corr = False
     If_save = True
 
-    If_plot_stddev_hxb_snapshot = True
+    If_plot_stddev_hxb_snapshot = False
     If_plot_stddev_xb_snapshot = True
     
     If_plot_corr_snapshot = False
@@ -1055,7 +1133,8 @@ if __name__ == '__main__':
             print('At '+DAtime)
             for var_name in v_interest:
                 print('Plot '+var_name+'...')
-                stddev_xb_snapshot( DAtime,var_name,var_dim )
+                if interp_H and not interp_P:
+                    stddev_xb_snapshot( wrf_dir,DAtime,var_name,var_dim,H_range)
 
     # Plot the correlations per snapshot
     if If_plot_corr_snapshot:
