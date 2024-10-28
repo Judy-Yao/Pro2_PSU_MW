@@ -8,7 +8,7 @@ import glob
 import netCDF4 as nc
 import math
 import matplotlib
-from wrf import getvar
+from wrf import getvar,interplevel
 from scipy import interpolate
 matplotlib.use("agg")
 import matplotlib.ticker as mticker
@@ -97,6 +97,44 @@ def corr_Tb_to3D( cov_xb_hxb,stddev_xb,stddev_hxb ):
                 res[i,j,k] = cov_xb_hxb[i,j,k]/stddev_xb[i,k]
                 res[i,j,k] = res[i,j,k]/stddev_hxb[k]
     return res
+
+def vertical_interp( ncdir,array,levels ):
+
+    if interp_H and not interp_P:
+        #interp_arr = np.zeros( [len(H_of_interest),len(idx_xb)] )
+        z = getvar(ncdir, 'z', units='km')
+        interp_arr = np.zeros( (len(levels),z.shape[1],z.shape[2]) )
+        array =  array.reshape( (z.shape) )
+        start_time=time.process_time()
+        for ih in levels:
+            interp_arr[levels.index(ih),:,:] = interplevel(array, z, ih)
+        end_time = time.process_time()
+        print ('time needed for the interpolation: ', end_time-start_time, ' seconds')
+        print('Min of interpolated_arr: '+str(np.amin( interp_arr )))
+        print('Max of interpolated_arr: '+str(np.amax( interp_arr )))
+        return interp_arr
+    elif interp_P and not interp_H:
+        # pressure levels
+        PB = ncdir.variables['PB'][0,:,:,:]
+        P = ncdir.variables['P'][0,:,:,:]
+        P_hpa_all = (PB + P)/100 # 0 dimension: bottom to top
+        P_hpa_all = P_hpa_all.reshape(nLevel,xmax*ymax)
+        P_hpa = P_hpa_all[:,idx_xb]
+        # Calculate the corr at specified levels
+        start_time=time.process_time()
+        array_P = np.zeros( (len(P_of_interest),array.shape[1]),  )
+        for im in range( array.shape[1] ):
+            f_interp = interpolate.interp1d( P_hpa[:,im], array[:,im])
+            interp_arr[:,im] = f_interp( P_of_interest )
+        #corr_colxb_hxb_cloud_P = corr_colxb_hxb_cloud[:3,:] # test....
+        end_time = time.process_time()
+        print ('time needed for the interpolation: ', end_time-start_time, ' seconds')
+        print('Min of interpolated_arr: '+str(np.amin( interp_arr )))
+        print('Max of interpolated_arr: '+str(np.amax( interp_arr )))
+
+    else:
+        pass
+
 
 
 # ------------------------------------------------------------------------------------------------------

@@ -76,47 +76,6 @@ def nearest_axis( obs,model ):
     assert res.any() != np.nan
     return res
 
-
-# vertical interpolation
-def vertical_interp( ncdir,array,levels ):
-
-    if interp_H and not interp_P:
-        #Interp_corr_xb_hxb = np.zeros( [len(H_of_interest),len(idx_xb)] )
-        z = getvar(ncdir, 'z', units='km')
-        Interp_corr_xb_hxb = np.zeros( (len(levels),z.shape[1],z.shape[2]) )
-        array =  array.reshape( (z.shape) )
-        start_time=time.process_time()
-        for ih in levels:
-            Interp_corr_xb_hxb[levels.index(ih),:,:] = interplevel(array, z, ih)
-        end_time = time.process_time()
-        print ('time needed for the interpolation: ', end_time-start_time, ' seconds')
-        print('Min of correlation: '+str(np.amin( Interp_corr_xb_hxb )))
-        print('Max of correlation: '+str(np.amax( Interp_corr_xb_hxb )))
-        return Interp_corr_xb_hxb
-    elif interp_P and not interp_H:
-        # pressure levels
-        PB = ncdir.variables['PB'][0,:,:,:]
-        P = ncdir.variables['P'][0,:,:,:]
-        P_hpa_all = (PB + P)/100 # 0 dimension: bottom to top
-        P_hpa_all = P_hpa_all.reshape(nLevel,xmax*ymax)
-        P_hpa = P_hpa_all[:,idx_xb]
-        # Calculate the corr at specified levels
-        start_time=time.process_time()
-        array_P = np.zeros( (len(P_of_interest),array.shape[1]),  )
-        for im in range( array.shape[1] ):
-            f_interp = interpolate.interp1d( P_hpa[:,im], array[:,im])
-            Interp_corr_xb_hxb[:,im] = f_interp( P_of_interest )
-        #corr_colxb_hxb_cloud_P = corr_colxb_hxb_cloud[:3,:] # test....
-        end_time = time.process_time()
-        print ('time needed for the interpolation: ', end_time-start_time, ' seconds')
-        print('Min of correlation: '+str(np.amin( Interp_corr_xb_hxb )))
-        print('Max of correlation: '+str(np.amax( Interp_corr_xb_hxb )))
-
-    else:
-        pass
-
-
-
 # ------------------------------------------------------------------------------------------------------
 #           Object: ensemble correlations of columns of Xb and Hxb in 2D; Operation: Calculation
 # ------------------------------------------------------------------------------------------------------
