@@ -202,14 +202,14 @@ def cal_hor_corr( DAtime, var_name, obs_type, d_obs, xdim=None ):
 
     # --- Find the model related statistics
     # Read ensemble perturbations of xb
-    des_path = wrf_dir+ "xb_d03_3D_ensPert_" + DAtime + '_' + var_name +  '.pickle'
+    des_path = wrf_dir+ 'xb_d03_'+xdim+'_ensPert_' + DAtime + '_' + var_name +  '.pickle'
     with open( des_path,'rb' ) as f:
         xb_ens = pickle.load( f )
     xb_pert = xb_ens[:,:num_ens,:]
     print('Shape of xb_pert: '+ str(np.shape(xb_pert)))
     assert not np.isnan(xb_pert).any()
     # Read ensemble standard deviation of xb
-    des_path = wrf_dir+ "xb_d03_3D_ensStddev_" + DAtime + '_' +  var_name + '.pickle'
+    des_path = wrf_dir+ 'xb_d03_'+xdim+'_ensStddev_' + DAtime + '_' +  var_name + '.pickle'
     with open( des_path,'rb' ) as f:
         stddev_xb = pickle.load( f )
     print('Shape of stddev_xb: '+ str(np.shape(stddev_xb)))
@@ -381,11 +381,11 @@ def plot_2Dcorr_snapshot( lat,lon,corr,lon_obs,lat_obs ):
     #    ax.flat[isub].scatter(tc_lon, tc_lat, s=3, marker='*', edgecolors='black', transform=ccrs.PlateCarree())
 
     # Colorbar
-    cbaxes = fig.add_axes([0.91, 0.1, 0.03, 0.8])
+    cbaxes = fig.add_axes([0.9, 0.1, 0.03, 0.8])
     color_ticks = np.linspace(min_corr, max_corr, 5, endpoint=True)
     cbar = fig.colorbar(cs, cax=cbaxes,fraction=0.046, pad=0.04, extend='both')
     cbar.set_ticks( color_ticks )
-    cbar.ax.tick_params(labelsize=12)
+    cbar.ax.tick_params(labelsize=11)
 
     #subplot title
     font = {'size':12,}
@@ -667,7 +667,7 @@ if __name__ == '__main__':
         obs_type = 'slp' # Radiance
     
     # model variable
-    model_v = [ 'PSFC',]#'QSNOW','QCLOUD','QRAIN','QICE','QGRAUP']
+    model_v = [ 'QSNOW',]#'QSNOW','QCLOUD','QRAIN','QICE','QGRAUP']
     
     # time
     start_time_str = '201709030000'
@@ -690,12 +690,11 @@ if __name__ == '__main__':
     H_range = list(np.arange(1,21,1))
 
     If_cal_pert_stddev = False
-    If_cal_hor_corr = True
+    If_cal_hor_corr = False
     If_save = True
 
     If_plot_corr_snapshot = True
     If_plot_cov_snapshot = False
-
     # ensemble spread in vis_point2point_stat_IR_toColumnModel.py 
 
     # -------------------------------------------------------
@@ -749,7 +748,7 @@ if __name__ == '__main__':
                 output_dir = wrf_dir+ 'xb_d03_'+var_dim+'_ensPert_' + DAtime + '_' + var_name + '.pickle'
                 output_exists = os.path.exists( output_dir )
                 if output_exists == False:
-                    p2p.cal_pert_stddev_xb( DAtime, wrf_dir, var_name, If_save, '3D')
+                    p2p.cal_pert_stddev_xb( DAtime, wrf_dir, var_name, If_save, var_dim)
 
     # Calculate horizontal correlations between the obs at the obs location and  model field across the specified domain
     if If_cal_hor_corr:
@@ -763,28 +762,6 @@ if __name__ == '__main__':
                 var_dim = def_vardim( var_name )
                 cal_hor_corr( DAtime, var_name, obs_type, d_obs, var_dim )
 
-    # Plot the ensemble spread of xb per snapshot
-    if If_plot_stddev_xb_snapshot:
-        print('------------ Plot the ensemble spread of xb --------------')
-        plot_dir = small_dir+Storm+'/'+Exper_name+'/Vis_analyze/Ens_stddev_xb/'
-        plotdir_exists = os.path.exists( plot_dir )
-        if plotdir_exists == False:
-            os.mkdir(plot_dir)
-
-        for DAtime in DAtimes:
-            wrf_dir = big_dir+Storm+'/'+Exper_name+'/fc/'+DAtime+'/'
-            #Hx_dir = big_dir+Storm+'/'+Exper_name+'/Obs_Hx/IR/'+DAtime+'/'
-            print('At '+DAtime)
-            for var_name in model_v:
-                print('Plot '+var_name+'...')
-                var_dim = def_vardim( var_name )
-                stddev_xb_snapshot( wrf_dir,DAtime,var_name,var_dim )
-
-
-
-
-
-
 
     # Plot the horizontal covariance per snapshot
     if If_plot_cov_snapshot:
@@ -793,10 +770,11 @@ if __name__ == '__main__':
             #Hx_dir = big_dir+Storm+'/'+Exper_name+'/Obs_Hx/IR/'+DAtime+'/'
             wrf_dir = big_dir+Storm+'/'+Exper_name+'/fc/'+DAtime+'/'
             print('At '+DAtime)
-            for var_name in model_v:
 
+            for var_name in model_v:
                 print('Plot horizontal covariance: '+var_name+'...')
-                HroiCov_snapshot( DAtime,var_name,'3D' )
+                var_dim = def_vardim( var_name )
+                HroiCov_snapshot( DAtime,var_name,var_dim )
 
     # Plot the horizontal correlations per snapshot
     if If_plot_corr_snapshot:
@@ -805,11 +783,16 @@ if __name__ == '__main__':
             #Hx_dir = big_dir+Storm+'/'+Exper_name+'/Obs_Hx/IR/'+DAtime+'/'
             wrf_dir = big_dir+Storm+'/'+Exper_name+'/fc/'+DAtime+'/'
             print('At '+DAtime)
-            for var_name in model_v:
 
+            for var_name in model_v:
                 print('Plot horizontal correlation: '+var_name+'...')
-                if interp_H and not interp_P:
-                    HroiCorr_snapshot( DAtime,var_name,'3D',H_range)
+                var_dim = def_vardim( var_name )
+                
+                if var_dim == '2D':
+                    HroiCorr_snapshot( DAtime,var_name,var_dim )
+                else:
+                    if interp_H and not interp_P:
+                        HroiCorr_snapshot( DAtime,var_name,var_dim,H_range)
 
 
 
