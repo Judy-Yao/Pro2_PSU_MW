@@ -1,4 +1,3 @@
-#!/work2/06191/tg854905/stampede2/opt/anaconda3/lib/python3.7
 
 from numba import njit, prange
 import os,sys,stat # functions for interacting with the operating system
@@ -98,7 +97,7 @@ def corr_Tb_to3D( cov_xb_hxb,stddev_xb,stddev_hxb ):
                 res[i,j,k] = res[i,j,k]/stddev_hxb[k]
     return res
 
-def vertical_interp( ncdir,array,levels ):
+def vertical_interp( ncdir,array,levels,interp_H=None,interp_P=None):
 
     if interp_H and not interp_P:
         #interp_arr = np.zeros( [len(H_of_interest),len(idx_xb)] )
@@ -114,24 +113,17 @@ def vertical_interp( ncdir,array,levels ):
         print('Max of interpolated_arr: '+str(np.amax( interp_arr )))
         return interp_arr
     elif interp_P and not interp_H:
-        # pressure levels
-        PB = ncdir.variables['PB'][0,:,:,:]
-        P = ncdir.variables['P'][0,:,:,:]
-        P_hpa_all = (PB + P)/100 # 0 dimension: bottom to top
-        P_hpa_all = P_hpa_all.reshape(nLevel,xmax*ymax)
-        P_hpa = P_hpa_all[:,idx_xb]
-        # Calculate the corr at specified levels
+        pres = getvar(ncdir, 'pres', units='hPa')
+        interp_arr = np.zeros( (len(levels),pres.shape[1],pres.shape[2]) )
+        array =  array.reshape( (pres.shape) )
         start_time=time.process_time()
-        array_P = np.zeros( (len(P_of_interest),array.shape[1]),  )
-        for im in range( array.shape[1] ):
-            f_interp = interpolate.interp1d( P_hpa[:,im], array[:,im])
-            interp_arr[:,im] = f_interp( P_of_interest )
-        #corr_colxb_hxb_cloud_P = corr_colxb_hxb_cloud[:3,:] # test....
+        for ih in levels:
+            interp_arr[levels.index(ih),:,:] = interplevel(array, pres, ih)
         end_time = time.process_time()
         print ('time needed for the interpolation: ', end_time-start_time, ' seconds')
         print('Min of interpolated_arr: '+str(np.amin( interp_arr )))
         print('Max of interpolated_arr: '+str(np.amax( interp_arr )))
-
+        return interp_arr
     else:
         pass
 
@@ -514,65 +506,65 @@ def cal_pert_stddev_xb( DAtime, wrf_dir, var_name, If_save, dim=None ):
 #           Object: ensemble correlations of Xb and Hxb
 # ------------------------------------------------------------------------------------------------------
 
-# Calculate the ensemble correlation
-def calculate_corr( DAtime, Hx_dir, sensor, wrf_dir, var_name, idx_xb, idx_hxb):
-
-    # Read ensemble perturbations of xb
-    des_path = wrf_dir+ "xb_d03_3D_ensPert_" + DAtime + '_' + var_name +  '.pickle'
-    with open( des_path,'rb' ) as f:
-        xb_ens = pickle.load( f )
-    print('Shape of xb_ens: '+ str(np.shape(xb_ens)))
-    # Read ensemble standard deviation of xb
-    des_path = wrf_dir+ "xb_d03_3D_ensStddev_" + DAtime + '_' +  var_name + '.pickle'
-    with open( des_path,'rb' ) as f:
-        stddev_xb = pickle.load( f )
-    print('Shape of stddev_xb: '+ str(np.shape(stddev_xb)))
-    # Read ensemble perturbations of Hxb 
-    if to_obs_res:
-        des_path = Hx_dir+ "Hxb_ensPert_obsRes_" + DAtime + '_' +  sensor + '.pickle'
-    else:
-        des_path = Hx_dir+ "Hxb_ensPert_modelRes_" + DAtime + '_' +  sensor + '.pickle'
-    with open( des_path,'rb' ) as f:
-        hxb_ens = pickle.load( f )
-    print('Shape of hxb_ens: '+ str(np.shape(hxb_ens)))
-    # Read ensemble stand deviation of Hxb
-    if to_obs_res:
-        des_path = Hx_dir+ "Hxb_ensStddev_obsRes_" + DAtime + '_' +  sensor + '.pickle'
-    else:
-        des_path = Hx_dir+ "Hxb_ensStddev_modelRes_" + DAtime + '_' +  sensor + '.pickle'
-    with open( des_path,'rb' ) as f:
-        stddev_hxb = pickle.load( f )
-    print('Shape of stddev_hxb: '+ str(np.shape(stddev_hxb)))
-
-    # Calculate the covariance between Xb and Hxb
-    print('Calculating the covariance between Tbs and ' + var_name + '......' )
-    start = time.perf_counter()
-    cov_xb_hxb = cross_Tb_to3D( xb_ens[:,:num_ens,idx_xb],hxb_ens[:num_ens,idx_hxb] )
-    end = time.perf_counter()
-    print("Elapsed (after compilation) of covariance calculation = {}s".format((end - start)))
-    cov_xb_hxb = cov_xb_hxb / ( num_ens-1 )
-
-    # Calculate the correlation between Xb and Hxb
-    print('Calculating the correlation between Tbs and ' + var_name + '......' )
-    start = time.perf_counter()
-    corr_xb_hxb = corr_Tb_to3D( cov_xb_hxb,stddev_xb,stddev_hxb[idx_hxb] )
-    end = time.perf_counter()
-    print("Elapsed (after compilation) = {}s".format((end - start)))
-
-    # sanity check
-    assert  0 <= abs(corr_xb_hxb).all() and abs(corr_xb_hxb).all() <= 1
-    
-    # May save the correlations
-    if If_save:
-        if to_obs_res:
-            des_path = Hx_dir+ "Hcorr_Hxb_xb_obsRes_" + DAtime + '_' +  sensor + '_' + var_name +  '.pickle'
-        else:
-            des_path = Hx_dir+ "Hcorr_Hxb_xb_modelRes_" + DAtime + '_' +  sensor + '_' + var_name +  '.pickle'
-        f = open( des_path, 'wb' )
-        pickle.dump( corr_xb_hxb, f )
-        f.close()
-        print('Save '+des_path)
-    return corr_xb_hxb
+# # Calculate the ensemble correlation
+# def calculate_corr( DAtime, Hx_dir, sensor, wrf_dir, var_name, idx_xb, idx_hxb):
+# 
+#     # Read ensemble perturbations of xb
+#     des_path = wrf_dir+ "xb_d03_3D_ensPert_" + DAtime + '_' + var_name +  '.pickle'
+#     with open( des_path,'rb' ) as f:
+#         xb_ens = pickle.load( f )
+#     print('Shape of xb_ens: '+ str(np.shape(xb_ens)))
+#     # Read ensemble standard deviation of xb
+#     des_path = wrf_dir+ "xb_d03_3D_ensStddev_" + DAtime + '_' +  var_name + '.pickle'
+#     with open( des_path,'rb' ) as f:
+#         stddev_xb = pickle.load( f )
+#     print('Shape of stddev_xb: '+ str(np.shape(stddev_xb)))
+#     # Read ensemble perturbations of Hxb 
+#     if to_obs_res:
+#         des_path = Hx_dir+ "Hxb_ensPert_obsRes_" + DAtime + '_' +  sensor + '.pickle'
+#     else:
+#         des_path = Hx_dir+ "Hxb_ensPert_modelRes_" + DAtime + '_' +  sensor + '.pickle'
+#     with open( des_path,'rb' ) as f:
+#         hxb_ens = pickle.load( f )
+#     print('Shape of hxb_ens: '+ str(np.shape(hxb_ens)))
+#     # Read ensemble stand deviation of Hxb
+#     if to_obs_res:
+#         des_path = Hx_dir+ "Hxb_ensStddev_obsRes_" + DAtime + '_' +  sensor + '.pickle'
+#     else:
+#         des_path = Hx_dir+ "Hxb_ensStddev_modelRes_" + DAtime + '_' +  sensor + '.pickle'
+#     with open( des_path,'rb' ) as f:
+#         stddev_hxb = pickle.load( f )
+#     print('Shape of stddev_hxb: '+ str(np.shape(stddev_hxb)))
+# 
+#     # Calculate the covariance between Xb and Hxb
+#     print('Calculating the covariance between Tbs and ' + var_name + '......' )
+#     start = time.perf_counter()
+#     cov_xb_hxb = cross_Tb_to3D( xb_ens[:,:num_ens,idx_xb],hxb_ens[:num_ens,idx_hxb] )
+#     end = time.perf_counter()
+#     print("Elapsed (after compilation) of covariance calculation = {}s".format((end - start)))
+#     cov_xb_hxb = cov_xb_hxb / ( num_ens-1 )
+# 
+#     # Calculate the correlation between Xb and Hxb
+#     print('Calculating the correlation between Tbs and ' + var_name + '......' )
+#     start = time.perf_counter()
+#     corr_xb_hxb = corr_Tb_to3D( cov_xb_hxb,stddev_xb,stddev_hxb[idx_hxb] )
+#     end = time.perf_counter()
+#     print("Elapsed (after compilation) = {}s".format((end - start)))
+# 
+#     # sanity check
+#     assert  0 <= abs(corr_xb_hxb).all() and abs(corr_xb_hxb).all() <= 1
+#     
+#     # May save the correlations
+#     if If_save:
+#         if to_obs_res:
+#             des_path = Hx_dir+ "Hcorr_Hxb_xb_obsRes_" + DAtime + '_' +  sensor + '_' + var_name +  '.pickle'
+#         else:
+#             des_path = Hx_dir+ "Hcorr_Hxb_xb_modelRes_" + DAtime + '_' +  sensor + '_' + var_name +  '.pickle'
+#         f = open( des_path, 'wb' )
+#         pickle.dump( corr_xb_hxb, f )
+#         f.close()
+#         print('Save '+des_path)
+#     return corr_xb_hxb
 
 if __name__ == '__main__':
 

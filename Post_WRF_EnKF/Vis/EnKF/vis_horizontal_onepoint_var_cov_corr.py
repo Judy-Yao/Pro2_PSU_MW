@@ -22,7 +22,7 @@ import random
 
 import Util_Vis
 import Util_data as UD
-import point2point_var_cov_corr_IR_x as p2p
+import calculate_pert_stddev_x_IR as stat
 import Read_Obspace_IR as ROIR
 import Diagnostics as Diag
 #import matlab.engine
@@ -275,7 +275,6 @@ def HroiCorr_snapshot( DAtime,var_name,xdim=None,ver_coor=None):
     with open( des_path,'rb' ) as f:
         hori_corr = pickle.load( f )
     print('Shape of hori_corr: '+ str(np.shape(hori_corr)))
-    print( np.shape(hori_corr ))
 
     # Find the flattened grid index near the obs
     idx_obs_inX = []
@@ -300,7 +299,7 @@ def HroiCorr_snapshot( DAtime,var_name,xdim=None,ver_coor=None):
             # interpolate
             if If_plot_corr_snapshot:
                 for iobs in range(len(idx_obs_inX)):
-                    Interp_hori_corr = p2p.vertical_interp( ncdir,hori_corr[iobs,:,:],ver_coor)
+                    Interp_hori_corr = stat.vertical_interp( ncdir,hori_corr[iobs,:,:],ver_coor)
                     if If_plot_corr_snapshot:
                         #plot_3Dcorr_snapshot( xlat,xlon,hori_corr[iobs,25:31,:],H_of_interest )
                         plot_3Dcorr_snapshot( xlat,xlon,Interp_hori_corr,ver_coor,lon_obs,lat_obs)
@@ -611,8 +610,8 @@ def plot_3Dcov_snapshot( lat,lon,Interp_cov,ver_coor ):
 
 if __name__ == '__main__':
 
-    big_dir = '/expanse/lustre/scratch/zuy121/temp_project/Pro2_PSU_MW/' #'/scratch/06191/tg854905/Pro2_PSU_MW/'
-    small_dir = '/expanse/lustre/projects/pen116/zuy121/Pro2_PSU_MW/'  #'/work2/06191/tg854905/stampede2/Pro2_PSU_MW/'
+    big_dir = '/scratch/06191/tg854905/Pro2_PSU_MW/' #'/expanse/lustre/scratch/zuy121/temp_project/Pro2_PSU_MW/' #'/scratch/06191/tg854905/Pro2_PSU_MW/'
+    small_dir = '/work2/06191/tg854905/stampede2/Pro2_PSU_MW/' #'/expanse/lustre/projects/pen116/zuy121/Pro2_PSU_MW/'  #'/work2/06191/tg854905/stampede2/Pro2_PSU_MW/'
 
     # ---------- Configuration -------------------------
     Storm = 'IRMA'
@@ -627,7 +626,7 @@ if __name__ == '__main__':
         obs_type = 'slp' # Radiance
     
     # model variable
-    model_v = [ 'PSFC',]#'QSNOW','QCLOUD','QRAIN','QICE','QGRAUP']
+    model_v = [ 'QSNOW',]#'QSNOW','QCLOUD','QRAIN','QICE','QGRAUP']
     
     # time
     start_time_str = '201709030000'
@@ -650,7 +649,7 @@ if __name__ == '__main__':
     H_range = list(np.arange(1,21,1))
 
     If_cal_pert_stddev = False
-    If_cal_hor_corr = True
+    If_cal_hor_corr = False
     If_save = True
 
     If_plot_corr_snapshot = True
@@ -694,13 +693,13 @@ if __name__ == '__main__':
                 output_dir = wrf_dir+ "xb_d03_2D_ensPert_" + DAtime + '_PSFC.pickle'
                 output_exists = os.path.exists( output_dir )
                 if output_exists == False:
-                    p2p.cal_pert_stddev_xb( DAtime, wrf_dir, 'PSFC', If_save, '2D')
+                    stat.cal_pert_stddev_xb( DAtime, wrf_dir, 'PSFC', If_save, '2D')
             elif obs_type == 'Radiance':
                 Hx_dir = big_dir+Storm+'/'+Exper_name+'/Obs_Hx/IR/'+DAtime+'/'
                 output_dir = Hx_dir+ "Hxb_ensStddev_obsRes_" + DAtime + '_' +  sensor + '.pickle'
                 output_exists = os.path.exists( output_dir )
                 if output_exists == False:
-                    p2p.cal_pert_stddev_obsRes_Hxb( DAtime,sensor,Hx_dir,If_save,fort_v,wrf_dir)
+                    stat.cal_pert_stddev_obsRes_Hxb( DAtime,sensor,Hx_dir,If_save,fort_v,wrf_dir)
 
             # Xb
             wrf_dir = big_dir+Storm+'/'+Exper_name+'/fc/'+DAtime+'/'
@@ -709,7 +708,7 @@ if __name__ == '__main__':
                 output_dir = wrf_dir+ 'xb_d03_'+var_dim+'_ensPert_' + DAtime + '_' + var_name + '.pickle'
                 output_exists = os.path.exists( output_dir )
                 if output_exists == False:
-                    p2p.cal_pert_stddev_xb( DAtime, wrf_dir, var_name, If_save, '3D')
+                    stat.cal_pert_stddev_xb( DAtime, wrf_dir, var_name, If_save, '3D')
 
     # Calculate horizontal correlations between the obs at the obs location and  model field across the specified domain
     if If_cal_hor_corr:

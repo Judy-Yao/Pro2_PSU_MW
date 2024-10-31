@@ -17,7 +17,7 @@ from scipy.interpolate import interp2d
 
 import Util_data as UD
 import Util_Vis
-#import matlab.engine
+import matlab.engine
 import Diagnostics as Diag
 
 
@@ -382,7 +382,7 @@ def plot_Tb(Storm, Exper_name, Hx_dir, DAtime, sensor, ch_list ):
 
     # Read location from TCvitals
     if any( hh in DAtime[8:10] for hh in ['00','06','12','18']):
-        tc_lon, tc_lat, tc_slp = UD.read_TCvitals(Storm, DAtime )
+        tc_lon, tc_lat, tc_slp = UD.read_TCvitals(small_dir, Storm, DAtime )
 
     # ------------------ Plot -----------------------
     f, ax=plt.subplots(1, 3, subplot_kw={'projection': ccrs.PlateCarree()}, gridspec_kw = {'wspace':0, 'hspace':0}, linewidth=0.5, sharex='all', sharey='all',  figsize=(5,2.5), dpi=400)
@@ -460,7 +460,7 @@ def plot_Tb(Storm, Exper_name, Hx_dir, DAtime, sensor, ch_list ):
         gl.ylabel_style = {'size': 6}
 
     if not limit:
-        des_name = small_dir+Storm+'/'+Exper_name+'/Vis_analyze/Tb/IRch8_Obspace/'+DAtime+'_'+sensor+'_Obspace.png'
+        des_name = small_dir+Storm+'/'+Exper_name+'/Vis_analyze/Tb/IRch8_Obspace/'+DAtime+'_'+sensor+'_Obspace_only_assimilate_IR.png'
     else:
         des_name = small_dir+Storm+'/'+Exper_name+'/Vis_analyze/Tb/IRch8_Obspace/'+DAtime+'_'+sensor+'_Obspace_limit.png'
     plt.savefig(des_name,dpi=300)
@@ -489,7 +489,7 @@ def plot_Tb_diff(Storm, Exper_name, Hx_dir, DAtime, sensor, ch_list ):
 
     # Read location from TCvitals
     if any( hh in DAtime[8:10] for hh in ['00','06','12','18']):
-        tc_lon, tc_lat, tc_slp = UD.read_TCvitals(Storm, DAtime)
+        tc_lon, tc_lat, tc_slp = UD.read_TCvitals(small_dir, Storm, DAtime)
         print( 'Location from TCvital: ', tc_lon, tc_lat )
 
     # Prepare to calculate Bias and RMSE between the Hx and Yo
@@ -609,25 +609,25 @@ if __name__ == '__main__':
     small_dir =  '/work2/06191/tg854905/stampede2/Pro2_PSU_MW/'
 
     # ---------- Configuration -------------------------
-    Storm = 'HARVEY'
+    Storm = 'IRMA'
     DA = 'CONV'
-    MP = 'THO'
+    MP = 'WSM6'
  
     sensor = 'abi_gr'
     ch_list = ['8',]
     fort_v = ['obs_type','lat','lon','obs']
 
-    start_time_str = '201708231200'
-    end_time_str = '201708231200'
+    start_time_str = '201709030000'
+    end_time_str = '201709030000'
     Consecutive_times = True
     
     # limitations
     limit = False
 
-    Interp_to_obs = True
+    Interp_to_obs = False
     plot_full = False
-    plot_diff = False
-    plot_scatter = False
+    plot_diff = True
+    plot_scatter = True
     # ------------------------------------------------------   
 
     # Create experiment names
