@@ -22,7 +22,7 @@ import random
 
 import Util_Vis
 import Util_data as UD
-import point2point_var_cov_corr_IR_x as p2p
+import calculate_pert_stddev_x_IR as stat
 import Read_Obspace_IR as ROIR
 import Diagnostics as Diag
 #import matlab.engine
@@ -81,46 +81,6 @@ def hor_corr_obs_x( cov_xb_hxb,stddev_xb,stddev_hxb ):
                 res[i,n] = res[i,n]/stddev_hxb
 
     return res
-
-# vertical interpolation
-def vertical_interp( ncdir,array,levels ):
-
-    if interp_H and not interp_P:
-        #Interp_corr_xb_hxb = np.zeros( [len(H_of_interest),len(idx_xb)] )
-        z = getvar(ncdir, 'z', units='km')
-        Interp_corr_xb_hxb = np.zeros( (len(levels),z.shape[1],z.shape[2]) )
-        array =  array.reshape( (z.shape) )
-        start_time=time.process_time()
-        for ih in levels:
-            Interp_corr_xb_hxb[levels.index(ih),:,:] = interplevel(array, z, ih)
-        end_time = time.process_time()
-        print ('time needed for the interpolation: ', end_time-start_time, ' seconds')
-        print('Min of correlation: '+str(np.nanmin( Interp_corr_xb_hxb )))
-        print('Max of correlation: '+str(np.nanmax( Interp_corr_xb_hxb )))
-        return Interp_corr_xb_hxb
-    elif interp_P and not interp_H:
-        # pressure levels
-        PB = ncdir.variables['PB'][0,:,:,:]
-        P = ncdir.variables['P'][0,:,:,:]
-        P_hpa_all = (PB + P)/100 # 0 dimension: bottom to top
-        P_hpa_all = P_hpa_all.reshape(nLevel,xmax*ymax)
-        P_hpa = P_hpa_all[:,idx_xb]
-        # Calculate the corr at specified levels
-        start_time=time.process_time()
-        array_P = np.zeros( (len(P_of_interest),array.shape[1]),  )
-        for im in range( array.shape[1] ):
-            f_interp = interpolate.interp1d( P_hpa[:,im], array[:,im])
-            Interp_corr_xb_hxb[:,im] = f_interp( P_of_interest )
-        #corr_colxb_hxb_cloud_P = corr_colxb_hxb_cloud[:3,:] # test....
-        end_time = time.process_time()
-        print ('time needed for the interpolation: ', end_time-start_time, ' seconds')
-        print('Min of correlation: '+str(np.nanmin( Interp_corr_xb_hxb )))
-        print('Max of correlation: '+str(np.nanmax( Interp_corr_xb_hxb )))
-
-    else:
-        pass
-
-
 
 
 ## For each obs loc, find the nearest model grid point (good for mercator)
@@ -315,7 +275,6 @@ def HroiCorr_snapshot( DAtime,var_name,xdim=None,ver_coor=None):
     with open( des_path,'rb' ) as f:
         hori_corr = pickle.load( f )
     print('Shape of hori_corr: '+ str(np.shape(hori_corr)))
-    print( np.shape(hori_corr ))
 
     # Find the flattened grid index near the obs
     idx_obs_inX = []
@@ -340,7 +299,7 @@ def HroiCorr_snapshot( DAtime,var_name,xdim=None,ver_coor=None):
             # interpolate
             if If_plot_corr_snapshot:
                 for iobs in range(len(idx_obs_inX)):
-                    Interp_hori_corr = vertical_interp( ncdir,hori_corr[iobs,:,:],ver_coor)
+                    Interp_hori_corr = stat.vertical_interp( ncdir,hori_corr[iobs,:,:],ver_coor)
                     if If_plot_corr_snapshot:
                         #plot_3Dcorr_snapshot( xlat,xlon,hori_corr[iobs,25:31,:],H_of_interest )
                         plot_3Dcorr_snapshot( xlat,xlon,Interp_hori_corr,ver_coor,lon_obs,lat_obs)
@@ -651,8 +610,8 @@ def plot_3Dcov_snapshot( lat,lon,Interp_cov,ver_coor ):
 
 if __name__ == '__main__':
 
-    big_dir = '/expanse/lustre/scratch/zuy121/temp_project/Pro2_PSU_MW/' #'/scratch/06191/tg854905/Pro2_PSU_MW/'
-    small_dir = '/expanse/lustre/projects/pen116/zuy121/Pro2_PSU_MW/'  #'/work2/06191/tg854905/stampede2/Pro2_PSU_MW/'
+    big_dir = '/scratch/06191/tg854905/Pro2_PSU_MW/' #'/expanse/lustre/scratch/zuy121/temp_project/Pro2_PSU_MW/' #'/scratch/06191/tg854905/Pro2_PSU_MW/'
+    small_dir = '/work2/06191/tg854905/stampede2/Pro2_PSU_MW/' #'/expanse/lustre/projects/pen116/zuy121/Pro2_PSU_MW/'  #'/work2/06191/tg854905/stampede2/Pro2_PSU_MW/'
 
     # ---------- Configuration -------------------------
     Storm = 'IRMA'
@@ -733,13 +692,13 @@ if __name__ == '__main__':
                 output_dir = wrf_dir+ "xb_d03_2D_ensPert_" + DAtime + '_PSFC.pickle'
                 output_exists = os.path.exists( output_dir )
                 if output_exists == False:
-                    p2p.cal_pert_stddev_xb( DAtime, wrf_dir, 'PSFC', If_save, '2D')
+                    stat.cal_pert_stddev_xb( DAtime, wrf_dir, 'PSFC', If_save, '2D')
             elif obs_type == 'Radiance':
                 Hx_dir = big_dir+Storm+'/'+Exper_name+'/Obs_Hx/IR/'+DAtime+'/'
                 output_dir = Hx_dir+ "Hxb_ensStddev_obsRes_" + DAtime + '_' +  sensor + '.pickle'
                 output_exists = os.path.exists( output_dir )
                 if output_exists == False:
-                    p2p.cal_pert_stddev_obsRes_Hxb( DAtime,sensor,Hx_dir,If_save,fort_v,wrf_dir)
+                    stat.cal_pert_stddev_obsRes_Hxb( DAtime,sensor,Hx_dir,If_save,fort_v,wrf_dir)
 
             # Xb
             wrf_dir = big_dir+Storm+'/'+Exper_name+'/fc/'+DAtime+'/'
@@ -748,7 +707,7 @@ if __name__ == '__main__':
                 output_dir = wrf_dir+ 'xb_d03_'+var_dim+'_ensPert_' + DAtime + '_' + var_name + '.pickle'
                 output_exists = os.path.exists( output_dir )
                 if output_exists == False:
-                    p2p.cal_pert_stddev_xb( DAtime, wrf_dir, var_name, If_save, var_dim)
+                    stat.cal_pert_stddev_xb( DAtime, wrf_dir, var_name, If_save, '3D')
 
     # Calculate horizontal correlations between the obs at the obs location and  model field across the specified domain
     if If_cal_hor_corr:

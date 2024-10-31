@@ -1,4 +1,3 @@
-#!/work2/06191/tg854905/stampede2/opt/anaconda3/lib/python3.7
 
 from numba import njit, prange
 import os # functions for interacting with the operating system
@@ -21,9 +20,10 @@ from mpl_toolkits.axes_grid1 import make_axes_locatable
 import time
 
 import Util_data as UD
+from calculate_pert_stddev_x_IR import vertical_interp
 
 # ------------------------------------------------------------------------------------------------------
-#           Operation: Perform Operations
+#           Object: hydro mass 
 # ------------------------------------------------------------------------------------------------------
 @njit(parallel=True)
 def hydro_mass( full_p, tv, geoHm, q ):
@@ -240,6 +240,130 @@ def plot_IC(DAtime, plot_dir, d_hydro, var, IC_xb, IC_xa, ):
     print('Saving the figure: ', des)
     plt.close()
 
+# ------------------------------------------------------------------------------------------------------
+#           Object: mixing ratio
+# ------------------------------------------------------------------------------------------------------
+def MixingRatio_snapshot( DAtime, Exper_name, wrf_file, var_name, ver_coor):
+
+    # Dimension of the domain
+    xmax = 297
+    ymax = 297
+    nLevel = 42
+
+    ncdir = nc.Dataset( wrf_file, 'r')
+    # Read the increment
+    if 'Q' in var_name:
+
+        # Use a threshold to overwrite elements that are too small
+        epsilon=1e-4
+        # Read mixting ratios of interest
+        var = ncdir.variables[var_name][0,:,:,:]*1000 # level,lat,lon; g/kg
+        var[var < epsilon] = np.nan
+    else:
+        raise ValueError('Invalid variable!')
+
+    # Make interpolation
+    if interp_P and not interp_H:
+        Interp_var = np.zeros( [len(P_range),xmax*ymax] )
+
+    elif interp_H and not interp_P:
+        Interp_var = vertical_interp( ncdir,var,ver_coor,interp_H,interp_P)
+
+    # Plot
+    # Read lon and lat
+    xlon = ncdir.variables['XLONG'][0,:,:].flatten()
+    xlat = ncdir.variables['XLAT'][0,:,:].flatten()
+    plot_3D_mixingRatio( wrf_file, xlat,xlon,Interp_var,ver_coor )
+
+def plot_3D_mixingRatio( wrf_file, lat,lon,Interp_var,ver_coor ):
+
+    # Read WRF domain
+    d_wrf_d03 = UD.read_wrf_domain( wrf_file )
+
+    # Read location from TCvitals
+    #if any( hh in DAtime[8:10] for hh in ['00','06','12','18']):
+    #    tc_lon, tc_lat, tc_slp = UD.read_TCvitals(small_dir,Storm, DAtime)
+
+    # ------------------ Plot -----------------------
+    fig, ax=plt.subplots(4, 5, subplot_kw={'projection': ccrs.PlateCarree()}, gridspec_kw = {'wspace':0.05, 'hspace':0.05}, linewidth=0.5, sharex='all', sharey='all',  figsize=(15,12), dpi=200)
+
+    # Define the domain
+    lat_min = d_wrf_d03['lat_min']
+    lat_max = d_wrf_d03['lat_max']
+    lon_min = d_wrf_d03['lon_min']
+    lon_max = d_wrf_d03['lon_max']
+
+    min_var = 0  #-0.5  # -0.015
+    max_var = 1. #1.5  # 0.015
+    for isub in range(20):
+        ax.flat[isub].set_extent([lon_min, lon_max, lat_min, lat_max], crs=ccrs.PlateCarree())
+        ax.flat[isub].coastlines(resolution='10m', color='black',linewidth=0.5)
+        #cs = ax.flat[isub].scatter(lon,lat,c,Interp_var[isub,:],cmap='RdBu_r',edgecolors='none',transform=ccrs.PlateCarree(),)
+        cs = ax.flat[isub].scatter(lon,lat,5,Interp_var[isub,:],cmap='jet_r',vmin=min_var,vmax=max_var,edgecolors='none',transform=ccrs.PlateCarree(),)
+        #if any( hh in DAtime[8:10] for hh in ['00','06','12','18'] ):
+        #    ax.flat[isub].scatter(tc_lon, tc_la
+
+    # Colorbar
+    cbaxes = fig.add_axes([0.91, 0.1, 0.03, 0.8])
+    #color_ticks = np.linspace(min_corr, max_corr, 5, endpoint=True)
+    cbar = fig.colorbar(cs, cax=cbaxes,fraction=0.046, pad=0.04, extend='max')
+    #cbar.set_ticks( color_ticks )
+    cbar.ax.tick_params(labelsize=18) #15
+
+    # Define the colorbar
+    #max_abs = 0.001 #max(np.amin(abs(Interp_var)),np.amax(abs(Interp_var)))
+    #min_var = -0.001#0-max_abs
+
+    #subplot title
+    font = {'size':15,}
+    for isub in range(20):
+        ax.flat[isub].set_title( str(ver_coor[isub])+' KM', font, fontweight='bold')
+
+    #title for all
+    if 'input' in wrf_file:
+        title_name = Storm+': '+Exper_name+'  Background (Xb)'
+    elif 'output' in wrf_file:
+        title_name = Storm+': '+Exper_name+'  Analysis (Xa)'
+
+    title_name = title_name+'\nMixing Ratio of '+var_name+' (g/kg)'
+    fig.suptitle(title_name, fontsize=20, fontweight='bold')
+
+    # Axis labels
+    lon_ticks = list(range(math.ceil(lon_min)-2, math.ceil(lon_max)+2,2))
+    lat_ticks = list(range(math.ceil(lat_min)-2, math.ceil(lat_max)+2,2))
+    for i in range(4):
+        for j in range(5):
+            gl = ax[i,j].gridlines(crs=ccrs.PlateCarree(),draw_labels=False,linewidth=0.5, color='gray', alpha=0.5, linestyle='--')
+
+            gl.top_labels = False
+            gl.right_labels = False
+            if j == 0:
+                gl.left_labels = True
+            else:
+                gl.left_labels = False
+            if i == 3:
+                gl.bottom_labels = True
+            else:
+                gl.bottom_labels = False
+
+            gl.ylocator = mticker.FixedLocator(lat_ticks)
+            gl.xlocator = mticker.FixedLocator(lon_ticks)
+            gl.xformatter = LONGITUDE_FORMATTER
+            gl.yformatter = LATITUDE_FORMATTER
+            gl.xlabel_style = {'size': 10}
+            gl.ylabel_style = {'size': 15}
+
+    if interp_H and not interp_P:
+        des = plot_dir+'Interp_H_'+var_name+'_'+DAtime
+        if 'input' in wrf_file:
+            des = des+'_Xb.png'
+        elif 'output' in wrf_file:
+            des = des+'_Xa.png'
+
+    plt.savefig( des, dpi=300 )
+    print('Saving the figure: ', des)
+    plt.close()
+
 
 if __name__ == '__main__':
 
@@ -247,33 +371,60 @@ if __name__ == '__main__':
     small_dir =  '/work2/06191/tg854905/stampede2/Pro2_PSU_MW/'
 
     # ---------- Configuration -------------------------
-    Storm = 'MARIA'
-    Exper_name = 'IR-J_DA+J_WRF+J_init-SP-intel17-THO-24hr-hroi900'
-    each_var = ['QCLOUD','QRAIN','QICE','QSNOW','QGRAUP']
+    Storm = 'IRMA'
+    MP = 'WSM6'
+    DA = 'CONV'
+    each_var = ['QSNOW',] #['QCLOUD','QRAIN','QICE','QSNOW','QGRAUP']
 
-    # Time range set up
-    start_time_str = '201709160900'
-    end_time_str = '201709160900'
+    start_time_str = '201709030000'
+    end_time_str = '201709030000'
     Consecutive_times = True
 
-    #Plot_layer = True
-    each_water = False
-    Plot_IC = True
+    interp_P = False
+    P_range = list(range( 900,10,-20 ))
+    interp_H = True
+    H_range = list(np.arange(1,21,1))
+
+    each_water = True
+    convert_to_mass = False
+    Plot_Q = True
+    Plot_mass = False
     # -------------------------------------------------------    
+    Exper_name = UD.generate_one_name( Storm,DA,MP )
 
     if not Consecutive_times:
         DAtimes = ['201709050000',]
-        #DAtimes = ['201708230000','201708230600','201708231200','201708231800','201708240000','201708240600','201708241200']
-        #DAtimes = ['201709031200','201709031800','201709040000','201709040600','201709041200','201709041800','201709050000']
-        #DAtimes = ['201709161200','201709161800','201709170000','201709170600','201709171200','201709171800','201709180000']
     else:
         time_diff = datetime.strptime(end_time_str,"%Y%m%d%H%M") - datetime.strptime(start_time_str,"%Y%m%d%H%M")
         time_diff_hour = time_diff.total_seconds() / 3600
         time_interest_dt = [datetime.strptime(start_time_str,"%Y%m%d%H%M") + timedelta(hours=t) for t in list(range(0, int(time_diff_hour)+1, 1))]
         DAtimes = [time_dt.strftime("%Y%m%d%H%M") for time_dt in time_interest_dt]
 
+    # Plot the 3D mixing ratio per snapshot
+    if Plot_Q:
+        print('------------ Plot the mixing ratio per snapshot --------------')
+        for DAtime in DAtimes:
+            print('At '+DAtime)
+            wrf_dir = big_dir+Storm+'/'+Exper_name+'/fc/'+DAtime+'/'
+            wrf_files = [wrf_dir+'/wrf_enkf_input_d03_mean',wrf_dir+'/wrf_enkf_output_d03_mean']
+            # ------ Plot -------------------
+            plot_dir = small_dir+Storm+'/'+Exper_name+'/Vis_analyze/Model/Hydro_mixingRatio/'
+            plotdir_exists = os.path.exists( plot_dir )
+            if plotdir_exists == False:
+                os.mkdir(plot_dir)
+            
+            # loop EnKF input and output
+            for ifile in wrf_files:
+                # loop var name
+                for var_name in each_var:
+                    print('Plot '+var_name+'...')
+                    if interp_H and not interp_P:
+                        ver_coor = H_range
+
+                    MixingRatio_snapshot( DAtime, Exper_name, ifile, var_name, ver_coor)
+
     # Plot integrated column of hydrometeors
-    if Plot_IC:
+    if Plot_mass:
         start_time=time.process_time()
         for DAtime in DAtimes:
             print('At '+DAtime)

@@ -275,7 +275,7 @@ def Find_IR( file_Diag, v_interest ):
     for key in v_interest:
         idx_var = v_interest.index( key )
         Diag_IR[key] = IR_list[idx_var]
-        print(key, ':', Diag_IR[key][222])
+        print(key, ':', Diag_IR[key][0])
 
     return Diag_IR
 

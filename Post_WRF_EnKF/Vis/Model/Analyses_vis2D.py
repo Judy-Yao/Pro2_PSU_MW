@@ -534,7 +534,7 @@ def read_UV10_slp( DAtime, wrf_dir ):
 def plot_UV10_slp( Storm, Exper_name, DAtime, wrf_dir, plot_dir ):
 
     # Read storm center
-    dict_btk = UD.read_bestrack(Storm)
+    dict_btk = UD.read_bestrack(small_dir,Storm)
     # Find the best-track position
     btk_dt = [it_str for it_str in dict_btk['time'] ]#[datetime.strptime(it_str,"%Y%m%d%H%M") for it_str in dict_btk['time']]
     bool_match = [DAtime == it for it in btk_dt]
@@ -576,15 +576,15 @@ def plot_UV10_slp( Storm, Exper_name, DAtime, wrf_dir, plot_dir ):
         plt.clabel(slp_contour,level,inline=True, fmt="%i", use_clabeltext=True, fontsize=13)
         # Wind at 10 meters
         wind_smooth = sp.ndimage.gaussian_filter( d_field['windspeed'][i,:,:], [2,2])
-        min_wind = 2#10
-        max_wind = 24#60
-        bounds = np.arange(min_wind,max_wind+1,2)
+        min_wind = 10#2#10
+        max_wind = 60#24#60
+        bounds = [10,20,30,40,50,60]#np.arange(min_wind,max_wind+1,2)
         wind_contourf = ax[i].contourf(lon,lat,wind_smooth,cmap='hot_r',vmin=min_wind,vmax=max_wind,levels=bounds,extend='both',transform=ccrs.PlateCarree())
         ax[i].barbs(lon.flatten(), lat.flatten(), d_field['U10'][i,:,:].flatten(), d_field['V10'][i,:,:].flatten(), length=5, pivot='middle', color='royalblue', regrid_shape=20, transform=ccrs.PlateCarree())
 
         # Mark the best track
         if if_btk_exist:
-            fig.text(0.50,0.05,'Best-Track MSLP:'+str("{0:.3f}".format(dict_btk['min_slp'][idx_btk]))+' hPa', fontsize=12, ha='center', va='center',fontweight='bold')
+            fig.text(0.50,0.05,'Best-Track MSLP:'+str("{0:.3f}".format(dict_btk['mslp'][idx_btk]))+' hPa', fontsize=12, ha='center', va='center',fontweight='bold')
             ax[i].scatter(dict_btk['lon'][idx_btk],dict_btk['lat'][idx_btk], 40, 'green', marker='*',transform=ccrs.PlateCarree())
 
         # Mask the simulated storm center
@@ -1683,9 +1683,9 @@ if __name__ == '__main__':
     Plot_dewT = False
 
     Plot_slp = False
-    Plot_UV10_slp = False
+    Plot_UV10_slp = True
     Plot_minslp_evo = False
-    Plot_PSFC = True
+    Plot_PSFC = False
     Plot_rtvo = False
     Plot_divergence = False
 
@@ -1693,7 +1693,7 @@ if __name__ == '__main__':
 
     # Time range set up
     start_time_str = '201709030000'
-    end_time_str = '201709040000'
+    end_time_str = '201709030000'
     Consecutive_times = True
 
     if not Consecutive_times:
