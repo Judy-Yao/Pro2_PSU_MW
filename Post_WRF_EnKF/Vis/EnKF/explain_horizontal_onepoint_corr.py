@@ -205,9 +205,11 @@ def explain_HroiCorr_PSFC( wrf_dir,DAtime ):
     # Mark the observed location: TCvital
     ax.scatter(lon_obs, lat_obs, c='green', s=10, marker='s', edgecolors='green', transform=ccrs.PlateCarree())
     # Mark the mslp for the whole EnKF input ensemble
-    min_mslp = 950
-    max_mslp = 990
-    cs_mslp = ax.scatter(d_mslp['lon_mslp'],d_mslp['lat_mslp'],10,d_mslp['mslp'],cmap='bone',marker='*',vmin=min_mslp,vmax=max_mslp,transform=ccrs.PlateCarree())
+    #min_mslp = 950
+    #max_mslp = 990
+    #cs_mslp = ax.scatter(d_mslp['lon_mslp'],d_mslp['lat_mslp'],10,d_mslp['mslp'],cmap='bone',marker='*',vmin=min_mslp,vmax=max_mslp,transform=ccrs.PlateCarree())
+
+    cs_mslp = ax.scatter(d_mslp['lon_mslp'],d_mslp['lat_mslp'],10,d_mslp['id'],cmap='jet',marker='*',vmin=1,vmax=60,transform=ccrs.PlateCarree())
 
     # Colorbar
     cbaxes = fig.add_axes([0.9, 0.1, 0.03, 0.8])
@@ -247,9 +249,8 @@ def explain_HroiCorr_PSFC( wrf_dir,DAtime ):
     gl.xlabel_style = {'size': 10}
     gl.ylabel_style = {'size': 12}
 
-
     # Save the figure
-    save_des = small_dir+Storm+'/'+Exper_name+'/Vis_analyze/hori_Corr/explain_'+DAtime+'_HroiCorr_obs_' + obs_type +'_model_' +  var_name + '.png'
+    save_des = small_dir+Storm+'/'+Exper_name+'/Vis_analyze/hori_Corr/explain_'+DAtime+'_HroiCorr_obs_' + obs_type +'_model_' +  var_name + '_id.png'
     #save_des = small_dir+Storm+'/'+Exper_name+'/Vis_analyze/hori_Corr/Interp_H_corr_ms_'+DAtime+'_'+var_name+'_'+sensor+'.png'
     plt.savefig( save_des )
     print( 'Saving the figure: ', save_des )
@@ -259,8 +260,8 @@ def explain_HroiCorr_PSFC( wrf_dir,DAtime ):
 
 if __name__ == '__main__':
 
-    big_dir = '/expanse/lustre/scratch/zuy121/temp_project/Pro2_PSU_MW/' #'/scratch/06191/tg854905/Pro2_PSU_MW/'
-    small_dir = '/expanse/lustre/projects/pen116/zuy121/Pro2_PSU_MW/'  #'/work2/06191/tg854905/stampede2/Pro2_PSU_MW/'
+    big_dir = '/work2/06191/tg854905/stampede2/Pro2_PSU_MW/'#'/expanse/lustre/scratch/zuy121/temp_project/Pro2_PSU_MW/' #'/scratch/06191/tg854905/Pro2_PSU_MW/'
+    small_dir = '/work2/06191/tg854905/stampede2/Pro2_PSU_MW/'#'/expanse/lustre/projects/pen116/zuy121/Pro2_PSU_MW/'  #'/work2/06191/tg854905/stampede2/Pro2_PSU_MW/'
 
     # ---------- Configuration -------------------------
     Storm = 'IRMA'
