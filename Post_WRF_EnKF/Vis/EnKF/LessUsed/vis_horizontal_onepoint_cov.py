@@ -460,6 +460,153 @@ def plot_3Dcorr_snapshot( lat,lon,Interp_corr,ver_coor,lon_obs,lat_obs):
     print( 'Saving the figure: ', save_des )
     plt.close()
 
+# ---------------------------------------------------------------------------------------------------------------
+#           Object: ensemble horizontal covariance of one obs and 2D/3D model variable;Operation: Plot the snapshot
+# ------------------------------------------------------------------------------------------------------------------
+
+def HroiCov_snapshot( DAtime,var_name,xdim ):
+
+    if xdim == '3D':
+        nLevel = 42
+    elif xdim == '2D':
+        nLevel = 1
+
+    # Read covelations between a Tb and a column of model var
+    des_path = wrf_dir+DAtime+"_d03_hroi_cov_Obs_" + obs_type +'_model_' +  var_name + '.pickle'
+    with open( des_path,'rb' ) as f:
+        hori_cov = pickle.load( f )
+    print('Shape of hori_cov: '+ str(np.shape(hori_cov)))
+    print( np.shape(hori_cov ))
+
+    # Find the flattened grid index near the obs
+    idx_obs_inX = []
+    lon_obs = np.array( d_obs[DAtime]['lon'] )
+    lat_obs = np.array( d_obs[DAtime]['lat'] )
+    idx_obs_inX.append( Find_nearest_grid( lon_obs,lat_obs ) )
+
+    # Plot
+    # read model attributes
+    mean_xb = wrf_dir + '/wrf_enkf_input_d03_mean'
+    ncdir = nc.Dataset( mean_xb, 'r')
+    # read lon and lat
+    xlon = ncdir.variables['XLONG'][0,:,:].flatten()
+    xlat = ncdir.variables['XLAT'][0,:,:].flatten()
+
+    if xdim == '2D':
+        if If_plot_cov_snapshot:
+            for iobs in range(len(idx_obs_inX)):
+                plot_2Dcov_snapshot( xlat,xlon,hori_cov[iobs,:,:],)
+    else:
+        if interp_H and not interp_P:
+            # interpolate
+            H_of_interest = [8,9,10,11,12,13]
+            if If_plot_cov_snapshot:
+                for iobs in range(len(idx_obs_inX)):
+                    #Interp_hori_cov = #vertical_interp( ncdir,hori_cov[iobs,:,:],H_of_interest ) 
+                    if If_plot_cov_snapshot:
+                        # Count the number of NaN values
+                        nan_count = np.isnan(hori_cov[iobs,0:6,:]).sum()
+                        print("Number of NaN elements:", nan_count)
+                        #print(np.nanmin(hori_cov[iobs,0:6,:]))
+                        #print(np.nanmax(hori_cov[iobs,0:6,:]))
+                        plot_3Dcov_snapshot( xlat,xlon,hori_cov[iobs,0:6,:],H_of_interest ) 
+                        #plot_3Dcov_snapshot( xlat,xlon,Interp_hori_cov,H_of_interest )
+        elif interp_P and not interp_H:
+
+            if If_plot_cov_snapshot:
+                plot_3Dcov_snapshot( xlat,xlon,Interp_hori_cov,P_of_interest ) 
+        else:
+            pass
+
+    return None
+
+
+# Plot 3D covariance per snapshot
+def plot_3Dcov_snapshot( lat,lon,Interp_cov,ver_coor ):
+
+    # Read WRF domain
+    wrf_file = big_dir+Storm+'/'+Exper_name+'/fc/'+DAtime+'/wrf_enkf_output_d03_mean'
+    d_wrf_d03 = ROIR.read_wrf_domain( wrf_file )
+
+    # Read location from TCvitals
+    #if any( hh in DAtime[8:10] for hh in ['00','06','12','18']):
+    #    tc_lon, tc_lat, tc_slp = UD.read_TCvitals(small_dir,Storm, DAtime)
+
+    # ------------------ Plot -----------------------
+    fig, ax=plt.subplots(2, 3, subplot_kw={'projection': ccrs.PlateCarree()}, gridspec_kw = {'wspace':0, 'hspace':0}, linewidth=0.5, sharex='all', sharey='all',  figsize=(9.75,6.5), dpi=400)
+
+    # Define the domain
+    lat_min = d_wrf_d03['lat_min']
+    lat_max = d_wrf_d03['lat_max']
+    lon_min = d_wrf_d03['lon_min']
+    lon_max = d_wrf_d03['lon_max']
+
+    min_cov = -1
+    max_cov = 1
+    for isub in range(6):
+        ax.flat[isub].set_extent([lon_min, lon_max, lat_min, lat_max], crs=ccrs.PlateCarree())
+        ax.flat[isub].coastlines(resolution='10m', color='black',linewidth=0.5)
+
+        #cs = ax.flat[isub].scatter(lon,lat,5,Interp_cov[isub,:],cmap='RdBu_r',edgecolors='none',transform=ccrs.PlateCarree(),)
+        cs = ax.flat[isub].scatter(lon,lat,5,Interp_cov[isub,:],cmap='RdBu_r',edgecolors='none',vmin=min_cov,vmax=max_cov,transform=ccrs.PlateCarree(),)
+        # Mark the observed location
+        ax.flat[isub].scatter(lon,lat,5,Interp_cov[isub,:],cmap='RdBu_r',edgecolors='none',vmin=min_cov,vmax=max_cov,transform=ccrs.PlateCarree(),)
+        #    edgecolors='none', cmap='RdBu_r',transform=ccrs.PlateCarree())
+        #if any( hh in DAtime[8:10] for hh in ['00','06','12','18'] ):
+        #    ax.flat[isub].scatter(tc_lon, tc_lat, s=3, marker='*', edgecolors='black', transform=ccrs.PlateCarree())
+
+    # Colorbar
+    cbaxes = fig.add_axes([0.91, 0.1, 0.03, 0.8])
+    color_ticks = np.linspace(min_cov, max_cov, 5, endpoint=True)
+    cbar = fig.colorbar(cs, cax=cbaxes,fraction=0.046, pad=0.04, )
+    cbar.set_ticks( color_ticks )
+    cbar.ax.tick_params(labelsize=11)
+    
+    #subplot title
+    font = {'size':15,}
+    for isub in range(6):
+        ax.flat[isub].set_title( str(ver_coor[isub])+' KM', font, fontweight='bold')
+
+    #title for all
+    title_name = Storm+': '+Exper_name+'(ver_cov of '+var_name+'&IR)'
+    fig.suptitle(title_name, fontsize=10, fontweight='bold')
+
+    # Axis labels
+    lon_ticks = list(range(math.ceil(lon_min)-2, math.ceil(lon_max)+2,2))
+    lat_ticks = list(range(math.ceil(lat_min)-2, math.ceil(lat_max)+2,2))
+    for j in range(6):
+        gl = ax.flat[j].gridlines(crs=ccrs.PlateCarree(),draw_labels=False,linewidth=0.5, color='gray', alpha=0.5, linestyle='--')
+
+        gl.top_labels = False
+        gl.bottom_labels = True
+        if j==0 or j==3:
+            gl.left_labels = True
+            gl.right_labels = False
+        else:
+            gl.left_labels = False
+            gl.right_labels = False
+
+        if j==3 or j==4 or j==5:
+            gl.bottom_labels = True
+            gl.top_labels = False
+        else:
+            gl.bottom_labels = False
+            gl.top_labels = False
+
+        gl.ylocator = mticker.FixedLocator(lat_ticks)
+        gl.xlocator = mticker.FixedLocator(lon_ticks)
+        gl.xformatter = LONGITUDE_FORMATTER
+        gl.yformatter = LATITUDE_FORMATTER
+        gl.xlabel_style = {'size': 10}
+        gl.ylabel_style = {'size': 12}
+
+    # Save the figure
+    save_des = small_dir+Storm+'/'+Exper_name+'/Vis_analyze/hori_Corr/Interp_H_HroiCov_obs_' + obs_type +'_model_' +  var_name + '.png'
+    #save_des = small_dir+Storm+'/'+Exper_name+'/Vis_analyze/hori_Cov/Interp_H_cov_ms_'+DAtime+'_'+var_name+'_'+sensor+'.png'
+    plt.savefig( save_des )
+    print( 'Saving the figure: ', save_des )
+    plt.close()
+
 
 if __name__ == '__main__':
 
