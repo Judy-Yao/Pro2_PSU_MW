@@ -16,6 +16,15 @@ import Util_Vis
 import Diagnostics as Diag
 import Util_data as UD
 
+def RMSE(simu, obs):
+    return np.sqrt( ((simu - obs) ** 2).mean() )
+
+def Bias(simu, obs):
+    return  np.sum((simu - obs),0)/np.size(obs,0)
+
+def mean_Yo_Hx(simu, obs):
+    return  np.sum((obs - simu),0)/np.size(obs,0)
+
 def plot_Tb( Storm, Exper_name, Hxb, Hxa, DAtime, sensor, ch_list, d_obs):
 
     # Read simulated data
@@ -23,7 +32,7 @@ def plot_Tb( Storm, Exper_name, Hxb, Hxa, DAtime, sensor, ch_list, d_obs):
 
     # Read location from TCvitals
     if any( hh in DAtime[8:10] for hh in ['00','06','12','18']):
-        tc_lon, tc_lat, tc_slp = UD.read_TCvitals(Storm, DAtime)
+        tc_lon, tc_lat, tc_slp = UD.read_TCvitals(small_dir, Storm, DAtime)
         print( 'Location from TCvital: ', tc_lon, tc_lat )
 
     # ------------------ Plot -----------------------
@@ -96,12 +105,12 @@ def plot_Tb( Storm, Exper_name, Hxb, Hxa, DAtime, sensor, ch_list, d_obs):
 
     head_tail = os.path.split( Hxb )
     mem = head_tail[1].replace('TB_GOES_CRTM_input_mem','')
-    mem = mem.replace('_d03_2017-08-22_12:00.bin','')
+    mem = mem.replace('_d03_2017-09-03_00:00.bin','')
     des_name = small_dir+Storm+'/'+Exper_name+'/Vis_analyze/Tb/IR_60mem/'+DAtime+'_'+mem+'_mspace.png'
     plt.savefig( des_name, dpi=300)
     plt.close()
     print('Saving the figure: ', des_name)
- 
+
 
 if __name__ == '__main__':
 
@@ -109,19 +118,20 @@ if __name__ == '__main__':
     small_dir =  '/work2/06191/tg854905/stampede2/Pro2_PSU_MW/'
 
     # ---------- Configuration -------------------------
-    Storm = 'HARVEY'
-    Exper_name = UD.generate_one_name( Storm,'IR','WSM6' )
-    Exper_obs =  UD.generate_one_name( Storm,'IR','WSM6' )
+    Storm = 'IRMA'
+    Exper_name = UD.generate_one_name( Storm,'CONV','THO' )
+    Exper_obs =  UD.generate_one_name( Storm,'IR','THO' )
     sensor = 'abi_gr'
     ch_list = ['8',]
     fort_v = ['obs_type','lat','lon','obs']
     num_ens = 60
 
-    start_time_str = '201708242000'
-    end_time_str = '201708242000'
+    start_time_str = '201709030000'
+    end_time_str = '201709030000'
     Consecutive_times = True
 
-    If_plot = True
+    If_plot = False
+    If_plot_diff = True
     # -------------------------------------------------------   
 
     if not Consecutive_times:
@@ -146,4 +156,19 @@ if __name__ == '__main__':
             print('------------ Plot ----------------------')
             for i in range(len(file_yb)):
                 plot_Tb( Storm, Exper_name, file_yb[i], file_ya[i], DAtime, sensor, ch_list, d_obs)
-        
+       
+    # Plot
+    if If_plot_diff:
+        for DAtime in IR_times:
+            print('DAtime: '+ DAtime)
+            # Read assimilated obs
+            file_Diag = big_dir+Storm+'/'+Exper_obs+'/run/'+DAtime+'/enkf/d03/fort.10000'
+            d_obs = Diag.Find_IR( file_Diag, fort_v )
+
+            Hx_dir = big_dir+Storm+'/'+Exper_name+'/Obs_Hx/IR/'+DAtime+'/'
+            file_yb = sorted( glob.glob(Hx_dir + '/TB_GOES_CRTM_input_mem0*.bin') )
+            file_ya = sorted( glob.glob(Hx_dir + '/TB_GOES_CRTM_output_mem0*.bin') )
+            print('------------ Plot ----------------------')
+            for i in range(len(file_yb)):
+                plot_Tb_diff( Storm, Exper_name, file_yb[i], file_ya[i], DAtime, sensor, ch_list, d_obs)
+
