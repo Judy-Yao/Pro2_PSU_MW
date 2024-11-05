@@ -157,6 +157,40 @@ def read_min_PSFC_ens( wrf_dir,DAtime ):
     d_mpsfc = {'id':id_,'mslp':mpsfc,'lat_mslp':lat_mpsfc,'lon_mslp':lon_mpsfc}
     return d_mpsfc
 
+def mean_geolocation(coordinates):
+    """
+    Calculates the mean latitude and longitude of a set of geographic coordinates.
+
+    Parameters:
+    coordinates (list of tuples): List of (longitude, latitude) in degrees.
+
+    Returns:
+    tuple: (mean_longitude, mean_latitude) in degrees.
+    """
+    # Convert latitude and longitude from degrees to radians
+    rad_coords = [(np.radians(lon), np.radians(lat)) for lon, lat in coordinates]
+
+    # Convert spherical to Cartesian coordinates
+    x = [np.cos(lat) * np.cos(lon) for lon, lat in rad_coords]
+    y = [np.cos(lat) * np.sin(lon) for lon, lat in rad_coords]
+    z = [np.sin(lat) for lon, lat in rad_coords]
+
+    # Compute the mean of each Cartesian component
+    mean_x = np.mean(x)
+    mean_y = np.mean(y)
+    mean_z = np.mean(z)
+
+    # Convert the mean Cartesian coordinates back to spherical coordinates
+    mean_lon = np.arctan2(mean_y, mean_x)
+    hyp = np.sqrt(mean_x**2 + mean_y**2)
+    mean_lat = np.arctan2(mean_z, hyp)
+
+    # Convert the result from radians to degrees
+    mean_lon_deg = np.degrees(mean_lon)
+    mean_lat_deg = np.degrees(mean_lat)
+
+    return mean_lon_deg, mean_lat_deg
+
 
 def explain_HroiCorr_PSFC( wrf_dir,DAtime ):
     
@@ -164,6 +198,10 @@ def explain_HroiCorr_PSFC( wrf_dir,DAtime ):
     #d_mslp = read_mslp_ens( wrf_dir,DAtime )
 
     d_mslp = read_min_PSFC_ens( wrf_dir,DAtime )
+
+    # Calculate the mean of geographic coordinates for the whole ensemble   
+    ensXb_mslp_locs = list(zip(d_mslp['lon_mslp'],d_mslp['lat_mslp']))
+    mean_xb_lon, mean_xb_lat = mean_geolocation( ensXb_mslp_locs )
 
     # Read correlations between a Tb and a column of model var
     des_path = wrf_dir+DAtime+"_d03_hroi_corr_Obs_" + obs_type +'_model_' +  var_name + '.pickle'
@@ -188,7 +226,7 @@ def explain_HroiCorr_PSFC( wrf_dir,DAtime ):
     d_wrf_d03 = UD.read_wrf_domain( wrf_file )
 
     # ------------------ Plot -----------------------
-    fig, ax=plt.subplots(1, 1, subplot_kw={'projection': ccrs.PlateCarree()}, gridspec_kw = {'wspace':0, 'hspace':0}, linewidth=0.5,figsize=(6.5,6), dpi=300)
+    fig, ax=plt.subplots(1, 1, subplot_kw={'projection': ccrs.PlateCarree()}, gridspec_kw = {'wspace':0, 'hspace':0}, linewidth=0.5,figsize=(7.5,6.5), dpi=300) #(6.5,6)
 
     # Define the domain
     lat_min = d_wrf_d03['lat_min']
@@ -205,11 +243,12 @@ def explain_HroiCorr_PSFC( wrf_dir,DAtime ):
     # Mark the observed location: TCvital
     ax.scatter(lon_obs, lat_obs, c='green', s=10, marker='s', edgecolors='green', transform=ccrs.PlateCarree())
     # Mark the mslp for the whole EnKF input ensemble
-    #min_mslp = 950
-    #max_mslp = 990
-    #cs_mslp = ax.scatter(d_mslp['lon_mslp'],d_mslp['lat_mslp'],10,d_mslp['mslp'],cmap='bone',marker='*',vmin=min_mslp,vmax=max_mslp,transform=ccrs.PlateCarree())
-
-    cs_mslp = ax.scatter(d_mslp['lon_mslp'],d_mslp['lat_mslp'],10,d_mslp['id'],cmap='jet',marker='*',vmin=1,vmax=60,transform=ccrs.PlateCarree())
+    min_mslp = 950
+    max_mslp = 990
+    cs_mslp = ax.scatter(d_mslp['lon_mslp'],d_mslp['lat_mslp'],10,d_mslp['mslp'],cmap='bone',marker='*',vmin=min_mslp,vmax=max_mslp,transform=ccrs.PlateCarree())
+    #cs_mslp = ax.scatter(d_mslp['lon_mslp'],d_mslp['lat_mslp'],10,d_mslp['id'],cmap='jet',marker='*',vmin=1,vmax=60,transform=ccrs.PlateCarree())
+    # Mark the mean of EnsXb mslp
+    ax.scatter(mean_xb_lon, mean_xb_lat,c='#FF0000', s=10, marker='*',transform=ccrs.PlateCarree(),)
 
     # Colorbar
     cbaxes = fig.add_axes([0.9, 0.1, 0.03, 0.8])
@@ -223,6 +262,9 @@ def explain_HroiCorr_PSFC( wrf_dir,DAtime ):
     cbar2 = fig.colorbar(cs_mslp, cax=cax_below, orientation='horizontal', extend='both')
     cbar2.set_ticks( color_ticks2 )
     cbar2.ax.tick_params(labelsize=10)
+
+    fig.text( 0.1,0.93,'Assimilated obs: '+"{0:.2f}".format((d_obs[DAtime]['obs'][0]/100))+' hPa',fontsize=10,color='green',rotation='horizontal',fontweight='bold')
+    fig.text( 0.5,0.93,'Mean of mslp locations in EnsXb',fontsize=10,color='#FF0000',rotation='horizontal',fontweight='bold')
 
     #subplot title
     font = {'size':12,}
@@ -250,7 +292,7 @@ def explain_HroiCorr_PSFC( wrf_dir,DAtime ):
     gl.ylabel_style = {'size': 12}
 
     # Save the figure
-    save_des = small_dir+Storm+'/'+Exper_name+'/Vis_analyze/hori_Corr/explain_'+DAtime+'_HroiCorr_obs_' + obs_type +'_model_' +  var_name + '_id.png'
+    save_des = small_dir+Storm+'/'+Exper_name+'/Vis_analyze/hori_Corr/explain_'+DAtime+'_HroiCorr_obs_' + obs_type +'_model_' +  var_name + '.png'
     #save_des = small_dir+Storm+'/'+Exper_name+'/Vis_analyze/hori_Corr/Interp_H_corr_ms_'+DAtime+'_'+var_name+'_'+sensor+'.png'
     plt.savefig( save_des )
     print( 'Saving the figure: ', save_des )
@@ -260,7 +302,7 @@ def explain_HroiCorr_PSFC( wrf_dir,DAtime ):
 
 if __name__ == '__main__':
 
-    big_dir = '/work2/06191/tg854905/stampede2/Pro2_PSU_MW/'#'/expanse/lustre/scratch/zuy121/temp_project/Pro2_PSU_MW/' #'/scratch/06191/tg854905/Pro2_PSU_MW/'
+    big_dir = '/scratch/06191/tg854905/Pro2_PSU_MW/'#'/expanse/lustre/scratch/zuy121/temp_project/Pro2_PSU_MW/' #'/scratch/06191/tg854905/Pro2_PSU_MW/'
     small_dir = '/work2/06191/tg854905/stampede2/Pro2_PSU_MW/'#'/expanse/lustre/projects/pen116/zuy121/Pro2_PSU_MW/'  #'/work2/06191/tg854905/stampede2/Pro2_PSU_MW/'
 
     # ---------- Configuration -------------------------
