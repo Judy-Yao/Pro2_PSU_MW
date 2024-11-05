@@ -460,7 +460,7 @@ def plot_Tb(Storm, Exper_name, Hx_dir, DAtime, sensor, ch_list ):
         gl.ylabel_style = {'size': 6}
 
     if not limit:
-        des_name = small_dir+Storm+'/'+Exper_name+'/Vis_analyze/Tb/IRch8_Obspace/'+DAtime+'_'+sensor+'_Obspace_only_assimilate_IR.png'
+        des_name = small_dir+Storm+'/'+Exper_name+'/Vis_analyze/Tb/IRch8_Obspace/'+DAtime+'_'+sensor+'_Obspace.png'
     else:
         des_name = small_dir+Storm+'/'+Exper_name+'/Vis_analyze/Tb/IRch8_Obspace/'+DAtime+'_'+sensor+'_Obspace_limit.png'
     plt.savefig(des_name,dpi=300)
@@ -611,14 +611,14 @@ if __name__ == '__main__':
     # ---------- Configuration -------------------------
     Storm = 'IRMA'
     DA = 'CONV'
-    MP = 'WSM6'
+    MP = 'THO'
  
     sensor = 'abi_gr'
     ch_list = ['8',]
     fort_v = ['obs_type','lat','lon','obs']
 
-    start_time_str = '201709030000'
-    end_time_str = '201709030000'
+    start_time_str = '201709031200'
+    end_time_str = '201709040000'
     Consecutive_times = True
     
     # limitations
@@ -627,7 +627,7 @@ if __name__ == '__main__':
     Interp_to_obs = False
     plot_full = False
     plot_diff = True
-    plot_scatter = True
+    plot_scatter = False
     # ------------------------------------------------------   
 
     # Create experiment names
