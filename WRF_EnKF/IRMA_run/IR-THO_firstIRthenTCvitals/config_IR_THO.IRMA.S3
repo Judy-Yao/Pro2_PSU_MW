@@ -14,16 +14,17 @@
  USE_PERTS=false
 
 # ==== Experiment Design ====
- EXP_NAME=IR-J_DA+J_WRF+J_init-SP-intel17-THO-30hr-hroi900
+ EXP_NAME=IR-THO_firstIRthenTCvitals
  DATE_START=201709021200
  DATE_END=201709080000 
  DATE_CYCLE_START=201709030000 #201709160000
- DATE_CYCLE_END=201709040000
+ DATE_CYCLE_END=201709030600
  STORM_ID=IRMA
 
 # ==== Directories ===
  WORK_DIR=/scratch/06191/tg854905/Pro2_PSU_MW/${STORM_ID}/${EXP_NAME}
- SCRIPT_DIR=/work2/06191/tg854905/stampede2/Pro2_PSU_MW/SourceCode/WRF_EnKF/IRMA_run/IR-J_DA+J_WRF+J_init-SP-intel17-THO-30hr-hroi900
+ CONTROL_DIR=/scratch/06191/tg854905/Pro2_PSU_MW/${STORM_ID}/IR-J_DA+J_WRF+J_init-SP-intel17-THO-30hr-hroi900
+ SCRIPT_DIR=/work2/06191/tg854905/stampede2/Pro2_PSU_MW/SourceCode/WRF_EnKF/IRMA_run/${EXP_NAME}
  CODE_DIR=/work2/06191/tg854905/stampede2/JerryZhang_IRMW/Jerry_code/ 
  DATA_DIR=/work2/06191/tg854905/stampede2/Pro2_PSU_MW/Obs_input_EnKF/IRMA
  # Tools
@@ -151,7 +152,7 @@
  USE_BUOYOBS=true #false
  USE_TCV_winds=false
  USE_hurricane_PI=false
- USE_RADIANCE=false #
+ USE_RADIANCE=true #
  USE_MICROWAVE=false
  MERGE_IRMW_METHOD=ir_mw_removeSomeMWLand
 
