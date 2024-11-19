@@ -1,3 +1,5 @@
+
+from numba import njit, prange
 import os,sys,stat # functions for interacting with the operating system
 import numpy as np
 from datetime import datetime, timedelta
@@ -16,6 +18,7 @@ from cartopy.mpl.gridliner import LONGITUDE_FORMATTER, LATITUDE_FORMATTER
 from mpl_toolkits.axes_grid1 import make_axes_locatable
 import time
 import pickle
+import random
 
 import Util_Vis
 import Util_data as UD
@@ -26,6 +29,63 @@ def def_vardim( var_name ):
         return '2D'
     elif 'Q' in var_name:
         return '3D'
+
+## For each obs loc, find the nearest model grid point (good for mercator)
+@njit(parallel=True)
+def nearest_axis( obs,model ):
+
+    res = np.zeros( (obs.shape[0]), )
+    res[:] = np.nan
+    for io in prange( obs.shape[0] ):
+        for i in range( model.shape[0]-1 ):
+            if model[i+1] < obs[io]:
+                continue
+            elif model[i] > obs[io]:
+                continue
+            else:
+                if model[i] <= obs[io] and model[i+1] >= obs[io]:
+                    if abs(model[i]-obs[io]) < abs(model[i+1]-obs[io]):
+                        res[io] = i
+                    else:
+                        res[io] = i+1
+    # Make sure every obs has a nearest model grid
+    assert res.any() != np.nan
+    return res
+
+def Find_nearest_grid( wrf_file,lon_obs,lat_obs ): #lon_obs,lat_obs: lists
+
+    print('------- Search for the nearest model grid for the obs ------')
+    
+    # Read model lon and lat
+    ncdir = nc.Dataset( wrf_file, 'r')
+    lon_x1d = ncdir.variables['XLONG'][0,0,:]
+    lon_x1d = lon_x1d.filled(np.nan)
+    lat_x1d = ncdir.variables['XLAT'][0,:,0]
+    lat_x1d = lat_x1d.filled(np.nan)
+    lon_x = ncdir.variables['XLONG'][0,:,:].flatten()
+    lat_x = ncdir.variables['XLAT'][0,:,:].flatten()
+
+    # Loop thru all obs and search each's left- and bottom-nearest model grid along x and y direction
+    # returned is i,j in model domain
+    Idx_i = nearest_axis( lon_obs,lon_x1d )
+    Idx_j = nearest_axis( lat_obs,lat_x1d )
+
+    # Transform to a 2d meshgrid and find the corresponding idx
+    Idx_nearest = []
+    for io in range(len(lon_obs)):
+        Idx_nearest.append( int(Idx_j[io]*len(lon_x1d)+Idx_i[io]) )
+
+    # check
+    check_idx = random.randint(0, len(lon_obs))-1
+    print('Checking the '+str(check_idx)+'th obs... lon: '+str(lon_obs[check_idx])+' lat: '+str(lat_obs[check_idx]))
+    print('Its nearest model grid -- lon: '+str( lon_x[Idx_nearest[check_idx]] )+' lat: '+str( lat_x[Idx_nearest[check_idx]] ))
+
+    if len(np.unique(Idx_nearest)) != len(lon_obs):
+        warnings.warn('The nearest model grids might be repetitive!')
+        print('Number of obs is '+str(len(lon_obs))+' while the number of the unique model location is '+str(len(np.unique(Idx_nearest))))
+
+    return Idx_nearest
+
 
 # ---------------------------------------------------------------------------------------------------------------
 #    Object: explain the PSFC horizontal correlation 
@@ -79,16 +139,15 @@ def find_mslp( Storm,wrf_file):
 # Loop thru all ensemble members &
 # Identify the mslp for that member &
 # Save mslps to a txt file
-def identify_mslp_ens( wrf_dir ):
+def identify_mslp_ens( wrf_dir, key='input'):
 
     mslp_info = np.zeros( shape=(num_ens,4) )
     #mslp_info = np.nan
 
     for ie in range(num_ens):
         id_num = ie+1
-        wrf_file = wrf_dir+'wrf_enkf_input_d03_'+f"{id_num:03}" 
+        wrf_file = wrf_dir+'wrf_enkf_'+key+'_d03_'+f"{id_num:03}" 
         d_mslp = find_mslp( Storm,wrf_file)
-        #print(type(id_num))
         mslp_info[ie,1] = "{0:.3f}".format( d_mslp['lon_minslp'] )
         mslp_info[ie,2] = "{0:.3f}".format(d_mslp['lat_minslp'] )
         mslp_info[ie,3] = "{0:.3f}".format(d_mslp['mslp'] )
@@ -96,7 +155,7 @@ def identify_mslp_ens( wrf_dir ):
     # May save the mslp info
     if If_save:
         header = ['ID','Lon','Lat','mslp']
-        des_path = wrf_dir+ DAtime+'_enkf_input_mslp.txt'
+        des_path = wrf_dir+ DAtime+'_enkf_'+key+'_mslp.txt'
         with open(des_path,'w') as f:
             # Add header 
             f.write('\t'.join( item.rjust(6) for item in header ) + '\n' )
@@ -111,14 +170,73 @@ def identify_mslp_ens( wrf_dir ):
     
     return None
 
-def read_mslp_ens( wrf_dir,DAtime ):
+# Find the slp at the obs location
+def find_slp_obsLoc( wrf_file, idx_grid ):
+
+    ncdir = nc.Dataset( wrf_file )
+    lat = ncdir.variables['XLAT'][0,:,:]
+    lon = ncdir.variables['XLONG'][0,:,:]
+    # sea level pressure
+    #slp = getvar(ncdir, 'slp')
+    slp = UD.compute_slp( ncdir )
+    # simulated storm center
+    if Storm == 'HARVEY': # Harvey is special with its location near land!
+        pass
+    else:
+        lon_slp = lon.flatten()[idx_grid].item()
+        lat_slp = lat.flatten()[idx_grid].item()
+        slp_obsLoc = slp.flatten()[idx_grid].item()
+    return {'slp_obsLoc':slp_obsLoc,'lat_slp':lat_slp,'lon_slp':lon_slp}
+
+# Loop thru all ensemble members &
+# Identify the slp for that member at the obs location &
+# Save mslps to a txt file
+def identify_slp_ens_obsLoc( obs, wrf_dir, key=None ):
+
+    slp_obsLoc_info = np.zeros( shape=(num_ens,4) )
+
+    # Find the nearest grid point to the obs
+    lon_obs = np.array( obs['lon'] )
+    lat_obs = np.array( obs['lat'] )
+    wrf_file = wrf_dir+'wrf_enkf_'+key+'_d03_001'
+    idx_grid = Find_nearest_grid( wrf_file,lon_obs,lat_obs ) 
+
+    # Identify the slp at the obs location
+    for ie in range(num_ens):
+        id_num = ie+1
+        wrf_file = wrf_dir+'wrf_enkf_'+key+'_d03_'+f"{id_num:03}"
+        d_slp_obsLoc = find_slp_obsLoc( wrf_file, idx_grid )
+        slp_obsLoc_info[ie,1] = "{0:.3f}".format( d_slp_obsLoc['lon_slp'] )
+        slp_obsLoc_info[ie,2] = "{0:.3f}".format(d_slp_obsLoc['lat_slp'] )
+        slp_obsLoc_info[ie,3] = "{0:.3f}".format(d_slp_obsLoc['slp_obsLoc'] )
+
+    # May save the slp_obsLoc info
+    if If_save:
+        header = ['ID','Lon','Lat','slp_obsLoc']
+        des_path = wrf_dir+ DAtime+'_enkf_'+key+'_slp_obsLoc.txt'
+        with open(des_path,'w') as f:
+            # Add header 
+            f.write('\t'.join( item.rjust(6) for item in header ) + '\n' )
+            # Write the record to the file serially
+            len_records = np.shape( slp_obsLoc_info )[0]
+            for irow in range( len_records ):
+                irecord = slp_obsLoc_info[irow,:].astype(str)
+                irecord[0] = f"{irow+1:03}"
+                #print(irecord)
+                f.write('\t'.join( item.rjust(6) for item in irecord ) + '\n')
+    print('Save '+des_path)
+
+    return None
+
+
+def read_mslp_ens( wrf_dir,DAtime,key=None ):
 
     id_ = []
     lon_mslp = []
     lat_mslp = []
     mslp = []
 
-    with open( wrf_dir+ DAtime+'_enkf_input_mslp.txt' ) as f:
+    with open( wrf_dir+ DAtime+'_enkf_'+key+'_mslp.txt' ) as f:
         next(f)
         all_lines = f.readlines()
 
@@ -132,8 +250,30 @@ def read_mslp_ens( wrf_dir,DAtime ):
     d_mslp = {'id':id_,'mslp':mslp,'lat_mslp':lat_mslp,'lon_mslp':lon_mslp}
     return d_mslp
 
+# Read  HPI info from pre-calculated files
+# e.g., HPI_wrf_enkf_input_d03_.201709030000_201709040000.txt 
+def Read_mslp_EnsMean( mfile ):
 
-def read_min_PSFC_ens( wrf_dir,DAtime ):
+    d_mean = {}
+    print('Reading ', mfile)
+    with open(mfile) as f:
+        next(f)
+        all_lines = f.readlines()
+
+    for line in all_lines:
+        if 'Success' in line:
+            break
+        split_line = line.split()
+        time = split_line[0]
+        lon =  float(split_line[1])
+        lat =  float(split_line[2])
+        mslp = float(split_line[3])
+        d_mean[time] = (lon,lat,mslp) 
+
+    return d_mean
+
+
+def read_min_PSFC_ens( wrf_dir,DAtime,key=None ):
 
     id_ = []
     lon_mpsfc = []
@@ -142,7 +282,7 @@ def read_min_PSFC_ens( wrf_dir,DAtime ):
 
     for ie in range(num_ens):
         id_.append( ie+1 )
-        wrf_file = wrf_dir+'wrf_enkf_input_d03_'+f"{ie+1:03}"
+        wrf_file = wrf_dir+'wrf_enkf_'+key+'_d03_'+f"{ie+1:03}"
         ncdir = nc.Dataset( wrf_file )
         lat = ncdir.variables['XLAT'][0,:,:]
         lon = ncdir.variables['XLONG'][0,:,:]
@@ -191,20 +331,23 @@ def mean_geolocation(coordinates):
 
     return mean_lon_deg, mean_lat_deg
 
-
-def explain_HroiCorr_PSFC( wrf_dir,DAtime ):
+def explain_HroiCorr_Pres( wrf_dir, DAtime, var_name, key, x_mean):
     
     # Read mslp for all input members
-    #d_mslp = read_mslp_ens( wrf_dir,DAtime )
-
-    d_mslp = read_min_PSFC_ens( wrf_dir,DAtime )
+    if var_name == 'PSFC':
+        d_mslp = read_min_PSFC_ens( wrf_dir,DAtime, key )
+    elif var_name == 'slp':
+        d_mslp = read_mslp_ens( wrf_dir,DAtime,key )
 
     # Calculate the mean of geographic coordinates for the whole ensemble   
     ensXb_mslp_locs = list(zip(d_mslp['lon_mslp'],d_mslp['lat_mslp']))
     mean_xb_lon, mean_xb_lat = mean_geolocation( ensXb_mslp_locs )
 
     # Read correlations between a Tb and a column of model var
-    des_path = wrf_dir+DAtime+"_d03_hroi_corr_Obs_" + obs_type +'_model_' +  var_name + '.pickle'
+    if var_name == 'slp':
+        des_path = wrf_dir+DAtime+"_d03_hroi_corr_Obs_" + obs_type +'_model_PSFC.pickle'
+    else:
+        des_path = wrf_dir+DAtime+"_d03_hroi_corr_Obs_" + obs_type +'_model_' +  var_name + '.pickle'
     with open( des_path,'rb' ) as f:
         hori_corr = pickle.load( f )
     print('Shape of hori_corr: '+ str(np.shape(hori_corr)))
@@ -226,7 +369,7 @@ def explain_HroiCorr_PSFC( wrf_dir,DAtime ):
     d_wrf_d03 = UD.read_wrf_domain( wrf_file )
 
     # ------------------ Plot -----------------------
-    fig, ax=plt.subplots(1, 1, subplot_kw={'projection': ccrs.PlateCarree()}, gridspec_kw = {'wspace':0, 'hspace':0}, linewidth=0.5,figsize=(7.5,6.5), dpi=300) #(6.5,6)
+    fig, ax=plt.subplots(1, 1, subplot_kw={'projection': ccrs.PlateCarree()}, gridspec_kw = {'wspace':0, 'hspace':0}, linewidth=0.5,figsize=(6.5,6), dpi=300) #(6.5,6)
 
     # Define the domain
     lat_min = d_wrf_d03['lat_min']
@@ -247,8 +390,12 @@ def explain_HroiCorr_PSFC( wrf_dir,DAtime ):
     max_mslp = 990
     cs_mslp = ax.scatter(d_mslp['lon_mslp'],d_mslp['lat_mslp'],10,d_mslp['mslp'],cmap='bone',marker='*',vmin=min_mslp,vmax=max_mslp,transform=ccrs.PlateCarree())
     #cs_mslp = ax.scatter(d_mslp['lon_mslp'],d_mslp['lat_mslp'],10,d_mslp['id'],cmap='jet',marker='*',vmin=1,vmax=60,transform=ccrs.PlateCarree())
+    
     # Mark the mean of EnsXb mslp
     ax.scatter(mean_xb_lon, mean_xb_lat,c='#FF0000', s=10, marker='*',transform=ccrs.PlateCarree(),)
+
+    # Mark the mslp in the ensemble mean 
+    ax.scatter(x_mean[DAtime][0],x_mean[DAtime][1],10,x_mean[DAtime][2],cmap='bone',marker='o',vmin=min_mslp,vmax=max_mslp,transform=ccrs.PlateCarree())
 
     # Colorbar
     cbaxes = fig.add_axes([0.9, 0.1, 0.03, 0.8])
@@ -257,22 +404,36 @@ def explain_HroiCorr_PSFC( wrf_dir,DAtime ):
     cbar1.set_ticks( color_ticks1 )
     cbar1.ax.tick_params(labelsize=11)
 
-    cax_below = fig.add_axes([0.1, 0.05, 0.8, 0.02])  # [left, bottom, width, height]
+    cax_below = fig.add_axes([0.25, 0.05, 0.7, 0.02])  # [left, bottom, width, height]
     color_ticks2 = np.linspace(min_mslp, max_mslp, 5, endpoint=True)
     cbar2 = fig.colorbar(cs_mslp, cax=cax_below, orientation='horizontal', extend='both')
     cbar2.set_ticks( color_ticks2 )
     cbar2.ax.tick_params(labelsize=10)
+    if key == 'input':
+        fig.text(0.018, 0.05, 'Ens Xb mslp (hPa)', fontweight='bold',fontsize=11)
+    else:
+        fig.text(0.018, 0.05, 'Ens Xa mslp (hPa)', fontweight='bold',fontsize=11)
 
     fig.text( 0.1,0.93,'Assimilated obs: '+"{0:.2f}".format((d_obs[DAtime]['obs'][0]/100))+' hPa',fontsize=10,color='green',rotation='horizontal',fontweight='bold')
-    fig.text( 0.5,0.93,'Mean of mslp locations in EnsXb',fontsize=10,color='#FF0000',rotation='horizontal',fontweight='bold')
+    if var_name == 'PSFC':
+        title_name = 'Mean of min PSFC locations in '
+    elif var_name == 'slp':
+        title_name = 'Mean of mslp locations in '
+        
+    if key == 'input':
+        title_name = title_name + 'Ens Xb'
+    else:
+        title_name = title_name + 'Ens Xa'
+
+    fig.text( 0.5,0.93,title_name,fontsize=10,color='#FF0000',rotation='horizontal',fontweight='bold')
 
     #subplot title
     font = {'size':12,}
-    ax.set_title( 'Horizontal Corr: obs ' + obs_type +' & model ' +  var_name, font, fontweight='bold')
+    ax.set_title( 'Horizontal Corr: obs ' + obs_type +' & model PSFC', font, fontweight='bold')
 
     #title for all
-    title_name = Storm+': '+Exper_name
-    fig.suptitle(title_name, fontsize=10, fontweight='bold')
+    tt_name = Storm+': '+Exper_name
+    fig.suptitle(tt_name, fontsize=10, fontweight='bold')
 
     # Axis labels
     lon_ticks = list(range(math.ceil(lon_min)-2, math.ceil(lon_max)+2,2))
@@ -292,12 +453,13 @@ def explain_HroiCorr_PSFC( wrf_dir,DAtime ):
     gl.ylabel_style = {'size': 12}
 
     # Save the figure
-    save_des = small_dir+Storm+'/'+Exper_name+'/Vis_analyze/hori_Corr/explain_'+DAtime+'_HroiCorr_obs_' + obs_type +'_model_' +  var_name + '.png'
-    #save_des = small_dir+Storm+'/'+Exper_name+'/Vis_analyze/hori_Corr/Interp_H_corr_ms_'+DAtime+'_'+var_name+'_'+sensor+'.png'
+    if key == 'input':
+        save_des = plot_dir+'explain_'+DAtime+'_HroiCorr_obs_' + obs_type +'_model_' +  var_name + '_Xb_mslp.png'
+    else:
+        save_des = plot_dir+'explain_'+DAtime+'_HroiCorr_obs_' + obs_type +'_model_' +  var_name + '_Xa_mslp.png'
     plt.savefig( save_des )
     print( 'Saving the figure: ', save_des )
     plt.close()
-
 
 
 if __name__ == '__main__':
@@ -306,9 +468,9 @@ if __name__ == '__main__':
     small_dir = '/work2/06191/tg854905/stampede2/Pro2_PSU_MW/'#'/expanse/lustre/projects/pen116/zuy121/Pro2_PSU_MW/'  #'/work2/06191/tg854905/stampede2/Pro2_PSU_MW/'
 
     # ---------- Configuration -------------------------
-    Storm = 'IRMA'
-    DA = 'CONV'
-    MP = 'WSM6'
+    Storm = 'JOSE'
+    DA = 'IR'
+    MP = 'THO'
     fort_v = ['obs_type','lat','lon','obs']
     sensor = 'abi_gr'
 
@@ -318,11 +480,11 @@ if __name__ == '__main__':
         obs_type = 'slp' # Radiance
 
     # model variable
-    model_v = [ 'PSFC',]#'QSNOW','QCLOUD','QRAIN','QICE','QGRAUP']
+    model_v = [ 'slp',]#'QSNOW','QCLOUD','QRAIN','QICE','QGRAUP']
 
     # time
-    start_time_str = '201709030000'
-    end_time_str = '201709030000'
+    start_time_str = '201709050100'
+    end_time_str = '201709060000'
     Consecutive_times = True
 
     # Number of ensemble members
@@ -331,19 +493,23 @@ if __name__ == '__main__':
     xmax = 297
     ymax = 297
 
-    #to_obs_res = False
-    #ens_Interp_to_obs = False
-
     # vertical interpolation if needed
     interp_P = False
     P_range = np.arange( 995,49,-20 )
     interp_H = True
     H_range = list(np.arange(1,21,1))
 
-    calculate_ens_data = False
+    # if calculate data
+    calculate_ens_data = True
+    if calculate_ens_data:
+        # at obs location
+        at_obs_res = False
     If_save = True
 
-    If_plot_corr_snapshot = True
+    # plot
+    If_plot_corr_snapshot = False
+    if If_plot_corr_snapshot:
+        key = 'input'
 
     # -------------------------------------------------------
     Exper_name = UD.generate_one_name( Storm,DA,MP )
@@ -375,9 +541,13 @@ if __name__ == '__main__':
 
             for var_name in model_v:
                 start_time=time.process_time()
-                if var_name == 'PSFC':
-                    print('Finding the mslp for each EnKF input member...')
-                    identify_mslp_ens( wrf_dir )
+                if var_name == 'PSFC' or var_name == 'slp':
+                    if not at_obs_res:
+                        print('Finding the mslp for each EnKF member...')
+                        identify_mslp_ens( wrf_dir, 'input' )
+                    else:
+                        print('Finding the slp at the obs location for each EnKF member...')
+                        identify_slp_ens_obsLoc( d_obs[DAtime], wrf_dir, 'output' )
 
                 end_time = time.process_time()
                 print ('time needed: ', end_time-start_time, ' seconds')
@@ -386,8 +556,13 @@ if __name__ == '__main__':
     # Plot the horizontal correlations per snapshot
     if If_plot_corr_snapshot:
         print('------------ Plot the horizontal correlation --------------')
+
+        # Read mslp of the ensemble mean 
+        saved_dir = small_dir+Storm+'/'+Exper_name+'/Data_analyze/'
+        x_mean = Read_mslp_EnsMean( saved_dir+'HPI_wrf_enkf_'+key+'_d03_mean.201709050000_201709060000.txt' )
+
+        # Loop thru times
         for DAtime in DAtimes:
-            #Hx_dir = big_dir+Storm+'/'+Exper_name+'/Obs_Hx/IR/'+DAtime+'/'
             wrf_dir = big_dir+Storm+'/'+Exper_name+'/fc/'+DAtime+'/'
             print('At '+DAtime)
 
@@ -396,8 +571,12 @@ if __name__ == '__main__':
                 #var_dim = def_vardim( var_name )
 
                 if var_name == 'PSFC':
-                    explain_HroiCorr_PSFC( wrf_dir, DAtime )
+                    plot_dir=small_dir+Storm+'/'+Exper_name+'/Vis_analyze/hori_Corr/explain_obs_slp/'
+                    explain_HroiCorr_Pres( wrf_dir, DAtime, var_name, key)
 
+                if var_name == 'slp':
+                    plot_dir=small_dir+Storm+'/'+Exper_name+'/Vis_analyze/hori_Corr/explain_obs_slp/'
+                    explain_HroiCorr_Pres( wrf_dir, DAtime, var_name, key, x_mean)
 
                 #if var_dim == '2D':
                 #    HroiCorr_snapshot( DAtime,var_name,var_dim )

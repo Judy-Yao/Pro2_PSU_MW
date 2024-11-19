@@ -23,7 +23,7 @@ import Util_Vis
 import Util_data as UD
 import Read_Obspace_IR as ROIR
 import Diagnostics as Diag
-#import matlab.engine
+import matlab.engine
 
 
 # ------------------------------------------------------------------------------------------------------
@@ -591,10 +591,10 @@ if __name__ == '__main__':
     xmax = 297
     ymax = 297
 
-    to_obs_res = False
-    ens_Interp_to_obs = False
+    to_obs_res = True
+    ens_Interp_to_obs = True
    
-    If_cal_pert_stddev = True
+    If_cal_pert_stddev = False
     If_save = True
     If_plot = False
     # -------------------------------------------------------    

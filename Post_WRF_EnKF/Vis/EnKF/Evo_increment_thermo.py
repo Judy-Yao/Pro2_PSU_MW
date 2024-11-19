@@ -654,16 +654,16 @@ if __name__ == '__main__':
 
     # ---------- Configuration -------------------------
     Storm = 'IRMA'
-    MP = 'WSM6'
+    MP = 'THO'
     DA = 'CONV'
-    v_interest = ['QSNOW',] #'QICE'
+    v_interest = ['QSNOW','QVAPOR'] #'QICE'
     fort_v = ['obs_type','lat','lon','obs']
     
     start_time_str = '201709030000'
-    end_time_str = '201709030000'
+    end_time_str = '201709040000'
     Consecutive_times = True
     
-    interp_P = False
+    interp_P = True
     P_range = list(range( 900,10,-20 ))
     interp_H = True
     H_range = list(np.arange(1,21,1))
@@ -673,10 +673,10 @@ if __name__ == '__main__':
     interp_to_obs = False
     
     If_ncdiff = False
-    If_cal_series = False
+    If_cal_series = True
     If_save = True
-    If_plot_snapshot = True
-    If_plot_series = False
+    If_plot_snapshot = False
+    If_plot_series = True
     # -------------------------------------------------------    
     Exper_name = UD.generate_one_name( Storm,DA,MP )
 
