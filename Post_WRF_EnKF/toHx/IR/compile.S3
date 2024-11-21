@@ -1,0 +1,19 @@
+#!/bin/bash
+
+NETCDF_INC=${TACC_NETCDFF_INC}
+NETCDF_LIB=${TACC_NETCDFF_LIB}
+HDF5_LIB=${TACC_HDF5_LIB}
+
+#NETCDF_INC=/opt/apps/intel24/impi21/parallel-netcdf/4.9.2/x86_64/inc
+#NETCDF_LIB=/opt/apps/intel24/impi21/parallel-netcdf/4.9.2/x86_64/lib
+#HDF5_LIB=/opt/apps/intel24/impi21/phdf5/1.14.3/x86_64/lib
+
+CRTM_DIR="/work2/06191/tg854905/stampede2/opt/CRTM/PSU_EnKF_CRTM/crtm_v2.3.0/"
+#FCFLAG=-f90=ifort -convert little_endian -traceback -I$(QN2RE)
+echo ${CRTM_DIR}
+
+mpif90 -f90=ifort -g -traceback -c -i4 -w -ftz -align all -fno-alias -fp-model precise -assume realloc_lhs -convert little_endian -traceback -MIC -AVX512 -FR  mpi_module.f
+mpif90 -f90=ifort -g -traceback -c -i4 -w -ftz -align all -fno-alias -fp-model precise -assume realloc_lhs -convert little_endian -traceback -MIC -AVX512 -I$NETCDF_INC  module_netcdf.f
+mpif90 -f90=ifort -g -traceback -c -i4 -w -ftz -align all -fno-alias -fp-model precise -assume realloc_lhs -convert little_endian -traceback -MIC -AVX512 -FR -I$NETCDF_INC -I$CRTM_DIR/include XbtoIR_crtm.f90
+# apparently replace the above line with below if using newer netcdfs
+mpif90 -o XbtoIR_crtm.exe mpi_module.o module_netcdf.o XbtoIR_crtm.o -L$CRTM_DIR/lib -lcrtm -L$NETCDF_LIB -lnetcdff 
