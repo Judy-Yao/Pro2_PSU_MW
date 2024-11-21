@@ -146,6 +146,12 @@ def interpolate_locations( DAtimes, bestrack ):
 
     return dict_bestrack
 
+# Return the variable dimension
+def def_vardim( var_name ):
+    if var_name == 'PSFC':
+        return '2D'
+    elif 'Q' in var_name:
+        return '3D'
 
 # Automate the experiment name for one storm
 def generate_one_name( Storm,DA,MP ):
@@ -178,6 +184,9 @@ def generate_one_name( Storm,DA,MP ):
                 return 'J_DA+J_WRF+J_init-SP-intel17-THO-24hr-hroi900'
             else:
                 raise ValueError('No corresponding storm!')
+        elif DA == 'IR-onlyTCV':
+            return 'IR-THO_onlyTCvitals' 
+
 
     elif MP == 'WSM6':
         if DA == 'IR+MW':
@@ -207,6 +216,9 @@ def generate_one_name( Storm,DA,MP ):
                 return 'J_DA+J_WRF+J_init-SP-intel17-WSM6-24hr-hroi900'
             else:
                 raise ValueError('No corresponding name!')
+        elif DA == 'IR-onlyTCV':
+            return 'IR-WSM6_onlyTCvitals'
+
     elif MP == 'TuneWSM6':
         #if DA == 'IR+MW':
         #    if Storm == 'HARVEY':

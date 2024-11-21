@@ -384,7 +384,7 @@ def plot_2Dcorr_snapshot( lat,lon,corr,lon_obs,lat_obs ):
 def plot_3Dcorr_snapshot( lat,lon,Interp_corr,ver_coor,lon_obs,lat_obs):
 
     # Read WRF domain
-    wrf_file = big_dir+Storm+'/'+Exper_name+'/fc/'+DAtime+'/wrf_enkf_output_d03_mean'
+    wrf_file = big_dir+Storm+'/'+Exper_name+'/fc/'+DAtime+'/wrf_enkf_input_d03_mean'
     d_wrf_d03 = ROIR.read_wrf_domain( wrf_file )
 
     # Read location from TCvitals
@@ -467,9 +467,9 @@ if __name__ == '__main__':
     small_dir = '/work2/06191/tg854905/stampede2/Pro2_PSU_MW/' #'/expanse/lustre/projects/pen116/zuy121/Pro2_PSU_MW/'  #'/work2/06191/tg854905/stampede2/Pro2_PSU_MW/'
 
     # ---------- Configuration -------------------------
-    Storm = 'IRMA'
-    DA = 'CONV'
-    MP = 'THO'
+    Storm = 'HARVEY'
+    DA = 'IR'
+    MP = 'WSM6'
     fort_v = ['obs_type','lat','lon','obs']
     sensor = 'abi_gr'
 
@@ -479,11 +479,11 @@ if __name__ == '__main__':
         obs_type = 'slp' # Radiance
     
     # model variable
-    model_v = [ 'QSNOW',]#'QSNOW','QCLOUD','QRAIN','QICE','QGRAUP']
+    model_v = [ 'PSFC',]#'QSNOW','QCLOUD','QRAIN','QICE','QGRAUP']
     
     # time
-    start_time_str = '201709030000'
-    end_time_str = '201709030000'
+    start_time_str = '201708221200'
+    end_time_str = '201708221500'
     Consecutive_times = True
 
     # Number of ensemble members
@@ -501,11 +501,11 @@ if __name__ == '__main__':
     interp_H = True
     H_range = list(np.arange(1,21,1))
 
-    If_cal_pert_stddev = False
-    If_cal_hor_corr = False
+    If_cal_pert_stddev = True
+    If_cal_hor_corr = True
     If_save = True
 
-    If_plot_corr_snapshot = True
+    If_plot_corr_snapshot = False
     If_plot_cov_snapshot = False
     # ensemble spread in vis_point2point_stat_IR_toColumnModel.py 
 
@@ -529,8 +529,11 @@ if __name__ == '__main__':
         for DAtime in DAtimes:
             # Read assimilated obs
             file_Diag = big_dir+Storm+'/'+Exper_name+'/run/'+DAtime+'/enkf/d03/fort.10000'
+            dt = datetime.strptime(DAtime, "%Y%m%d%H%M")
+            DAtime_wrf = dt.strftime("%Y-%m-%d_%H:%M")
+            file_hpi = small_dir+'/Obs_input_EnKF/'+Storm+'/HPI/HPI_obs_gts_'+DAtime_wrf+':00.3DVAR' 
             if obs_type == 'slp':
-                d_obs[DAtime] = Diag.Find_min_slp( file_Diag, fort_v )
+                d_obs[DAtime] = Diag.Find_min_slp( file_Diag, fort_v, file_hpi )
 
 
     # Calculate ensemble perturbations and variances

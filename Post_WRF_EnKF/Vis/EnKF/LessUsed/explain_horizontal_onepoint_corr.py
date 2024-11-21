@@ -84,6 +84,63 @@ def Find_nearest_grid( wrf_file,lon_obs,lat_obs ): #lon_obs,lat_obs: lists
     return Idx_nearest
 
 
+## For each obs loc, find the nearest model grid point (good for mercator)
+@njit(parallel=True)
+def nearest_axis( obs,model ):
+
+    res = np.zeros( (obs.shape[0]), )
+    res[:] = np.nan
+    for io in prange( obs.shape[0] ):
+        for i in range( model.shape[0]-1 ):
+            if model[i+1] < obs[io]:
+                continue
+            elif model[i] > obs[io]:
+                continue
+            else:
+                if model[i] <= obs[io] and model[i+1] >= obs[io]:
+                    if abs(model[i]-obs[io]) < abs(model[i+1]-obs[io]):
+                        res[io] = i
+                    else:
+                        res[io] = i+1
+    # Make sure every obs has a nearest model grid
+    assert res.any() != np.nan
+    return res
+
+def Find_nearest_grid( wrf_file,lon_obs,lat_obs ): #lon_obs,lat_obs: lists
+
+    print('------- Search for the nearest model grid for the obs ------')
+    
+    # Read model lon and lat
+    ncdir = nc.Dataset( wrf_file, 'r')
+    lon_x1d = ncdir.variables['XLONG'][0,0,:]
+    lon_x1d = lon_x1d.filled(np.nan)
+    lat_x1d = ncdir.variables['XLAT'][0,:,0]
+    lat_x1d = lat_x1d.filled(np.nan)
+    lon_x = ncdir.variables['XLONG'][0,:,:].flatten()
+    lat_x = ncdir.variables['XLAT'][0,:,:].flatten()
+
+    # Loop thru all obs and search each's left- and bottom-nearest model grid along x and y direction
+    # returned is i,j in model domain
+    Idx_i = nearest_axis( lon_obs,lon_x1d )
+    Idx_j = nearest_axis( lat_obs,lat_x1d )
+
+    # Transform to a 2d meshgrid and find the corresponding idx
+    Idx_nearest = []
+    for io in range(len(lon_obs)):
+        Idx_nearest.append( int(Idx_j[io]*len(lon_x1d)+Idx_i[io]) )
+
+    # check
+    check_idx = random.randint(0, len(lon_obs))-1
+    print('Checking the '+str(check_idx)+'th obs... lon: '+str(lon_obs[check_idx])+' lat: '+str(lat_obs[check_idx]))
+    print('Its nearest model grid -- lon: '+str( lon_x[Idx_nearest[check_idx]] )+' lat: '+str( lat_x[Idx_nearest[check_idx]] ))
+
+    if len(np.unique(Idx_nearest)) != len(lon_obs):
+        warnings.warn('The nearest model grids might be repetitive!')
+        print('Number of obs is '+str(len(lon_obs))+' while the number of the unique model location is '+str(len(np.unique(Idx_nearest))))
+
+    return Idx_nearest
+
+
 # ---------------------------------------------------------------------------------------------------------------
 #    Object: explain the PSFC horizontal correlation 
 # ------------------------------------------------------------------------------------------------------------------
@@ -249,6 +306,8 @@ def read_mslp_ens( wrf_dir,DAtime,key=None ):
 # e.g., HPI_wrf_enkf_input_d03_.201709030000_201709040000.txt 
 def Read_mslp_EnsMean( mfile ):
 
+<<<<<<< HEAD
+=======
     d_mean = {}
     print('Reading ', mfile)
     with open(mfile) as f:
@@ -268,6 +327,7 @@ def Read_mslp_EnsMean( mfile ):
     return d_mean
 
 
+>>>>>>> d5bde3356209a40d942c97b70fca9c481e8eff15
 def read_min_PSFC_ens( wrf_dir,DAtime,key=None ):
 
     id_ = []
@@ -413,6 +473,13 @@ def explain_HroiCorr_Pres( wrf_dir, DAtime, var_name, key, x_mean):
     cbar2.set_ticks( color_ticks2 )
     cbar2.ax.tick_params(labelsize=10)
     if key == 'input':
+<<<<<<< HEAD
+        fig.text(0.018, 0.05, 'Ens Xb mslp (hPa)', fontweight='bold',fontsize=11)
+    else:
+        fig.text(0.018, 0.05, 'Ens Xa mslp (hPa)', fontweight='bold',fontsize=11)
+
+    fig.text( 0.1,0.93,'Assimilated obs: '+"{0:.2f}".format((d_obs[DAtime]['obs'][0]/100))+' hPa',fontsize=10,color='green',rotation='horizontal',fontweight='bold')
+=======
         if var_name == 'PSFC':
             fig.text(0.018, 0.05, 'Ens Xb mpsfc (hPa)', fontweight='bold',fontsize=11)
         elif var_name == 'slp':
@@ -426,10 +493,15 @@ def explain_HroiCorr_Pres( wrf_dir, DAtime, var_name, key, x_mean):
 
     fig.text( 0.1,0.93,'Assimilated obs: '+"{0:.2f}".format((d_obs[DAtime]['obs'][0]/100))+' hPa',fontsize=10,color='green',rotation='horizontal',fontweight='bold')
 
+>>>>>>> d5bde3356209a40d942c97b70fca9c481e8eff15
     if var_name == 'PSFC':
         title_name = 'Mean of min PSFC locations in '
     elif var_name == 'slp':
         title_name = 'Mean of mslp locations in '
+<<<<<<< HEAD
+        
+=======
+>>>>>>> d5bde3356209a40d942c97b70fca9c481e8eff15
     if key == 'input':
         title_name = title_name + 'Ens Xb'
     else:
@@ -474,6 +546,15 @@ def explain_HroiCorr_Pres( wrf_dir, DAtime, var_name, key, x_mean):
 
 if __name__ == '__main__':
 
+<<<<<<< HEAD
+    big_dir = '/expanse/lustre/scratch/zuy121/temp_project/Pro2_PSU_MW/' #'/scratch/06191/tg854905/Pro2_PSU_MW/'
+    small_dir = '/expanse/lustre/projects/pen116/zuy121/Pro2_PSU_MW/'  #'/work2/06191/tg854905/stampede2/Pro2_PSU_MW/'
+
+    # ---------- Configuration -------------------------
+    Storm = 'IRMA'
+    DA = 'IR'
+    MP = 'THO'
+=======
     big_dir = '/scratch/06191/tg854905/Pro2_PSU_MW/'#'/expanse/lustre/scratch/zuy121/temp_project/Pro2_PSU_MW/' #'/scratch/06191/tg854905/Pro2_PSU_MW/'
     small_dir = '/work2/06191/tg854905/stampede2/Pro2_PSU_MW/'#'/expanse/lustre/projects/pen116/zuy121/Pro2_PSU_MW/'  #'/work2/06191/tg854905/stampede2/Pro2_PSU_MW/'
 
@@ -481,6 +562,7 @@ if __name__ == '__main__':
     Storm = 'HARVEY'
     DA = 'IR'
     MP = 'WSM6'
+>>>>>>> d5bde3356209a40d942c97b70fca9c481e8eff15
     fort_v = ['obs_type','lat','lon','obs']
     sensor = 'abi_gr'
 
@@ -490,6 +572,13 @@ if __name__ == '__main__':
         obs_type = 'slp' # Radiance
 
     # model variable
+<<<<<<< HEAD
+    model_v = [ 'slp',]#'QSNOW','QCLOUD','QRAIN','QICE','QGRAUP']
+
+    # time
+    start_time_str = '201709030100'
+    end_time_str = '201709030100'
+=======
     if Storm == 'HARVEY':
         model_v = [ 'slp',]
     else:
@@ -498,6 +587,7 @@ if __name__ == '__main__':
     # time
     start_time_str = '201708221300'
     end_time_str = '201708221500'
+>>>>>>> d5bde3356209a40d942c97b70fca9c481e8eff15
     Consecutive_times = True
 
     # Number of ensemble members
@@ -512,8 +602,12 @@ if __name__ == '__main__':
     interp_H = True
     H_range = list(np.arange(1,21,1))
 
+<<<<<<< HEAD
+    calculate_ens_data = False
+=======
     # if calculate data
     calculate_ens_data = True
+>>>>>>> d5bde3356209a40d942c97b70fca9c481e8eff15
     if calculate_ens_data:
         # at obs location
         at_obs_res = False
@@ -561,7 +655,11 @@ if __name__ == '__main__':
                 if var_name == 'PSFC' or var_name == 'slp':
                     if not at_obs_res:
                         print('Finding the mslp for each EnKF member...')
+<<<<<<< HEAD
+                        identify_mslp_ens( wrf_dir, 'output' )
+=======
                         identify_mslp_ens( wrf_dir, 'input' )
+>>>>>>> d5bde3356209a40d942c97b70fca9c481e8eff15
                     else:
                         print('Finding the slp at the obs location for each EnKF member...')
                         identify_slp_ens_obsLoc( d_obs[DAtime], wrf_dir, 'output' )
@@ -597,11 +695,19 @@ if __name__ == '__main__':
 
                 if var_name == 'PSFC':
                     plot_dir=small_dir+Storm+'/'+Exper_name+'/Vis_analyze/hori_Corr/explain_obs_slp/'
+<<<<<<< HEAD
+                    explain_HroiCorr_Pres( wrf_dir, DAtime, var_name, 'input')
+
+                if var_name == 'slp':
+                    plot_dir=small_dir+Storm+'/'+Exper_name+'/Vis_analyze/hori_Corr/explain_obs_slp/'
+                    explain_HroiCorr_Pres( wrf_dir, DAtime, var_name, 'output')
+=======
                     explain_HroiCorr_Pres( wrf_dir, DAtime, var_name, key, x_mean)
 
                 if var_name == 'slp':
                     plot_dir=small_dir+Storm+'/'+Exper_name+'/Vis_analyze/hori_Corr/explain_obs_slp/'
                     explain_HroiCorr_Pres( wrf_dir, DAtime, var_name, key, x_mean)
+>>>>>>> d5bde3356209a40d942c97b70fca9c481e8eff15
 
                 #if var_dim == '2D':
                 #    HroiCorr_snapshot( DAtime,var_name,var_dim )

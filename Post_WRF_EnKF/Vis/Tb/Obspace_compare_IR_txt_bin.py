@@ -1,4 +1,3 @@
-
 import os
 import glob
 import numpy as np
@@ -460,7 +459,7 @@ def plot_Tb(Storm, Exper_name, Hx_dir, DAtime, sensor, ch_list ):
         gl.ylabel_style = {'size': 6}
 
     if not limit:
-        des_name = small_dir+Storm+'/'+Exper_name+'/Vis_analyze/Tb/IRch8_Obspace/'+DAtime+'_'+sensor+'_Obspace_only_assimilate_IR.png'
+        des_name = small_dir+Storm+'/'+Exper_name+'/Vis_analyze/Tb/IRch8_Obspace/'+DAtime+'_'+sensor+'_Obspace.png'
     else:
         des_name = small_dir+Storm+'/'+Exper_name+'/Vis_analyze/Tb/IRch8_Obspace/'+DAtime+'_'+sensor+'_Obspace_limit.png'
     plt.savefig(des_name,dpi=300)
@@ -609,7 +608,7 @@ if __name__ == '__main__':
     small_dir =  '/work2/06191/tg854905/stampede2/Pro2_PSU_MW/'
 
     # ---------- Configuration -------------------------
-    Storm = 'IRMA'
+    Storm = 'MARIA'
     DA = 'CONV'
     MP = 'WSM6'
  
@@ -617,18 +616,19 @@ if __name__ == '__main__':
     ch_list = ['8',]
     fort_v = ['obs_type','lat','lon','obs']
 
-    start_time_str = '201709030000'
-    end_time_str = '201709030000'
+    start_time_str = '201709160000'
+    end_time_str = '201709160000'
     Consecutive_times = True
     
     # limitations
     limit = False
 
-    Interp_to_obs = False
+    Interp_to_obs = True
     plot_full = False
-    plot_diff = True
-    plot_scatter = True
+    plot_diff = False
+    plot_scatter = False
     # ------------------------------------------------------   
+
 
     # Create experiment names
 
@@ -695,12 +695,6 @@ if __name__ == '__main__':
             plot_Tb_diff( Storm, Exper_name, Hx_dir, DAtime, sensor, ch_list)
         end_time = time.process_time()
         print ('time needed: ', end_time-start_time, ' seconds')
-
-
-
-
-
-
 
 
 

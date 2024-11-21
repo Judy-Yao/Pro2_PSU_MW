@@ -14,11 +14,11 @@
  USE_PERTS=false
 
 # ==== Experiment Design ====
- EXP_NAME=IR-THO_firstIRthenTCvitals
+ EXP_NAME=IR-THO_onlyTCvitals
  DATE_START=201709021200
  DATE_END=201709080000 
  DATE_CYCLE_START=201709030000 #201709160000
- DATE_CYCLE_END=201709030600
+ DATE_CYCLE_END=201709040000
  STORM_ID=IRMA
 
 # ==== Directories ===
@@ -152,7 +152,7 @@
  USE_BUOYOBS=true #false
  USE_TCV_winds=false
  USE_hurricane_PI=false
- USE_RADIANCE=true #
+ USE_RADIANCE=false #
  USE_MICROWAVE=false
  MERGE_IRMW_METHOD=ir_mw_removeSomeMWLand
 

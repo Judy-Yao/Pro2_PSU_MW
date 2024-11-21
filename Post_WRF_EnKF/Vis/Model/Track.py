@@ -345,16 +345,19 @@ def plot_hpi_df( Config ):
         DF_model_end  = None
 
     # Identify the available forecasts with either their initialization times or their id members
-    Exper_content_lbl = {}
-    for iExper in Exper:
-        if iExper is not None:
-            #Exper_content_lbl[iExper] = sorted(fnmatch.filter(os.listdir( wrf_dir+'/'+Storm+'/'+iExper+'/' ),'20*input')) 
-            if os.path.exists( wrf_dir+'/'+Storm+'/'+iExper+'/wrf_df/' ):
-                Exper_content_lbl[iExper] = sorted(fnmatch.filter(os.listdir( wrf_dir+'/'+Storm+'/'+iExper+'/wrf_df/' ),'20*'))  
+    fc_start_times = {}
+    for imp in MP:
+        fc_start_times[imp] = {}
+        for ida in DA:
+            if Exper_name[imp][ida] is None:
+                fc_start_times[imp][ida] = None
             else:
-                Exper_content_lbl[iExper] = None
-        else:
-             Exper_content_lbl[iExper] = None
+                path = wrf_dir+'/'+Storm+'/'+Exper_name[imp][ida]+'/wrf_df/'
+                if os.path.exists( path ):
+                    fc_start_times[imp][ida] = ['201709030000','201709030600']#'201709031200',]
+                    #fc_start_times[imp][ida] = sorted(fnmatch.filter(os.listdir(path),'20*'))
+                else:
+                    fc_start_times[imp][ida] = None
 
     # Set up figure
     fig = plt.figure( figsize=(22,6.5), dpi=150 ) #12,4 20,6
@@ -387,8 +390,8 @@ def plot_hpi_df( Config ):
 
     # Customize color maps
     if distinct_colors:
-        Color1 = ["#c23728","#e14b31","#de6e56","#e1a692","#786028","#a57c1b","#d2980d","#ffb400","#503f3f","#6d4b4b","#a86464","#e27c7c"] #redish
-        Color2 = ["#115f9a", "#1984c5", "#22a7f0", "#48b5c4", "#48446e", "#5e569b", "#776bcd", "#9080ff","#3c4e4b", "#466964", "#599e94", "#6cd4c5"] #blueish
+        Color1 = ['#ffd8b1','#fabed4','#bfef45','#ffe119','#f58231','#e6194B','#808000','#9A6324','#800000'] # redish
+        Color2 = ['blue','red'] #['#dcbeff','#aaffc3','#f032e6','#911eb4','#4363d8','#42d4f4','#3cb44b','#000075','#469990'] # blueish
     else:
         red_cm = cm.Reds
         blue_cm = cm.Blues
@@ -397,49 +400,35 @@ def plot_hpi_df( Config ):
         discretize_blue = ListedColormap(blue_cm(np.linspace(0,1,num_colors)))
         Color1 = discretize_red.colors[5:]
         Color2 = discretize_blue.colors[5:]
-    Color_set = {'c0':Color1, 'c1':Color2}
+    Color_set = {'WSM6':Color1, 'THO':Color2}
     Ana_color = ['#eea990','#748b97'] #'#748b97'
-    Line_types = ['-','-']
+   
+    # Line types
+    lines = {'CONV':'-','IR':'--','IR+MW':'(0, (1, 1))','IR-onlyTCV':':'}
     
     # Customize labels ###### Chnage it every time !!!!!!!!!!!!!!! 
-    #Labels = ['GTS+HPI(hroi:300km): ']
-    Labels = ['WSM6:','THO:']
     #Labels = ['Stp2-Intel17 ','Eps-Intel19 ']
     Ana_labels = ['Ref Ans','MD Ans' ]
     #Ana_labels = ['Stampede2 Analysis', 'Expanse Analysis']
 
     # Plot HPI for each deterministic forecasts
-    if read_fc_wrfout == True:
-        i = 0
-        for init_time in DF_init_times:
-            #plot_one_hpi( ax0, ax1, ax2, read_wrfout(Storm, wrf_dir+'/'+Storm+'/newWRF_MW_THO/wrf_df/'+init_time, force_reload=reload_data), color_model[i], 'IR+MW: '+ init_time, step=step)
-            pass
-            i = i+1
-
-    elif read_fc_wrfout == False:
-        iExper = 0
-        for key in Exper_content_lbl: 
-            print('Experiment: ', key)
-            if Exper_content_lbl[key] is not None:
-                ic = 0
+    for imp in MP:
+        for ida in DA:
+            if fc_start_times[imp][ida] is None:
+                print('No available data!')
+            else:
+                print('Experiment: ', Exper_name[imp][ida])
                 if Plot_analyses == True:
                     print('Plotting the analyses...')
                     HPI_analyses = read_HPI_analyses(Storm, key, wrf_dir)
                     plot_one_hpi( ax0, ax1, ax2, HPI_analyses, Ana_color[iExper], '--', 2.5, Ana_labels[iExper], steps=1 )
-                for it in Exper_content_lbl[key]:
+                # loop thru initialized forecast times
+                for it in fc_start_times[imp][ida]:
                     print('Plotting ', it)
-                    #HPI_model = read_rsl_error(Storm, key, wrf_dir+'/'+Storm+'/'+key+'/'+it, '201709030000', DF_model_end)
-                    #print(wrf_dir+'/'+Storm+'/'+key+'/wrf_df/'+it)
-                    HPI_model = read_rsl_error(Storm, key, wrf_dir+'/'+Storm+'/'+key+'/wrf_df/'+it, it, DF_model_end)
-                    plot_one_hpi( ax0, ax1, ax2, HPI_model, Color_set['c'+str(iExper)][ic], Line_types[iExper], 2.5, Labels[iExper]+it, steps=6 )
-                    #if 'THO' in it:
-                    #    plot_one_hpi( ax0, ax1, ax2, HPI_model,'#B1D866', '-', 5, 'conv_THO', steps=1 )
-                    #else:
-                    #    plot_one_hpi( ax0, ax1, ax2, HPI_model,'#FFED13', '-', 5, 'conv_WSM6', steps=1 )
-                    ic = ic + 1
-            else:
-                print('No available data!')
-            iExper = iExper + 1
+                    idx_it = fc_start_times[imp][ida].index( it )
+                    path = wrf_dir+'/'+Storm+'/'+Exper_name[imp][ida]+'/wrf_df/'
+                    HPI_model = read_rsl_error(Storm, Exper_name[imp][ida], path+it, it, DF_model_end)
+                    plot_one_hpi( ax0, ax1, ax2, HPI_model, Color_set[imp][idx_it], lines[ida], 2.5, ida+'_'+imp+': '+it, steps=6 )
 
     # Set ticks/labels for track subplot
     lon_ticks = list(range(math.ceil(domain_range[0])-2, math.ceil(domain_range[1])+3, 4))
@@ -461,7 +450,8 @@ def plot_hpi_df( Config ):
     ax2.set_ylim([10,80])   #([10,60])
     ax1.tick_params(axis='x', labelrotation=30,labelsize=12)
     ax2.tick_params(axis='x', labelrotation=30,labelsize=12)
-    ax2.legend(bbox_to_anchor=(1.5, 1.0),frameon=True,loc='upper right',fontsize='10') #10
+    ax2.legend(frameon=True,fontsize='10') 
+    #ax2.legend(bbox_to_anchor=(1.5, 1.0),frameon=True,loc='upper right',fontsize='10') #10
     ax1.grid(True,linewidth=1, color='gray', alpha=0.5, linestyle='-')
     ax2.grid(True,linewidth=1, color='gray', alpha=0.5, linestyle='-')
 
@@ -469,10 +459,18 @@ def plot_hpi_df( Config ):
     ax0.set_title( 'Track',fontsize = 15 )
     ax1.set_title( 'MSLP (hPa)',fontsize = 15 )
     ax2.set_title( 'Vmax ($\mathregular{ms^{-1}}$)',fontsize = 15 )
-    fig.suptitle('IRMA: CONV, WSM6',fontsize = 15)
+    #fig.suptitle('IRMA: CONV, WSM6',fontsize = 15)
 
     # Save figure
-    des_name = small_dir+Storm+'/'+Exper[0]+'/Vis_analyze/Model/'+Storm+'_forecast_conv_WSM6.png'
+    des_name = small_dir+Storm+'/Forecasts/'+Storm+'_'
+    for ida in DA:
+        des_name = des_name+ida+'_'
+
+    for imp in MP:
+        des_name = des_name+imp+'_'
+    
+    des_name = des_name+'.png'
+
     plt.savefig( des_name )
     print( 'Saving the figure to '+des_name )
 
@@ -611,15 +609,16 @@ def plot_abs_err( Config ):
         DF_model_end  = None
 
     # Identify the available forecasts with either their initialization times or their id members
-    Exper_content_lbl = {}
+    fc_start_times = {}
     for iExper in Exper:
         if iExper is not None:
             if os.path.exists( wrf_dir+'/'+Storm+'/'+iExper+'/wrf_df/' ):
-                Exper_content_lbl[iExper] = sorted(fnmatch.filter(os.listdir( wrf_dir+'/'+Storm+'/'+iExper+'/wrf_df/' ),'20*'))
+                pass
+                #fc_start_times[iExper] = sorted(fnmatch.filter(os.listdir( wrf_dir+'/'+Storm+'/'+iExper+'/wrf_df/' ),'20*'))
             else:
-                Exper_content_lbl[iExper] = None
+                fc_start_times[iExper] = None
         else:
-             Exper_content_lbl[iExper] = None
+             fc_start_times[iExper] = None
    
     # Read best-track data
     if Storm == 'HARVEY':
@@ -642,8 +641,8 @@ def plot_abs_err( Config ):
     Exper_absError_lbl = {}
     for iExper in Exper:
         print(iExper)
-        if Exper_content_lbl[iExper] is not None:
-            Exper_absError_lbl[iExper] = SameL_error_eachInit(Storm,wrf_dir,iExper,best_track,Exper_content_lbl[iExper],DF_model_end,run_hrs=fc_run_hrs)
+        if fc_start_times[iExper] is not None:
+            Exper_absError_lbl[iExper] = SameL_error_eachInit(Storm,wrf_dir,iExper,best_track,fc_start_times[iExper],DF_model_end,run_hrs=fc_run_hrs)
         else:
              Exper_absError_lbl[iExper] = None 
 
@@ -678,7 +677,7 @@ def plot_abs_err( Config ):
         err = Exper_absError_lbl[exper]
         # loop thru each forecast
         ic = 0
-        for init_t in Exper_content_lbl[exper]:   
+        for init_t in fc_start_times[exper]:   
             ax[0].plot(lead_t,err[init_t][0,:],color=Color_set['c'+str(iE)][ic], linestyle=Line_types[iE],alpha=0.6)
             ax[1].plot(lead_t,abs(err[init_t][1,:]),color=Color_set['c'+str(iE)][ic], linestyle=Line_types[iE],alpha=0.6)
             ax[2].plot(lead_t,abs(err[init_t][2,:]),color=Color_set['c'+str(iE)][ic], linestyle=Line_types[iE],alpha=0.6)
@@ -720,27 +719,28 @@ if __name__ == '__main__':
     big_dir = '/scratch/06191/tg854905/Pro2_PSU_MW/'
     small_dir = '/work2/06191/tg854905/stampede2/Pro2_PSU_MW/'
 
-    # Configuration
+    #--------Configuration------------
     Storm = 'IRMA'
-    MP = ['WSM6']
-    DA = 'CONV'
+    MP = ['THO',]
+    DA = ['CONV','IR',]
     DF_model_start = '20170822180000' # Default value of DF_model_start. Especially useful when dealing with ensemble forecast
     mem_id = 'mean' # Default value of member id. Especially useful when dealing with deterministic forecast
     read_fc_wrfout = False # Feature that decides the way of reading HPI from model files
 
-    distinct_colors = False
+    distinct_colors = True
     Plot_analyses = False # Feature that plots the analyses of an experiment
     Plot_HPI = True
     Plot_abs_error = False
     fc_run_hrs = 60
+    #------------------------------------
+    wrf_dir = big_dir
     
     # Generate experiment names
-    Exper_name = []
+    Exper_name = {}
     for imp in MP:
-        Exper_name.append( UD.generate_one_name( Storm,DA,imp ) )
-
-    wrf_dir = big_dir
-    Config = [wrf_dir, Storm, Exper_name, DF_model_start, mem_id, read_fc_wrfout, Plot_analyses]
+        Exper_name[imp] = {}
+        for ida in DA:
+            Exper_name[imp][ida] = UD.generate_one_name( Storm,ida,imp )
 
     # Pre-set the domain for DF forecast
     if Storm == 'HARVEY':
@@ -764,6 +764,8 @@ if __name__ == '__main__':
         lat_min = 0
         lat_max = 25
     domain_range = [lon_min, lon_max, lat_min, lat_max]
+
+    Config = [wrf_dir, Storm, Exper_name, DF_model_start, mem_id, read_fc_wrfout, Plot_analyses]
 
     if Plot_HPI:
         plot_hpi_df( Config )

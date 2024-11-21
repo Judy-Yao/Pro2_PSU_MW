@@ -1,20 +1,6 @@
-#!/work2/06191/tg854905/stampede2/opt/anaconda3/lib/python3.7
 
-import os # functions for interacting with the operating system
 import numpy as np
-from datetime import datetime, timedelta
-import glob
-import pickle
-import netCDF4 as nc
-import math
-import matplotlib
-matplotlib.use("agg")
-import matplotlib.ticker as mticker
-from matplotlib import pyplot as plt
-from cartopy import crs as ccrs
-from cartopy.mpl.gridliner import LONGITUDE_FORMATTER, LATITUDE_FORMATTER
-from mpl_toolkits.axes_grid1 import make_axes_locatable
-import time
+from datetime import datetime
 
 diag_var = ['obs_type','lat','lon','height','i_grid','j_grid','k_grid','Hroi','Vroi','obs','obs_error_variance','prior_mean','posterior_mean','prior_spread','posterior_spread']
 
@@ -275,15 +261,26 @@ def Find_IR( file_Diag, v_interest ):
     for key in v_interest:
         idx_var = v_interest.index( key )
         Diag_IR[key] = IR_list[idx_var]
-        print(key, ':', Diag_IR[key][0])
+        print(key, ':', Diag_IR[key])
 
     return Diag_IR
 
 # ---------------------------------------------------------------------------------------------------------
 #           Operation: Find minimum slp records from diagnostics 
 # ---------------------------------------------------------------------------------------------------------
+# Read the storm location from HPI file that was assimilated
+def Read_HPI_file( file_hpi ):
 
-def Find_min_slp( file_Diag, v_interest ):
+    with open(file_hpi, 'r') as file:
+         # Skip the first 21 lines and Read all lines into a list
+         lines = file.readlines()[21:]
+    hpi_line = lines[0].split()
+    hpi_lat = float(hpi_line[4])
+    hpi_lon = float(hpi_line[5])
+    return (hpi_lon,hpi_lat)
+
+def Find_min_slp( file_Diag, v_interest, file_hpi ):
+
     # Read the diagnostics from fort.10000 (obs assmilated by enkf)
     d_diag = read_diag( file_Diag, v_interest )
     # Get the indices of minimum slp
@@ -296,21 +293,28 @@ def Find_min_slp( file_Diag, v_interest ):
 
     if len(idx_slp) == 0:
         raise ValueError('No slp is assimilated!')
+        idx_slp = None
     elif len(idx_slp) > 1:
         print('More than ONE slp are assimilated!')
+        print('Reading '+file_hpi+' for more information...')
+        # locate the storm
+        hpi_loc = Read_HPI_file( file_hpi )
+        loc_candis = [(float(d_diag['lon'][it]),float(d_diag['lat'][it])) for it in idx_slp]
+        idx_match = loc_candis.index(hpi_loc)
+        idx_slp = idx_slp[idx_match]
     else:
         print('One slp is assimilated!')
+        idx_slp = idx_slp[0]
 
     # Get the minimum slp part
     slp_list = [[] for i in range(len(v_interest))]
-    if len(idx_slp) > 0:
+    if idx_slp is not None:
         for var in  v_interest:
             idx_var = v_interest.index(var)
-            for it in idx_slp:
-                if var == 'obs_type':
-                    slp_list[idx_var].append( d_diag[var][it])
-                else:
-                    slp_list[idx_var].append( float(d_diag[var][it]))
+            if var == 'obs_type':
+                slp_list[idx_var].append( d_diag[var][idx_slp])
+            else:
+                slp_list[idx_var].append( float(d_diag[var][idx_slp]))
 
         Diag_slp = {}
         print('Sanity check of reading process...Printing 1st record...')

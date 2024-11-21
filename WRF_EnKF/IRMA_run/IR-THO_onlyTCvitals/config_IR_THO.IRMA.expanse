@@ -18,33 +18,33 @@
  DATE_START=201709021200
  DATE_END=201709080000 
  DATE_CYCLE_START=201709030000 #201709160000
- DATE_CYCLE_END=201709030600
+ DATE_CYCLE_END=201709040000
  STORM_ID=IRMA
 
 # ==== Directories ===
- WORK_DIR=/scratch/06191/tg854905/Pro2_PSU_MW/${STORM_ID}/${EXP_NAME}
- CONTROL_DIR=/scratch/06191/tg854905/Pro2_PSU_MW/${STORM_ID}/IR-J_DA+J_WRF+J_init-SP-intel17-THO-30hr-hroi900
- SCRIPT_DIR=/work2/06191/tg854905/stampede2/Pro2_PSU_MW/SourceCode/WRF_EnKF/IRMA_run/${EXP_NAME}
- CODE_DIR=/work2/06191/tg854905/stampede2/JerryZhang_IRMW/Jerry_code/ 
- DATA_DIR=/work2/06191/tg854905/stampede2/Pro2_PSU_MW/Obs_input_EnKF/IRMA
+ WORK_DIR=/expanse/lustre/scratch/zuy121/temp_project/Pro2_PSU_MW/${STORM_ID}/${EXP_NAME}
+ SCRIPT_DIR=/expanse/lustre/projects/pen116/zuy121/Pro2_PSU_MW/SourceCode/WRF_EnKF/${STORM_ID}_run/${EXP_NAME}
+ CODE_DIR=/expanse/lustre/projects/pen116/zuy121/WRF_DA_Tool
+ DATA_DIR=/expanse/lustre/projects/pen116/zuy121/Pro2_PSU_MW/Obs_input_EnKF/${STORM_ID}
  # Tools
- WPS_DIR=${CODE_DIR}/WPS_S3
- WRF_DIR_FCST=${CODE_DIR}/WRFV3_S3
- WRF_PRESET_DIR=${CODE_DIR}/WRF_preset_S3
+ WPS_DIR=${CODE_DIR}/WPS
+ WRF_DIR_FCST=${CODE_DIR}/WRF_VF
+ WRF_PRESET_DIR=${CODE_DIR}/WRF_preset
  # !!!!!!!!!!!!! Attention !!!!!!!!!!!!!!!!!!
  WRF_DIR=${WRF_PRESET_DIR}  # Spin up/DA cycle: WRF preset moves; Deterministic Forecast: WRF vortex following
  # !!!!!!!!!!!!! Attention !!!!!!!!!!!!!!!!!!
  WRFDA_DIR=${CODE_DIR}/WRFDA
  CRTM_DIR=${SCRIPT_DIR}
- CRTM_COEFF_DIR=/work2/06191/tg854905/stampede2/opt/PSU-EnKF_w_satellites/fortran_src/crtm_v2.3.0/coefficients  
- ENKF_DIR=/work2/06191/tg854905/stampede2/JerryZhang_IRMW/Jerry_code/J_PSU-EnKF_w_satellites/fortran_src/EnSRF/src_Thompson08/
+ CRTM_COEFF_DIR=/expanse/lustre/projects/pen116/zuy121/WRF_DA_Tool/J_PSU-EnKF_w_satellites/fortran_src/crtm_v2.3.0/coefficients
+ ENKF_DIR=${CODE_DIR}/J_PSU-EnKF_w_satellites/fortran_src/EnSRF/src_Thompson08
  # Input Data
  FG_DIR_GFS=${DATA_DIR}/GFS
  TCVITALS_DIR=${DATA_DIR}/TCvitals
  TCV_DIR=${DATA_DIR}/HPI #location of HPI for assimilation
- GEOG_DIR=/work2/06191/tg854905/stampede2/Pro2_PSU_MW/WPS_GEOG_v3.6.1 
- #PERTS_DIR=$WORK_DIR/robs_perts # Should be used. However, the experiment generates the data itself if it starts from the DATE_START.
+ GEOG_DIR=${CODE_DIR}/WPS_GEOG_v3.6.1
+#PERTS_DIR=$WORK_DIR/robs_perts # Should be used. However, the experiment generates the data itself if it starts from the DATE_START.
  #SO_DIR=$DATA_DIR/superob # Not in use because radar observations are not assimilated.
+
 # === Domain Setup ===
  TWO_WAY_NESTING=true
  MAX_DOM=3

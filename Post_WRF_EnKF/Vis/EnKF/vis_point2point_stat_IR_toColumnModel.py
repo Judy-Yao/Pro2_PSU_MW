@@ -76,6 +76,37 @@ def nearest_axis( obs,model ):
     assert res.any() != np.nan
     return res
 
+def vertical_interp( ncdir,array,levels,interp_H=None,interp_P=None):
+
+    if interp_H and not interp_P:
+        #interp_arr = np.zeros( [len(H_of_interest),len(idx_xb)] )
+        z = getvar(ncdir, 'z', units='km')
+        interp_arr = np.zeros( (len(levels),z.shape[1],z.shape[2]) )
+        array =  array.reshape( (z.shape) )
+        start_time=time.process_time()
+        for ih in levels:
+            interp_arr[levels.index(ih),:,:] = interplevel(array, z, ih)
+        end_time = time.process_time()
+        print ('time needed for the interpolation: ', end_time-start_time, ' seconds')
+        print('Min of interpolated_arr: '+str(np.amin( interp_arr )))
+        print('Max of interpolated_arr: '+str(np.amax( interp_arr )))
+        return interp_arr
+    elif interp_P and not interp_H:
+        pres = getvar(ncdir, 'pres', units='hPa')
+        interp_arr = np.zeros( (len(levels),pres.shape[1],pres.shape[2]) )
+        array =  array.reshape( (pres.shape) )
+        start_time=time.process_time()
+        for ih in levels:
+            interp_arr[levels.index(ih),:,:] = interplevel(array, pres, ih)
+        end_time = time.process_time()
+        print ('time needed for the interpolation: ', end_time-start_time, ' seconds')
+        print('Min of interpolated_arr: '+str(np.amin( interp_arr )))
+        print('Max of interpolated_arr: '+str(np.amax( interp_arr )))
+        return interp_arr
+    else:
+        pass
+
+
 # ------------------------------------------------------------------------------------------------------
 #           Object: ensemble correlations of columns of Xb and Hxb in 2D; Operation: Calculation
 # ------------------------------------------------------------------------------------------------------
@@ -977,9 +1008,8 @@ def stddev_xb_snapshot( wrf_dir,DAtime,var_name,var_dim,ver_coor=None):
     else:
         if interp_H and not interp_P:
             # interpolate
-            Interp_cov = vertical_interp( ncdir,stddev_xb,ver_coor )
+            Interp_cov = vertical_interp( ncdir,array,levels,interp_H,)
             Interp_cov = Interp_cov.reshape( (len(ver_coor),xmax*ymax) )
-            print( np.shape( Interp_cov ) )
             if If_plot_stddev_xb_snapshot:
                 plot_3D_stddev_xb_snapshot( xlat[idx_xb],xlon[idx_xb],Interp_cov[:,idx_xb],ver_coor)
         elif interp_P and not interp_H:
@@ -995,21 +1025,21 @@ def stddev_xb_snapshot( wrf_dir,DAtime,var_name,var_dim,ver_coor=None):
 
 if __name__ == '__main__':
 
-    big_dir = '/expanse/lustre/scratch/zuy121/temp_project/Pro2_PSU_MW/' #'/scratch/06191/tg854905/Pro2_PSU_MW/'
-    small_dir = '/expanse/lustre/projects/pen116/zuy121/Pro2_PSU_MW/'  #'/work2/06191/tg854905/stampede2/Pro2_PSU_MW/'
+    big_dir = '/scratch/06191/tg854905/Pro2_PSU_MW/'#'/expanse/lustre/scratch/zuy121/temp_project/Pro2_PSU_MW/' #'/scratch/06191/tg854905/Pro2_PSU_MW/'
+    small_dir = '/work2/06191/tg854905/stampede2/Pro2_PSU_MW/'#'/expanse/lustre/projects/pen116/zuy121/Pro2_PSU_MW/'  #'/work2/06191/tg854905/stampede2/Pro2_PSU_MW/'
 
     # ---------- Configuration -------------------------
-    Storm = 'IRMA'
+    Storm = 'HARVEY'
     DA = 'CONV'
     MP = 'THO'
 
-    v_interest = [ 'QVAPOR','QSNOW','QCLOUD','QRAIN','QICE','QGRAUP'] #[ 'PSFC',]#'rt_vo']
+    v_interest = [ 'QSNOW','QICE',] #[ 'PSFC',]#'rt_vo']
     sensor = 'abi_gr'
     ch_list = ['8',]
     fort_v = ['obs_type','lat','lon','obs']
 
-    start_time_str = '201709030000'
-    end_time_str = '201709030000'
+    start_time_str = '201708221200'
+    end_time_str = '201708221200'
     Consecutive_times = True
 
     # Number of ensemble members
@@ -1034,13 +1064,13 @@ if __name__ == '__main__':
     if limit:  
         num_limit = 3
 
-    If_cal_corr = False
+    If_cal_corr = True
     If_save = True
 
     If_plot_stddev_hxb_snapshot = False
-    If_plot_stddev_xb_snapshot = True
+    If_plot_stddev_xb_snapshot = False
     
-    If_plot_corr_snapshot = False
+    If_plot_corr_snapshot = True
     If_plot_meanCorr = False
     # -------------------------------------------------------    
     

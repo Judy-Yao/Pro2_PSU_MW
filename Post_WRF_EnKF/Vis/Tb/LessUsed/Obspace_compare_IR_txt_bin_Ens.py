@@ -1,4 +1,3 @@
-#!/work2/06191/tg854905/stampede2/opt/anaconda3/lib/python3.7
 
 import os
 import glob
@@ -15,53 +14,22 @@ from datetime import datetime, timedelta
 import matlab.engine
 import time
 
+import Util_data as UD
 import Diagnostics as Diag
-
 
 def RMSE(simu, obs):
     return np.sqrt( ((simu - obs) ** 2).mean() )
 
+def Bias(simu, obs):
+    return  np.sum((simu - obs),0)/np.size(obs,0)
+
+def mean_Yo_Hx(simu, obs):
+    return  np.sum((obs - simu),0)/np.size(obs,0)
+
+
 # ------------------------------------------------------------------------------------------------------
 #           Object: Tbs and their attributes; Operation: Read and Process 
 # ------------------------------------------------------------------------------------------------------
-
-# Read thinned IR data from SO files
-def read_obs(obs_file, d_wrf_d03):
-
-    # Define the wrf domain
-    lat_min = d_wrf_d03['lat_min']
-    lat_max = d_wrf_d03['lat_max']
-    lon_min = d_wrf_d03['lon_min']
-    lon_max = d_wrf_d03['lon_max']
-
-    with open(obs_file) as tmp:
-        obs_all = tmp.readlines()
-
-    Ch_obs = []
-    Lat_obs = []
-    Lon_obs = []
-    Yo_obs = []
-    for line in obs_all:
-        line_split = line.split()
-
-        read_lat = float(line_split[3])
-        read_lon = float(line_split[4])
-        if read_lat <= lat_max and read_lat >= lat_min and read_lon <= lon_max and read_lon >= lon_min:      
-            Ch_obs.append( line_split[2])
-            Lat_obs.append( read_lat )
-            Lon_obs.append( read_lon )
-            Yo_obs.append(float(line_split[5]))
-
-    Ch_obs = np.array(Ch_obs)
-    Lat_obs = np.array(Lat_obs)
-    Lon_obs = np.array(Lon_obs)
-    Yo_obs = np.array(Yo_obs)
-    # Note: If you want to build up your matrix one column at a time,
-    # you might be best off to keep it in a list until it is finished, and only then convert it into an array.    
-
-    dict_obs_all = {'Ch_obs': Ch_obs, 'Lat_obs': Lat_obs, 'Lon_obs': Lon_obs, 'Yo_obs': Yo_obs}
-    return dict_obs_all
-
 
 # Read crtm calcuated IR data from binary file
 def read_simu_Tb(Hxb_file, Hxa_file, ch_list):
@@ -96,120 +64,8 @@ def read_simu_Tb(Hxb_file, Hxa_file, ch_list):
     return dict_simu_Tb
 
 
-# Average the ensemble of H(x)
-def write_mean_bin ( DAtime, sensor, Hx_dir, ch_list ):
-
-    print("Initiate the function to average the ensemble...")
-    start_time=time.process_time()
-
-    # Number of ensemble members
-    num_ens = 60
-
-    # Dimension of the domain
-    xmax = 297
-    ymax = 297
-
-    # List the Yb and Ya files
-    file_yb = sorted( glob.glob(Hx_dir + '/TB_GOES_CRTM_input_mem0*.bin') )
-    file_ya = sorted( glob.glob(Hx_dir + '/TB_GOES_CRTM_output_mem0*.bin') )
-
-    # Sanity check the number of calculated ens
-    if np.size(file_yb) != num_ens:
-        raise ValueError('Wait until all of the ens is calculated!')
-    if np.size(file_ya) != num_ens:
-        raise ValueError('Wait until all of the ens is calculated!')
-
-    # Read attributes from a member
-    tmp_control = np.fromfile( file_yb[0],dtype='<f4') # <: little endian; f: float; 4: 4 bytes
-    n_ch = len(tmp_control)/(xmax*ymax) - 2
-    n_ch = int(n_ch)
-    if n_ch != len(ch_list):
-        print('Error!! # of channels in data is '+str(n_ch))
-    tmp_data = tmp_control[:].reshape(n_ch+2,ymax,xmax) 
-    Lon_all =  [ "{0:.3f}".format(item) for item in tmp_data[0,:,:].flatten() ] #longitude
-    Lat_all = [ "{0:.3f}".format(item) for item in tmp_data[1,:,:].flatten() ] #latitude
-    Chnum_all = [ ch_list[0] for i in range( len(Lon_all))  ] 
- 
-    # ---- Read prior Tb from the ens ----
-    sum_yb = np.zeros( shape=np.shape(Lon_all) )
-    # Iterate thru input ens
-    for ifile in file_yb:
-        print('Reading the file: ' + ifile)
-        tmp = np.fromfile( file_yb[0],dtype='<f4')
-        
-        # Sanity check
-        n_ch = int( len(tmp_control)/(xmax*ymax) - 2 )
-        tmp_data = tmp[:].reshape(n_ch+2,ymax,xmax)
-        sum_yb = sum_yb + tmp_data[2,:,:].flatten()
-
-    Yb_all_mean = np.round( (sum_yb / num_ens), 3 )
-
-    # ---- Read posterior Tb from the ens -----
-    sum_ya = np.zeros( shape=np.shape(Lon_all) )
-    # Iterate thru input ens
-    for ifile in file_ya:
-        print('Reading the file: ' + ifile)
-        tmp = np.fromfile( file_ya[0],dtype='<f4')
-
-        # Sanity check
-        n_ch = int( len(tmp_control)/(xmax*ymax) - 2 )
-        tmp_data = tmp[:].reshape(n_ch+2,ymax,xmax)
-        sum_ya = sum_ya + tmp_data[2,:,:].flatten()
-
-    Ya_all_mean = np.round( (sum_ya / num_ens), 3 )
-
-    # Stack each list into an array
-    all_attrs = np.column_stack( (Lat_all, Lon_all, Chnum_all, Yb_all_mean, Ya_all_mean ) )
-
-    # ---- Write to file and save it to the disk ----
-    header = ['Lat','Lon','Ch_num','Tb_Yb','Tb_Ya']
-    file_name = Hx_dir + "/mean_model_res_d03" + DAtime + '_' +  sensor + '.txt'
-    with open(file_name,'w') as f:
-        # Add header 
-        f.write('\t'.join( item.rjust(5) for item in header ) + '\n' )
-        # Write the record to the file serially
-        len_records = np.shape( all_attrs )[0]
-        for irow in range( len_records ):
-            irecord =  [str(item) for item in all_attrs[irow,:] ]
-            f.write('\t'.join( item.rjust(5) for item in irecord ) + '\n')
-
-    end_time = time.process_time()
-    print ('time needed: ', end_time-start_time, ' seconds')
-
-
-# Read the ensemble mean of Hx at model resolution 
-def read_Hx_mean( Hx_file ):
-
-    lat_x = []
-    lon_x = []
-    ch_x = []
-    meanYb = []
-    meanYa = []
-
-    with open(Hx_file) as f:
-        next(f) 
-        all_lines = f.readlines()
-
-    for line in all_lines:
-        split_line = line.split()
-        lat_x.append( float(split_line[0]) )
-        lon_x.append( float(split_line[1]) )
-        ch_x.append( split_line[2] )
-        meanYb.append( float(split_line[3]) )
-        meanYa.append( float(split_line[4]) )
-
-    lat_x = np.array( lat_x )
-    lon_x = np.array( lon_x )
-    ch_x = np.array( ch_x )
-    meanYb = np.array( meanYb )
-    meanYa = np.array( meanYa )
-
-    dict_Tb_all = {'Lat_x':lat_x, 'Lon_x':lon_x, 'Ch_x': ch_x, 'Yb_x':meanYb, 'Ya_x':meanYa}
-    return dict_Tb_all
-
-
 # Interpolate IR Tbs in model resolution to obs locations and Write it to a txt file
-def interp_simu_to_obs_matlab( Hxb, sensor, DAtime, d_obs, d_wrf_d03 ):
+def interp_simu_to_obs_matlab( Hxb, sensor, DAtime, d_obs, ):
 
     print("Initiate the function to interpolate simulated Tbs to obs locations...")
     start_time=time.process_time()
@@ -233,7 +89,6 @@ def interp_simu_to_obs_matlab( Hxb, sensor, DAtime, d_obs, d_wrf_d03 ):
     for ich in ch_list:
 
         print('Channel number: ', ich)
-
         
         #Ch_idx_obs = d_obs['Ch_obs'] == ich
         Lat_obs_ch = d_obs['lat']
@@ -250,10 +105,10 @@ def interp_simu_to_obs_matlab( Hxb, sensor, DAtime, d_obs, d_wrf_d03 ):
         print('Number of NaN in Ya_x_ch', sum(np.isnan(Ya_x_ch)))
         # interpolate simulated Tbs to obs location
         mYb_obspace = eng.griddata(matlab.double(Lon_x_ch.tolist()), matlab.double(Lat_x_ch.tolist()), matlab.double(Yb_x_ch.tolist()), matlab.double(Lon_obs_ch.tolist()), matlab.double(Lat_obs_ch.tolist()) )
-        Yb_obspace = np.array(mYb_obspace._data)
+        Yb_obspace = mYb_obspace._data
         print('Number of NaN in Yb_obspace', sum(np.isnan(Yb_obspace)))
         mYa_obspace = eng.griddata(matlab.double(Lon_x_ch.tolist()), matlab.double(Lat_x_ch.tolist()), matlab.double(Ya_x_ch.tolist()), matlab.double(Lon_obs_ch.tolist()), matlab.double(Lat_obs_ch.tolist()) )
-        Ya_obspace = np.array(mYa_obspace._data)
+        Ya_obspace = mYa_obspace._data
         print('Number of NaN in Ya_obspace', sum(np.isnan(Ya_obspace)))
 
         # Add values to the container
@@ -264,7 +119,6 @@ def interp_simu_to_obs_matlab( Hxb, sensor, DAtime, d_obs, d_wrf_d03 ):
         Yb_obspace_all =  Yb_obspace_all + ["{0:.3f}".format(item) for item in Yb_obspace]
         Ya_obspace_all =  Ya_obspace_all + ["{0:.3f}".format(item) for item in Ya_obspace]
         Yo_all = Yo_all + ["{0:.3f}".format(item) for item in Yo_obs_ch]
-
 
     # End the matlab process
     eng.quit()
@@ -327,62 +181,9 @@ def read_allTb(Tb_file, sensor ):
     Yo_obs = np.array( Yo_obs )
     meanYb_obs = np.array( meanYb_obs )
     meanYa_obs = np.array( meanYa_obs )
-    print('Number of NaN in meanYa_obs', sum(np.isnan(meanYa_obs)))
 
     dict_Tb_all = {'lat_obs':lat_obs, 'lon_obs':lon_obs, 'ch_obs':ch_obs, 'Yo_obs':Yo_obs, 'meanYb_obs':meanYb_obs, 'meanYa_obs':meanYa_obs}
     return dict_Tb_all
-
-
-# ------------------------------------------------------------------------------------------------------
-#           Object: things that might be of interest to the plotting  
-# ------------------------------------------------------------------------------------------------------
-
-# Storm center produced by ATCF of the NWP
-def read_TCvitals(tc_file, DAtime):
-
-    with open(tc_file) as tmp:
-        tc_all = tmp.readlines()
-
-    tc_lat = []
-    tc_lon = []
-    for line in tc_all:
-        line_split = line.split()
-        tc_time = line_split[3]+line_split[4]
-
-        if tc_time == DAtime:
-            print('Time from TCvitals:', tc_time)
-            # Read latitude
-            if 'N' in line_split[5]:
-                tc_lat.append(float(line_split[5].replace('N',''))/10)
-            else:
-                tc_lat.append( 0-float(line_split[5].replace('S',''))/10)
-            # Read longitude
-            if 'W' in line_split[6]:
-                tc_lon.append(0-float(line_split[6].replace('W',''))/10)
-            else:
-                tc_lon.append(float(line_split[6].replace('E',''))/10)
-
-            break
-
-    return tc_lon, tc_lat
-
-# Plotting domain
-def read_wrf_domain( wrf_file ):
-
-    print('Read domain info from: ' + wrf_file)
-    ncdir = nc.Dataset(wrf_file, 'r')
-
-    Lat_x = ncdir.variables['XLAT'][0,:,:] #latitude: XLAT(time, y, x)
-    Lon_x = ncdir.variables['XLONG'][0,:,:] #longitude: XLONG(time, y, x)
-
-    lat_min = np.min( Lat_x.flatten() )
-    lat_max = np.max( Lat_x.flatten() )
-    lon_min = np.min( Lon_x.flatten() )
-    lon_max = np.max( Lon_x.flatten() )
-
-    d03_list = {'lat_min':lat_min, 'lat_max':lat_max, 'lon_min':lon_min, 'lon_max':lon_max}
-    return d03_list
-
 
 def plot_Tb(Storm, Exper_name, ifile, DAtime, sensor, ch_list ):
 
@@ -466,36 +267,30 @@ def plot_Tb(Storm, Exper_name, ifile, DAtime, sensor, ch_list ):
 
     head_tail = os.path.split( ifile )
     mem = head_tail[1].replace('_d03_2017-08-22_12:00.txt','')
-    plt.savefig('/work2/06191/tg854905/stampede2/Pro2_PSU_MW/'+Storm+'/'+Exper_name+'/Vis_analyze/Tb/IR/obspace_60mem/'+DAtime+'_'+sensor+'_'+mem+'.png', dpi=300)
-    #print('Saving the figure: ', '/work2/06191/tg854905/stampede2/Pro2_PSU_MW/'+Storm+'/'+Exper_name+'/Vis_analyze/Tb/IR/Obspace/'+DAtime+'_'+sensor+'_Obspace.png') 
 
+    des_path = big_dir+Storm+'/'+Exper_name+'/Vis_analyze/Tb/IR/obspace_60mem/'+DAtime+'_'+sensor+'_'+mem+'.png'
+    plt.savefig( des_path, dpi=300 )
+    print( 'Saving the figure: ', des_path )
+    plt.close()
 
-def plot_Tb_diff(Storm, Exper_name, Hx_dir, DAtime, sensor, ch_list ):
+def plot_Tb_diff( Storm, Exper_name, ifile, DAtime, sensor, ch_list ):
 
     # Read WRF domain
-    wrf_file = '/scratch/06191/tg854905/Pro2_PSU_MW/'+Storm+'/'+Exper_name+'/fc/'+DAtime+'/wrf_enkf_output_d03_mean'
-    d_wrf_d03 = read_wrf_domain( wrf_file )
+    wrf_file = big_dir+Storm+'/'+Exper_name+'/fc/'+DAtime+'/wrf_enkf_output_d03_mean'
+    d_wrf_d03 = UD.read_wrf_domain( wrf_file )
 
     # Read Tbs of obs, Hxb, Hxa
-    Tb_file = Hx_dir + "/mean_obs_res_d03" + DAtime + '_' +  sensor + '.txt'
-    d_all = read_allTb(Tb_file, sensor )
+    d_all = read_allTb(ifile, sensor )
 
     # Read location from TCvitals
     if any( hh in DAtime[8:10] for hh in ['00','06','12','18']):
-        tc_lon, tc_lat = read_TCvitals('/work2/06191/tg854905/stampede2/Pro2_PSU_MW/'+Storm+'/TCvitals/'+Storm+'_tcvitals', DAtime)
-        print( 'Location from TCvital: ', tc_lon, tc_lat )
+        tc_lon, tc_lat, tc_slp = UD.read_TCvitals(small_dir, Storm, DAtime )
 
-    # Prepare to calculate RMSE between the Hx and Yo
-    rmse = np.full(2, fill_value=None) # default type: none
+    # Prepare to calculate Bias and RMSE between the Hx and Yo
+    metric = np.full((2,2), fill_value=None) # default type: none
 
     # ------------------ Plot -----------------------
-    f, ax=plt.subplots(1, 2, subplot_kw={'projection': ccrs.PlateCarree()}, gridspec_kw = {'wspace':0, 'hspace':0}, linewidth=0.5, sharex='all', sharey='all',  figsize=(5,3), dpi=400)
-
-    # Customize colormap
-    max_T=50
-    min_T=-50
-    #min_RWB = 0
-    #newRWB = Util_Vis.newRWB(max_T, min_T, min_RWB)
+    f, ax=plt.subplots(1, 3, subplot_kw={'projection': ccrs.PlateCarree()}, gridspec_kw = {'wspace':0, 'hspace':0}, linewidth=0.5, sharex='all', sharey='all',  figsize=(5,2.5), dpi=300)
 
     # Define the domain
     lat_min = d_wrf_d03['lat_min']
@@ -503,62 +298,86 @@ def plot_Tb_diff(Storm, Exper_name, Hx_dir, DAtime, sensor, ch_list ):
     lon_min = d_wrf_d03['lon_min']
     lon_max = d_wrf_d03['lon_max']
 
-    # HXb - Obs
-    ax[0].set_extent([lon_min, lon_max, lat_min, lat_max], crs=ccrs.PlateCarree())
+    # Obs
+    min_T = 185
+    max_T = 325
+    IRcmap = Util_Vis.IRcmap( 0.5 )
+    ax[0].set_extent([lon_min,lon_max,lat_min,lat_max], crs=ccrs.PlateCarree())
     ax[0].coastlines(resolution='10m', color='black',linewidth=0.5)
-    ax[0].scatter(d_all['lon_obs'], d_all['lat_obs'],1.5,c=d_all['meanYb_obs']-d_all['Yo_obs'],\
-                edgecolors='none', cmap='RdBu_r', vmin=min_T, vmax=max_T, transform=ccrs.PlateCarree())
+    obs_s = ax[0].scatter(d_all['lon_obs'],d_all['lat_obs'],1.5,c=d_all['Yo_obs'],edgecolors='none', cmap=IRcmap, vmin=min_T, vmax=max_T,transform=ccrs.PlateCarree())
     if any( hh in DAtime[8:10] for hh in ['00','06','12','18'] ):
-        ax[0].scatter(tc_lon, tc_lat, s=3, marker='*', edgecolors='white', transform=ccrs.PlateCarree())
-    
-    rmse[0] = RMSE(d_all['meanYb_obs'], d_all['Yo_obs'] )
+        ax.flat[0].scatter(tc_lon, tc_lat, s=1, marker='*', edgecolors='darkviolet', transform=ccrs.PlateCarree())
+    # Colorbar
+    caxes = f.add_axes([0.12, 0.1, 0.25, 0.02])
+    obs_bar = f.colorbar(obs_s,ax=ax[0],orientation="horizontal", cax=caxes)
+    obs_bar.ax.tick_params(labelsize=6)
 
-    # HXa - Obs
+    max_T=15
+    min_T=-15
+    # HXb - Obs & HXa - Obs
     ax[1].set_extent([lon_min, lon_max, lat_min, lat_max], crs=ccrs.PlateCarree())
     ax[1].coastlines(resolution='10m', color='black',linewidth=0.5)
-    cs = ax[1].scatter(d_all['lon_obs'], d_all['lat_obs'],1.5,c=d_all['meanYa_obs']-d_all['Yo_obs'],\
-                edgecolors='none', cmap='RdBu_r', vmin=min_T, vmax=max_T, transform=ccrs.PlateCarree())
+    xb_s = ax[1].scatter(d_all['lon_obs'],d_all['lat_obs'],1.5,c=d_all['meanYb_obs']-d_all['Yo_obs'],\
+                edgecolors='none', cmap='bwr', vmin=min_T, vmax=max_T, transform=ccrs.PlateCarree())
+
+    ax[2].set_extent([lon_min, lon_max, lat_min, lat_max], crs=ccrs.PlateCarree())
+    ax[2].coastlines(resolution='10m', color='black',linewidth=0.5)
+    xa_s = ax[2].scatter(d_all['lon_obs'],d_all['lat_obs'],1.5,c=d_all['meanYa_obs']-d_all['Yo_obs'],\
+                edgecolors='none', cmap='bwr', vmin=min_T, vmax=max_T, transform=ccrs.PlateCarree())
+    # add a reference point
     if any( hh in DAtime[8:10] for hh in ['00','06','12','18'] ):
-        ax[1].scatter(tc_lon, tc_lat, s=3, marker='*', edgecolors='white', transform=ccrs.PlateCarree())
-    
-    rmse[1] = RMSE(d_all['meanYa_obs'], d_all['Yo_obs'] )
-    
+        ax[1].scatter(tc_lon, tc_lat, s=1, marker='*', edgecolors='black', transform=ccrs.PlateCarree())
+        ax[2].scatter(tc_lon, tc_lat, s=1, marker='*', edgecolors='black', transform=ccrs.PlateCarree())
     # Colorbar
-    cb_ticks = np.linspace(min_T, max_T, 5, endpoint=True)
-    caxes = f.add_axes([0.2, 0.97, 0.6, 0.02])
-    cbar = f.colorbar(cs, ticks=cb_ticks, orientation="horizontal", cax=caxes)
+    caxes = f.add_axes([0.4, 0.1, 0.5, 0.02])
+    cb_diff_ticks = np.linspace(min_T, max_T, 7, endpoint=True)
+    cbar = f.colorbar(xa_s, ax=ax[1:], ticks=cb_diff_ticks, orientation="horizontal", cax=caxes, extend='both')
     cbar.ax.tick_params(labelsize=6)
+
+    # Calculate metrics and annotate them
+    metric[0,0] = Bias(d_all['meanYb_obs'], d_all['Yo_obs'] )
+    metric[0,1] = Bias(d_all['meanYa_obs'], d_all['Yo_obs'] )
+    metric[1,0] = RMSE(d_all['meanYb_obs'], d_all['Yo_obs'] )
+    metric[1,1] = RMSE(d_all['meanYa_obs'], d_all['Yo_obs'] )
+
+    f.text( 0.42,0.15,'Bias:'+'%.2f' % metric[0,0],rotation='horizontal',fontsize=6,fontweight='bold')
+    f.text( 0.52,0.15,'; RMSE:'+'%.2f' % metric[1,0],rotation='horizontal',fontsize=6,fontweight='bold')
+    f.text( 0.66,0.15,'Bias:'+'%.2f' % metric[0,1],rotation='horizontal',fontsize=6,fontweight='bold')
+    f.text( 0.76,0.15,'; RMSE:'+'%.2f' % metric[1,1],rotation='horizontal',fontsize=6,fontweight='bold')
 
     #subplot title
     font = {'size':8,}
-    if rmse[0] is None:
-        ax[0].set_title('Ch'+ch_list[0]+':H(Xb)-Yo ', font, fontweight='bold')
-    else:
-        rmse_str = '%.2f' % rmse[0]
-        ax[0].set_title('Ch'+ch_list[0]+':H(Xb)-Yo '+rmse_str, font, fontweight='bold')
+    ax.flat[0].set_title('CH'+ch_list[0]+': Yo', font, fontweight='bold')
+    ax.flat[1].set_title(r'$\mathbf{\overline{H(Xb)}}$'+'-Yo', font, fontweight='bold')
+    ax.flat[2].set_title(r'$\mathbf{\overline{H(Xa)}}$'+'-Yo', font, fontweight='bold')
 
-    if rmse[1] is None:
-        ax[1].set_title('Ch'+ch_list[0]+':H(Xa)-Yo ', font, fontweight='bold')
-    else:
-        rmse_str = '%.2f' % rmse[1]
-        ax[1].set_title('Ch'+ch_list[0]+':H(Xa)-Yo '+rmse_str, font, fontweight='bold')
- 
+    #title for all
+    f.suptitle(Storm+': '+Exper_name+'\n'+DAtime, fontsize=6, fontweight='bold')
+
+    #subplot title
+    head_tail = os.path.split( ifile )
+    mem = head_tail[1].replace('Interp_Tb_mem','')
+    mem = mem.replace('_d03_2017-09-03_00:00.txt','')
+
+    font = {'size':8,}
+    ax[0].set_title('Yo', font, fontweight='bold')
+    ax[1].set_title(mem+': '+r'$H_{Tb}(Xb)$', font, fontweight='bold')
+    ax[2].set_title(mem+': '+r'$H_{Tb}(Xa)$', font, fontweight='bold')
 
     # Axis labels
     lon_ticks = list(range(math.ceil(lon_min)-2, math.ceil(lon_max)+2,2))
     lat_ticks = list(range(math.ceil(lat_min)-2, math.ceil(lat_max)+2,2))
-
-    for j in range(2):
+    for j in range(3):
         gl = ax[j].gridlines(crs=ccrs.PlateCarree(),draw_labels=False,linewidth=0.1, color='gray', alpha=0.5, linestyle='--')
 
-        gl.xlabels_top = False
-        gl.xlabels_bottom = True
+        gl.top_labels = False
+        gl.bottom_labels = True
         if j==0:
-            gl.ylabels_left = True
-            gl.ylabels_right = False
+            gl.left_labels = True
+            gl.right_labels = False
         else:
-            gl.ylabels_left = False
-            gl.ylabels_right = False
+            gl.left_labels = False
+            gl.right_labels = False
 
         gl.ylocator = mticker.FixedLocator(lat_ticks)
         gl.xlocator = mticker.FixedLocator(lon_ticks)
@@ -567,10 +386,10 @@ def plot_Tb_diff(Storm, Exper_name, Hx_dir, DAtime, sensor, ch_list ):
         gl.xlabel_style = {'size': 4}
         gl.ylabel_style = {'size': 6}
 
-    plt.savefig('/work2/06191/tg854905/stampede2/Pro2_PSU_MW/'+Storm+'/'+Exper_name+'/Vis_analyze/Tb/IR/Obspace/'+DAtime+'_'+sensor+'_Obspace_Diff_range50.png', dpi=300)
-    print('Saving the figure: ', '/work2/06191/tg854905/stampede2/Pro2_PSU_MW/'+Storm+'/'+Exper_name+'/Vis_analyze/Tb/IR/Obspace/'+DAtime+'_'+sensor+'_Obspace_Diff.png')
-
-
+    des_name = small_dir+Storm+'/'+Exper_name+'/Vis_analyze/Tb/IR_60mem_Diff/'+DAtime+'_'+mem+'_Obspace_Diff_mspace.png'
+    plt.savefig( des_name, dpi=300)
+    plt.close()
+    print('Saving the figure: ', des_name)
 
 
 
@@ -579,19 +398,30 @@ if __name__ == '__main__':
     big_dir = '/scratch/06191/tg854905/Pro2_PSU_MW/'
     small_dir =  '/work2/06191/tg854905/stampede2/Pro2_PSU_MW/'
 
-    Storm = 'IRMA'
-    Exper_name = 'IR-J_DA+J_WRF+J_init-SP-intel17-WSM6-30hr-hroi900'
+    # -------- Configuration -----------------
+    Storm = 'HARVEY'
+    DA = 'CONV'
+    MP = 'WSM6'
+
+    # Time range set up
+    start_time_str = '201708221200'
+    end_time_str = '201708221200'
+    Consecutive_times = True
 
     sensor = 'abi_gr'
     ch_list = ['8',]
     fort_v = ['obs_type','lat','lon','obs']
-
-    start_time_str = '201709030600' 
-    end_time_str = '201709030600'
-    Interp_to_obs = True
-    Consecutive_times = True
-    If_plot = True
     num_ens = 60
+
+    Interp_to_obs = True
+    
+    If_plot = False
+    If_plot_diff = True
+    # -----------------------------------------
+    
+    # Experiment name
+    Exper_name = UD.generate_one_name( Storm,DA,MP )
+    Exper_obs = UD.generate_one_name( Storm,'IR',MP )
 
     if not Consecutive_times:
         IR_times = ['201708221200',]#'201708221800','201708230000','201708230600','201708231200']
@@ -606,33 +436,42 @@ if __name__ == '__main__':
     if Interp_to_obs:
         for DAtime in IR_times:
             # Get obs's sensor/channel info
-            file_Diag = big_dir+Storm+'/'+Exper_name+'/run/'+DAtime+'/enkf/d03/fort.10000'
+            file_Diag = big_dir+Storm+'/'+Exper_obs+'/run/'+DAtime+'/enkf/d03/fort.10000'
             d_obs = Diag.Find_IR( file_Diag, fort_v )
 
             Hx_dir = big_dir+Storm+'/'+Exper_name+'/Obs_Hx/IR/'+DAtime+'/'
             # List the Yb and Ya files
-            Hxb = sorted( glob.glob(Hx_dir + '/TB_GOES_CRTM_*') ) 
-            print('Reading the Hxb: ' + Hxb)
-            # Interpolate HX in model resolution to obs location AND write it to a txt file
+            Hxb = sorted( glob.glob(Hx_dir + '/TB_GOES_CRTM_*bin') ) 
             print('------------ Interpolate Hx in model resolution to obs location --------------')
-            # Read WRF domain
-            wrf_file = big_dir+Storm+'/'+Exper_name+'/fc/'+DAtime+'/wrf_enkf_output_d03_mean'
-            d_wrf_d03 = read_wrf_domain( wrf_file )
-            interp_simu_to_obs_matlab( Hxb, sensor, DAtime, d_obs, d_wrf_d03 )
-            #time.sleep(60)
+            for ifile in Hxb:
+                print('Reading the Hxb: ' + ifile)
+                # Interpolate HX in model resolution to obs location AND write it to a txt file
+                interp_simu_to_obs_matlab( ifile, sensor, DAtime, d_obs, )
+                #time.sleep(60)
 
     # Plot
     if If_plot:
         for DAtime in IR_times:
-            Hx_dir = '/scratch/06191/tg854905/Pro2_PSU_MW/'+Storm+'/'+Exper_name+'/Obs_Hx/IR/'+DAtime+'/'
+            Hx_dir = big_dir+Storm+'/'+Exper_name+'/Obs_Hx/IR/'+DAtime+'/'
             print('------------ Plot ----------------------')         
             print('DAtime: '+ DAtime)
             # List the interpolated files
             interp_files = sorted( glob.glob(Hx_dir + '/Interp_Tb_mem0*.txt') ) 
             for ifile in interp_files:
                 print('Plotting ' + ifile)
-                plot_Tb( Storm, Exper_name, ifile, DAtime, sensor, ch_list) 
-            #plot_Tb_diff( Storm, Exper_name, Hx_dir, DAtime, sensor, ch_list) 
+                plot_Tb( Storm, Exper_name, ifile, DAtime, sensor, ch_list)
+
+    if If_plot_diff:
+        for DAtime in IR_times:
+            Hx_dir = big_dir+Storm+'/'+Exper_name+'/Obs_Hx/IR/'+DAtime+'/'
+            print('------------ Plot ----------------------')
+            print('DAtime: '+ DAtime)
+            # List the interpolated files
+            interp_files = sorted( glob.glob(Hx_dir + '/Interp_Tb_mem0*.txt') )
+            for ifile in interp_files:
+                print('Plotting ' + ifile)
+                plot_Tb_diff( Storm, Exper_name, ifile, DAtime, sensor, ch_list)
+
     
 
 
