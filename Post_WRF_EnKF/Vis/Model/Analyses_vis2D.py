@@ -1,5 +1,5 @@
 
-import os # functions for interacting with the operating system
+import os,sys # functions for interacting with the operating system
 import numpy as np
 #import xarray as xr
 from datetime import datetime, timedelta
@@ -122,7 +122,7 @@ def read_IC_water( wrf_dir ):
 def plot_IC_water( Storm, Exper_name, DAtime, wrf_dir, plot_dir ):
 
     # Read storm center
-    dict_btk = UD.read_bestrack(Storm)
+    dict_btk = UD.read_bestrack(small_dir, Storm)
     # Find the best-track position
     btk_dt = [it_str for it_str in dict_btk['time'] ]#[datetime.strptime(it_str,"%Y%m%d%H%M") for it_str in dict_btk['time']]
     bool_match = [DAtime == it for it in btk_dt]
@@ -145,12 +145,12 @@ def plot_IC_water( Storm, Exper_name, DAtime, wrf_dir, plot_dir ):
     fig, axs=plt.subplots(1, 3, subplot_kw={'projection': ccrs.PlateCarree()}, gridspec_kw = {'wspace':0, 'hspace':0}, linewidth=0.5, sharex='all', sharey='all',  figsize=(12,5), dpi=400)
 
     # Xb
-    min_icwv = 30
-    max_icwv = 80
+    min_icwv = 45#40 #30
+    max_icwv = 65#70 #80
     axs.flat[0].set_extent([lon_min,lon_max,lat_min,lat_max], crs=ccrs.PlateCarree())
     axs.flat[0].coastlines(resolution='10m', color='black',linewidth=0.5)
     #xb_wv = axs.flat[0].scatter(lon,lat,1.5,c=d_icwv['IC_water'][0,:,:],edgecolors='none', cmap='rainbow_r',transform=ccrs.PlateCarree())
-    xb_wv = axs.flat[0].scatter(lon,lat,1.5,c=d_icwv['IC_water'][0,:,:],edgecolors='none', cmap='raibow_r', vmin=min_icwv, vmax=max_icwv,transform=ccrs.PlateCarree())
+    xb_wv = axs.flat[0].scatter(lon,lat,3,c=d_icwv['IC_water'][0,:,:],edgecolors='none', cmap='rainbow_r', vmin=min_icwv, vmax=max_icwv,transform=ccrs.PlateCarree())
     # Mark the best track
     if if_btk_exist:
         axs.flat[0].scatter(dict_btk['lon'][idx_btk],dict_btk['lat'][idx_btk], 20, 'white', marker='*',transform=ccrs.PlateCarree())
@@ -159,18 +159,18 @@ def plot_IC_water( Storm, Exper_name, DAtime, wrf_dir, plot_dir ):
     axs.flat[1].set_extent([lon_min, lon_max, lat_min, lat_max], crs=ccrs.PlateCarree())
     axs.flat[1].coastlines(resolution='10m', color='black',linewidth=0.5)
     #xa_wv = axs.flat[1].scatter(lon,lat,1.5,c=d_icwv['IC_water'][1,:,:],edgecolors='none', cmap='rainbow_r',transform=ccrs.PlateCarree())
-    xa_wv = axs.flat[1].scatter(lon,lat,1.5,c=d_icwv['IC_water'][1,:,:],edgecolors='none', cmap='rainbow_r', vmin=min_icwv, vmax=max_icwv,transform=ccrs.PlateCarree())
+    xa_wv = axs.flat[1].scatter(lon,lat,3,c=d_icwv['IC_water'][1,:,:],edgecolors='none', cmap='rainbow_r', vmin=min_icwv, vmax=max_icwv,transform=ccrs.PlateCarree())
     # Mark the best track
     if if_btk_exist:
         axs.flat[1].scatter(dict_btk['lon'][idx_btk],dict_btk['lat'][idx_btk], 20, 'white', marker='*',transform=ccrs.PlateCarree())
     # Colorbar
     caxes = fig.add_axes([0.12, 0.1, 0.5, 0.02])
-    xwv_bar = fig.colorbar(xb_wv,ax=axs[0:2],orientation="horizontal", cax=caxes)
+    xwv_bar = fig.colorbar(xb_wv,ax=axs[0:2],orientation="horizontal", cax=caxes, extend='both')
     xwv_bar.ax.tick_params()
 
     # Xa-Xb (increment)
-    min_incre = -10
-    max_incre = 10
+    min_incre = -5
+    max_incre = 5
     axs.flat[2].set_extent([lon_min, lon_max, lat_min, lat_max], crs=ccrs.PlateCarree())
     axs.flat[2].coastlines(resolution='10m', color='black',linewidth=0.5)
     icwv_incre = d_icwv['IC_water'][1,:,:] - d_icwv['IC_water'][0,:,:]
@@ -178,7 +178,7 @@ def plot_IC_water( Storm, Exper_name, DAtime, wrf_dir, plot_dir ):
     # Colorbar
     caxes = fig.add_axes([0.65, 0.1, 0.25, 0.02])
     cb_diff_ticks = np.linspace(min_incre, max_incre, 5, endpoint=True)
-    cbar = fig.colorbar(incre_wv, ax=axs[2:], ticks=cb_diff_ticks, orientation="horizontal", cax=caxes)
+    cbar = fig.colorbar(incre_wv, ax=axs[2:], ticks=cb_diff_ticks, orientation="horizontal", cax=caxes, extend='both')
     cbar.ax.tick_params()
 
     #subplot title
@@ -282,9 +282,9 @@ def plot_psfc( Storm, Exper_name, DAtime, wrf_dir, plot_dir ):
     # ------ Plot Figure -------------------
     fig, ax=plt.subplots(1, 2, subplot_kw={'projection': ccrs.PlateCarree()}, gridspec_kw = {'wspace':0, 'hspace':0}, linewidth=0.5, sharex='all', sharey='all',  figsize=(12,6), dpi=400)
 
-    min_psfc = 950 #970
-    max_psfc = 1010 #1015
-    bounds = np.linspace(min_psfc, max_psfc, 7)
+    min_psfc = 950 #970 #1005
+    max_psfc = 1010 #1015 #1015
+    bounds = np.linspace(min_psfc, max_psfc, 7) # 11
 
     mpsfc = []
     for i in range(2):
@@ -1672,7 +1672,7 @@ if __name__ == '__main__':
 
     # -------- Configuration -----------------
     Storm = 'IRMA'
-    DA = ['IR']   
+    DA = ['CONV']   
     MP = 'THO' 
 
     Plot_Precip = False       # Accumulated total grid scale precipitation
@@ -1683,9 +1683,9 @@ if __name__ == '__main__':
     Plot_dewT = False
 
     Plot_slp = False
-    Plot_UV10_slp = True
+    Plot_UV10_slp = False
     Plot_minslp_evo = False
-    Plot_PSFC = False
+    Plot_PSFC = True
     Plot_rtvo = False
     Plot_divergence = False
 
@@ -1693,7 +1693,7 @@ if __name__ == '__main__':
 
     # Time range set up
     start_time_str = '201709030000'
-    end_time_str = '201709030000'
+    end_time_str = '201709030600'
     Consecutive_times = True
 
     if not Consecutive_times:

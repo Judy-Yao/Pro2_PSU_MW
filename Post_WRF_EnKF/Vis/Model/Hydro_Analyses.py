@@ -88,7 +88,7 @@ def compute_hydro( wrf_files, each_var):
             ivar = each_var.index(var_name)
             var = ncdir.variables[var_name][0,:,:,:]
             var = var.reshape( var.shape[0],-1 )
-            hydro_layer[ifile,:,:] = hydro_mass( full_p[ifile,:,:], tv_k[ifile,:,:], geoHm[ifile,:,:], var )
+            hydro_layer[ifile,:,:] = hydro_mass( full_p[ifile,:,:], tv_k[ifile,:,:], geoHm[ifile,:,:], var.filled(np.nan) )
         d_hydro[var_name] = hydro_layer
  
     return d_hydro
@@ -96,7 +96,7 @@ def compute_hydro( wrf_files, each_var):
 def plot_IC(DAtime, plot_dir, d_hydro, var, IC_xb, IC_xa, ):
 
     # Read storm center
-    dict_btk = UD.read_bestrack(Storm)
+    dict_btk = UD.read_bestrack(small_dir,Storm)
     # Find the best-track position
     btk_dt = [it_str for it_str in dict_btk['time'] ]#[datetime.strptime(it_str,"%Y%m%d%H%M") for it_str in dict_btk['time']]
     bool_match = [DAtime == it for it in btk_dt]
@@ -128,7 +128,7 @@ def plot_IC(DAtime, plot_dir, d_hydro, var, IC_xb, IC_xa, ):
             max_ichydro = 0.5
         elif var == 'QSNOW':
             min_ichydro = 0
-            max_ichydro = 5
+            max_ichydro = 3
         else:
             pass
     else:
@@ -294,12 +294,12 @@ def plot_3D_mixingRatio( wrf_file, lat,lon,Interp_var,ver_coor ):
     lon_max = d_wrf_d03['lon_max']
 
     min_var = 0  #-0.5  # -0.015
-    max_var = 1. #1.5  # 0.015
+    max_var = 1.5 #1.5 #1.5  # 0.015
     for isub in range(20):
         ax.flat[isub].set_extent([lon_min, lon_max, lat_min, lat_max], crs=ccrs.PlateCarree())
         ax.flat[isub].coastlines(resolution='10m', color='black',linewidth=0.5)
         #cs = ax.flat[isub].scatter(lon,lat,c,Interp_var[isub,:],cmap='RdBu_r',edgecolors='none',transform=ccrs.PlateCarree(),)
-        cs = ax.flat[isub].scatter(lon,lat,5,Interp_var[isub,:],cmap='jet_r',vmin=min_var,vmax=max_var,edgecolors='none',transform=ccrs.PlateCarree(),)
+        cs = ax.flat[isub].scatter(lon,lat,5,Interp_var[isub,:],cmap='magma_r',vmin=min_var,vmax=max_var,edgecolors='none',transform=ccrs.PlateCarree(),)
         #if any( hh in DAtime[8:10] for hh in ['00','06','12','18'] ):
         #    ax.flat[isub].scatter(tc_lon, tc_la
 
@@ -371,13 +371,13 @@ if __name__ == '__main__':
     small_dir =  '/work2/06191/tg854905/stampede2/Pro2_PSU_MW/'
 
     # ---------- Configuration -------------------------
-    Storm = 'IRMA'
-    MP = 'WSM6'
-    DA = 'CONV'
+    Storm = 'JOSE'
+    MP = 'THO'
+    DA = 'IR'
     each_var = ['QSNOW',] #['QCLOUD','QRAIN','QICE','QSNOW','QGRAUP']
 
-    start_time_str = '201709030000'
-    end_time_str = '201709030000'
+    start_time_str = '201709050000'
+    end_time_str = '201709050000'
     Consecutive_times = True
 
     interp_P = False
@@ -386,9 +386,9 @@ if __name__ == '__main__':
     H_range = list(np.arange(1,21,1))
 
     each_water = True
-    convert_to_mass = False
-    Plot_Q = True
-    Plot_mass = False
+    convert_to_mass = True
+    Plot_Q = False
+    Plot_mass = True
     # -------------------------------------------------------    
     Exper_name = UD.generate_one_name( Storm,DA,MP )
 

@@ -346,13 +346,13 @@ if __name__ == '__main__':
     small_dir = '/work2/06191/tg854905/stampede2/Pro2_PSU_MW/'
 
     # ---------- Configuration -------------------------
-    Storm = 'IRMA'
-    MP = 'WSM6'
-    DA = 'CONV'
+    Storm = 'JOSE'
+    MP = 'THO'
+    DA = 'IR'
     v_interest = ['RH'] #['hroi_wind','RH']
 
-    start_time_str = '201709030000'
-    end_time_str = '201709031200'
+    start_time_str = '201709050000'
+    end_time_str = '201709060000'
     Consecutive_times = True
 
     # model dimension
@@ -386,23 +386,22 @@ if __name__ == '__main__':
         plotdir_exists = os.path.exists( plot_dir )
         if plotdir_exists == False:
             os.mkdir(plot_dir)
+        
+        for var_name in v_interest:
+            plot_dir =  plot_dir + var_name
+            plotdir_exists = os.path.exists( plot_dir )
+            if plotdir_exists == False:
+                os.mkdir(plot_dir)
 
     # Plot cross section of a variable    
     for DAtime in DAtimes:
         wrf_dir = big_dir+Storm+'/'+Exper_name+'/fc/'+DAtime+'/'
         wrf_files = [wrf_dir+'/wrf_enkf_input_d03_mean',wrf_dir+'/wrf_enkf_output_d03_mean']
 
-    # Loop through each DAtime/analysis
-    for DAtime in DAtimes:
-        wrf_dir = big_dir+Storm+'/'+Exper_name+'/fc/'+DAtime
         print('Reading WRF background and analysis: ', wrf_dir)
         DAtime_dt = datetime.strptime( DAtime, '%Y%m%d%H%M' )
 
         for var_name in v_interest:
+            plot_dir =  small_dir+Storm+'/'+Exper_name+'/Vis_analyze/Model/CrossSection/'+var_name+'/'
             # ------ Plot -------------------
-            plot_dir = plot_dir+var_name
-            plotdir_exists = os.path.exists( plot_dir )
-            if plotdir_exists == False:
-                os.mkdir(plot_dir)
-
-                var_cross( var_name,wrf_files ) 
+            var_cross( var_name,wrf_files ) 

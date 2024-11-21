@@ -399,13 +399,13 @@ if __name__ == '__main__':
     small_dir =  '/work2/06191/tg854905/stampede2/Pro2_PSU_MW/'
 
     # -------- Configuration -----------------
-    Storm = 'IRMA'
+    Storm = 'HARVEY'
     DA = 'CONV'
-    MP = 'THO'
+    MP = 'WSM6'
 
     # Time range set up
-    start_time_str = '201709030000'
-    end_time_str = '201709030000'
+    start_time_str = '201708221200'
+    end_time_str = '201708221200'
     Consecutive_times = True
 
     sensor = 'abi_gr'
@@ -413,11 +413,7 @@ if __name__ == '__main__':
     fort_v = ['obs_type','lat','lon','obs']
     num_ens = 60
 
-    start_time_str = '201709030000' 
-    end_time_str = '201709030000'
-    Consecutive_times = True
-
-    Interp_to_obs = False
+    Interp_to_obs = True
     
     If_plot = False
     If_plot_diff = True
@@ -445,7 +441,7 @@ if __name__ == '__main__':
 
             Hx_dir = big_dir+Storm+'/'+Exper_name+'/Obs_Hx/IR/'+DAtime+'/'
             # List the Yb and Ya files
-            Hxb = sorted( glob.glob(Hx_dir + '/TB_GOES_CRTM_*') ) 
+            Hxb = sorted( glob.glob(Hx_dir + '/TB_GOES_CRTM_*bin') ) 
             print('------------ Interpolate Hx in model resolution to obs location --------------')
             for ifile in Hxb:
                 print('Reading the Hxb: ' + ifile)

@@ -1,4 +1,3 @@
-
 import os
 import glob
 import numpy as np
@@ -609,26 +608,27 @@ if __name__ == '__main__':
     small_dir =  '/work2/06191/tg854905/stampede2/Pro2_PSU_MW/'
 
     # ---------- Configuration -------------------------
-    Storm = 'IRMA'
+    Storm = 'MARIA'
     DA = 'CONV'
-    MP = 'THO'
+    MP = 'WSM6'
  
     sensor = 'abi_gr'
     ch_list = ['8',]
     fort_v = ['obs_type','lat','lon','obs']
 
-    start_time_str = '201709031200'
-    end_time_str = '201709040000'
+    start_time_str = '201709160000'
+    end_time_str = '201709160000'
     Consecutive_times = True
     
     # limitations
     limit = False
 
-    Interp_to_obs = False
+    Interp_to_obs = True
     plot_full = False
-    plot_diff = True
+    plot_diff = False
     plot_scatter = False
     # ------------------------------------------------------   
+
 
     # Create experiment names
 
@@ -695,12 +695,6 @@ if __name__ == '__main__':
             plot_Tb_diff( Storm, Exper_name, Hx_dir, DAtime, sensor, ch_list)
         end_time = time.process_time()
         print ('time needed: ', end_time-start_time, ' seconds')
-
-
-
-
-
-
 
 
 

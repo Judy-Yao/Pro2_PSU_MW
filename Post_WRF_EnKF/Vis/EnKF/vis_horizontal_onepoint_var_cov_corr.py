@@ -467,7 +467,7 @@ if __name__ == '__main__':
     small_dir = '/work2/06191/tg854905/stampede2/Pro2_PSU_MW/' #'/expanse/lustre/projects/pen116/zuy121/Pro2_PSU_MW/'  #'/work2/06191/tg854905/stampede2/Pro2_PSU_MW/'
 
     # ---------- Configuration -------------------------
-    Storm = 'JOSE'
+    Storm = 'HARVEY'
     DA = 'CONV'
     MP = 'THO'
     fort_v = ['obs_type','lat','lon','obs']
@@ -482,8 +482,8 @@ if __name__ == '__main__':
     model_v = [ 'PSFC',]#'QSNOW','QCLOUD','QRAIN','QICE','QGRAUP']
     
     # time
-    start_time_str = '201709050600'
-    end_time_str = '201709050600'
+    start_time_str = '201708221200'
+    end_time_str = '201708221800'
     Consecutive_times = True
 
     # Number of ensemble members
@@ -501,7 +501,7 @@ if __name__ == '__main__':
     interp_H = True
     H_range = list(np.arange(1,21,1))
 
-    If_cal_pert_stddev = True
+    If_cal_pert_stddev = False
     If_cal_hor_corr = True
     If_save = True
 
@@ -529,8 +529,11 @@ if __name__ == '__main__':
         for DAtime in DAtimes:
             # Read assimilated obs
             file_Diag = big_dir+Storm+'/'+Exper_name+'/run/'+DAtime+'/enkf/d03/fort.10000'
+            dt = datetime.strptime(DAtime, "%Y%m%d%H%M")
+            DAtime_wrf = dt.strftime("%Y-%m-%d_%H:%M")
+            file_hpi = small_dir+'/Obs_input_EnKF/'+Storm+'/HPI/HPI_obs_gts_'+DAtime_wrf+':00.3DVAR' 
             if obs_type == 'slp':
-                d_obs[DAtime] = Diag.Find_min_slp( file_Diag, fort_v )
+                d_obs[DAtime] = Diag.Find_min_slp( file_Diag, fort_v, file_hpi )
 
 
     # Calculate ensemble perturbations and variances

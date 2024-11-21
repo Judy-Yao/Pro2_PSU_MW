@@ -118,7 +118,7 @@ if __name__ == '__main__':
     small_dir =  '/work2/06191/tg854905/stampede2/Pro2_PSU_MW/'
 
     # ---------- Configuration -------------------------
-    Storm = 'IRMA'
+    Storm = 'MARIA'
     Exper_name = UD.generate_one_name( Storm,'CONV','THO' )
     Exper_obs =  UD.generate_one_name( Storm,'IR','THO' )
     sensor = 'abi_gr'
@@ -126,12 +126,12 @@ if __name__ == '__main__':
     fort_v = ['obs_type','lat','lon','obs']
     num_ens = 60
 
-    start_time_str = '201709030000'
-    end_time_str = '201709030000'
+    start_time_str = '201709160000'
+    end_time_str = '201709160000'
     Consecutive_times = True
 
-    If_plot = False
-    If_plot_diff = True
+    If_plot = True
+    If_plot_diff = False
     # -------------------------------------------------------   
 
     if not Consecutive_times:

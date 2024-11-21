@@ -8,6 +8,8 @@ import netCDF4 as nc
 import math
 import matplotlib
 from wrf import getvar,interplevel
+import numpy.ma as ma
+import scipy as sp
 #from scipy import interpolate
 matplotlib.use("agg")
 import matplotlib.ticker as mticker
@@ -103,11 +105,9 @@ def find_mslp( Storm,wrf_file):
     # original SLP
     slp_values = slp #slp.values
     slp_values[slp_values > 1030] = np.nan
-    slp_original = slp_values
     # smoothed SLP
-    slp_smt_values = slp #sp.ndimage.gaussian_filter(slp, [1,1]) #[11,11]
+    slp_smt_values = sp.ndimage.gaussian_filter(slp, [1,1]) #[11,11]
     slp_smt_values[slp_smt_values > 1030] = np.nan
-    slp_smooth = slp_smt_values
     # simulated storm center
     if Storm == 'HARVEY': # Harvey is special with its location near land!
 
@@ -384,18 +384,22 @@ def explain_HroiCorr_Pres( wrf_dir, DAtime, var_name, key, x_mean):
     #cs = ax.flat[isub].scatter(lon,lat,5,Interp_corr[isub,:],cmap='RdBu_r',edgecolors='none',transform=ccrs.PlateCarree(),)
     cs_corr = ax.scatter(xlon,xlat,5,hori_corr,cmap='RdBu_r',edgecolors='none',vmin=min_corr,vmax=max_corr,transform=ccrs.PlateCarree(),)
     # Mark the observed location: TCvital
-    ax.scatter(lon_obs, lat_obs, c='green', s=10, marker='s', edgecolors='green', transform=ccrs.PlateCarree())
+    ax.scatter(lon_obs, lat_obs, c='green', s=15, marker='s', edgecolors='green', transform=ccrs.PlateCarree())
     # Mark the mslp for the whole EnKF input ensemble
-    min_mslp = 950
-    max_mslp = 990
-    cs_mslp = ax.scatter(d_mslp['lon_mslp'],d_mslp['lat_mslp'],10,d_mslp['mslp'],cmap='bone',marker='*',vmin=min_mslp,vmax=max_mslp,transform=ccrs.PlateCarree())
+    if Storm == 'IRMA':
+        min_mslp = 950
+        max_mslp = 990
+    else:
+        min_mslp = 1008
+        max_mslp = 1012
+    cs_mslp = ax.scatter(d_mslp['lon_mslp'],d_mslp['lat_mslp'],15,d_mslp['mslp'],cmap='bone',marker='*',vmin=min_mslp,vmax=max_mslp,transform=ccrs.PlateCarree())
     #cs_mslp = ax.scatter(d_mslp['lon_mslp'],d_mslp['lat_mslp'],10,d_mslp['id'],cmap='jet',marker='*',vmin=1,vmax=60,transform=ccrs.PlateCarree())
     
     # Mark the mean of EnsXb mslp
-    ax.scatter(mean_xb_lon, mean_xb_lat,c='#FF0000', s=10, marker='*',transform=ccrs.PlateCarree(),)
+    ax.scatter(mean_xb_lon, mean_xb_lat,c='#FF0000', s=15, marker='*',transform=ccrs.PlateCarree(),)
 
     # Mark the mslp in the ensemble mean 
-    ax.scatter(x_mean[DAtime][0],x_mean[DAtime][1],10,x_mean[DAtime][2],cmap='bone',marker='o',vmin=min_mslp,vmax=max_mslp,transform=ccrs.PlateCarree())
+    ax.scatter(x_mean[DAtime][0],x_mean[DAtime][1],15,x_mean[DAtime][2],cmap='bone',marker='o',vmin=min_mslp,vmax=max_mslp,transform=ccrs.PlateCarree())
 
     # Colorbar
     cbaxes = fig.add_axes([0.9, 0.1, 0.03, 0.8])
@@ -469,8 +473,8 @@ if __name__ == '__main__':
 
     # ---------- Configuration -------------------------
     Storm = 'JOSE'
-    DA = 'IR'
-    MP = 'THO'
+    DA = 'CONV'
+    MP = 'WSM6'
     fort_v = ['obs_type','lat','lon','obs']
     sensor = 'abi_gr'
 
@@ -480,11 +484,11 @@ if __name__ == '__main__':
         obs_type = 'slp' # Radiance
 
     # model variable
-    model_v = [ 'slp',]#'QSNOW','QCLOUD','QRAIN','QICE','QGRAUP']
+    model_v = [ 'slp',]
 
     # time
-    start_time_str = '201709050100'
-    end_time_str = '201709060000'
+    start_time_str = '201709050000'
+    end_time_str = '201709050000'
     Consecutive_times = True
 
     # Number of ensemble members
@@ -500,14 +504,14 @@ if __name__ == '__main__':
     H_range = list(np.arange(1,21,1))
 
     # if calculate data
-    calculate_ens_data = True
+    calculate_ens_data = False
     if calculate_ens_data:
         # at obs location
         at_obs_res = False
     If_save = True
 
     # plot
-    If_plot_corr_snapshot = False
+    If_plot_corr_snapshot = True
     if If_plot_corr_snapshot:
         key = 'input'
 
@@ -559,7 +563,10 @@ if __name__ == '__main__':
 
         # Read mslp of the ensemble mean 
         saved_dir = small_dir+Storm+'/'+Exper_name+'/Data_analyze/'
-        x_mean = Read_mslp_EnsMean( saved_dir+'HPI_wrf_enkf_'+key+'_d03_mean.201709050000_201709060000.txt' )
+        if Storm == 'HARVEY':
+            x_mean = Read_mslp_EnsMean( saved_dir+'HPI_wrf_enkf_'+key+'_d03_mean.201708221200_201708231200.txt' )
+        elif Storm == 'JOSE':
+            x_mean = Read_mslp_EnsMean( saved_dir+'HPI_wrf_enkf_'+key+'_d03_mean.201709050000_201709060000.txt' )
 
         # Loop thru times
         for DAtime in DAtimes:
@@ -572,7 +579,7 @@ if __name__ == '__main__':
 
                 if var_name == 'PSFC':
                     plot_dir=small_dir+Storm+'/'+Exper_name+'/Vis_analyze/hori_Corr/explain_obs_slp/'
-                    explain_HroiCorr_Pres( wrf_dir, DAtime, var_name, key)
+                    explain_HroiCorr_Pres( wrf_dir, DAtime, var_name, key, x_mean)
 
                 if var_name == 'slp':
                     plot_dir=small_dir+Storm+'/'+Exper_name+'/Vis_analyze/hori_Corr/explain_obs_slp/'
