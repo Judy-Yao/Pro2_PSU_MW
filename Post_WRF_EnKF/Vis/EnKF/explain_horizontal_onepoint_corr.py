@@ -26,11 +26,6 @@ import Util_Vis
 import Util_data as UD
 import Diagnostics as Diag
 
-def def_vardim( var_name ):
-    if var_name == 'PSFC':
-        return '2D'
-    elif 'Q' in var_name:
-        return '3D'
 
 ## For each obs loc, find the nearest model grid point (good for mercator)
 @njit(parallel=True)
@@ -377,8 +372,12 @@ def explain_HroiCorr_Pres( wrf_dir, DAtime, var_name, key, x_mean):
     lon_min = d_wrf_d03['lon_min']
     lon_max = d_wrf_d03['lon_max']
 
-    min_corr = -0.6
-    max_corr = 0.6
+    if Storm == 'IRMA':
+        min_corr = -0.6
+        max_corr = 0.6
+    else:
+        min_corr = -0.8
+        max_corr = 0.8
     ax.set_extent([lon_min, lon_max, lat_min, lat_max], crs=ccrs.PlateCarree())
     ax.coastlines(resolution='10m', color='black',linewidth=0.5)
     #cs = ax.flat[isub].scatter(lon,lat,5,Interp_corr[isub,:],cmap='RdBu_r',edgecolors='none',transform=ccrs.PlateCarree(),)
@@ -414,16 +413,23 @@ def explain_HroiCorr_Pres( wrf_dir, DAtime, var_name, key, x_mean):
     cbar2.set_ticks( color_ticks2 )
     cbar2.ax.tick_params(labelsize=10)
     if key == 'input':
-        fig.text(0.018, 0.05, 'Ens Xb mslp (hPa)', fontweight='bold',fontsize=11)
+        if var_name == 'PSFC':
+            fig.text(0.018, 0.05, 'Ens Xb mpsfc (hPa)', fontweight='bold',fontsize=11)
+        elif var_name == 'slp':
+            fig.text(0.018, 0.05, 'Ens Xb mslp (hPa)', fontweight='bold',fontsize=11)
     else:
-        fig.text(0.018, 0.05, 'Ens Xa mslp (hPa)', fontweight='bold',fontsize=11)
+        if var_name == 'PSFC':
+            fig.text(0.018, 0.05, 'Ens Xa mpsfc (hPa)', fontweight='bold',fontsize=11)
+        elif var_name == 'slp':
+            fig.text(0.018, 0.05, 'Ens Xa mslp (hPa)', fontweight='bold',fontsize=11)
+
 
     fig.text( 0.1,0.93,'Assimilated obs: '+"{0:.2f}".format((d_obs[DAtime]['obs'][0]/100))+' hPa',fontsize=10,color='green',rotation='horizontal',fontweight='bold')
+
     if var_name == 'PSFC':
         title_name = 'Mean of min PSFC locations in '
     elif var_name == 'slp':
         title_name = 'Mean of mslp locations in '
-        
     if key == 'input':
         title_name = title_name + 'Ens Xb'
     else:
@@ -472,8 +478,8 @@ if __name__ == '__main__':
     small_dir = '/work2/06191/tg854905/stampede2/Pro2_PSU_MW/'#'/expanse/lustre/projects/pen116/zuy121/Pro2_PSU_MW/'  #'/work2/06191/tg854905/stampede2/Pro2_PSU_MW/'
 
     # ---------- Configuration -------------------------
-    Storm = 'JOSE'
-    DA = 'CONV'
+    Storm = 'HARVEY'
+    DA = 'IR'
     MP = 'WSM6'
     fort_v = ['obs_type','lat','lon','obs']
     sensor = 'abi_gr'
@@ -484,11 +490,14 @@ if __name__ == '__main__':
         obs_type = 'slp' # Radiance
 
     # model variable
-    model_v = [ 'slp',]
-
+    if Storm == 'HARVEY':
+        model_v = [ 'slp',]
+    else:
+        model_v = [ 'PSFC',]
+    
     # time
-    start_time_str = '201709050000'
-    end_time_str = '201709050000'
+    start_time_str = '201708221300'
+    end_time_str = '201708221500'
     Consecutive_times = True
 
     # Number of ensemble members
@@ -504,7 +513,7 @@ if __name__ == '__main__':
     H_range = list(np.arange(1,21,1))
 
     # if calculate data
-    calculate_ens_data = False
+    calculate_ens_data = True
     if calculate_ens_data:
         # at obs location
         at_obs_res = False
@@ -534,8 +543,12 @@ if __name__ == '__main__':
         for DAtime in DAtimes:
             # Read assimilated obs
             file_Diag = big_dir+Storm+'/'+Exper_name+'/run/'+DAtime+'/enkf/d03/fort.10000'
+            dt = datetime.strptime(DAtime, "%Y%m%d%H%M")
+            DAtime_wrf = dt.strftime("%Y-%m-%d_%H:%M")
+            file_hpi = small_dir+'/Obs_input_EnKF/'+Storm+'/HPI/HPI_obs_gts_'+DAtime_wrf+':00.3DVAR'
+
             if obs_type == 'slp':
-                d_obs[DAtime] = Diag.Find_min_slp( file_Diag, fort_v )
+                d_obs[DAtime] = Diag.Find_min_slp( file_Diag, fort_v, file_hpi )
 
     # Calculate more data
     if calculate_ens_data:
@@ -567,6 +580,11 @@ if __name__ == '__main__':
             x_mean = Read_mslp_EnsMean( saved_dir+'HPI_wrf_enkf_'+key+'_d03_mean.201708221200_201708231200.txt' )
         elif Storm == 'JOSE':
             x_mean = Read_mslp_EnsMean( saved_dir+'HPI_wrf_enkf_'+key+'_d03_mean.201709050000_201709060000.txt' )
+        elif Storm == 'IRMA':
+            x_mean = Read_mslp_EnsMean( saved_dir+'HPI_wrf_enkf_'+key+'_d03_mean.201709030000_201709040000.txt' )
+        elif Storm == 'MARIA':
+            x_mean = Read_mslp_EnsMean( saved_dir+'HPI_wrf_enkf_'+key+'_d03_mean.201709160000_201709170000.txt' )
+
 
         # Loop thru times
         for DAtime in DAtimes:

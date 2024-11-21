@@ -468,8 +468,8 @@ if __name__ == '__main__':
 
     # ---------- Configuration -------------------------
     Storm = 'HARVEY'
-    DA = 'CONV'
-    MP = 'THO'
+    DA = 'IR'
+    MP = 'WSM6'
     fort_v = ['obs_type','lat','lon','obs']
     sensor = 'abi_gr'
 
@@ -483,7 +483,7 @@ if __name__ == '__main__':
     
     # time
     start_time_str = '201708221200'
-    end_time_str = '201708221800'
+    end_time_str = '201708221500'
     Consecutive_times = True
 
     # Number of ensemble members
@@ -501,7 +501,7 @@ if __name__ == '__main__':
     interp_H = True
     H_range = list(np.arange(1,21,1))
 
-    If_cal_pert_stddev = False
+    If_cal_pert_stddev = True
     If_cal_hor_corr = True
     If_save = True
 

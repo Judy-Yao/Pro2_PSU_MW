@@ -1,10 +1,14 @@
 #!/bin/bash
 
-NETCDF_INC=${TACC_NETCDFF_INC}
-NETCDF_LIB=${TACC_NETCDFF_LIB}
-HDF5_LIB=${TACC_HDF5_LIB}
+NETCDF_INC=/opt/apps/intel24/netcdf/4.9.2/include
+NETCDF_LIB=/opt/apps/intel24/netcdf/4.9.2/lib
+HDF5_LIB=/opt/apps/intel24/hdf5/1.14.4/lib
 
-#NETCDF_INC=/opt/apps/intel24/impi21/parallel-netcdf/4.9.2/x86_64/inc
+#NETCDF_INC=${TACC_NETCDFF_INC}
+#NETCDF_LIB=${TACC_NETCDFF_LIB}
+#HDF5_LIB=${TACC_HDF5_LIB}
+
+#NETCDF_INC=/opt/apps/intel24/impi21/parallel-netcdf/4.9.2/x86_64/include
 #NETCDF_LIB=/opt/apps/intel24/impi21/parallel-netcdf/4.9.2/x86_64/lib
 #HDF5_LIB=/opt/apps/intel24/impi21/phdf5/1.14.3/x86_64/lib
 

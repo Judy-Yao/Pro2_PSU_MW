@@ -994,6 +994,58 @@ def plot_2by2_MAEs():
 
     return None
 
+
+
+# layout
+# one MSLP MAE
+def plot_MSLP_MAE():
+
+    # Set up figure
+    fig,ax = plt.subplots( 1,1,figsize=(6.5,6),dpi=200) # standard: 6.5,8.5
+    
+    # DA by color
+    colorset = {'CONV': 'black','IR':'red','IR+MW':'blue'}
+
+    # 
+    for imp in MP:
+        for ist in Storms:
+            lead_t = list(range(0,fc_srt_len[ist]))
+            for ida in DA:
+                if imp == 'WSM6':
+                    ax.plot(lead_t,MAEs[ist][imp][ida]['mslp'],color=colorset[ida],linewidth=3)
+
+    # labels
+    ax.set_title('Mean Absolute Error of MSLP (hPa)',fontsize=15)
+    #fig.text(0.78,0.95,'MSLP', fontsize=12, ha='center', va='center',rotation='horizontal')
+
+    lines = ax.get_lines()
+    legend = ax.legend([lines[i] for i in [0,1,2]], list(colorset.keys()),fontsize='15',loc='upper center',ncol=3)
+    # Add the first legend manually to the current Axes
+    ax.add_artist(legend)
+
+    # Set axis attributes
+    ax.set_ylim( [-0.1,25] )
+    # y ticks
+    wsm6_yticks = list(range(0,25+1,5))
+    ax.set_yticks( wsm6_yticks )
+    ax.set_yticklabels( [str(it) for it in wsm6_yticks],fontsize='15' )
+    # x axis
+    for imp in MP:
+        ax.set_xlim( [-0.1,max(fc_srt_len.values())-1] )
+        ax.set_xticks([0,4,8,12,16] )
+        ax.set_xticklabels(['D0','D1','D2','D3','D4'],fontsize='15')
+        ax.set_xlabel('Forecast Time (days)',fontsize='15')
+        # y label
+        ax.set_ylabel('MSLP: MAE (hPa)',fontsize='15')
+        # grid lines
+        ax.grid(True,linewidth=1, color='gray', alpha=0.3, linestyle='-')
+
+    # Save figure
+    des_name = 'WSM6_MSLP_JOSE.png'#small_dir+'/SYSTEMS/Vis_analyze/Paper1/sys_fc_HPI_absError_MAEs_withFCtime.png'
+    plt.savefig( des_name )
+    print( 'Saving the figure to '+des_name )
+
+
 # layout:
 # WSM6_FSP_overIR, THO_FSP_overIR
 def plot_1by2_FSP():
@@ -1144,9 +1196,9 @@ if __name__ == '__main__':
     small_dir = '/work2/06191/tg854905/stampede2/Pro2_PSU_MW/'
 
     #--------Configuration------------
-    Storms = ['HARVEY','IRMA','JOSE','MARIA']
+    Storms = ['JOSE']  #['HARVEY','IRMA','JOSE','MARIA']
     DA = ['CONV','IR','IR+MW']
-    MP = ['WSM6','THO'] #
+    MP = ['WSM6','THO'] #['WSM6','THO'] #
 
     # if operate over the same number of samples for all forecasts
     sameNum_sample = False
@@ -1192,7 +1244,8 @@ if __name__ == '__main__':
         # Calculate MAE with same samples
         fc_srt_len, MAEs = calculate_MAEs_wrt_time()
 
-        plot_2by2_MAEs()
+        plot_MSLP_MAE()
+        #plot_2by2_MAEs()
 
     if FSP_IR and not normMAE_FSP:
         fsp = FSP_overIR()

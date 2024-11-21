@@ -23,7 +23,7 @@ import Util_Vis
 import Util_data as UD
 import Read_Obspace_IR as ROIR
 import Diagnostics as Diag
-import matlab.engine
+#import matlab.engine
 
 
 # ------------------------------------------------------------------------------------------------------
@@ -132,6 +132,62 @@ def vertical_interp( ncdir,array,levels,interp_H=None,interp_P=None):
 # ------------------------------------------------------------------------------------------------------
 #           Object: ; Operation: Write or read Tbs at obs locations
 # ------------------------------------------------------------------------------------------------------
+
+def Rewrite_interpolated_Tbs( d_obs,DAtime,sensor,interp_files ):
+
+    # Read IR_obs attributes
+    IR_obs = d_obs['obs']
+    lon_obs = d_obs['lon']
+    lat_obs = d_obs['lat']
+    Ch_all = np.full( np.shape(IR_obs), [ch_list][0] )
+
+    # Read IR_obs attributes
+    hxb_ens = np.zeros( shape=[num_ens,len(d_obs['obs_type'])] )
+
+    #------------------------------------
+    def read_interp_mem( Tb_file ):
+        meanYb_obs = []
+
+        # Read records
+        print('Reading ', Tb_file)
+        with open(Tb_file) as f:
+            next(f)
+            all_lines = f.readlines()
+
+        for line in all_lines:
+            split_line = line.split()
+            meanYb_obs.append( float(split_line[4]) )
+
+        return np.array( meanYb_obs )
+    #------------------------------------
+
+    for ifile in sorted( interp_files ):
+        print('Reading '+ifile)
+        idx = interp_files.index( ifile )
+        # interpolate simulated Tbs to obs location
+        hxb_ens[idx,:] = read_interp_mem( ifile )
+
+    # Stack each list into an array
+    all_attrs = np.row_stack( (Ch_all,lat_obs,lon_obs,IR_obs,hxb_ens)  )
+    all_attrs = all_attrs.transpose()
+    print('Shape of all_attrs: '+str(np.shape(all_attrs)))
+    # ---- Write to file and save it to the disk ----
+    header = ['Ch_num','Lat','Lon','Tb_obs','Hxb']
+    file_name = Hx_dir + "/Hxb_ens_obs_res_d03_" + DAtime + '_' +  sensor + '.txt'
+    with open(file_name,'w') as f:
+        # Add header 
+        f.write('\t'.join( item.rjust(6) for item in header ) + '\n' )
+        # Write the record to the file serially
+        len_records = np.shape( all_attrs )[0]
+        for irow in range( len_records ):
+            irecord =  [str(item) for item in all_attrs[irow,:] ]
+            f.write('\t'.join( item.rjust(6) for item in irecord ) + '\n')
+    print('Save '+file_name)
+
+    return None
+
+
+
 # Interpolate IR Tbs in model resolution to assimilated obs locations and Write it to a txt file
 def interp_simu_to_obs_matlab_ens( d_obs, Hx_dir, sensor, ch_list,  DAtime ):
 
@@ -392,7 +448,7 @@ def cal_pert_stddev_obsRes_Hxb( DAtime, sensor, Hx_dir, If_save, fort_v,  wrf_di
     assert not np.isnan(stddev_hxb).any()
 
     # verify the standard deviation of hxb
-    verify_hxb( d_obspace, DAtime, stddev_hxb,  wrf_dir )
+    #verify_hxb( d_obspace, DAtime, stddev_hxb,  wrf_dir )
 
     # May save the standard deviation
     if If_save:
@@ -566,23 +622,27 @@ def cal_pert_stddev_xb( DAtime, wrf_dir, var_name, If_save, dim=None ):
 #         print('Save '+des_path)
 #     return corr_xb_hxb
 
+
+
+
+
 if __name__ == '__main__':
 
     big_dir = '/scratch/06191/tg854905/Pro2_PSU_MW/'
     small_dir =  '/work2/06191/tg854905/stampede2/Pro2_PSU_MW/'
 
     # ---------- Configuration -------------------------
-    Storm = 'IRMA'
+    Storm = 'HARVEY'
     DA = 'CONV'
     MP = 'THO'
 
-    v_interest = [ 'QCLOUD','QRAIN','QICE','QGRAUP'] #[ 'PSFC']
+    v_interest = [ 'QICE','QSNOW'] #[ 'PSFC']
     sensor = 'abi_gr'
     ch_list = ['8',]
     fort_v = ['obs_type','lat','lon','obs']
 
-    start_time_str = '201709030000'
-    end_time_str = '201709030000'
+    start_time_str = '201708221200'
+    end_time_str = '201708221200'
     Consecutive_times = True
 
     # Number of ensemble members
@@ -591,15 +651,16 @@ if __name__ == '__main__':
     xmax = 297
     ymax = 297
 
-    to_obs_res = True
-    ens_Interp_to_obs = True
+    to_obs_res = False
+    ens_Interp_to_obs = False
    
-    If_cal_pert_stddev = False
+    If_cal_pert_stddev = True
     If_save = True
     If_plot = False
     # -------------------------------------------------------    
 
     Exper_name = UD.generate_one_name( Storm,DA,MP )
+    Exper_IR = UD.generate_one_name( Storm,'IR',MP )
 
     if not Consecutive_times:
         IR_times = ['201709160600','201709161200','201709161800','201709170000','201709170600','201709171200','201709171800','201709180000']#['201709160000','201709161200','201709161800',]#'201708221800','201708230000','201708230600','201708231200']
@@ -614,12 +675,19 @@ if __name__ == '__main__':
     if ens_Interp_to_obs:
         print('------- For all members, interpolate Hx in model resolution to obs location ------')
         for DAtime in IR_times:
-            # Read assimilated obs 
-            file_Diag = big_dir+Storm+'/'+Exper_name+'/run/'+DAtime+'/enkf/d03/fort.10000'
-            d_obs = Diag.Find_IR( file_Diag, fort_v )
-            # Interpolate
             Hx_dir = big_dir+Storm+'/'+Exper_name+'/Obs_Hx/IR/'+DAtime+'/'
-            interp_simu_to_obs_matlab_ens( d_obs, Hx_dir, sensor, ch_list, DAtime )
+            # Read assimilated obs 
+            file_Diag = big_dir+Storm+'/'+Exper_IR+'/run/'+DAtime+'/enkf/d03/fort.10000'
+            d_obs = Diag.Find_IR( file_Diag, fort_v )
+            # First check if interpolated files exist (in another file format)
+            interp_files = glob.glob(Hx_dir + '/Interp_Tb_mem0*.txt') 
+            if interp_files and len(interp_files) == num_ens:
+                print('Hx has been interpolated to obs locations. Rewriting files into one file...')
+                Rewrite_interpolated_Tbs( d_obs,DAtime,sensor,interp_files )
+            else:
+                # Interpolate
+                pass
+                #interp_simu_to_obs_matlab_ens( d_obs, Hx_dir, sensor, ch_list, DAtime )
 
     # Calculate ensemble perturbations and variances
     if If_cal_pert_stddev:
@@ -635,7 +703,8 @@ if __name__ == '__main__':
             # Xb
             wrf_dir = big_dir+Storm+'/'+Exper_name+'/fc/'+DAtime+'/'
             for var_name in v_interest:
-                cal_pert_stddev_xb( DAtime, wrf_dir, var_name, If_save, '2D')
+                var_dim = UD.def_vardim( var_name )
+                cal_pert_stddev_xb( DAtime, wrf_dir, var_name, If_save, var_dim)
 
     # Calculate correlations
     #if If_cal_corr:
