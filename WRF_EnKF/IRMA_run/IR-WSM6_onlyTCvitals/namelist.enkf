@@ -1,0 +1,154 @@
+&enkf_parameter
+numbers_en   = 60, 
+expername    = 'IR-WSM6_onlyTCvitals',  
+enkfvar      = 'T         ', 'U         ', 'V         ', 'QVAPOR    ', 'QCLOUD    ', 'QRAIN     ', 'QICE      ', 'QSNOW     ', 'QGRAUP    ', 'PH        ', 'MU        ', 'PSFC      ', 'P         ', 'PHB       ', 'PB        ', 'MUB       ', 'U10       ', 'V10       ', 'TSK       ','W         ',
+updatevar    = 'T         ', 'U         ', 'V         ', 'QVAPOR    ', 'QCLOUD    ', 'QRAIN     ', 'QICE      ', 'QSNOW     ', 'QGRAUP    ', 'PH        ', 'MU        ', 'PSFC      ', 'P         ', 'U10       ', 'V10       ', 'TSK       ', 
+update_is    = 1,
+update_ie    = 298,
+update_js    = 1,
+update_je    = 298,
+update_ks    = 1,
+update_ke    = 43,
+inflate      = 1.0,
+mixing       = 0.75,
+use_vortex_RTPP = .false.,
+mixing_core  = 0.75,
+random_order = .false.,
+print_detail = 0,
+use_sfc_theta= true,
+use_sfc_td   = true,
+/
+
+&parallel
+manual_parallel = .true.,
+nmcpu  = 1,
+nicpu  = 16,
+njcpu  = 12,
+/
+
+&osse
+use_ideal_obs    = .false.,
+gridobs_is   = 0,
+gridobs_ie   = 0,
+gridobs_js   = 0,
+gridobs_je   = 0,
+gridobs_ks   = 0,
+gridobs_ke   = 0,
+gridobs_int_x= 0,
+gridobs_int_k= 0,
+use_simulated= .false.,
+/
+
+&hurricane_PI 
+use_hurricane_PI  = .false.,
+hroi_hurricane_PI = 60,
+vroi_hurricane_PI = 35,
+/
+
+&surface_obs
+use_surface      = .true.,
+datathin_surface = 10,
+hroi_surface     = 300,
+vroi_surface     = 43,
+/
+
+&sounding_obs
+use_sounding      = .true.,
+datathin_sounding = 0,
+hroi_sounding     = 30,
+vroi_sounding     = 43,
+/
+
+&profiler_obs
+use_profiler      = .true.,
+datathin_profiler = 5,
+hroi_profiler     = 30,
+vroi_profiler     = 43,
+/
+
+&aircft_obs
+use_aircft      = .false.,
+datathin_aircft = 10,
+hroi_aircft     = 30,
+vroi_aircft     = 43,
+/
+
+&metar_obs
+use_metar      = .true.,
+datathin_metar = 10,
+hroi_metar     = 300,
+vroi_metar     = 999,
+/
+
+&sfcshp_obs
+use_sfcshp      = .false.,
+datathin_sfcshp = 5,
+hroi_sfcshp     = 300,
+vroi_sfcshp     = 43,
+/
+
+&spssmi_obs
+use_spssmi      = .true.,
+datathin_spssmi = 10,
+hroi_spssmi     = 30,
+vroi_spssmi     = 43,
+/
+
+&atovs_obs
+use_atovs      = .false.,
+datathin_atovs = 10,
+hroi_atovs     = 30,
+vroi_atovs     = 43,
+/
+
+&satwnd_obs
+use_satwnd      = .true.,
+datathin_satwnd = 20,
+hroi_satwnd     = 30,
+vroi_satwnd     = 43,
+/
+
+&gpspw_obs
+use_gpspw      = .false.,
+datathin_gpspw = 0,
+hroi_gpspw     = 300,
+vroi_gpspw     = 43,
+/
+
+&radar_obs
+radar_number   = 1,
+use_radar_rf   = .false.,
+use_radar_rv   = .false., 
+datathin_radar = 5,
+hroi_radar     = 15,
+vroi_radar     = 43,
+/
+
+&airborne_radar   
+use_airborne_rf   = .false.,
+use_airborne_rv   = .false.,
+datathin_airborne = 5,
+hroi_airborne     = 15,
+vroi_airborne     = 43,
+/
+
+&radiance 
+use_radiance  = .true.,
+hroi_radiance = 100,
+vroi_radiance = 999,
+datathin_radiance = 0,
+use_vroi_radiance_halfsfc = .false.,
+use_aoei      = .true.,
+use_elf       = .false.,
+use_abei      = .true.,
+/
+
+&microwave 
+use_microwave  = .false.,
+hroi_microwave = 0,
+vroi_microwave = 999,
+datathin_microwave = 0,
+aoei_microwave = .true.,
+use_slant_path = .true.,
+/
+
