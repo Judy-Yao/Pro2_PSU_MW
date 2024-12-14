@@ -150,6 +150,16 @@ def interpolate_locations( DAtimes, bestrack ):
 def def_vardim( var_name ):
     if var_name == 'PSFC':
         return '2D'
+    elif var_name == 'U':
+        return '3D'
+    elif var_name == 'V':
+        return '3D'
+    elif var_name == 'T':
+        return '3D'
+    elif var_name == 'W':
+        return '3D'
+    elif var_name == 'P':
+        return '3D'
     elif 'Q' in var_name:
         return '3D'
 
@@ -159,7 +169,8 @@ def generate_one_name( Storm,DA,MP ):
     if MP == 'THO':
         if DA == 'IR+MW':
             if Storm == 'HARVEY':
-                return 'JerryRun/MW_THO'
+                return None
+                #return 'JerryRun/MW_THO'
             elif Storm == 'IRMA' or Storm == 'JOSE':
                 return 'IR+MW-J_DA+J_WRF+J_init-SP-intel17-THO-30hr-hroi900'
             elif Storm == 'MARIA':
@@ -168,7 +179,7 @@ def generate_one_name( Storm,DA,MP ):
                 raise ValueError('No corresponding storm!')
         elif DA == 'IR':
             if Storm == 'HARVEY':
-                return 'JerryRun/IR_THO'
+                return 'IR_THO_perturb082200'
             elif Storm == 'IRMA' or Storm == 'JOSE':
                 return 'IR-J_DA+J_WRF+J_init-SP-intel17-THO-30hr-hroi900'
             elif Storm == 'MARIA':
@@ -177,13 +188,24 @@ def generate_one_name( Storm,DA,MP ):
                 raise ValueError('No corresponding storm!')
         elif DA == 'CONV':
             if Storm == 'HARVEY':
-                return 'J_DA+J_WRF+J_init-Expanse-THO-24hr-hroi300'
+                return 'CONV_THO_perturb082200'
             elif Storm == 'IRMA' or Storm == 'JOSE':
                 return 'J_DA+J_WRF+J_init-SP-intel17-THO-30hr-hroi900'
             elif Storm == 'MARIA':
                 return 'J_DA+J_WRF+J_init-SP-intel17-THO-24hr-hroi900'
             else:
                 raise ValueError('No corresponding storm!')
+        # same perturbation before 12-hr spin up
+        elif DA == 'CONV-WSM6Ens':
+            if Storm == 'HARVEY':
+                return 'J_DA+J_WRF+J_init-Expanse-THO-24hr-hroi300'
+            if Storm == 'IRMA':
+                return 'CONV_THO_samePert09021200_as_WSM6' #'J_DA+J_WRF+J_init-SP-intel17-THO-30hr-hroi900'
+        elif DA == 'IR-WSM6Ens':
+            if Storm == 'HARVEY':
+                return 'JerryRun/IR_THO'
+            if Storm == 'IRMA':
+                return 'IR_THO_samePert09021200_as_WSM6' #'J_DA+J_WRF+J_init-SP-intel17-THO-30hr-hroi900'
         elif DA == 'IR-onlyTCV':
             return 'IR-THO_onlyTCvitals' 
 
@@ -216,6 +238,18 @@ def generate_one_name( Storm,DA,MP ):
                 return 'J_DA+J_WRF+J_init-SP-intel17-WSM6-24hr-hroi900'
             else:
                 raise ValueError('No corresponding name!')
+        # same perturbation before 12-hr spin up
+        elif DA == 'CONV-WSM6Ens':
+            if Storm == 'HARVEY':
+                return 'J_DA+J_WRF+J_init-Expanse-WSM6-24hr-hroi300' #None
+            if Storm == 'IRMA':
+                return None
+        elif DA == 'IR-WSM6Ens':
+            if Storm == 'HARVEY':
+                return 'JerryRun/IR_WSM6'
+            if Storm == 'IRMA':
+                return None
+
         elif DA == 'IR-onlyTCV':
             return 'IR-WSM6_onlyTCvitals'
 
@@ -621,6 +655,7 @@ def read_IRsimu_mean_Hx(Hx_dir, ch_list):
 # ------------------------------------------------------------------------------------------------------
 #           Object: Model 
 # ------------------------------------------------------------------------------------------------------
+
 @njit(parallel=True)
 # compute relative humidity from temperature and dew point
 def compute_rh_fromTkTd( tk, td ):

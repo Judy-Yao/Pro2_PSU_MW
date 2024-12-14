@@ -22,7 +22,6 @@ import random
 
 import Util_Vis
 import Util_data as UD
-import calculate_pert_stddev_x_IR as stat
 import Read_Obspace_IR as ROIR
 import Diagnostics as Diag
 #import matlab.engine
@@ -467,9 +466,9 @@ if __name__ == '__main__':
     small_dir = '/work2/06191/tg854905/stampede2/Pro2_PSU_MW/' #'/expanse/lustre/projects/pen116/zuy121/Pro2_PSU_MW/'  #'/work2/06191/tg854905/stampede2/Pro2_PSU_MW/'
 
     # ---------- Configuration -------------------------
-    Storm = 'HARVEY'
-    DA = 'IR'
-    MP = 'WSM6'
+    Storm = 'IRMA'
+    DA = 'IR-WSM6Ens'
+    MP = 'THO'
     fort_v = ['obs_type','lat','lon','obs']
     sensor = 'abi_gr'
 
@@ -482,8 +481,8 @@ if __name__ == '__main__':
     model_v = [ 'PSFC',]#'QSNOW','QCLOUD','QRAIN','QICE','QGRAUP']
     
     # time
-    start_time_str = '201708221200'
-    end_time_str = '201708221500'
+    start_time_str = '201709030600'
+    end_time_str = '201709030600'
     Consecutive_times = True
 
     # Number of ensemble members
@@ -501,7 +500,7 @@ if __name__ == '__main__':
     interp_H = True
     H_range = list(np.arange(1,21,1))
 
-    If_cal_pert_stddev = True
+    If_cal_pert_stddev = False
     If_cal_hor_corr = True
     If_save = True
 

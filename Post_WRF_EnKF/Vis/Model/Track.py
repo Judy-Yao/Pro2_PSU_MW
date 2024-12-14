@@ -354,7 +354,7 @@ def plot_hpi_df( Config ):
             else:
                 path = wrf_dir+'/'+Storm+'/'+Exper_name[imp][ida]+'/wrf_df/'
                 if os.path.exists( path ):
-                    fc_start_times[imp][ida] = ['201709030000','201709030600']#'201709031200',]
+                    fc_start_times[imp][ida] = ['201708221800','201708230000','201708230600','201708231200']
                     #fc_start_times[imp][ida] = sorted(fnmatch.filter(os.listdir(path),'20*'))
                 else:
                     fc_start_times[imp][ida] = None
@@ -391,7 +391,7 @@ def plot_hpi_df( Config ):
     # Customize color maps
     if distinct_colors:
         Color1 = ['#ffd8b1','#fabed4','#bfef45','#ffe119','#f58231','#e6194B','#808000','#9A6324','#800000'] # redish
-        Color2 = ['blue','red'] #['#dcbeff','#aaffc3','#f032e6','#911eb4','#4363d8','#42d4f4','#3cb44b','#000075','#469990'] # blueish
+        Color2 = ['#dcbeff','#aaffc3','#f032e6','#911eb4','#4363d8','#42d4f4','#3cb44b','#000075','#469990'] # blueish
     else:
         red_cm = cm.Reds
         blue_cm = cm.Blues
@@ -404,7 +404,7 @@ def plot_hpi_df( Config ):
     Ana_color = ['#eea990','#748b97'] #'#748b97'
    
     # Line types
-    lines = {'CONV':'-','IR':'--','IR+MW':'(0, (1, 1))','IR-onlyTCV':':'}
+    lines = {'CONV':'-','IR':'--','IR+MW':'(0, (1, 1))','CONV-WSM6Ens':'-','IR-WSM6Ens':'--'}
     
     # Customize labels ###### Chnage it every time !!!!!!!!!!!!!!! 
     #Labels = ['Stp2-Intel17 ','Eps-Intel19 ']
@@ -459,7 +459,8 @@ def plot_hpi_df( Config ):
     ax0.set_title( 'Track',fontsize = 15 )
     ax1.set_title( 'MSLP (hPa)',fontsize = 15 )
     ax2.set_title( 'Vmax ($\mathregular{ms^{-1}}$)',fontsize = 15 )
-    #fig.suptitle('IRMA: CONV, WSM6',fontsize = 15)
+    fig.suptitle('WSM6 experiments',fontsize = 15)
+    #fig.suptitle('Different GSF-perturbed Ensemble from WSM6 experiments',fontsize = 15)
 
     # Save figure
     des_name = small_dir+Storm+'/Forecasts/'+Storm+'_'
@@ -720,14 +721,14 @@ if __name__ == '__main__':
     small_dir = '/work2/06191/tg854905/stampede2/Pro2_PSU_MW/'
 
     #--------Configuration------------
-    Storm = 'IRMA'
-    MP = ['THO',]
+    Storm = 'HARVEY'
+    MP = ['WSM6',]
     DA = ['CONV','IR',]
     DF_model_start = '20170822180000' # Default value of DF_model_start. Especially useful when dealing with ensemble forecast
     mem_id = 'mean' # Default value of member id. Especially useful when dealing with deterministic forecast
     read_fc_wrfout = False # Feature that decides the way of reading HPI from model files
 
-    distinct_colors = True
+    distinct_colors = False
     Plot_analyses = False # Feature that plots the analyses of an experiment
     Plot_HPI = True
     Plot_abs_error = False

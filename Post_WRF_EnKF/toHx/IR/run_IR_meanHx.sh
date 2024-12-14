@@ -4,9 +4,9 @@
 #SBATCH -o IR.o%j       # Name of stdout output file
 #SBATCH -e IR.e%j       # Name of stderr error file
 #SBATCH -p icx      # Queue (partition) name
-#SBATCH -N 1               # Total # of nodes 
+#SBATCH -N 2               # Total # of nodes 
 #SBATCH --ntasks-per-node 80
-#SBATCH -t 00:30:00        # Run time (hh:mm:ss)
+#SBATCH -t 03:00:00        # Run time (hh:mm:ss)
 #SBATCH --mail-user=zuy121@psu.edu
 #SBATCH --mail-type=all    # Send email at begin and end of job
 ##SBATCH -A myproject       # Allocation name (req'd if you have more than 1)
@@ -18,8 +18,8 @@ module restore intel
 source util.sh
 
 # Fill in the storm name and experiment name
-Storm=IRMA
-Exper=IR-THO_onlyTCvitals
+Storm=HARVEY
+Exper=CONV_THO_perturb082200
 
 # Parent paths
 Big_dir=/scratch/06191/tg854905/Pro2_PSU_MW/
@@ -27,16 +27,16 @@ Small_dir=/work2/06191/tg854905/stampede2/Pro2_PSU_MW
 #Code_dir=/home1/06191/tg854905/Pro2_PSU_MW/Post_WRF_EnKF/toHx/IR
 
 ############ User control parameters
-max_num_of_crtm=1  # Max number of CRTM.exe to run concurrently 
+max_num_of_crtm=2  # Max number of CRTM.exe to run concurrently 
                     # (make same as # of nodes requested)
 cores_per_crtm=80   # Number of cores given to each crtm.exe 
                     # (make same as # of cores per node)
-date_st=201709030200        # Start date  
-date_ed=201709030200        # End date (24 forecast hrs can be done in < 2 hr w/4 nodes on skx queues)
+date_st=201708230300        # Start date  
+date_ed=201708231200        # End date (24 forecast hrs can be done in < 2 hr w/4 nodes on skx queues)
 time_int=60         # Time interval btwn cycles in minutes
 nE=60               # Number of ens members
 dom=3                           # Domain you are running it on 
-state=( "output") # Input or output or both
+state=("input" "output") # Input or output or both
 
 ##### Initialize counting variable to keep track of number of active CRTM.exe 
 num_crtm=0

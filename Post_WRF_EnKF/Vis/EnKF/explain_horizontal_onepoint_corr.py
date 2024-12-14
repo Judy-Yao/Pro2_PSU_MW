@@ -398,7 +398,7 @@ def explain_HroiCorr_Pres( wrf_dir, DAtime, var_name, key, x_mean):
     ax.scatter(mean_xb_lon, mean_xb_lat,c='#FF0000', s=15, marker='*',transform=ccrs.PlateCarree(),)
 
     # Mark the mslp in the ensemble mean 
-    ax.scatter(x_mean[DAtime][0],x_mean[DAtime][1],15,x_mean[DAtime][2],cmap='bone',marker='o',vmin=min_mslp,vmax=max_mslp,transform=ccrs.PlateCarree())
+    #ax.scatter(x_mean[DAtime][0],x_mean[DAtime][1],15,x_mean[DAtime][2],cmap='bone',marker='o',vmin=min_mslp,vmax=max_mslp,transform=ccrs.PlateCarree())
 
     # Colorbar
     cbaxes = fig.add_axes([0.9, 0.1, 0.03, 0.8])
@@ -478,9 +478,9 @@ if __name__ == '__main__':
     small_dir = '/work2/06191/tg854905/stampede2/Pro2_PSU_MW/'#'/expanse/lustre/projects/pen116/zuy121/Pro2_PSU_MW/'  #'/work2/06191/tg854905/stampede2/Pro2_PSU_MW/'
 
     # ---------- Configuration -------------------------
-    Storm = 'HARVEY'
-    DA = 'IR'
-    MP = 'WSM6'
+    Storm = 'IRMA'
+    DA = 'IR-WSM6Ens'
+    MP = 'THO'
     fort_v = ['obs_type','lat','lon','obs']
     sensor = 'abi_gr'
 
@@ -490,14 +490,14 @@ if __name__ == '__main__':
         obs_type = 'slp' # Radiance
 
     # model variable
-    if Storm == 'HARVEY':
+    if Storm == 'IRMA':
         model_v = [ 'slp',]
     else:
         model_v = [ 'PSFC',]
     
     # time
-    start_time_str = '201708221300'
-    end_time_str = '201708221500'
+    start_time_str = '201709030600'
+    end_time_str = '201709030600'
     Consecutive_times = True
 
     # Number of ensemble members
@@ -513,7 +513,7 @@ if __name__ == '__main__':
     H_range = list(np.arange(1,21,1))
 
     # if calculate data
-    calculate_ens_data = True
+    calculate_ens_data = False
     if calculate_ens_data:
         # at obs location
         at_obs_res = False
@@ -564,7 +564,7 @@ if __name__ == '__main__':
                         identify_mslp_ens( wrf_dir, 'input' )
                     else:
                         print('Finding the slp at the obs location for each EnKF member...')
-                        identify_slp_ens_obsLoc( d_obs[DAtime], wrf_dir, 'output' )
+                        identify_slp_ens_obsLoc( d_obs[DAtime], wrf_dir, 'input' )
 
                 end_time = time.process_time()
                 print ('time needed: ', end_time-start_time, ' seconds')
@@ -581,7 +581,8 @@ if __name__ == '__main__':
         elif Storm == 'JOSE':
             x_mean = Read_mslp_EnsMean( saved_dir+'HPI_wrf_enkf_'+key+'_d03_mean.201709050000_201709060000.txt' )
         elif Storm == 'IRMA':
-            x_mean = Read_mslp_EnsMean( saved_dir+'HPI_wrf_enkf_'+key+'_d03_mean.201709030000_201709040000.txt' )
+            x_mean = None
+            #x_mean = Read_mslp_EnsMean( saved_dir+'HPI_wrf_enkf_'+key+'_d03_mean.201709030000_201709040000.txt' )
         elif Storm == 'MARIA':
             x_mean = Read_mslp_EnsMean( saved_dir+'HPI_wrf_enkf_'+key+'_d03_mean.201709160000_201709170000.txt' )
 

@@ -171,14 +171,14 @@ def Plot_rmse( d_rmse ):
     for imp in MP:
         for ida in DA:
             # threshold
-            if ida == 'IR':
+            if 'IR' in ida:
                 rmse_min = 2
                 rmse_max = 8
-            elif ida == 'CONV':
+            elif 'CONV' in ida:
                 rmse_min = 5
                 rmse_max = 15
             # add patch: to get a sense where metrics of IR experiments are
-            if ida == 'CONV' and imp == MP[0]:
+            if 'CONV' in ida and imp == MP[0]:
                 ax.axhspan(0, 8, color='grey', alpha=0.2, label="IR Area")
 
             rmse_zip = list( chain.from_iterable( zip(d_rmse[imp][ida]['xb'],d_rmse[imp][ida]['xa']) ) )
@@ -208,12 +208,14 @@ def Plot_rmse( d_rmse ):
     ax.grid(True,linestyle='--',alpha=0.5)
     ax.set_ylabel('IR Bias (K)',fontsize=20)
 
-    suptt = Storm + ': IR'
-    if limit:
-        suptt = suptt + ' Obs <= 220K'
-    else:
-        suptt = suptt + ' All-sky'
-    fig.suptitle( suptt, fontsize=15, fontweight='bold')
+    suptt = Storm + ': '
+    #if limit:
+    #    suptt = suptt + ' Obs <= 220K'
+    #else:
+    #    suptt = suptt + ' All-sky'
+
+    fig.suptitle( suptt+' IR-WSM6Ens', fontsize=15, fontweight='bold')
+
     # title
     ax.set_title( 'IR RMSE: mean{('+r'$\mathbf{\overline{H(X)}}$'+' - Obs)**2}',fontweight="bold",fontsize='15' )
     # saved name
@@ -255,14 +257,14 @@ def Plot_bias( d_bias ):
     for imp in MP:
         for ida in DA:
             # threshold
-            if ida == 'IR':
+            if 'IR' in ida:
                 bias_min = -4
                 bias_max = 4
-            elif ida == 'CONV':
+            elif 'CONV' in ida:
                 bias_min = -10
                 bias_max = 10
             # add patch: to get a sense where metrics of IR experiments are
-            if ida == 'CONV' and imp == MP[0]:
+            if 'CONV' in ida and imp == MP[0]:
                 ax.axhspan(-4, 4, color='grey', alpha=0.2, label="IR Area")
 
             bias_zip = list( chain.from_iterable( zip(d_bias[imp][ida]['xb'],d_bias[imp][ida]['xa']) ) )
@@ -292,12 +294,14 @@ def Plot_bias( d_bias ):
     ax.grid(True,linestyle='--',alpha=0.5)
     ax.set_ylabel('IR Bias (K)',fontsize=20)
 
-    suptt = Storm + ': IR'
-    if limit:
-        suptt = suptt + ' Obs <= 220K'
-    else:
-        suptt = suptt + ' All-sky' 
-    fig.suptitle( suptt, fontsize=15, fontweight='bold')
+    suptt = Storm + ': '
+    #if limit:
+    #    suptt = suptt + ' Obs <= 220K'
+    #else:
+    #    suptt = suptt + ' All-sky' 
+    
+    fig.suptitle( suptt+' IR-WSM6Ens', fontsize=15, fontweight='bold')
+    
     # title
     ax.set_title( 'IR Bias: mean{'+r'$\mathbf{\overline{H(X)}}$'+' - Obs}',fontweight="bold",fontsize='15' )
     # saved name
@@ -314,6 +318,8 @@ def Plot_bias( d_bias ):
 
 
 def IR_metric( ida,imp ):
+
+    print(ida,imp,Expers[imp][ida])
 
     xb_bias = []
     xa_bias = []
@@ -355,9 +361,9 @@ if __name__ == '__main__':
     small_dir =  '/work2/06191/tg854905/stampede2/Pro2_PSU_MW/'
 
     # ---------- Configuration -------------------------
-    Storm = 'MARIA'
-    DA = ['CONV',]
-    MP = ['WSM6','THO']
+    Storm = 'HARVEY'
+    DA = ['IR-WSM6Ens']
+    MP = ['THO','WSM6']
 
     sensor = 'abi_gr'
     ch_list = ['8',]

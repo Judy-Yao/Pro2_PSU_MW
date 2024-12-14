@@ -20,7 +20,7 @@ from mpl_toolkits.axes_grid1 import make_axes_locatable
 import time
 
 import Util_data as UD
-from calculate_pert_stddev_x_IR import vertical_interp
+from ModelX_calculate_pert_stddev import vertical_interp
 
 # ------------------------------------------------------------------------------------------------------
 #           Object: hydro mass 
@@ -255,10 +255,10 @@ def MixingRatio_snapshot( DAtime, Exper_name, wrf_file, var_name, ver_coor):
     if 'Q' in var_name:
 
         # Use a threshold to overwrite elements that are too small
-        epsilon=1e-4
+        #epsilon=1e-4
         # Read mixting ratios of interest
         var = ncdir.variables[var_name][0,:,:,:]*1000 # level,lat,lon; g/kg
-        var[var < epsilon] = np.nan
+        #var[var < epsilon] = np.nan
     else:
         raise ValueError('Invalid variable!')
 
@@ -294,7 +294,7 @@ def plot_3D_mixingRatio( wrf_file, lat,lon,Interp_var,ver_coor ):
     lon_max = d_wrf_d03['lon_max']
 
     min_var = 0  #-0.5  # -0.015
-    max_var = 1.5 #1.5 #1.5  # 0.015
+    max_var = 1 #1.5 #1.5 #1.5  # 0.015
     for isub in range(20):
         ax.flat[isub].set_extent([lon_min, lon_max, lat_min, lat_max], crs=ccrs.PlateCarree())
         ax.flat[isub].coastlines(resolution='10m', color='black',linewidth=0.5)
@@ -371,13 +371,13 @@ if __name__ == '__main__':
     small_dir =  '/work2/06191/tg854905/stampede2/Pro2_PSU_MW/'
 
     # ---------- Configuration -------------------------
-    Storm = 'JOSE'
-    MP = 'THO'
+    Storm = 'HARVEY'
+    MP = 'WSM6'
     DA = 'IR'
     each_var = ['QSNOW',] #['QCLOUD','QRAIN','QICE','QSNOW','QGRAUP']
 
-    start_time_str = '201709050000'
-    end_time_str = '201709050000'
+    start_time_str = '201708221200'
+    end_time_str = '201708221200'
     Consecutive_times = True
 
     interp_P = False
@@ -386,9 +386,9 @@ if __name__ == '__main__':
     H_range = list(np.arange(1,21,1))
 
     each_water = True
-    convert_to_mass = True
-    Plot_Q = False
-    Plot_mass = True
+    convert_to_mass = False
+    Plot_Q = True
+    Plot_mass = False
     # -------------------------------------------------------    
     Exper_name = UD.generate_one_name( Storm,DA,MP )
 

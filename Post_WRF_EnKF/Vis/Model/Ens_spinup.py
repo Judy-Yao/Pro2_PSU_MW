@@ -48,7 +48,7 @@ def identify_mpsfc_ens( wrf_dir, key=None):
         if key == 'start':
             wrf_file = wrf_dir+'wrfinput_d03_'+f"{ie+1:03}"
         else:
-            dt = datetime.strptime(end_time_str, '%Y%m%d%H%M')
+            dt = datetime.strptime(end_time_str[Storm], '%Y%m%d%H%M')
             wrf_time = dt.strftime('%Y-%m-%d_%H:%M:%S')
             wrf_file = wrf_dir+'wrfinput_d03_'+wrf_time+'_'+f"{ie+1:03}"
         d_mpsfc = find_mpsfc( wrf_file)
@@ -548,7 +548,7 @@ if __name__ == '__main__':
     small_dir = '/work2/06191/tg854905/stampede2/Pro2_PSU_MW/'#'/expanse/lustre/projects/pen116/zuy121/Pro2_PSU_MW/'  #'/work2/06191/tg854905/stampede2/Pro2_PSU_MW/'
 
     # ---------- Configuration -------------------------
-    Storm = 'JOSE'
+    Storm = 'IRMA'
     DA = 'CONV'
     MP = ['THO','WSM6']
     #fort_v = ['obs_type','lat','lon','obs']
@@ -568,7 +568,7 @@ if __name__ == '__main__':
     start_time_str = {'HARVEY':'201708220000','IRMA':'201709021200','JOSE':'201709041200','MARIA':'201709151200'}
     end_time_str =  {'HARVEY':'201708221200','IRMA':'201709030000','JOSE':'201709050000','MARIA':'201709160000'}
 
-    key = 'start' # 'end'
+    key = 'end' # 'end'
 
     # Number of ensemble members
     num_ens = 60

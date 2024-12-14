@@ -608,25 +608,25 @@ if __name__ == '__main__':
     small_dir =  '/work2/06191/tg854905/stampede2/Pro2_PSU_MW/'
 
     # ---------- Configuration -------------------------
-    Storm = 'MARIA'
+    Storm = 'HARVEY'
     DA = 'CONV'
-    MP = 'WSM6'
+    MP = 'THO'
  
     sensor = 'abi_gr'
     ch_list = ['8',]
     fort_v = ['obs_type','lat','lon','obs']
 
-    start_time_str = '201709160000'
-    end_time_str = '201709160000'
+    start_time_str = '201708221300'
+    end_time_str = '201708231200'
     Consecutive_times = True
     
     # limitations
     limit = False
 
     Interp_to_obs = True
-    plot_full = False
-    plot_diff = False
-    plot_scatter = False
+    plot_full = True
+    plot_diff = True
+    plot_scatter = True
     # ------------------------------------------------------   
 
 
