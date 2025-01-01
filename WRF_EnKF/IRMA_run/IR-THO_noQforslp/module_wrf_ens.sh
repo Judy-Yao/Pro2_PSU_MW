@@ -82,9 +82,9 @@ done
 
 cat > run_wrf_ens.sh << EOF
 #!/bin/bash -x
-#SBATCH -J ir_irma_wrf
-#SBATCH -p icx
-#SBATCH -n 240 -N 3
+#SBATCH -J noQforslp
+#SBATCH -p skx-dev
+#SBATCH -n 192 -N 4
 #SBATCH -t 2:00:00
 #SBATCH -o run_wrf_ens.batch
 #SBATCH --mail-type=ALL

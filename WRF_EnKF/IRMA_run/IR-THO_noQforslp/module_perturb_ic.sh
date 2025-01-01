@@ -112,8 +112,8 @@ done
 
 cat > run_wrfvar.sh << EOF
 #!/bin/bash -x
-#SBATCH -J conv_irma_var
-#SBATCH -p icx
+#SBATCH -J wrfvar
+#SBATCH -p skx-dev
 #SBATCH -N 1 
 #SBATCH -n 48
 #SBATCH -t 0:30:00
@@ -201,8 +201,8 @@ if [ "$MAX_DOM" -gt 1 ]; then
 #    wait
 cat > run_ndown.sh << EOF
 #!/bin/bash -x
-#SBATCH -p icx
-#SBATCH -J conv_irma_ndown
+#SBATCH -p skx-dev
+#SBATCH -J ndown
 #SBATCH -N 1 
 #SBATCH -n 48
 #SBATCH -t 2:00:00

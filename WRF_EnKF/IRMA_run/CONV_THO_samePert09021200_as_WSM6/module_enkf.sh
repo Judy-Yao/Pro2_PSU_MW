@@ -214,9 +214,9 @@ fi
 echo "    Running enkf.mpi"
 cat > run_enkf.sh << EOF
 #!/bin/bash -x
-#SBATCH -J enkf
-#SBATCH -p skx-dev
-#SBATCH -n 192 -N 4
+#SBATCH -J conv_irma_enkf
+#SBATCH -p icx
+#SBATCH -n 192 -N 3
 #SBATCH -t 0:30:00
 #SBATCH -o enkf.batch
 #SBATCH --mail-type=ALL
