@@ -19,7 +19,7 @@ import Util_Vis
 def readMW_obs( ist ):
     
     # Read the file into a pandas DataFrame
-    Hx_dir = big_dir+ist+'/'+Exper_names[ist][MP[0]]['IR+MW']+'/Obs_Hx/MW/'+DAtime[ist]+'/'
+    Hx_dir = big_dir+ist+'/'+Exper_names[ist][MP[0]]['MW']+'/Obs_Hx/MW/'+DAtime[ist]+'/'
     file_name = 'mean_obs_res_d03_'+DAtime[ist]+'.tb.'+d_highf[ist]['sensor']+'.crtm.conv.txt'
     # Read the file into a pandas DataFrame
     df = pd.read_csv( Hx_dir+file_name,delim_whitespace=True,skiprows=1,header=None,dtype=str )
@@ -182,20 +182,20 @@ def plot_snapshot():
 
 if __name__ == '__main__':
 
-    big_dir = '/scratch/06191/tg854905/Pro2_PSU_MW/'
-    small_dir = '/work2/06191/tg854905/stampede2/Pro2_PSU_MW/'
+    big_dir = '/scratch/06191/tg854905/Clean_Pro2_PSU_MW/'
+    small_dir = '/work2/06191/tg854905/stampede2/Pro2_PSU_MW/Clean_results/'
 
     #--------Configuration------------
     Storms = ['HARVEY','IRMA','JOSE','MARIA']
     MP = ['WSM6','THO']
-    DA = ['CONV','IR','IR+MW']
+    DA = ['CONV','IR','MW']
     # sensor and channel
-    d_highf = {'HARVEY':{'sensor':'ssmis_f18','ch':9},
-                'IRMA':{'sensor':'mhs_metop-b','ch':5},
-                'JOSE':{'sensor':'ssmis_f16','ch':9},
-                'MARIA':{'sensor':'saphir_meghat','ch':5}}
+    d_highf = {'HARVEY':{'sensor':'ssmis_f17','ch':9},
+                'IRMA':{'sensor':'mhs_metop-a','ch':5},
+                'JOSE':{'sensor':'mhs_metop-b','ch':5},
+                'MARIA':{'sensor':'mhs_metop-a','ch':5}}
     # time
-    DAtime = {'HARVEY':'201708221300','IRMA':'201709030100','JOSE':'201709050600','MARIA':'201709160200'}
+    DAtime = {'HARVEY':'201708221200','IRMA':'201709030000','JOSE':'201709050000','MARIA':'201709160000'}
 
     #------------------------------------
     wrf_dir = big_dir

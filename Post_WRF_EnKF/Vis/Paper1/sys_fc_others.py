@@ -891,8 +891,8 @@ def plot_4by2_diff(  ):
 
 if __name__ == '__main__':
 
-    big_dir = '/scratch/06191/tg854905/Pro2_PSU_MW/'
-    small_dir = '/work2/06191/tg854905/stampede2/Pro2_PSU_MW/'
+    big_dir = '/scratch/06191/tg854905/Clean_Pro2_PSU_MW/'
+    small_dir = '/work2/06191/tg854905/stampede2/Pro2_PSU_MW/Clean_results/'
 
     #--------Configuration------------
     Storms = ['HARVEY','IRMA','JOSE','MARIA']

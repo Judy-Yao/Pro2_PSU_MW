@@ -207,13 +207,13 @@ def plot_snapshot():
 
 if __name__ == '__main__':
 
-    big_dir = '/scratch/06191/tg854905/Pro2_PSU_MW/'
-    small_dir = '/work2/06191/tg854905/stampede2/Pro2_PSU_MW/'
+    big_dir = '/scratch/06191/tg854905/Clean_Pro2_PSU_MW/'
+    small_dir = '/work2/06191/tg854905/stampede2/Pro2_PSU_MW/Clean_results/'
 
     #--------Configuration------------
     Storms = ['HARVEY','IRMA','JOSE','MARIA']
     MP = ['WSM6','THO']
-    DA = ['CONV','IR','IR+MW']
+    DA = ['CONV','IR','MW']
     # sensor
     sensor = 'abi_gr'
     ch_list = ['8',]
@@ -233,7 +233,7 @@ if __name__ == '__main__':
                 Exper_names[istorm][imp][ida] = UD.generate_one_name( istorm,ida,imp )
 
     # DA time of interest
-    DAtime = {'HARVEY':'201708221300','IRMA':'201709030100','JOSE':'201709050600','MARIA':'201709160200'}
+    DAtime = {'HARVEY':'201708221200','IRMA':'201709030000','JOSE':'201709050000','MARIA':'201709160000'}
     #DAtime = {}
     #for ist in Storms:
     #    tmp_time = datetime.strptime(start_time_str[ist],"%Y%m%d%H%M") + timedelta(hours=t_incre)

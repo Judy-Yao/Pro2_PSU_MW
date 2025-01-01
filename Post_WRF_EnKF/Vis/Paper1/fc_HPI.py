@@ -355,13 +355,13 @@ def plot_hpi_df( ):
 
 if __name__ == '__main__':
 
-    big_dir = '/scratch/06191/tg854905/Pro2_PSU_MW/'
-    small_dir = '/work2/06191/tg854905/stampede2/Pro2_PSU_MW/'
+    big_dir = '/scratch/06191/tg854905/Clean_Pro2_PSU_MW/'
+    small_dir = '/work2/06191/tg854905/stampede2/Pro2_PSU_MW/Clean_results/'
 
     # Configuration
-    Storm = 'MARIA'
+    Storm = 'IRMA'
     MP = ['WSM6','THO']
-    DA = ['CONV','IR','IR+MW']
+    DA = ['CONV','IR','MW']
 
     distinct_colors = False
     Plot_analyses = False # Feature that plots the analyses of an experiment

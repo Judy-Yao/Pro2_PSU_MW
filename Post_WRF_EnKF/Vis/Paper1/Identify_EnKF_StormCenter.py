@@ -125,19 +125,19 @@ def write_HPI( ist,d_HPI,save_dir ):
 
 if __name__ == '__main__':
 
-    big_dir = '/scratch/06191/tg854905/Pro2_PSU_MW/'
-    small_dir = '/work2/06191/tg854905/stampede2/Pro2_PSU_MW/'
+    big_dir = '/scratch/06191/tg854905/Clean_Pro2_PSU_MW/'
+    small_dir = '/work2/06191/tg854905/stampede2/Pro2_PSU_MW/Clean_results/'
 
     # ------------Configuration------------------
-    Storms =  ['IRMA','HARVEY','IRMA','JOSE','MARIA']
-    MP = ['WSM6','THO']
-    DA = ['CONV','IR','IR+MW']
+    Storms =  ['HARVEY',]
+    MP = ['THO',]
+    DA = ['MW']
 
     start_time_str = {'HARVEY':'201708221200','IRMA':'201709030000','JOSE':'201709050000','MARIA':'201709160000'}
     end_time_str = {'HARVEY':'201708231200','IRMA':'201709040000','JOSE':'201709060000','MARIA':'201709170000'}
 
     # action
-    analysis = False
+    analysis = True
 
     # -------------------------------------------
 
