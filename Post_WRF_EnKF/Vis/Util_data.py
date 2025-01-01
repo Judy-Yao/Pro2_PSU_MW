@@ -154,22 +154,53 @@ def def_vardim( var_name ):
         return '3D'
     elif var_name == 'V':
         return '3D'
-    elif var_name == 'T':
+    elif var_name == 'Temp':
         return '3D'
     elif var_name == 'W':
         return '3D'
-    elif var_name == 'P':
+    elif var_name == 'Pres':
         return '3D'
     elif 'Q' in var_name:
         return '3D'
+
 
 # Automate the experiment name for one storm
 def generate_one_name( Storm,DA,MP ):
 
     if MP == 'THO':
+        if DA == 'MW':
+            if Storm == 'HARVEY':
+                #return 'CONV+IR+MW_THO'
+                return 'CONV+IR+MW_THO_moreMW'
+            else:
+                return 'CONV+IR+MW_THO'
+        elif DA == 'IR':
+            return 'CONV+IR_THO'
+        elif DA == 'CONV':
+            return 'CONV_THO'
+    elif MP == 'WSM6':
+        if DA == 'MW':
+            if Storm == 'HARVEY':
+                #return 'CONV+IR+MW_THO'
+                return 'CONV+IR+MW_WSM6_moreMW'
+            else:
+                return 'CONV+IR+MW_WSM6'
+        elif DA == 'IR':
+            return 'CONV+IR_WSM6'
+        elif DA == 'CONV':
+            return 'CONV_WSM6'
+    else:
+        raise ValueError('No corresponding MP!')
+
+
+
+# Automate the experiment name for one storm
+def old_generate_one_name( Storm,DA,MP ):
+
+    if MP == 'THO':
         if DA == 'IR+MW':
             if Storm == 'HARVEY':
-                return None
+                return 'IR+MW_THO_perturb082200'
                 #return 'JerryRun/MW_THO'
             elif Storm == 'IRMA' or Storm == 'JOSE':
                 return 'IR+MW-J_DA+J_WRF+J_init-SP-intel17-THO-30hr-hroi900'
@@ -206,9 +237,13 @@ def generate_one_name( Storm,DA,MP ):
                 return 'JerryRun/IR_THO'
             if Storm == 'IRMA':
                 return 'IR_THO_samePert09021200_as_WSM6' #'J_DA+J_WRF+J_init-SP-intel17-THO-30hr-hroi900'
+        elif DA == 'IR+MW-WSM6Ens':
+            return 'JerryRun/MW_THO'
         elif DA == 'IR-onlyTCV':
             return 'IR-THO_onlyTCvitals' 
-
+        elif DA == 'IR-noQforslp':
+            if Storm == 'IRMA':
+                return 'IR-THO_noQforslp'
 
     elif MP == 'WSM6':
         if DA == 'IR+MW':

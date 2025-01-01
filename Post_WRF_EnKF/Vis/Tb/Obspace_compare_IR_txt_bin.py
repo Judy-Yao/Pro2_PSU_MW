@@ -362,7 +362,7 @@ def read_wrf_domain( wrf_file ):
 def plot_Tb(Storm, Exper_name, Hx_dir, DAtime, sensor, ch_list ):
 
     # Read WRF domain
-    wrf_file = '/scratch/06191/tg854905/Pro2_PSU_MW/'+Storm+'/'+Exper_name+'/fc/'+DAtime+'/wrf_enkf_output_d03_mean'
+    wrf_file = big_dir+Storm+'/'+Exper_name+'/fc/'+DAtime+'/wrf_enkf_output_d03_mean'
     d_wrf_d03 = read_wrf_domain( wrf_file )
 
     # Read Tbs of obs, Hxb, Hxa
@@ -469,7 +469,7 @@ def plot_Tb(Storm, Exper_name, Hx_dir, DAtime, sensor, ch_list ):
 def plot_Tb_diff(Storm, Exper_name, Hx_dir, DAtime, sensor, ch_list ):
 
     # Read WRF domain
-    wrf_file = '/scratch/06191/tg854905/Pro2_PSU_MW/'+Storm+'/'+Exper_name+'/fc/'+DAtime+'/wrf_enkf_output_d03_mean'
+    wrf_file = big_dir+Storm+'/'+Exper_name+'/fc/'+DAtime+'/wrf_enkf_output_d03_mean'
     d_wrf_d03 = read_wrf_domain( wrf_file )
 
     # Read Tbs of obs, Hxb, Hxa
@@ -604,20 +604,20 @@ def plot_Tb_diff(Storm, Exper_name, Hx_dir, DAtime, sensor, ch_list ):
 
 if __name__ == '__main__':
 
-    big_dir = '/scratch/06191/tg854905/Pro2_PSU_MW/'
-    small_dir =  '/work2/06191/tg854905/stampede2/Pro2_PSU_MW/'
+    big_dir = '/scratch/06191/tg854905/Clean_Pro2_PSU_MW/'
+    small_dir =  '/work2/06191/tg854905/stampede2/Pro2_PSU_MW/Clean_results/'
 
     # ---------- Configuration -------------------------
     Storm = 'HARVEY'
-    DA = 'CONV'
-    MP = 'THO'
+    DA = 'MW'
+    MP = 'WSM6'
  
     sensor = 'abi_gr'
     ch_list = ['8',]
     fort_v = ['obs_type','lat','lon','obs']
 
-    start_time_str = '201708221300'
-    end_time_str = '201708231200'
+    start_time_str = '201708221800'
+    end_time_str = '201708230300'
     Consecutive_times = True
     
     # limitations

@@ -544,13 +544,13 @@ def plot_geo_compare( d_st, d_ed ):
 
 if __name__ == '__main__':
 
-    big_dir = '/scratch/06191/tg854905/Pro2_PSU_MW/'#'/expanse/lustre/scratch/zuy121/temp_project/Pro2_PSU_MW/' #'/scratch/06191/tg854905/Pro2_PSU_MW/'
-    small_dir = '/work2/06191/tg854905/stampede2/Pro2_PSU_MW/'#'/expanse/lustre/projects/pen116/zuy121/Pro2_PSU_MW/'  #'/work2/06191/tg854905/stampede2/Pro2_PSU_MW/'
+    big_dir = '/scratch/06191/tg854905/Clean_Pro2_PSU_MW/'#'/expanse/lustre/scratch/zuy121/temp_project/Pro2_PSU_MW/' #'/scratch/06191/tg854905/Pro2_PSU_MW/'
+    small_dir = '/work2/06191/tg854905/stampede2/Pro2_PSU_MW/Clean_results/'#'/expanse/lustre/projects/pen116/zuy121/Pro2_PSU_MW/'  #'/work2/06191/tg854905/stampede2/Pro2_PSU_MW/'
 
     # ---------- Configuration -------------------------
-    Storm = 'IRMA'
-    DA = 'CONV'
-    MP = ['THO','WSM6']
+    Storm = 'MARIA'
+    DA = 'IR'
+    MP = ['WSM6',]
     #fort_v = ['obs_type','lat','lon','obs']
 
     # observation type
@@ -568,7 +568,7 @@ if __name__ == '__main__':
     start_time_str = {'HARVEY':'201708220000','IRMA':'201709021200','JOSE':'201709041200','MARIA':'201709151200'}
     end_time_str =  {'HARVEY':'201708221200','IRMA':'201709030000','JOSE':'201709050000','MARIA':'201709160000'}
 
-    key = 'end' # 'end'
+    key = 'start' # 'end'
 
     # Number of ensemble members
     num_ens = 60
@@ -577,11 +577,11 @@ if __name__ == '__main__':
     ymax = 297
 
     # if calculate data
-    calculate_ens_data = False
+    calculate_ens_data = True
     If_save = True
 
     # plot
-    if_plot_geo = True
+    if_plot_geo = False
 
     # -------------------------------------------------------
     Exper_name = {}

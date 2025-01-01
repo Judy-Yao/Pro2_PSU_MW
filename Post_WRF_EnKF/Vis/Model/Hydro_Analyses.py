@@ -374,10 +374,10 @@ if __name__ == '__main__':
     Storm = 'HARVEY'
     MP = 'WSM6'
     DA = 'IR'
-    each_var = ['QSNOW',] #['QCLOUD','QRAIN','QICE','QSNOW','QGRAUP']
+    each_var = ['QICE',] #['QCLOUD','QRAIN','QICE','QSNOW','QGRAUP']
 
-    start_time_str = '201708221200'
-    end_time_str = '201708221200'
+    start_time_str = '201708221900'
+    end_time_str = '201708221900'
     Consecutive_times = True
 
     interp_P = False

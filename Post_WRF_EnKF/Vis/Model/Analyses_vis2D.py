@@ -21,7 +21,7 @@ import time
 import subprocess
 #import metpy.calc as mpcalc
 #from metpy.units import units
-#import numpy.ma as ma
+import numpy.ma as ma
 
 import Util_data as UD
 
@@ -43,10 +43,25 @@ def d03_domain( wrfout_d03 ):
     d03_list = [d03_lon_min, d03_lon_max, d03_lat_min, d03_lat_max]
     return d03_list
 
+def Read_HPI_file( file_hpi ):
+
+    with open(file_hpi, 'r') as file:
+         # Skip the first 21 lines and Read all lines into a list
+         lines = file.readlines()[21:]
+    hpi_line = lines[0].split()
+    hpi_lat = float(hpi_line[4])
+    hpi_lon = float(hpi_line[5])
+    return (hpi_lon,hpi_lat)
+
+
 # Obtain assimilated min slp from fort.10000
 def assimilated_obs(big_dir,storm,Exper_name,DAtime,d_field):
 
-    # collect assimilated min slp obs from TCvital record in fort.10000
+    obs_minslp_lon = []
+    obs_minslp_lat = []
+    obs_minslp_value = []
+
+   # collect assimilated min slp obs from TCvital record in fort.10000
     diag_enkf = big_dir+storm+'/'+Exper_name+'/run/'+DAtime+'/enkf/d03/fort.10000'
     print('Reading the EnKF diagnostics from ', diag_enkf)
     enkf_minSlp = subprocess.run(["grep","slp",diag_enkf],stdout=subprocess.PIPE,text=True)
@@ -55,45 +70,34 @@ def assimilated_obs(big_dir,storm,Exper_name,DAtime,d_field):
     if list_enkf_minSlp.count('slp') == 0 :
         raise ValueError('No min slp is assimilated!')
     elif list_enkf_minSlp.count('slp') == 1 :
-        obs_mslp_lat =  float(list_enkf_minSlp[1]) 
-        obs_mslp_lon = float(list_enkf_minSlp[2]) 
-        obs_mslp =  float(list_enkf_minSlp[9])/100 
+        obs_minslp_lat.append( float(list_enkf_minSlp[1]) )
+        obs_minslp_lon.append( float(list_enkf_minSlp[2]) )
+        obs_minslp_value.append( float(list_enkf_minSlp[9])/100 )
     else : # at least two min slp records are assimilated
         print('At least two min slp obs are assimilated!')
-        # find the index of the current time
-        idx_time = DAtimes.index( DAtime )
-        # assemble the diagnosed min slp from an analysis
-        xa_ms_lat = d_field['lon'] 
-        xa_ms_lon = d_field['lat']
-        # ---condition 1: find the nearest TCvital min slp from the analysis
+        dt = datetime.strptime(DAtime, "%Y%m%d%H%M")
+        DAtime_wrf = dt.strftime("%Y-%m-%d_%H:%M")
+        file_hpi = small_dir+'/Obs_input_EnKF/'+Storm+'/HPI/HPI_obs_gts_'+DAtime_wrf+':00.3DVAR'
+        print('Reading '+file_hpi+' for more information......')
+        hpi_loc = Read_HPI_file( file_hpi )
         # find the index/location of 'slp' in fort.10000
         indices = [i for i ,e in enumerate(list_enkf_minSlp) if e == 'slp']
         # assemble a pair of coordinate for each 'slp'
-        distances = []
-        obs_slp = []
         for it in indices:
-            obs_slp.append( float(list_enkf_minSlp[it+9]) )
-            lon1 = float(list_enkf_minSlp[it+2])
-            lat1 = float(list_enkf_minSlp[it+1])
-            distances.append( UD.mercator_distance(lon1, lat1, xa_ms_lon, xa_ms_lat) )
-        min_distances = [np.amin(distances) == it for it in distances]
-        idx_nearest = min_distances.index(True)
-        # ---condition 2: the min slp
-        min_obs_slp = [np.amin(obs_slp) == it for it in obs_slp]
-        idx_min = min_obs_slp.index(True)
-        # ---combine the two conditions
-        if idx_min == idx_nearest:
-            idx_coor = idx_min
-            print('Storm center is choosed with two condtions met!')
-        else:
-            print('Not sure which obs is the storm center. Go with the min value one!')
-            idx_coor = idx_min
-        # gather this TCvital min slp
-        obs_mslp_lat = float(list_enkf_minSlp[indices[idx_coor]+1]) 
-        obs_mslp_lon = float(list_enkf_minSlp[indices[idx_coor]+2]) 
-        obs_mslp = float(list_enkf_minSlp[indices[idx_coor]+9])/100 
+            lon = float(list_enkf_minSlp[it+2])
+            lat = float(list_enkf_minSlp[it+1])
+            loc_candis = (lon,lat)
+            if loc_candis == hpi_loc:
+                obs_minslp_lat.append( float(list_enkf_minSlp[it+1]) )
+                obs_minslp_lon.append( float(list_enkf_minSlp[it+2]) )
+                obs_minslp_value.append( float(list_enkf_minSlp[it+9])/100 )
 
     # Assemble the dictionary
+    obs_mslp_lon = obs_minslp_lon
+    obs_mslp_lat = obs_minslp_lat
+    obs_mslp = obs_minslp_value
+
+
     d_obs = {'lon':obs_mslp_lon,'lat':obs_mslp_lat,'mslp':obs_mslp}
     return d_obs
 
@@ -384,8 +388,8 @@ def slp_plt( Storm, Exper_name, DAtime, wrf_dir, plot_dir ):
     lon_min = np.amin( lon )
     lat_max = np.amax( lat )
     lon_max = np.amax( lon )
-    min_slp = np.min( slp )
-    max_slp = np.max( slp )
+    #min_slp = np.min( slp )
+    #max_slp = np.max( slp )
 
     # ----- Read assimilated obs -----------
     d_obs = assimilated_obs(big_dir,Storm,Exper_name,DAtime,d_field )
@@ -393,9 +397,14 @@ def slp_plt( Storm, Exper_name, DAtime, wrf_dir, plot_dir ):
     # ------ Plot Figure -------------------
     fig, ax=plt.subplots(1, 2, subplot_kw={'projection': ccrs.PlateCarree()}, gridspec_kw = {'wspace':0, 'hspace':0}, linewidth=0.5, sharex='all', sharey='all',  figsize=(12,6), dpi=400)
 
-    min_slp = 950 #970
-    max_slp = 1010 #1015
+    if Storm == 'IRMA':
+        min_slp = 950 #970
+        max_slp = 1010 #1015
+    elif Storm == 'HARVEY':
+        min_slp = 1006 #970
+        max_slp = 1015 #1015
     bounds = np.linspace(min_slp, max_slp, 7) 
+    
     for i in range(2):
         ax[i].set_extent([lon_min,lon_max,lat_min,lat_max], crs=ccrs.PlateCarree())
         ax[i].coastlines (resolution='10m', color='black', linewidth=1)
@@ -1671,8 +1680,8 @@ if __name__ == '__main__':
     small_dir = '/work2/06191/tg854905/stampede2/Pro2_PSU_MW/'#'/expanse/lustre/projects/pen116/zuy121/Pro2_PSU_MW/' #'/work2/06191/tg854905/stampede2/Pro2_PSU_MW/'
 
     # -------- Configuration -----------------
-    Storm = 'IRMA'
-    DA = ['IR-WSM6Ens']   
+    Storm = 'HARVEY'
+    DA = ['IR']   
     MP = 'THO' 
 
     Plot_Precip = False       # Accumulated total grid scale precipitation
@@ -1682,18 +1691,18 @@ if __name__ == '__main__':
     Plot_Temp = False
     Plot_dewT = False
 
-    Plot_slp = False
+    Plot_slp = True
     Plot_UV10_slp = False
     Plot_minslp_evo = False
-    Plot_PSFC = True
+    Plot_PSFC = False
     Plot_rtvo = False
     Plot_divergence = False
 
     # -----------------------------------------
 
     # Time range set up
-    start_time_str = '201709030000'
-    end_time_str = '201709030600'
+    start_time_str = '201708221200'
+    end_time_str = '201708221200'
     Consecutive_times = True
 
     if not Consecutive_times:

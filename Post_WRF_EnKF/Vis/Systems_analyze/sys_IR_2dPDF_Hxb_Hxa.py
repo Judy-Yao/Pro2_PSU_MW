@@ -232,8 +232,8 @@ def Plot_2Dhist_BMO( d_hcount ):
 
 if __name__ == '__main__':
 
-    big_dir = '/scratch/06191/tg854905/Pro2_PSU_MW/'
-    small_dir = '/work2/06191/tg854905/stampede2/Pro2_PSU_MW/'
+    big_dir = '/scratch/06191/tg854905/Clean_Pro2_PSU_MW/'
+    small_dir = '/work2/06191/tg854905/stampede2/Pro2_PSU_MW/Clean_results/'
 
     #--------Configuration------------
     Storms = ['IRMA','JOSE','MARIA','HARVEY']#['HARVEY','IRMA','JOSE','MARIA']

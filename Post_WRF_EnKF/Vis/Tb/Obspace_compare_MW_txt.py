@@ -573,16 +573,16 @@ def plot_Tb_diff(Storm, Exper_name, DAtime, sensor, dict_ss_len):
 
 if __name__ == '__main__':
 
-    big_dir = '/scratch/06191/tg854905/Pro2_PSU_MW/'
-    small_dir =  '/work2/06191/tg854905/stampede2/Pro2_PSU_MW/'
+    big_dir = '/scratch/06191/tg854905/Clean_Pro2_PSU_MW/'
+    small_dir =  '/work2/06191/tg854905/stampede2/Pro2_PSU_MW/Clean_results/'
 
     # ---------- Configuration -------------------------
-    Storm = 'HARVEY'
-    DA = 'IR+MW'
-    MP = 'THO'
+    Storm = 'JOSE'
+    DA = 'CONV'
+    MP = 'WSM6'
 
-    start_time_str = '201708221300'
-    end_time_str = '201708221300'
+    start_time_str = '201709051200'
+    end_time_str = '201709051200'
     Consecutive_times = True
 
     plot_full = True
@@ -592,7 +592,7 @@ if __name__ == '__main__':
 
     # Create experiment names
     Exper_name =  UD.generate_one_name( Storm,DA,MP )
-    Exper_obs =  UD.generate_one_name( Storm,'IR+MW',MP )
+    Exper_obs =  UD.generate_one_name( Storm,'MW',MP )
     # Create MW DA times
     if not Consecutive_times:
         MW_times = ['201709062200',]

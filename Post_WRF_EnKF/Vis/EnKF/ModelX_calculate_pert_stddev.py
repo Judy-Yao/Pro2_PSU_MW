@@ -136,7 +136,19 @@ def set_time_for_MakeEns( Storm ):
     elif Storm == 'MARIA':
         return ['201709151200',]
 
-def set_time_for_cyclings( Storm, start_time_str,end_time_str):
+def set_time_for_EndSpinup( Storm ):
+
+    if Storm == 'HARVEY':
+        return ['201708221200',]
+    elif Storm == 'IRMA':
+        return ['201709030000',]
+    elif Storm == 'JOSE':
+        return ['201709050000',]
+    elif Storm == 'MARIA':
+        return ['201709160000',]
+
+
+def set_time_for_cyclings( Storm,Consecutive_times,start_time_str,end_time_str):
 
     if not Consecutive_times:
         times = ['']
@@ -167,12 +179,12 @@ def Read_unstagger_WRF( ncdir, var_name ):
         var = ncdir.variables[var_name][0,:,:,:]
         var_mass = (var[:-1,:,:] + var[1:,:,:])/2
         return var_mass
-    elif var_name == 'T': # K 
+    elif var_name == 'Temp': # K 
         pres = (ncdir.variables['P'][0,:,:,:]+ncdir.variables['PB'][0,:,:,:])
-        Theta = ncdir.variables[var_name][0,:,:,:]
+        Theta = ncdir.variables['T'][0,:,:,:]
         var = (Theta+300)*(pres/P1000MB) ** (R_D/Cpd)
         return var
-    elif var_name == 'P': # hp
+    elif var_name == 'Pres': # pa
         var = (ncdir.variables['P'][0,:,:,:]+ncdir.variables['PB'][0,:,:,:])
         return var
     elif 'Q' in var_name: # kg/kg
@@ -240,7 +252,10 @@ def Cycling_pert_stddev_xb( DAtime, wrf_dir, var_name, If_save, dim=None ):
 
     # May save the perturbations
     if If_save:
-        des_path = wrf_dir+ "xb_d03_"+dim+"_ensPert_" + DAtime + '_' + var_name + '.pickle'
+        if if_interp:
+            des_path = wrf_dir+ "itp_xb_d03_"+dim+"_ensPert_" + DAtime + '_' + var_name + '.pickle'
+        else:
+            des_path = wrf_dir+ "xb_d03_"+dim+"_ensPert_" + DAtime + '_' + var_name + '.pickle'
         f = open( des_path, 'wb' )
         pickle.dump( xb_ens_pert, f )
         f.close()
@@ -343,19 +358,23 @@ if __name__ == '__main__':
 
     # ---------- Configuration -------------------------
     Storm = 'IRMA'
-    DA = 'IR-WSM6Ens'
+    DA = 'CONV-WSM6Ens'
     MP = 'THO'
     # variables of interest
-    v_interest = ['PSFC','QSNOW'] #['U','V','W','T','P','QVAPOR','PSFC'] #[ 'PSFC']
+    v_interest = ['U','V','W','Temp','Pres','QVAPOR','PSFC'] #[ 'PSFC']
     # Which stage
     MakeEns = False # Ens generated from perturbing GFS field
     if MakeEns:
         times = set_time_for_MakeEns( Storm )
     else:
-        start_time_str = '201709030600'
-        end_time_str = '201709030600'
-        Consecutive_times = True
-        times = set_time_for_cyclings( Storm, start_time_str,end_time_str)
+        EndSpinup = True
+        if EndSpinup:
+            times = set_time_for_EndSpinup( Storm ) 
+        else:
+            start_time_str = '201709030000'
+            end_time_str = '201709030000'
+            Consecutive_times = True
+            times = set_time_for_cyclings( Storm,Consecutive_times,start_time_str,end_time_str)
     # Number of ensemble members
     num_ens = 60
     # Dimension of the domain
@@ -363,7 +382,7 @@ if __name__ == '__main__':
     ymax = 297
  
     # vertical interpolation if needed
-    if_interp = True
+    if_interp = False
     if if_interp:
         interp_P = False
         P_range = np.arange( 995,49,-20 )

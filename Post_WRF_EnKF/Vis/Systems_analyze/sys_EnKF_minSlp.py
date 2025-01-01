@@ -48,10 +48,10 @@ def Read_HPI_file( file_hpi ):
 
 
 # Obtain assimilated min slp from fort.10000
-def assimilated_obs(big_dir, storm,iExper,DAtimes,slp_xa,slp_xb=False  ):
+def assimilated_obs(big_dir,small_dir,Storm,iExper,DAtimes,slp_xa,slp_xb=False  ):
 
     # Read model min slp
-    d_model = model_minSLP( big_dir,storm,iExper,DAtimes,slp_xa )
+    #d_model = model_minSLP( big_dir,Storm,iExper,DAtimes,slp_xa )
 
     # Determine the min slp and its location
     d_obs = {}
@@ -62,7 +62,7 @@ def assimilated_obs(big_dir, storm,iExper,DAtimes,slp_xa,slp_xb=False  ):
 
     for DAtime in DAtimes:
         # collect assimilated min slp obs from TCvital record in fort.10000
-        diag_enkf = big_dir+storm+'/'+iExper+'/run/'+DAtime+'/enkf/d03/fort.10000'
+        diag_enkf = big_dir+Storm+'/'+iExper+'/run/'+DAtime+'/enkf/d03/fort.10000'
         print('Reading the EnKF diagnostics from ', diag_enkf)
         enkf_minSlp = subprocess.run(["grep","slp",diag_enkf],stdout=subprocess.PIPE,text=True)
         list_enkf_minSlp = enkf_minSlp.stdout.split()
@@ -383,7 +383,7 @@ def plot_sys_minslp():
 
 if __name__ == '__main__':
 
-    big_dir = '/scratch/06191/tg854905/Pro2_PSU_MW/'
+    big_dir = '/scratch/06191/tg854905/Clean_Pro2_PSU_MW/'
     small_dir = '/work2/06191/tg854905/stampede2/Pro2_PSU_MW/'
 
     #--------Configuration------------

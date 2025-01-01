@@ -355,6 +355,9 @@ def plot_hpi_df( Config ):
                 path = wrf_dir+'/'+Storm+'/'+Exper_name[imp][ida]+'/wrf_df/'
                 if os.path.exists( path ):
                     fc_start_times[imp][ida] = ['201708221800','201708230000','201708230600','201708231200']
+                    #fc_start_times[imp][ida] = ['201709030600','201709031200','201709031800','201709040000']
+                    #fc_start_times[imp][ida] = ['201709050600','201709051200','201709051800','201709060000'] 
+                    #fc_start_times[imp][ida] = ['201709160600','201709161200','201709161800','201709170000']
                     #fc_start_times[imp][ida] = sorted(fnmatch.filter(os.listdir(path),'20*'))
                 else:
                     fc_start_times[imp][ida] = None
@@ -401,14 +404,14 @@ def plot_hpi_df( Config ):
         Color1 = discretize_red.colors[5:]
         Color2 = discretize_blue.colors[5:]
     Color_set = {'WSM6':Color1, 'THO':Color2}
-    Ana_color = ['#eea990','#748b97'] #'#748b97'
+    Ana_color = {'WSM6':'#eea990','THO':'#748b97'} #'#748b97'
    
     # Line types
-    lines = {'CONV':'-','IR':'--','IR+MW':'(0, (1, 1))','CONV-WSM6Ens':'-','IR-WSM6Ens':'--'}
-    
+    lines = {'CONV':':','IR':'--','MW':'-',}
+
     # Customize labels ###### Chnage it every time !!!!!!!!!!!!!!! 
     #Labels = ['Stp2-Intel17 ','Eps-Intel19 ']
-    Ana_labels = ['Ref Ans','MD Ans' ]
+    Ana_labels = {'WSM6':'WSM6 Ans', 'THO':'THO Ans'}
     #Ana_labels = ['Stampede2 Analysis', 'Expanse Analysis']
 
     # Plot HPI for each deterministic forecasts
@@ -421,14 +424,16 @@ def plot_hpi_df( Config ):
                 if Plot_analyses == True:
                     print('Plotting the analyses...')
                     HPI_analyses = read_HPI_analyses(Storm, key, wrf_dir)
-                    plot_one_hpi( ax0, ax1, ax2, HPI_analyses, Ana_color[iExper], '--', 2.5, Ana_labels[iExper], steps=1 )
+                    plot_one_hpi( ax0, ax1, ax2, HPI_analyses, Ana_color[imp], '--', 2.5, Ana_labels[imp], steps=1 )
                 # loop thru initialized forecast times
                 for it in fc_start_times[imp][ida]:
                     print('Plotting ', it)
                     idx_it = fc_start_times[imp][ida].index( it )
                     path = wrf_dir+'/'+Storm+'/'+Exper_name[imp][ida]+'/wrf_df/'
                     HPI_model = read_rsl_error(Storm, Exper_name[imp][ida], path+it, it, DF_model_end)
-                    plot_one_hpi( ax0, ax1, ax2, HPI_model, Color_set[imp][idx_it], lines[ida], 2.5, ida+'_'+imp+': '+it, steps=6 )
+                    plot_one_hpi( ax0, ax1, ax2, HPI_model, Color_set[imp][idx_it], lines[ida], 2.5,ida+'_'+imp+': '+it,steps=6 )
+                    #plot_one_hpi( ax0, ax1, ax2, HPI_model, Color_set[imp][idx_it], lines[ida], 2.5, imp+': '+it, steps=6 ) #ida+'_'+imp+': '+it
+                    #plot_one_hpi( ax0, ax1, ax2, HPI_model, Color_set[imp][idx_it], lines[ida], 2.5,ida+': '+it, steps=6 )
 
     # Set ticks/labels for track subplot
     lon_ticks = list(range(math.ceil(domain_range[0])-2, math.ceil(domain_range[1])+3, 4))
@@ -450,8 +455,8 @@ def plot_hpi_df( Config ):
     ax2.set_ylim([10,80])   #([10,60])
     ax1.tick_params(axis='x', labelrotation=30,labelsize=12)
     ax2.tick_params(axis='x', labelrotation=30,labelsize=12)
-    ax2.legend(frameon=True,fontsize='10') 
-    #ax2.legend(bbox_to_anchor=(1.5, 1.0),frameon=True,loc='upper right',fontsize='10') #10
+    ax2.legend(bbox_to_anchor=(1.5, 1.0),frameon=True,loc='upper right',fontsize='10') #10
+    #ax2.legend(bbox_to_anchor=(1.5, 0.4),frameon=True,loc='upper right',fontsize='10') #10
     ax1.grid(True,linewidth=1, color='gray', alpha=0.5, linestyle='-')
     ax2.grid(True,linewidth=1, color='gray', alpha=0.5, linestyle='-')
 
@@ -459,7 +464,7 @@ def plot_hpi_df( Config ):
     ax0.set_title( 'Track',fontsize = 15 )
     ax1.set_title( 'MSLP (hPa)',fontsize = 15 )
     ax2.set_title( 'Vmax ($\mathregular{ms^{-1}}$)',fontsize = 15 )
-    fig.suptitle('WSM6 experiments',fontsize = 15)
+    fig.suptitle('IRMA experiments',fontsize = 15)
     #fig.suptitle('Different GSF-perturbed Ensemble from WSM6 experiments',fontsize = 15)
 
     # Save figure
@@ -717,12 +722,12 @@ def plot_abs_err( Config ):
 
 if __name__ == '__main__':
     
-    big_dir = '/scratch/06191/tg854905/Pro2_PSU_MW/'
-    small_dir = '/work2/06191/tg854905/stampede2/Pro2_PSU_MW/'
+    big_dir = '/scratch/06191/tg854905/Clean_Pro2_PSU_MW/'
+    small_dir = '/work2/06191/tg854905/stampede2/Pro2_PSU_MW/Clean_results/'
 
     #--------Configuration------------
     Storm = 'HARVEY'
-    MP = ['WSM6',]
+    MP = ['THO','WSM6']
     DA = ['CONV','IR',]
     DF_model_start = '20170822180000' # Default value of DF_model_start. Especially useful when dealing with ensemble forecast
     mem_id = 'mean' # Default value of member id. Especially useful when dealing with deterministic forecast

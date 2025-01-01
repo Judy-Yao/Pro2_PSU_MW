@@ -43,12 +43,14 @@ def Read_EnsStddev( wrf_dir,xdim,tt,var_name ):
 
     # Read ensemble standard deviation of xb
     des_path = wrf_dir+ 'xb_d03_'+xdim+'_ensStddev_' + tt + '_' +  var_name + '.pickle'
-    with open( des_path,'rb' ) as f:
-        stddev_xb = pickle.load( f )
-    print('Shape of stddev_xb: '+ str(np.shape(stddev_xb)))
-    assert not np.isnan(stddev_xb).any()
-
-    return stddev_xb
+    if os.path.exists( des_path ):
+        with open( des_path,'rb' ) as f:
+            stddev_xb = pickle.load( f )
+        print('Shape of stddev_xb: '+ str(np.shape(stddev_xb)))
+        assert not np.isnan(stddev_xb).any()
+        return stddev_xb
+    else:
+        return None
 
 # Plot the vertical profile of horizontal-averaged stddev
 # x axis: range of stddev; y axis: vertical height
@@ -57,15 +59,16 @@ def plot_profile_hormean( std, v_3d, tt):
     fig, ax=plt.subplots(2, 3, sharey='all', figsize=(9,7), dpi=300)
 
     # Get unstaggered values of geo height in KM
-    wrf_path = big_dir+Storm+'/'+Exper_name[MP[0]]+'/fc/'+tt+'/'
+    wrf_path = big_dir+Storm+'/'+Exper_name[MP[0]][DA[0]]+'/fc/'+tt+'/'
     if MakeEns:
         wrf_file = wrf_path+'wrfinput_d03'
     else:
-        wrf_file = wrf_path+'wrf_enkf_output_d03'
+        wrf_file = wrf_path+'wrf_enkf_output_d03_mean'
     ncdir = nc.Dataset( wrf_file, 'r')
     ph = ncdir.variables['PH'][0,:,:,:] # perturbation
     phb = ncdir.variables['PHB'][0,:,:,:]
     geoHkm = (ph+phb)/9.81/1000 # in kilo
+    geoHkm = geoHkm.reshape( geoHkm.shape[0],-1)
     geoHkm_Dmean = np.nanmean( geoHkm, axis=1 )
     geoHkm_half_eta = (geoHkm_Dmean[:-1]+geoHkm_Dmean[1:])/2
     Height = np.ma.getdata(geoHkm_half_eta)
@@ -78,12 +81,40 @@ def plot_profile_hormean( std, v_3d, tt):
 
     # Customization
     color = {'THO':'blue','WSM6':'red'}
+    linestyles = {'CONV':'-','CONV-WSM6Ens':':'}
     labels = {'THO':'THO','WSM6':'WSM6'}
 
     for imp in MP:
-        for ivar in v_3d:
-            idx = v_3d.index(ivar)
-            ax.flat[idx].plot( np.nanmean(std[imp][ivar][tt],axis=1),loc_iny,color[imp],linewidth=3)
+        for ida in DA:
+            for ivar in v_3d:
+                idx = v_3d.index(ivar)
+                if std[imp][ida][ivar][tt] is None:
+                    continue
+                dmean_std = np.nanmean(std[imp][ida][ivar][tt],axis=1)
+                if ivar == 'Pres':
+                    dmean_std = dmean_std/100 # pa to hPa
+                if 'Q' in ivar:
+                    dmean_std = dmean_std*1000 # kg/kg to g/kg
+                # plot
+                ax.flat[idx].plot( dmean_std,loc_iny,color[imp],linestyle=linestyles[ida],linewidth=2.5)
+       
+    lines = ax.flat[-1].get_lines()
+    lgd = MP+['THO-WSM6Ens']
+    legend0 = ax.flat[-1].legend(lines,lgd, fontsize='15', loc='upper right')
+    # Add the first legend manually to the current Axes
+    ax.flat[-1].add_artist(legend0)
+
+    # limit
+    for ivar in v_3d:
+        idx = v_3d.index(ivar)
+        if ivar == 'U' or ivar == 'V':
+            ax.flat[idx].set_xlim(xmin=1.5,xmax=5)
+        elif ivar == 'W':
+            ax.flat[idx].set_xlim(xmin=-0.01,xmax=0.3)
+        elif ivar == 'Temp' or ivar == 'Pres':
+            ax.flat[idx].set_xlim(xmin=-0.01,xmax=1.5)
+        elif ivar == 'QVAPOR':
+            ax.flat[idx].set_xlim(xmin=-0.01,xmax=2.5)
 
     # Subplot title and labels
     ylabel_like = [0.0,5.0,10.0,15.0,20.0]
@@ -92,33 +123,38 @@ def plot_profile_hormean( std, v_3d, tt):
         yticks.append( f_yinterp( iy ) )
     for ivar in v_3d:
         idx = v_3d.index(ivar)
-        ax.flat[idx].set_title( ivar, fontsize = 15)
+        if ivar == 'U' or ivar == 'V' or ivar == 'W':
+            title = ivar +' (m/s)'
+        elif ivar == 'Temp':
+            title = ivar + ' (k)'
+        elif ivar == 'Pres':
+            title = ivar + ' (hPa)'
+        elif ivar == 'QVAPOR':
+            title = ivar +' (g/kg)'
+        ax.flat[idx].set_title( title, fontsize = 15)
         ax.flat[idx].set_ylim(ymin=0,ymax=20.5) # cut off data above 25km
         ax.flat[idx].set_yticks( yticks )
     ax[0,0].set_yticklabels( [str(it) for it in ylabel_like],fontsize=15 )
     ax[1,0].set_yticklabels( [str(it) for it in ylabel_like],fontsize=15 )
 
     # a common y label
-    fig.text(0.06,0.5,'Height (km)',ha='center',va='center',rotation='vertical',fontsize=20)
-    # set X label
-    #ax.set_xticks( x_axis_rg[::10] )
-    #if Storm == 'IRMA' and MP == 'THO':
-    #    ax.set_xticklabels(  ['0','500','1000','1500','2000','2500','3000','3500','4000',],fontsize=15 )
-    #else:
-    #    ax.set_xticklabels(  ['0','500','1000','1500','2000','2500','3000',],fontsize=15 )
-        #ax.set_xticklabels(  ['0','500','1000','1500','2000',],fontsize=15 )
+    fig.text(0.03,0.5,'Height (km)',ha='center',va='center',rotation='vertical',fontsize=20)
     #ax.set_xlabel('Mass (kg m-2)',fontsize=20)
     #ax.set_xlim(xmin=0)
 
     # Set title
-    #title_name = Storm+': '+Exper_name+' '+DAtime+'  \nProfile: hydrometeors in the circled area \n(center@min slp of Xa, radius=200km)'
-    #fig.suptitle(title_name, fontsize=12, fontweight='bold')
+    if MakeEns:
+        title_name = Storm+'--GFS perturbed ensemble: profiles of domain-averaged ensemble spread'
+    else:
+        title_name = Storm+' '+tt+'\nProfiles of domain-averaged ensemble spread'
+
+    fig.suptitle(title_name, fontsize=14, fontweight='bold')
 
     # Save the figure
     if MakeEns:
-        save_des = plot_dir+'test.png'
+        save_des = plot_dir+'ens_spread_profiles.png'
     else:
-        save_des = plot_dir+tt+'/VP_'+var+'_twotimes_area.png'
+        save_des = plot_dir+'ens_spread_profiles_'+tt+'.png'
     plt.savefig( save_des )
     print( 'Saving the figure: ', save_des )
     plt.close()
@@ -154,30 +190,48 @@ def spatial_dis_2D( std, ivar, tt ):
         axs.flat[i].coastlines(resolution='10m', color='black',linewidth=0.5)
 
     # Ens 1
-    min_std = 0
-    max_std = 1.5
+    if MakeEns:
+        min_std = 0.5
+        max_std = 1.0
+    else:
+        if Storm == 'IRMA':
+            min_std = 0.5
+            max_std = 10.0
+        else:
+            min_std = 0.5
+            max_std = 1.3
+
     Ens1_hPa = std[MP[0]][ivar][tt] / 100
-    la1 = axs.flat[0].scatter(lon,lat,1.5,Ens1_hPa,vmin=min_std, vmax=max_std,cmap='binary',transform=ccrs.PlateCarree())
-    caxes = fig.add_axes([0.12, 0.1, 0.25, 0.02])
-    obs_bar = fig.colorbar(la1,ax=axs[0],orientation="horizontal", cax=caxes)
-    obs_bar.ax.tick_params(labelsize=6)
-
+    axs.flat[0].scatter(lon,lat,1.5,Ens1_hPa,vmin=min_std, vmax=max_std,cmap='binary',transform=ccrs.PlateCarree())
+    #axs.flat[0].scatter(lon,lat,1.5,Ens1_hPa,cmap='binary',transform=ccrs.PlateCarree())
     Ens2_hPa = std[MP[1]][ivar][tt] / 100
-    la2 = axs.flat[1].scatter(lon,lat,1.5,Ens2_hPa,cmap='binary',vmin=min_std,vmax=max_std,transform=ccrs.PlateCarree())
-    caxes = fig.add_axes([0.52, 0.1, 0.25, 0.02])
-    obs_bar = fig.colorbar(la2,ax=axs[1],orientation="horizontal", cax=caxes)
+    #la1 = axs.flat[1].scatter(lon,lat,1.5,Ens2_hPa,cmap='binary',transform=ccrs.PlateCarree())
+    la1 = axs.flat[1].scatter(lon,lat,1.5,Ens2_hPa,cmap='binary',vmin=min_std,vmax=max_std,transform=ccrs.PlateCarree())
+    caxes = fig.add_axes([0.14, 0.1, 0.5, 0.02])
+    obs_bar = fig.colorbar(la1,ax=axs[0],orientation="horizontal", cax=caxes,extend='both')
     obs_bar.ax.tick_params(labelsize=6)
-    
-    axs.flat[2].scatter(lon,lat,1.5,Ens1_hPa - Ens2_hPa,cmap='seismic',transform=ccrs.PlateCarree())
 
-    #obs_s = axs.flat[0].scatter(d_all['lon_obs'],d_all['lat_obs'],1.5,c=d_all['Yo_obs'],edgecolors='none', cmap=IRcmap, vmin=min_obs, vmax=max_obs,transform=ccrs.PlateCarree())
-    #if any( hh in DAtime[8:10] for hh in ['00','06','12','18'] ):
-    #    axs.flat[0].scatter(tc_lon, tc_lat, s=1, marker='*', edgecolors='darkviolet', transform=ccrs.PlateCarree())
-    #axs.flat[0].add_patch(patches.Polygon(path,facecolor='none',edgecolor='white',linewidth=0.5 ))
-    # Colorbar
-    #caxes = fig.add_axes([0.12, 0.1, 0.25, 0.02])
-    #obs_bar = fig.colorbar(obs_s,ax=axs[0],orientation="horizontal", cax=caxes)
-    #obs_bar.ax.tick_params(labelsize=6)
+    if MakeEns:
+        min_std_diff = -0.1
+        max_std_diff = 0.1
+    else:
+        min_std_diff = -0.5
+        max_std_diff = 0.5
+    la2 = axs.flat[2].scatter(lon,lat,1.5,Ens1_hPa-Ens2_hPa,vmin=min_std_diff,vmax=max_std_diff,cmap='bwr',transform=ccrs.PlateCarree())
+    #la2 = axs.flat[2].scatter(lon,lat,1.5,Ens1_hPa - Ens2_hPa,cmap='bwr',transform=ccrs.PlateCarree())
+    caxes = fig.add_axes([0.65, 0.1, 0.25, 0.02])
+    obs_bar = fig.colorbar(la2,ax=axs[1],orientation="horizontal", cax=caxes,extend='both')
+    obs_bar.ax.tick_params(labelsize=6)
+
+    # Mark the location of TCvital
+    tc_lon_st, tc_lat_st, tc_slp_st = UD.read_TCvitals(small_dir, Storm, tt)
+    for i in range(3):
+        axs[i].plot(tc_lon_st,tc_lat_st, '*', color='green', markersize=3, transform=ccrs.PlateCarree())
+
+    # subplot title
+    axs[0].set_title( MP[0], fontsize = 8)
+    axs[1].set_title( MP[1], fontsize = 8)
+    axs[2].set_title( MP[0]+' - '+MP[1], fontsize = 8)
 
     # Axis labels
     lon_ticks = list(range(math.ceil(lon_min)-2, math.ceil(lon_max)+2,2))
@@ -202,16 +256,21 @@ def spatial_dis_2D( std, ivar, tt ):
         gl.xlabel_style = {'size': 4}
         gl.ylabel_style = {'size': 6}
 
+    # Set title
     if MakeEns:
-        save_des = plot_dir+'test2D.png'
+        title_name = Storm+':GFS perturbed ensemble\nEnsemble spread of PSFC (hPa)'
     else:
-        save_des = plot_dir+tt+'/VP_'+var+'_twotimes_area.png'
+        title_name = Storm+' '+tt+'\nEnsemble spread of PSFC (hPa)'
+    fig.suptitle(title_name, fontsize=8, fontweight='bold')
+
+    # Save the figure
+    if MakeEns:
+        save_des = plot_dir+'ens_spread_PSFC.png'
+    else:
+        save_des = plot_dir+'ens_spread_PSFC_'+tt+'.png'
     plt.savefig( save_des )
     print( 'Saving the figure: ', save_des )
     plt.close()
-
-
-
 
 
 if __name__ == '__main__':
@@ -220,22 +279,26 @@ if __name__ == '__main__':
     small_dir =  '/work2/06191/tg854905/stampede2/Pro2_PSU_MW/'
 
     # ---------- Configuration -------------------------
-    Storm = 'HARVEY'
-    DA = 'CONV'
-    MP = ['THO','WSM6']
+    Storm = 'IRMA'
+    DA = ['CONV','CONV-WSM6Ens']
+    MP = ['THO','WSM6',]
     # variables of interest
-    v_3d = [ 'U','V','W','T','P','QVAPOR',] #[ 'PSFC']
+    v_3d = [ 'U','V','W','Temp','Pres','QVAPOR',] #[ 'PSFC']
     v_2d = ['PSFC']
     v_all = v_3d + v_2d
     # Which stage
-    MakeEns = True # Ens generated from perturbing GFS field
+    MakeEns = False # Ens generated from perturbing GFS field
     if MakeEns:
         times = util.set_time_for_MakeEns( Storm )
     else:
-        start_time_str = '201709160000'
-        end_time_str = '201709160000'
-        Consecutive_times = True
-        times = util.set_time_for_cyclings( Storm, start_time_str,end_time_str )
+        EndSpinup = True
+        if EndSpinup:
+            times = util.set_time_for_EndSpinup( Storm )
+        else:
+            start_time_str = '201709030000'
+            end_time_str = '201709030000'
+            Consecutive_times = True
+            times = util.set_time_for_cyclings( Storm,Consecutive_times,start_time_str,end_time_str)
     # Number of ensemble members
     num_ens = 60
     # Dimension of the domain
@@ -243,35 +306,41 @@ if __name__ == '__main__':
     ymax = 297
 
     # operation:
-    profile_hor_mean = False
-    plot_2D = True
+    profile_hor_mean = True
+    plot_2D = False
 
     # -------------------------------------------------------
     Exper_name = {}
     for imp in MP:
-        Exper_name[imp] = UD.generate_one_name( Storm,DA,imp )
+        Exper_name[imp] = {}
+        for ida in DA:
+            Exper_name[imp][ida] = UD.generate_one_name( Storm,ida,imp )
 
     # Read in pre-calculated stddev
     std = {}
     for imp in MP:
         std[imp] = {}
-        for ivar in v_all:
-            var_dim = UD.def_vardim( ivar )
-            std[imp][ivar] = {}
-            for tt in times:
-                wrf_dir = big_dir+Storm+'/'+Exper_name[imp]+'/fc/'+tt+'/'
-                xdim = UD.def_vardim(ivar)
-                std[imp][ivar][tt] = Read_EnsStddev( wrf_dir,xdim,tt,ivar )
+        for ida in DA:
+            std[imp][ida] = {}
+            for ivar in v_all:
+                var_dim = UD.def_vardim( ivar )
+                std[imp][ida][ivar] = {}
+                for tt in times:
+                    if Exper_name[imp][ida] is not None:
+                        wrf_dir = big_dir+Storm+'/'+Exper_name[imp][ida]+'/fc/'+tt+'/'
+                        xdim = UD.def_vardim(ivar)
+                        std[imp][ida][ivar][tt] = Read_EnsStddev( wrf_dir,xdim,tt,ivar )
+                    else:
+                        std[imp][ida][ivar][tt] = None
 
-    if not MakeEns:
-        #print('------------ Calculate the ensemble perturbations for EnKF cyclings--------------')
-        for DAtime in times:
-            pass
+    if (not MakeEns) and (not EndSpinup):
+        # set plot dir
+        pass
 
-    else:
+    elif MakeEns or ((not MakeEns) and (EndSpinup)):
         # set plot dir
         for imp in MP:
-            plot_dir = small_dir+Storm+'/'+Exper_name[imp]+'/Vis_analyze/CV3/'
+            plot_dir = small_dir+Storm+'/Vis_analyze/CV3/'
             plotdir_exists = os.path.exists( plot_dir )
             if plotdir_exists == False:
                 os.mkdir(plot_dir)
