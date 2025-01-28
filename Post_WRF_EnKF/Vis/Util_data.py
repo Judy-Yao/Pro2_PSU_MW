@@ -19,10 +19,10 @@ R_D = 287.0
 R = 287.04
 CP = 7.0*R_D/2.0
 GAMMA = 0.0065
-NX = 297
-NY = 297
-NZ = 42
-
+#NX = 297
+#NY = 297
+#NZ = 42
+earth_radius_m = 6371200
 
 # ------------------------------------------------------------------------------------------------------
 #           Operation: Basic Geography Modelling
@@ -181,7 +181,7 @@ def generate_one_name( Storm,DA,MP ):
     elif MP == 'WSM6':
         if DA == 'MW':
             if Storm == 'HARVEY':
-                #return 'CONV+IR+MW_THO'
+                #return 'CONV+IR+MW_WSM6'
                 return 'CONV+IR+MW_WSM6_moreMW'
             else:
                 return 'CONV+IR+MW_WSM6'
@@ -310,6 +310,99 @@ def old_generate_one_name( Storm,DA,MP ):
     else:
         raise ValueError('No corresponding MP!')
 
+# ------------------------------------------------------------------------------------------------------
+#           Operation: Map projection set up; conversion between geo and grid space
+# ------------------------------------------------------------------------------------------------------
+class MapProjType:
+    def __init__(self):
+
+        self.code = ' ' 
+        self.lat1 = np.nan
+        self.lon1 = np.nan
+        self.dx = np.nan
+        self.stdlon = np.nan
+        self.truelat1 = np.nan
+        self.truelat2 = np.nan
+        self.nx = np.nan
+        self.ny = np.nan
+        self.dlon = np.nan
+        self.rsw = np.nan
+
+
+# Set map projection for the domain 
+def set_domain_proj( file_path ):
+
+    #--- Conversion of set_domain_proj() in module_map_utils.f90
+    # Read the global attributes
+    with nc.Dataset(file_path, mode='r') as ncfile:
+        # Read the value
+        ix = int( ncfile.getncattr('WEST-EAST_GRID_DIMENSION') )
+        ix = ix - 1
+        iy = int( ncfile.getncattr('SOUTH-NORTH_GRID_DIMENSION') )
+        iy = iy - 1
+        grid_space = int( ncfile.getncattr('DX') )
+        cen_lon = float( ncfile.getncattr('STAND_LON') )
+        truelat1 = float( ncfile.getncattr('TRUELAT1') )
+        truelat2 = float( ncfile.getncattr('TRUELAT2') )
+        map_type = ncfile.getncattr('MAP_PROJ_CHAR') 
+        # geolocation
+        lat00 = ncfile.variables['XLAT'][0,0,0]
+        lon00 = ncfile.variables['XLONG'][0,0,0]
+
+    #--- Conversion of map_set() in module_map_utils.f90
+    # Initialize data for map projection
+    proj = MapProjType()
+    # Fill in common attributes for all projection types
+    proj.code = map_type
+    proj.lat1 = lat00
+    proj.lon1 = lon00
+    proj.dx = grid_space
+    proj.stdlon = cen_lon
+    proj.truelat1 = truelat1
+    proj.truelat2 = truelat2
+    proj.nx = ix
+    proj.ny = iy
+
+    # Set map
+    if map_type == 'Mercator':
+        # preliminary variables
+        clain = np.cos( np.radians( proj.truelat1 ) )
+        proj.dlon = proj.dx / (earth_radius_m * clain)
+        # compute distance from equator to origin, and store in the proj%rsw
+        if (proj.lat1 != 0):
+            proj.rsw = np.log(np.tan(0.5 * np.radians(proj.lat1 + 90.0) )) / proj.dlon
+
+    return proj
+
+
+# Compute i/j coordinate from lat/lon for mercator projection
+def llij_merc( lat, lon, proj ):
+
+    deltalon = lon - proj.lon1
+    if deltalon < -180:
+        deltalon = deltalon + 360
+    if deltalon > 180:
+        deltalon = deltalon - 360
+
+    # first dimension in data (south_north, west_east)
+    D1 = 1+ np.log( np.tan(0.5 * np.radians(lat + 90)) ) / proj.dlon - proj.rsw
+    # second dimension in data (south_north, west_east)
+    D2 = 1 + (deltalon/(np.degrees(proj.dlon)))
+
+    return D1,D2
+
+# Compute lat/lon from i/j for mercator projection
+def ijll_merc(D1, D2, proj ):
+
+    lat = np.degrees(2.0*np.arctan( np.exp(proj.dlon*(proj.rsw+ D1-1)) )) - 90
+    lon = np.degrees((D2-1)*proj.dlon) + proj.lon1
+
+    if lon > 180:
+        lon = lon - 360
+    if lon < -180:
+        lon = lon + 360
+
+    return lat,lon
 
 
 # Written by wrf-python
