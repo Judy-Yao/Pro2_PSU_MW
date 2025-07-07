@@ -14,6 +14,16 @@ import Util_Vis
 #import matlab.engine
 import Diagnostics as Diag
 
+# Generate time series
+def generate_times( Storms, start_time_str, end_time_str, interval ):
+
+    dict_times = {}
+    for istorm in Storms:
+        time_diff = datetime.strptime(end_time_str[istorm],"%Y%m%d%H%M") - datetime.strptime(start_time_str[istorm],"%Y%m%d%H%M")
+        time_diff_hour = time_diff.total_seconds() / 3600
+        time_interest_dt = [datetime.strptime(start_time_str[istorm],"%Y%m%d%H%M") + timedelta(hours=t) for t in list(range(0, int(time_diff_hour)+interval, interval))]
+        dict_times[istorm] = [time_dt.strftime("%Y%m%d%H%M") for time_dt in time_interest_dt]
+    return dict_times
 
 # Read variables at obs resolution/location for one experiment 
 def read_Tbs_obsRes_oneExper(istorm,imp,ida,Exper_names,d_times,sensor):
@@ -259,7 +269,7 @@ def Plot_hist_IRsum( d_hcount ):
     # Save
     if bin_Tbdiff:
         fig.suptitle( 'PDF of IR Bias Over '+str(len(dict_times[Storms[0]]))+' Cycles', fontsize=15, fontweight='bold')
-        des_name = small_dir+'SYSTEMS/Vis_analyze/Tb/IR_bias_Xb_Xa_PDF_'+str(len(dict_times[Storms[0]]))+'cycles_IR_WSM6_IR_TuneWSM6.png'
+        des_name = small_dir+'SYSTEMS/Vis_analyze/Tb/IR_bias_Xb_Xa_PDF_'+str(len(dict_times[Storms[0]]))+'cycles.png'
     else:
         fig.suptitle( 'PDF over '+str(len(IR_times))+' Cycles', fontsize=15, fontweight='bold')
         des_name = small_dir+'SYSTEMS/Vis_analyze/Tb/IR_PDF_'+str(len(IR_times))+'cycles_multi.png'
@@ -272,17 +282,17 @@ def Plot_hist_IRsum( d_hcount ):
 
 if __name__ == '__main__':
 
-    big_dir = '/scratch/06191/tg854905/Pro2_PSU_MW/'
+    big_dir = '/scratch/06191/tg854905/Clean_Pro2_PSU_MW/'
     small_dir = '/work2/06191/tg854905/stampede2/Pro2_PSU_MW/'
 
     #--------Configuration------------
-    Storms = ['HARVEY']#['HARVEY','IRMA','JOSE','MARIA']
-    DA = ['IR',]
+    Storms = ['HARVEY','IRMA','JOSE','MARIA']
+    DA = ['CONV','IR']
     MP = ['WSM6','THO'] 
     sensor = 'abi_gr'
 
     start_time_str = {'HARVEY':'201708221200','IRMA':'201709030000','JOSE':'201709050000','MARIA':'201709160000'}
-    end_time_str = {'HARVEY':'201708241200','IRMA':'201709050000','JOSE':'201709070000','MARIA':'201709180000'}
+    end_time_str = {'HARVEY':'201708231200','IRMA':'201709040000','JOSE':'201709060000','MARIA':'201709170000'}
     Consecutive_times = True
     
     # Range
@@ -314,7 +324,8 @@ if __name__ == '__main__':
                 Exper_names[istorm][imp][ida] = UD.generate_one_name( istorm,ida,imp )
 
     # Identify DA times in the period of interest
-    dict_times = UD.generate_times( Storms, start_time_str, end_time_str )
+    dict_times = generate_times( Storms, start_time_str, end_time_str, 6 )
+
 
     # Number of kinds of experiments
     num_kinds = len(DA)*len(MP)

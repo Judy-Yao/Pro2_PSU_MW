@@ -294,20 +294,20 @@ def Plot_hist_IRsum( d_hcount ):
 
 if __name__ == '__main__':
 
-    big_dir = '/scratch/06191/tg854905/Pro2_PSU_MW/'
-    small_dir =  '/work2/06191/tg854905/stampede2/Pro2_PSU_MW/'
+    big_dir = '/scratch/06191/tg854905/Clean_Pro2_PSU_MW/'
+    small_dir =  '/work2/06191/tg854905/stampede2/Pro2_PSU_MW/Clean_results/'
 
     # ---------- Configuration -------------------------
     Storm = 'MARIA'
     DA = 'IR'
-    MP = ['','Tune']#['THO','WSM6']
+    MP = ['THO','WSM6']
 
     sensor = 'abi_gr'
     ch_list = ['8',]
     fort_v = ['obs_type','lat','lon','obs']
 
     start_time_str = '201709160000'
-    end_time_str = '201709180000'
+    end_time_str = '201709170000'
     Consecutive_times = True
 
     number_bins = 50
@@ -318,17 +318,16 @@ if __name__ == '__main__':
     max_Tbdiff_rg = 25
 
     Make_bins = True
-    bin_Tbdiff = True
+    bin_Tbdiff = False
     
     If_plot = True
     # ------------------------------------------------------   
 
     # Create experiment names
-    Expers = ['IR-J_DA+J_WRF+J_init-SP-intel17-WSM6-24hr-hroi900','IR-TuneWSM6-J_DA+J_WRF+J_init-SP-intel17-WSM6-24hr-hroi900',]#[]
-    #Expers = []
+    Expers = []
     #Expers.append( UD.generate_one_name( Storm,DA,MP))
-    #for imp in MP:
-    #    Expers.append( UD.generate_one_name( Storm,DA,imp) )
+    for imp in MP:
+        Expers.append( UD.generate_one_name( Storm,DA,imp) )
 
     if not Consecutive_times:
         IR_times = ['201709030100',]

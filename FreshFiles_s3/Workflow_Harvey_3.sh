@@ -20,7 +20,7 @@ source util.sh
 # Configuration
 #---------------------------------------------------------
 Storm=HARVEY
-Exp_interest=("JerryRun/IR_WSM6/")
+Exp_interest=("CONV+IR_WSM6")
 #Exp_interest=("J_DA+J_WRF+J_init" "IR-J_DA+J_WRF+J_init" "J_DA+Y_WRF+J_init-IR+MW" "J_DA+Y_WRF+J_init-IR" "JerryRun") #IR+MW-J_DA+J_WRF+J_init-SP-intel19
 StartDate_spinup=201708220000
 StartDate_cycling=201708221200
@@ -32,7 +32,7 @@ if_refresh_fc=false
 if_refresh_all=true
 
 # Parent paths
-Big_dir=/scratch/06191/tg854905/Pro2_PSU_MW/
+Big_dir=/scratch/06191/tg854905/Clean_Pro2_PSU_MW/
 
 
 #---------------------------------------------------------

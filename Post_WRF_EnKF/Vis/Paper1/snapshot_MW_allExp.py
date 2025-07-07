@@ -190,12 +190,12 @@ if __name__ == '__main__':
     MP = ['WSM6','THO']
     DA = ['CONV','IR','MW']
     # sensor and channel
-    d_highf = {'HARVEY':{'sensor':'ssmis_f17','ch':9},
-                'IRMA':{'sensor':'mhs_metop-a','ch':5},
-                'JOSE':{'sensor':'mhs_metop-b','ch':5},
+    d_highf = {'HARVEY':{'sensor':'ssmis_f18','ch':9},
+                'IRMA':{'sensor':'saphir_meghat','ch':5},
+                'JOSE':{'sensor':'mhs_metop-a','ch':5},
                 'MARIA':{'sensor':'mhs_metop-a','ch':5}}
     # time
-    DAtime = {'HARVEY':'201708221200','IRMA':'201709030000','JOSE':'201709050000','MARIA':'201709160000'}
+    DAtime = {'HARVEY':'201708230000','IRMA':'201709031200','JOSE':'201709051200','MARIA':'201709161300'}
 
     #------------------------------------
     wrf_dir = big_dir

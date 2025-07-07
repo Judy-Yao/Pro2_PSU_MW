@@ -4,7 +4,7 @@ module rt_newxb
   use rt_state_module
   use rt_result_module
   use rt_crtm_module
-  use rt_rttov_module
+  !use rt_rttov_module
   use rt_zenith_module
   use rt_util_module
   use rt_obs_module

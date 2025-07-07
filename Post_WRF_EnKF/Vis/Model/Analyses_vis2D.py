@@ -226,7 +226,7 @@ def IC_water( Storm, Exper_name, DAtimes, big_dir, small_dir ):
         print('Reading WRF background and analysis: ', wrf_dir)
         DAtime_dt = datetime.strptime( DAtime, '%Y%m%d%H%M' )
         # ------ Plot -------------------
-        plot_dir = small_dir+Storm+'/'+Exper_name+'/Vis_analyze/Model/IC_water/'
+        plot_dir = small_dir+'Clean_results/'+Storm+'/'+Exper_name+'/Vis_analyze/Model/IC_water/'
         plotdir_exists = os.path.exists( plot_dir )
         if plotdir_exists == False:
             os.mkdir(plot_dir)
@@ -286,14 +286,23 @@ def plot_psfc( Storm, Exper_name, DAtime, wrf_dir, plot_dir ):
     # ------ Plot Figure -------------------
     fig, ax=plt.subplots(1, 2, subplot_kw={'projection': ccrs.PlateCarree()}, gridspec_kw = {'wspace':0, 'hspace':0}, linewidth=0.5, sharex='all', sharey='all',  figsize=(12,6), dpi=400)
 
-    min_psfc = 950 #970 #1005
-    max_psfc = 1010 #1015 #1015
-    bounds = np.linspace(min_psfc, max_psfc, 7) # 11
+    if Storm == 'IRMA':
+        min_psfc = 950 #970 #1005
+        max_psfc = 1010 #1015 #1015
+    #elif Storm == 'JOSE':
+    #    min_psfc = 1006 #970
+    #    max_psfc = 1015 #1015
+    elif Storm == 'JOSE':
+        min_psfc = 1005 #970
+        max_psfc = 1015 #1015
+
+    bounds = np.linspace(min_psfc, max_psfc, 11) #7  # 11
 
     mpsfc = []
     for i in range(2):
         ax[i].set_extent([lon_min,lon_max,lat_min,lat_max], crs=ccrs.PlateCarree())
         ax[i].coastlines (resolution='10m', color='black', linewidth=1)
+        #psfc_contourf = ax[i].contourf(lon,lat,psfc[i,:,:],cmap='inferno',extend='both',transform=ccrs.PlateCarree())
         psfc_contourf = ax[i].contourf(lon,lat,psfc[i,:,:],cmap='inferno',vmin=min_psfc,vmax=max_psfc,levels=bounds,extend='both',transform=ccrs.PlateCarree())
         # Mark the best track
         if if_btk_exist:
@@ -350,7 +359,7 @@ def PSFC( Storm, Exper_name, DAtimes, big_dir, small_dir ):
         print('Reading WRF background and analysis: ', wrf_dir)
         DAtime_dt = datetime.strptime( DAtime, '%Y%m%d%H%M' )
         # ------ Plot -------------------
-        plot_dir = small_dir+Storm+'/'+Exper_name+'/Vis_analyze/Model/PSFC/'
+        plot_dir = small_dir+'Clean_results/'+Storm+'/'+Exper_name+'/Vis_analyze/Model/PSFC/'
         plotdir_exists = os.path.exists( plot_dir )
         if plotdir_exists == False:
             os.mkdir(plot_dir)
@@ -400,9 +409,10 @@ def slp_plt( Storm, Exper_name, DAtime, wrf_dir, plot_dir ):
     if Storm == 'IRMA':
         min_slp = 950 #970
         max_slp = 1010 #1015
-    elif Storm == 'HARVEY':
+    elif Storm == 'HARVEY' or Storm == 'JOSE':
         min_slp = 1006 #970
         max_slp = 1015 #1015
+    
     bounds = np.linspace(min_slp, max_slp, 7) 
     
     for i in range(2):
@@ -460,7 +470,7 @@ def plot_slp( Storm, Exper_name, DAtimes, big_dir, small_dir ):
         print('Reading WRF background and analysis: ', wrf_dir)
         DAtime_dt = datetime.strptime( DAtime, '%Y%m%d%H%M' )
         # ------ Plot -------------------
-        plot_dir = small_dir+Storm+'/'+Exper_name+'/Vis_analyze/Model/Slp/'
+        plot_dir = small_dir+'Clean_results/'+Storm+'/'+Exper_name+'/Vis_analyze/Model/Slp/'
         plotdir_exists = os.path.exists( plot_dir )
         if plotdir_exists == False:
             os.mkdir(plot_dir)
@@ -644,7 +654,7 @@ def UV10_slp( Storm, Exper_name, DAtimes, big_dir, small_dir ):
         print('Reading WRF background and analysis: ', wrf_dir)
         DAtime_dt = datetime.strptime( DAtime, '%Y%m%d%H%M' )
         # ------ Plot -------------------
-        plot_dir = small_dir+Storm+'/'+Exper_name+'/Vis_analyze/Model/UV10_slp/'
+        plot_dir = small_dir+'Clean_results/'+Storm+'/'+Exper_name+'/Vis_analyze/Model/UV10_slp/'
         plotdir_exists = os.path.exists( plot_dir )
         if plotdir_exists == False:
             os.mkdir(plot_dir)
@@ -757,7 +767,7 @@ def Precip( Storm, Exper_name, DAtimes, big_dir, small_dir ):
         print('Reading WRF background and analysis: ', wrf_dir)
         DAtime_dt = datetime.strptime( DAtime, '%Y%m%d%H%M' )
         # ------ Plot -------------------
-        plot_dir = small_dir+Storm+'/'+Exper_name+'/Vis_analyze/Model/Precip/'
+        plot_dir = small_dir+'Clean_results/'+Storm+'/'+Exper_name+'/Vis_analyze/Model/Precip/'
         plotdir_exists = os.path.exists( plot_dir )
         if plotdir_exists == False:
             os.mkdir(plot_dir)
@@ -842,7 +852,8 @@ def plot_RH( Storm, Exper_name, DAtime, wrf_dir, plot_dir ):
     ])   
 
     # Define the boundaries for each color section
-    bounds = [10, 20, 30, 40, 60, 70, 80, 90]
+    #bounds = [10, 20, 30, 40, 60, 70, 80, 90]
+    bounds = [60, 65, 70, 75, 80, 85,90,95,100]
     norm = mcolors.BoundaryNorm(bounds, new_map.N)
     
     fig, axs=plt.subplots(1, 3, subplot_kw={'projection': ccrs.PlateCarree()}, gridspec_kw = {'wspace':0, 'hspace':0}, linewidth=0.5, sharex='all', sharey='all',  figsize=(12,5), dpi=400)
@@ -925,7 +936,7 @@ def RH( Storm, Exper_name, DAtimes, big_dir, small_dir ):
         print('Reading WRF background and analysis: ', wrf_dir)
         DAtime_dt = datetime.strptime( DAtime, '%Y%m%d%H%M' )
         # ------ Plot -------------------
-        plot_dir = small_dir+Storm+'/'+Exper_name+'/Vis_analyze/Model/RH/'
+        plot_dir = small_dir+'Clean_results/'+Storm+'/'+Exper_name+'/Vis_analyze/Model/RH/'
         plotdir_exists = os.path.exists( plot_dir )
         if plotdir_exists == False:
             os.mkdir(plot_dir)
@@ -1055,7 +1066,7 @@ def Qvapor( Storm, Exper_name, DAtimes, big_dir, small_dir ):
         print('Reading WRF background and analysis: ', wrf_dir)
         DAtime_dt = datetime.strptime( DAtime, '%Y%m%d%H%M' )
         # ------ Plot -------------------
-        plot_dir = small_dir+Storm+'/'+Exper_name+'/Vis_analyze/Model/Qvapor/'
+        plot_dir = small_dir+'Clean_results/'+Storm+'/'+Exper_name+'/Vis_analyze/Model/Qvapor/'
         plotdir_exists = os.path.exists( plot_dir )
         if plotdir_exists == False:
             os.mkdir(plot_dir)
@@ -1200,7 +1211,7 @@ def Temp( Storm, Exper_name, DAtimes, big_dir, small_dir ):
         print('Reading WRF background and analysis: ', wrf_dir)
         DAtime_dt = datetime.strptime( DAtime, '%Y%m%d%H%M' )
         # ------ Plot -------------------
-        plot_dir = small_dir+Storm+'/'+Exper_name+'/Vis_analyze/Model/Temp/'
+        plot_dir = small_dir+'Clean_results/'+Storm+'/'+Exper_name+'/Vis_analyze/Model/Temp/'
         plotdir_exists = os.path.exists( plot_dir )
         if plotdir_exists == False:
             os.mkdir(plot_dir)
@@ -1344,7 +1355,7 @@ def DewPoint( Storm, Exper_name, DAtimes, big_dir, small_dir ):
         print('Reading WRF background and analysis: ', wrf_dir)
         DAtime_dt = datetime.strptime( DAtime, '%Y%m%d%H%M' )
         # ------ Plot -------------------
-        plot_dir = small_dir+Storm+'/'+Exper_name+'/Vis_analyze/Model/dewPoint/'
+        plot_dir = small_dir+'Clean_results/'+Storm+'/'+Exper_name+'/Vis_analyze/Model/dewPoint/'
         plotdir_exists = os.path.exists( plot_dir )
         if plotdir_exists == False:
             os.mkdir(plot_dir)
@@ -1507,7 +1518,7 @@ def relative_vo( Storm, Exper_name, DAtimes, big_dir, small_dir ):
         print('Reading WRF background and analysis: ', wrf_dir)
         DAtime_dt = datetime.strptime( DAtime, '%Y%m%d%H%M' )
         # ------ Plot -------------------
-        plot_dir = small_dir+Storm+'/'+Exper_name+'/Vis_analyze/Model/rt_vo/'
+        plot_dir = small_dir+'Clean_results/'+Storm+'/'+Exper_name+'/Vis_analyze/Model/rt_vo/'
         plotdir_exists = os.path.exists( plot_dir )
         if plotdir_exists == False:
             os.mkdir(plot_dir)
@@ -1667,7 +1678,7 @@ def diver( Storm, Exper_name, DAtimes, big_dir, small_dir ):
         print('Reading WRF background and analysis: ', wrf_dir)
         DAtime_dt = datetime.strptime( DAtime, '%Y%m%d%H%M' )
         # ------ Plot -------------------
-        plot_dir = small_dir+Storm+'/'+Exper_name+'/Vis_analyze/Model/divergence/'
+        plot_dir = small_dir+'Clean_results/'+Storm+'/'+Exper_name+'/Vis_analyze/Model/divergence/'
         plotdir_exists = os.path.exists( plot_dir )
         if plotdir_exists == False:
             os.mkdir(plot_dir)
@@ -1676,13 +1687,13 @@ def diver( Storm, Exper_name, DAtimes, big_dir, small_dir ):
 
 if __name__ == '__main__':
 
-    big_dir = '/scratch/06191/tg854905/Pro2_PSU_MW/'#'/expanse/lustre/scratch/zuy121/temp_project/Pro2_PSU_MW/' #'/scratch/06191/tg854905/Pro2_PSU_MW/'
+    big_dir = '/scratch/06191/tg854905/Clean_Pro2_PSU_MW/'#'/expanse/lustre/scratch/zuy121/temp_project/Pro2_PSU_MW/' #'/scratch/06191/tg854905/Pro2_PSU_MW/'
     small_dir = '/work2/06191/tg854905/stampede2/Pro2_PSU_MW/'#'/expanse/lustre/projects/pen116/zuy121/Pro2_PSU_MW/' #'/work2/06191/tg854905/stampede2/Pro2_PSU_MW/'
 
     # -------- Configuration -----------------
-    Storm = 'HARVEY'
+    Storm = 'JOSE'
     DA = ['IR']   
-    MP = 'THO' 
+    MP = 'WSM6' 
 
     Plot_Precip = False       # Accumulated total grid scale precipitation
     Plot_IC_water = False
@@ -1691,18 +1702,18 @@ if __name__ == '__main__':
     Plot_Temp = False
     Plot_dewT = False
 
-    Plot_slp = True
+    Plot_slp = False
     Plot_UV10_slp = False
     Plot_minslp_evo = False
-    Plot_PSFC = False
+    Plot_PSFC = True
     Plot_rtvo = False
     Plot_divergence = False
 
     # -----------------------------------------
 
     # Time range set up
-    start_time_str = '201708221200'
-    end_time_str = '201708221200'
+    start_time_str = '201709050000'
+    end_time_str = '201709051200'
     Consecutive_times = True
 
     if not Consecutive_times:
@@ -1719,6 +1730,7 @@ if __name__ == '__main__':
     Expers= []
     for ida in DA:
         Expers.append( UD.generate_one_name( Storm,ida,MP ) )
+    #Expers= ['CONV+IR-THO_MeanBiasRemoval']
     #Expers= ['IR-TuneWSM6-J_DA+J_WRF+J_init-SP-intel17-WSM6-30hr-hroi900',]
 
     # Plot slp

@@ -1,0 +1,36 @@
+####################################
+#Prepare ensemble ICBC at 201709041200
+####################################
+
+########################################
+# Use CONV_THO's initial perturbations
+#######################################
+
+1. Copy 
+  1.1 copy /Pro2_PSU_MW/JOSE/J_DA+J_WRF+J_init-SP-intel17-THO-30hr-hroi900/rc/201709041200/ to /Clean_Pro2_PSU_MW/JOSE/CONV_WSM6/rc/201709041200/
+  This directory includes: 
+     (1) wrfinput_d01/d02/d03
+     (2) wrfinput_d01/d02/d03_001(... to 060)
+     (3) wrfbdy_d01
+
+  1.2 copy /Pro2_PSU_MW/JOSE/J_DA+J_WRF+J_init-SP-intel17-THO-30hr-hroi900/fc/201709041200/XXX to /Clean_Pro2_PSU_MW/JOSE/CONV_WSM6/fc/201709041200/ 
+  XXX includes: 
+     (1) wrfinput_d01/d02/d03
+     (2) wrfinput_d01/d02/d03_001(... to 060)
+     (3) wrfbdy_d01
+     (4) wrfbdy_d01_001(... to 060)
+
+Note 1: above (1) and (3) are results of icbc step, and (2) is the result of perturb_ic step, and (4) is the result of update_bc step.
+Note 2: /fc and /rc directories both have a copy of (1)/(2)/(3) 
+
+
+2. Modify the metadata "MP_PHYSICS" from 6 to 8.
+- for all wrf* in /CONV_WSM6/rc/201709041200/
+- for all wrf* in /CONV_WSM6/fc/201709041200/
+
+3. Under /CONV_WSM6/run/201709041200/: create /icbc, /perturb_ic, /update_bc/, AND add "complete" to stat file under each directory. 
+- purpose: the experiment will start to do the 12-hr spin up. 
+
+
+
+

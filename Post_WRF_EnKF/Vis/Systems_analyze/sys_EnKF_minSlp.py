@@ -3,14 +3,13 @@ import os,fnmatch
 import glob
 import numba
 import numpy as np
-import netCDF4 as nc
+#import netCDF4 as nc
 from matplotlib import pyplot as plt
 import matplotlib
 import math
 from datetime import datetime, timedelta
 import time
 import netCDF4 as nc
-from wrf import getvar
 import subprocess
 import scipy as sp
 import scipy.ndimage
@@ -18,11 +17,13 @@ from itertools import chain
 import numpy.ma as ma
 
 import Util_data as UD
+import EnKF_Vmax as Vx 
 
 matplotlib.rcParams['font.size'] = 20
 
 # Calculate mean absolute error
 def mean_absolute_error(obs,model):
+
     return np.mean(np.abs(np.subtract(obs, model)))
 
 # Generate time series
@@ -186,7 +187,7 @@ def find_minSLP( Storm, wrfout, DAtime ):
     lat = ncdir.variables['XLAT'][0,:,:]
     lon = ncdir.variables['XLONG'][0,:,:]
     # sea level pressure
-    slp = UD.compute_slp( ncdir )
+    slp = UD.compute_slp( ncdir,NX=297,NY=297 )
     #slp = getvar(ncdir, 'slp')
     # original SLP
     slp_values = slp #slp.values
@@ -267,11 +268,50 @@ def model_minSLP( big_dir,istorm,iExper,DAtimes,slp_xa,slp_xb=False ):
 
     return dict_minSLP
 
+
+# Read pre-calculated HPI data
+def read_precompute_HPI( save_dir ):
+
+    model_hpi = {}
+    # file paths
+    file_xb = save_dir+'HPI_wrf_enkf_input_d03_mean.'+start_time_str[ist]+'_'+end_time_str[ist]+'.txt'
+    file_xa = save_dir+'HPI_wrf_enkf_output_d03_mean.'+start_time_str[ist]+'_'+end_time_str[ist]+'.txt'
+    files = [file_xb,file_xa]
+
+    for file in files:
+        mslp_lon = []
+        mslp_lat = []
+        mslp = []
+        vmax = []
+        with open(file,'r') as f:
+            all_lines = f.readlines()[1:]
+        for line in all_lines:
+            if 'Success' in line:
+                continue
+            split_lines = line.split()
+            mslp_lon.append( float(split_lines[1]) )
+            mslp_lat.append( float(split_lines[2]) )
+            mslp.append( float(split_lines[3]) )
+            vmax.append( float(split_lines[6]) )
+        # fill in the dictionary
+        if 'input' in file:
+            model_hpi['lon'] = mslp_lon
+            model_hpi['lat'] = mslp_lat
+            model_hpi['xb_mslp'] = mslp
+            model_hpi['xb_vmax'] = vmax
+        elif 'output' in file:
+            model_hpi['lon'] = mslp_lon
+            model_hpi['lat'] = mslp_lat
+            model_hpi['xa_mslp'] = mslp
+            model_hpi['xa_vmax'] = vmax
+
+    return model_hpi
+
 # ---------------------------------------------------------
 #       Min SLP Only
 # ---------------------------------------------------------
 
-def plot_sys_minslp():
+def plot_sys_minslp( d_model ):
 
     # Obtain mean absolute error
     MAE = {}
@@ -282,13 +322,12 @@ def plot_sys_minslp():
             for ida in DA:
                 MAE[istorm][imp][ida] = {}
                 if slp_xb:
-                    MAE[istorm][imp][ida]['xb'] = mean_absolute_error(d_tcvital[istorm]['minslp_obs'],Exper_minSLP[istorm][imp][ida]['xb_slp']) 
+                    MAE[istorm][imp][ida]['xb'] = mean_absolute_error(d_tcvital[istorm]['minslp_obs'],d_model[istorm][imp][ida]['xb_slp']) 
                 if slp_xa:
-                    print(Exper_names[istorm][imp][ida])
-                    if iExper is None:
+                    if Exper_names[ist][imp][ida] is None:
                          MAE[istorm][imp][ida]['xa'] = None
                     else:
-                        MAE[istorm][imp][ida]['xa'] = mean_absolute_error(d_tcvital[istorm]['minslp_obs'],Exper_minSLP[istorm][imp][ida]['xa_slp'])
+                        MAE[istorm][imp][ida]['xa'] = mean_absolute_error(d_tcvital[istorm]['minslp_obs'],d_model[istorm][imp][ida]['xa_slp'])
 
 
     # Set up figure
@@ -310,12 +349,12 @@ def plot_sys_minslp():
             for imp in MP:
                 for ida in DA: # linestyle=(0, (5, 1))
                     if ida == 'CONV':
-                        ax.plot(lead_t, Exper_minSLP[istorm][imp][ida]['xa_slp'],color=colorset[imp],linestyle='-',linewidth=4,label=imp+':'+ida) # linestyle=(0, (5, 1))
+                        ax.plot(lead_t, d_model[istorm][imp][ida]['xa_slp'],color=colorset[imp],linestyle='-',linewidth=4,label=imp+':'+ida) # linestyle=(0, (5, 1))
                     elif ida == 'IR':
-                        ax.plot(lead_t, Exper_minSLP[istorm][imp][ida]['xa_slp'],color=colorset[imp],linestyle='--',linewidth=4,label=imp+':'+ida)
+                        ax.plot(lead_t, d_model[istorm][imp][ida]['xa_slp'],color=colorset[imp],linestyle='--',linewidth=4,label=imp+':'+ida)
                     else:
-                        ax.plot(lead_t, Exper_minSLP[istorm][imp][ida]['xa_slp'],color=colorset[imp],linestyle=(0, (1, 1)),linewidth=4,label=imp+':'+ida)
-                        #ax.scatter(lead_t, Exper_minSLP[istorm][imp][ida]['xa_slp'],s=5,color=colorset[istorm],marker='*',markersize=12)
+                        ax.plot(lead_t, d_model[istorm][imp][ida]['xa_slp'],color=colorset[imp],linestyle=(0, (1, 1)),linewidth=4,label=imp+':'+ida)
+                        #ax.scatter(lead_t, d_model[istorm][imp][ida]['xa_slp'],s=5,color=colorset[istorm],marker='*',markersize=12)
                         
     # plot saw-tooth lines
     if slp_xa and  slp_xb:
@@ -325,7 +364,7 @@ def plot_sys_minslp():
                     # zip data
                     t_zip = list( chain.from_iterable( zip(lead_t,lead_t)) )
                     len_seg = len( t_zip )
-                    slp_zip = list( chain.from_iterable( zip(Exper_minSLP[istorm][imp][ida]['xb_slp'],Exper_minSLP[istorm][imp][ida]['xa_slp']) ) )
+                    slp_zip = list( chain.from_iterable( zip(d_model[istorm][imp][ida]['xb_slp'],d_model[istorm][imp][ida]['xa_slp']) ) )
 
                     if ida == 'CONV':
                         lines = '-'
@@ -342,11 +381,11 @@ def plot_sys_minslp():
                             line = lines # '-'
                     # customize the line
                         if i == 1:
-                            ax.plot(t_zip[i-1:i+1],slp_zip[i-1:i+1],linestyle=line,linewidth='6',color=colorset[istorm])
+                            ax.plot(t_zip[i-1:i+1],slp_zip[i-1:i+1],linestyle=line,linewidth='6',color=colorset[imp])
                         elif i == 2:
-                            ax.plot(t_zip[i-1:i+1],slp_zip[i-1:i+1],linestyle=line,linewidth='4',color=colorset[istorm],label=ida )#istorm)
+                            ax.plot(t_zip[i-1:i+1],slp_zip[i-1:i+1],linestyle=line,linewidth='4',color=colorset[imp],label=ida )#istorm)
                         else:
-                            ax.plot(t_zip[i-1:i+1],slp_zip[i-1:i+1],linestyle=line,linewidth='4',color=colorset[istorm])
+                            ax.plot(t_zip[i-1:i+1],slp_zip[i-1:i+1],linestyle=line,linewidth='4',color=colorset[imp])
 
 
     # labels and attributes
@@ -358,6 +397,7 @@ def plot_sys_minslp():
     ax.grid(True,linewidth=1, color='gray', alpha=0.5, linestyle='-')
     ax.set_ylabel('Minimum Sea Level Pressure (hPa)',fontsize=28)
     ax.set_ylim( 1000,1015 )
+    #ax.set_ylim( 920,1000 )
     ax.tick_params(axis='both',labelsize=28)
 
     # Titles
@@ -376,7 +416,8 @@ def plot_sys_minslp():
     #    fig.suptitle('TCvtial V.S. Analysis', fontsize=24, fontweight='bold')
 
     # Save the figure
-    des_name = small_dir+'SYSTEMS/Vis_analyze/Model/HARVEY_minslp_WSM6_IR_MW.png'
+    save = Storms[0]+'_'+MP[0]+'_'+DA[0]+'_'+DA[1]+'_'+DA[2]+'.png'
+    des_name = small_dir+'Clean_results/SYSTEMS/Vis_analyze/Model/'+save
     plt.savefig( des_name )
     print( 'Saving the figure: ', des_name )
     plt.close()
@@ -387,19 +428,19 @@ if __name__ == '__main__':
     small_dir = '/work2/06191/tg854905/stampede2/Pro2_PSU_MW/'
 
     #--------Configuration------------
-    Storms = ['HARVEY']
-    DA = ['IR',]
-    MP = ['WSM6',] #
+    Storms = ['JOSE']
+    DA = ['CONV','IR','MW']
+    MP = ['THO',] #
 
     start_time_str = {'HARVEY':'201708221200','IRMA':'201709030000','JOSE':'201709050000','MARIA':'201709160000'}
     end_time_str = {'HARVEY':'201708231200','IRMA':'201709040000','JOSE':'201709060000','MARIA':'201709170000'}
 
     # observation
     if_tcvital = True
-    if_btk = True
+    if_btk = False
 
     slp_xa = True
-    slp_xb = False
+    slp_xb = True
     Plot_minslp_compare = True
     cycles = 25
     multiple_segment = False
@@ -420,42 +461,51 @@ if __name__ == '__main__':
     if if_tcvital:
         d_tcvital = {}
         for istorm in Storms:
-            d_tcvital[istorm] = assimilated_obs( big_dir,istorm,Exper_names[istorm]['WSM6']['IR'],dict_times[istorm],slp_xa)
+            d_tcvital[istorm] = assimilated_obs( big_dir,small_dir,istorm,Exper_names[istorm][MP[0]]['IR'],dict_times[istorm],slp_xa)
 
     # Read best-track storm min slp
     if if_btk:
         d_btk = {}
         for istorm in Storms:
-            pass
-            #d_btk[istorm] = 
+            d_btk6Hrs = MSLP_btk( small_dir,istorm,d_6hrs[istorm] )
+            d_btkHr[istorm][iv] = Vx.Interpolate_hourly( istorm,d_6hrs,d_btk6Hrs['mslp'],d_hrs)
 
-
-    # Obtain model simulated min slp
-    Exper_minSLP = {}
-    for istorm in Storms:
-        Exper_minSLP[istorm] = {}
+    # Read simulations
+    d_model = {}
+    for ist in Storms:
+        d_model[ist] = {}
         for imp in MP:
-            Exper_minSLP[istorm][imp] = {}
+            d_model[ist][imp] = {}
             for ida in DA:
-                iExper = Exper_names[istorm][imp][ida]
-                if iExper is None:
-                    Exper_minSLP[istorm][imp][ida] = None
+                d_model[ist][imp][ida] = {}
+                if not os.path.exists( big_dir+'/'+ist+'/'+Exper_names[ist][imp][ida] ):
+                    print('Path does NOT exist'+big_dir+'/'+ist+'/'+Exper_names[ist][imp][ida])
+                    d_model[ist][imp][ida] = None
                 else:
-                    Exper_minSLP[istorm][imp][ida] = model_minSLP( big_dir,istorm,Exper_names[istorm][imp][ida],dict_times[istorm],slp_xa )
+                    # Read the precomputed data
+                    precompute_dir = small_dir+'Clean_results/'+ist+'/'+Exper_names[ist][imp][ida]+'/Data_analyze/'
+                    model_hpi = read_precompute_HPI( precompute_dir )
+                    if slp_xb:
+                        d_model[ist][imp][ida]['xb_slp'] = model_hpi['xb_mslp']
+                        #print( d_model[ist][imp][ida]['xb_mslp']  )
+                        #print( d_model['JOSE']['THO']['CONV']['xb_slp'] )
+                    if slp_xa:
+                        d_model[ist][imp][ida]['xa_slp'] = model_hpi['xa_mslp']
+
 
 
     # Compare analysis mean with TCvital
     if Plot_minslp_compare:
         print('Comparing min slp...')
         start_time=time.process_time()
-        plot_sys_minslp()
+        plot_sys_minslp( d_model )
         end_time = time.process_time()
         print('time needed: ', end_time-start_time, ' seconds')
 
-    if Plot_track_compare:
-        print('Comparing track...')
-        start_time=time.process_time()
-        plot_track_compare()
-        end_time = time.process_time()
-        print('time needed: ', end_time-start_time, ' seconds')
+    #if Plot_track_compare:
+    #    print('Comparing track...')
+    #    start_time=time.process_time()
+    #    plot_track_compare()
+    #    end_time = time.process_time()
+    #    print('time needed: ', end_time-start_time, ' seconds')
 

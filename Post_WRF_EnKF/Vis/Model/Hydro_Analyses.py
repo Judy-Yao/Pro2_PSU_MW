@@ -367,12 +367,12 @@ def plot_3D_mixingRatio( wrf_file, lat,lon,Interp_var,ver_coor ):
 
 if __name__ == '__main__':
 
-    big_dir = '/scratch/06191/tg854905/Pro2_PSU_MW/'
+    big_dir = '/scratch/06191/tg854905/Clean_Pro2_PSU_MW/'
     small_dir =  '/work2/06191/tg854905/stampede2/Pro2_PSU_MW/'
 
     # ---------- Configuration -------------------------
-    Storm = 'HARVEY'
-    MP = 'WSM6'
+    Storm = 'JOSE'
+    MP = 'THO'
     DA = 'IR'
     each_var = ['QICE',] #['QCLOUD','QRAIN','QICE','QSNOW','QGRAUP']
 

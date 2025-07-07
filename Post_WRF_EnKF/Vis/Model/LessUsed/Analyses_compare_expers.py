@@ -565,36 +565,191 @@ def Precip( Storm, Expers, DAtimes, big_dir, small_dir ):
         else:
             plot_Precip( Storm, Expers, DAtime, wrf_dirs, plot_dir )
 
+# ------------------------------------------------------------------------------------------------------
+#           Operation: Read, process, and plot accumulated grid scale precipitation per snapshot
+# ------------------------------------------------------------------------------------------------------
+def read_PSFC( Expers,wrf_dirs, DAtime ):
+
+    d_psfc_all = {}
+    for iExper in Expers:
+        idx_exper = Expers.index( iExper )
+        # set file names for analysis
+        mean_dir = [wrf_dirs[idx_exper]+DAtime+'/wrf_enkf_output_d03_mean',]
+        # read the shared variables: lat/lon
+        ncdir = nc.Dataset( mean_dir[0] )
+        lat = ncdir.variables['XLAT'][0,:,:]
+        lon = ncdir.variables['XLONG'][0,:,:]
+        # read precipitation
+        psfc = np.zeros( [len(mean_dir), np.size(lat,0), np.size(lat,1)] )
+        for i in range(len(mean_dir)):
+            file_name = mean_dir[i]
+            ncdir = nc.Dataset( file_name )
+            psfc[i,:,:] = ncdir.variables['PSFC'][0,:,:] / 100
+        d_psfc = {'lat':lat,'lon':lon,'PSFC':psfc}
+
+        d_psfc_all[iExper] = d_psfc
+
+    return d_psfc_all
+
+
+
+def plot_PSFC( Storm, Expers, DAtime, wrf_dirs, plot_dir ):
+
+    # ------ Read WRFout -------------------
+    d_psfc = read_PSFC( Expers, wrf_dirs, DAtime )
+
+    lon = d_psfc[Expers[0]]['lon']
+    lat = d_psfc[Expers[0]]['lat']
+
+    lat_min = np.amin( d_psfc[Expers[0]]['lat'] )
+    lon_min = np.amin( d_psfc[Expers[0]]['lon'] )
+    lat_max = np.amax( d_psfc[Expers[0]]['lat'] )
+    lon_max = np.amax( d_psfc[Expers[0]]['lon'] )
+
+    # ------ Plot Figure -------------------
+    f, ax=plt.subplots(1, 3, subplot_kw={'projection': ccrs.PlateCarree()}, gridspec_kw = {'wspace':0, 'hspace':0}, linewidth=0.5, sharex='all', sharey='all',  figsize=(5,2.5), dpi=400)
+
+    # Set the map
+    for i in range(3):
+        ax.flat[i].set_extent([lon_min,lon_max,lat_min,lat_max], crs=ccrs.PlateCarree())
+        ax.flat[i].coastlines(resolution='10m', color='black',linewidth=0.5)
+
+    # exp 1
+    min_psfc = 1006 #950#1006 #970
+    max_psfc = 1015 #1010#1015 #1015
+    bounds = np.linspace(min_psfc, max_psfc, 7)
+
+    psfc_0 = d_psfc[Expers[0]]['PSFC'][0,:,:]
+    ax[0].set_extent([lon_min,lon_max,lat_min,lat_max], crs=ccrs.PlateCarree())
+    ax[0].coastlines (resolution='10m', color='black', linewidth=1)
+    #ax[0].scatter(lon,lat,1,psfc_0,cmap='inferno',vmin=min_psfc,vmax=max_psfc,transform=ccrs.PlateCarree())
+    #ax[0].contourf(lon,lat,psfc_mean,cmap='inferno',levels=bounds,extend='both',transform=ccrs.PlateCarree())
+    ax[0].contourf(lon,lat,psfc_0,cmap='inferno',vmin=min_psfc,vmax=max_psfc,levels=bounds,extend='both',transform=ccrs.PlateCarree())
+
+    # exp 2
+    psfc_1 = d_psfc[Expers[1]]['PSFC'][0,:,:]
+    ax[1].set_extent([lon_min,lon_max,lat_min,lat_max], crs=ccrs.PlateCarree())
+    ax[1].coastlines (resolution='10m', color='black', linewidth=1)
+    #cf_mem = ax[1].scatter(lon,lat,1,psfc_1,cmap='inferno',vmin=min_psfc,vmax=max_psfc,transform=ccrs.PlateCarree())
+    cf_mem = ax[1].contourf(lon,lat,psfc_1,cmap='inferno',vmin=min_psfc,vmax=max_psfc,levels=bounds,extend='both',transform=ccrs.PlateCarree())
+    #cf_mem = ax[1].contourf(lon,lat,psfc_mem,cmap='inferno',transform=ccrs.PlateCarree())
+
+    # Colorbar
+    caxes = f.add_axes([0.12, 0.1, 0.5, 0.02])
+    cbar = f.colorbar(cf_mem,ax=ax[0],orientation="horizontal", cax=caxes)
+    cbar.ax.tick_params(labelsize=6)
+
+    # exp2 - exp1
+    min_diff = -2#-10 #-2
+    max_diff = 2#10 #2
+    # Create color bar with white at 0
+    cmap = plt.get_cmap("bwr")
+    #diff_ticks = np.linspace(min_diff, max_diff, 7, endpoint=True)
+    #norm = mcolors.TwoSlopeNorm(vmin=min_diff, vcenter=0, vmax=max_diff)
+    psfc_diff = psfc_1 - psfc_0
+    ax[2].set_extent([lon_min,lon_max,lat_min,lat_max], crs=ccrs.PlateCarree())
+    ax[2].coastlines (resolution='10m', color='black', linewidth=1)
+    cf_diff = ax[2].scatter(lon,lat,1,psfc_diff,cmap=cmap,vmin=min_diff,vmax=max_diff,transform=ccrs.PlateCarree())
+
+    # Adding the colorbar
+    caxes = f.add_axes([0.65, 0.1, 0.25, 0.02])
+    cb_diff_ticks = np.linspace(min_diff, max_diff, 7, endpoint=True)
+    #cbar = f.colorbar(cf_diff, ax=ax[1:], ticks=cb_diff_ticks, orientation="horizontal", cax=caxes, extend='both')
+    cbar = f.colorbar(cf_diff, ax=ax[1:],orientation="horizontal", cax=caxes, extend='both')
+    cbar.ax.tick_params(labelsize=6)
+
+    # Title
+    #subplot title
+    #matplotlib.rcParams['mathtext.fontset'] = 'custom'
+    #matplotlib.rcParams['mathtext.bf'] = 'STIXGeneral:italic:bold'
+    font = {'size':9,}
+    ax[0].set_title('Exp 1:'+Expers[0], fontsize=6, )
+    ax[1].set_title('Exp 2:'+Expers[1], fontsize=6, )
+    ax[2].set_title('Exp 2 - Exp 1', font)
+
+    f.suptitle(Storm+': Analysed PSFC (hPa)',fontsize=9, fontweight='bold')
+
+    #f.text( 0.05,0.86,'Assimilated obs: '+"{0:.2f}".format((d_obs[DAtime]['obs'][0]/100))+' hPa',fontsize=6,color='green',rotation='horizontal',fontweight='bold')
+    #f.text( 0.35,0.86,'Mslp in Xb mean: '+"{0:.2f}".format(d_mean['mslp'])+' hPa',fontsize=6,color='grey',rotation='horizontal',fontweight='bold')
+    #f.text( 0.68,0.86,'Mslp in Xb mem: '+"{0:.2f}".format(d_xb_ens['mslp'][idx])+' hPa',fontsize=6,color='red',rotation='horizontal',fontweight='bold')
+
+    # Axis labels
+    lon_ticks = list(range(math.ceil(lon_min), math.ceil(lon_max),2))
+    lat_ticks = list(range(math.ceil(lat_min), math.ceil(lat_max),2))
+    for j in range(3):
+        gl = ax[j].gridlines(crs=ccrs.PlateCarree(),draw_labels=False,linewidth=0.1, color='gray', alpha=0.5, linestyle='--')
+        gl.top_labels = False
+        gl.bottom_labels = True
+        if j==0:
+            gl.left_labels = True
+            gl.right_labels = False
+        else:
+            gl.left_labels = False
+            gl.right_labels = False
+        gl.ylocator = mticker.FixedLocator(lat_ticks)
+        gl.xlocator = mticker.FixedLocator(lon_ticks)
+        gl.xformatter = LONGITUDE_FORMATTER
+        gl.yformatter = LATITUDE_FORMATTER
+        gl.xlabel_style = {'size': 4}
+        gl.ylabel_style = {'size': 6}
+
+    des_path = plot_dir+DAtime+'_compare_psfc.png'
+    plt.savefig( des_path, dpi=300 )
+    print('Saving the figure: ', des_path)
+    plt.close()
+
+
+# Compare the PSFC
+def PSFC( Storm, Expers, DAtimes, big_dir, small_dir ):
+
+    wrf_dirs = []
+    for iExper in Expers:
+        wrf_dirs.append( big_dir+Storm+'/'+iExper+'/fc/' )
+    # Loop through each DAtime/analysis
+    for DAtime in DAtimes:
+        print('Reading WRF background and analysis at ', DAtime)
+        DAtime_dt = datetime.strptime( DAtime, '%Y%m%d%H%M' )
+        # ------ Plot -------------------
+        plot_dir = small_dir+'Clean_results/'+Storm+'/'+Expers[0]+'/Vis_analyze/Model/Com_PSFC/'
+        plotdir_exists = os.path.exists( plot_dir )
+        if plotdir_exists == False:
+            os.mkdir(plot_dir)
+            plot_PSFC( Storm, Expers, DAtime, wrf_dirs, plot_dir )
+        else:
+            plot_PSFC( Storm, Expers, DAtime, wrf_dirs, plot_dir )
+
 
 if __name__ == '__main__':
 
-    big_dir = '/scratch/06191/tg854905/Pro2_PSU_MW/'
+    big_dir = '/scratch/06191/tg854905/Clean_Pro2_PSU_MW/'
     small_dir =  '/work2/06191/tg854905/stampede2/Pro2_PSU_MW/'
 
     # ---------- Configuration -------------------------
-    Storm = 'IRMA'
+    Storm = 'JOSE'
     DA = ['CONV',]
     MP = ['WSM6','THO']
 
-    slp_xa = True
-    slp_xb = True
-    Com_minslp_evo = True
+    slp_xa = False
+    slp_xb = False
+    Com_minslp_evo = False
+    Com_PSFC = True
 
     meanOverEns = False  # mean of H(ens) or H of mean(ens)
     Com_IC_water = False
-    Com_Precip = True
+    Com_Precip = False
 
     # Time range set up
-    start_time_str = '201709030000'
-    end_time_str = '201709040000'
+    start_time_str = '201709050600'
+    end_time_str = '201709051200'
     Consecutive_times = True
     # ------------------------------------------------------   
 
     # Create experiment names
-    Expers = []
-    for imp in MP:
-        for ida in DA:
-           Expers.append( UD.generate_one_name( Storm,ida,imp ) )
+    Expers = ['CONV+IR-THO_onlyTCvitals','CONV+IR_THO']
+    #Expers = []
+    #for imp in MP:
+    #    for ida in DA:
+    #       Expers.append( UD.generate_one_name( Storm,ida,imp ) )
 
     if not Consecutive_times:
         DAtimes = ['201708231200']
@@ -615,6 +770,13 @@ if __name__ == '__main__':
     if Com_minslp_evo:
         Evo_slp = Gather_slp( Storm, Expers, DAtimes, big_dir )
         plot_slp_timeseries( small_dir, Storm, Expers, DAtimes, Evo_slp )
+
+    # Plot the comparison of PSFC fields
+    if Com_PSFC:
+        start_time=time.process_time()
+        PSFC( Storm, Expers, DAtimes, big_dir, small_dir )
+        end_time = time.process_time()
+        print ('time needed: ', end_time-start_time, ' seconds')
 
     # Plot the accumulated grid scale precipitation
     if Com_Precip:

@@ -280,17 +280,17 @@ if __name__ == '__main__':
     small_dir = '/work2/06191/tg854905/stampede2/Pro2_PSU_MW/Clean_results/'
 
     #--------Configuration------------
-    Storms = ['IRMA']#'HARVEY','IRMA','JOSE','MARIA']
-    DA = ['CONV','IR',]
+    Storms = ['HARVEY','IRMA','JOSE','MARIA']
+    DA = ['CONV','IR']
     MP = ['WSM6','THO'] 
     sensor = 'abi_gr'
 
     start_time_str = {'HARVEY':'201708221200','IRMA':'201709030000','JOSE':'201709050000','MARIA':'201709160000'}
-    end_time_str = {'HARVEY':'20170822160','IRMA':'201709030400','JOSE':'201709050400','MARIA':'201709160400'}
+    end_time_str = {'HARVEY':'201708231200','IRMA':'201709040000','JOSE':'201709060000','MARIA':'201709170000'}
     Consecutive_times = True
 
     # action
-    Subset_data = True
+    Subset_data = False
     model_center = True
     max_radius = 200 #km
 

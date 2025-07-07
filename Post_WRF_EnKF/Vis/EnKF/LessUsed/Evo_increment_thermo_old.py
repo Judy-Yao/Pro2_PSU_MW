@@ -1,0 +1,750 @@
+#!/work2/06191/tg854905/App/anaconda3/bin/python
+
+import os,sys,stat # functions for interacting with the operating system
+import numpy as np
+from datetime import datetime, timedelta
+import glob
+import netCDF4 as nc
+import math
+from wrf import getvar, ll_to_xy
+import matplotlib
+from scipy import interpolate
+matplotlib.use("agg")
+import matplotlib.ticker as mticker
+from matplotlib import pyplot as plt
+import matplotlib.colors as mcolors
+from cartopy import crs as ccrs
+from cartopy.mpl.gridliner import LONGITUDE_FORMATTER, LATITUDE_FORMATTER
+from mpl_toolkits.axes_grid1 import make_axes_locatable
+import time
+import subprocess
+import pickle
+
+import Read_Obspace_IR as ROIR
+from Util_Vis import HydroIncre
+import Util_data as UD
+#import matlab.engine
+import Diagnostics as Diag
+from Hxb_IR_calculate_pert_stddev import vertical_interp
+
+# Find the increment (posterior minus prior) in nc format and write it into another nc file
+def Find_ncdiff( wrf_dir ):
+
+
+    # Write a bash script 
+    file_dir = wrf_dir+'find_increment.sh'
+    with open ( file_dir, 'w') as rsh:
+        rsh.write('''\
+#! /bin/bash
+
+# ncview is available to analyze set
+module restore intel
+
+work_dir=$1
+cd $work_dir
+echo 'Enter ' $work_dir
+
+# write the increment (posterior minus prior) in nc format
+ncdiff wrf_enkf_output_d03_mean wrf_enkf_input_d03_mean wrf_d03_mean_increment 
+''')
+
+    # Change the permission 
+    os.chmod( file_dir, stat.S_IRWXU)
+
+    # Execute the bash script
+    status = subprocess.call([wrf_dir+'find_increment.sh', wrf_dir])
+    if status == 0:
+        print("Succeed to find the increment!")
+    else:
+        raise ValueError('Failed to find the increment!')
+
+
+# ------------------------------------------------------------------------------------------------------
+#           Operation: Plot the domain-averaged value of each variable in a time series
+# ------------------------------------------------------------------------------------------------------
+# Plot normalized increment
+def plot_var_incre_norm_timeseries( small_dir, Storm, Exper_name, DAtimes, var, baseP, ave_norm_overT ):
+
+    # Set up figure
+    fig = plt.figure( figsize=(12,6), dpi=300 )
+    ax = plt.subplot(1,1,1)
+
+    # Create a coordinate matrix from coordinate vectors
+    xv = [datetime.strptime( it,"%Y%m%d%H%M") for it in DAtimes]#range( np.shape(ave_norm_overT)[0] )
+    yv = range( np.shape(ave_norm_overT)[1])
+    xcoor, ycoor = np.meshgrid( xv, yv )
+    bounds = np.linspace(-0.5, 0.5, 11)
+    incre_contourf = ax.contourf( xcoor, ycoor, np.transpose( ave_norm_overT), cmap='RdBu_r', vmin=np.min(ave_norm_overT), vmax=np.max(ave_norm_overT),levels=bounds,extend='both')
+    # Add color bar below the plot
+    #divider = make_axes_locatable(ax)
+    #cax = divider.append_axes("bottom", size="5%", pad=0.8) #divider.new_vertical(size='5%', pad=0.8, pack_start = True)
+    color_bar = fig.colorbar(incre_contourf,orientation = 'horizontal',pad=0.15)
+    color_bar.ax.tick_params(labelsize=15)
+    color_bar.ax.set_xlabel('Normalized Increment',fontsize=15)
+
+    # Set X/Y labels
+    # set X label
+    start_time = datetime.strptime( DAtimes[0],"%Y%m%d%H%M") 
+    end_time = datetime.strptime( DAtimes[-1],"%Y%m%d%H%M") 
+    ax.set_xlim( start_time, end_time)
+    ax.tick_params(axis='x', labelrotation=45)
+    # set Y label
+    ax.set_yticks( yv[::5] )
+    ax.set_yticklabels( [str(it) for it in baseP[::5]],fontsize=15 )   
+    ax.set_ylabel('Pressure (hPa)',fontsize=15)
+    ax1 = ax.twinx()
+    ax1.set_yticks( yv[::5] );
+    ax1.set_yticklabels( [str(it) for it in yv[::5]],fontsize=15 ) 
+    ax1.set_ylabel('Model Level',fontsize=15)
+    # Set title
+    ax.set_title( 'Domain-averaged '+var,fontweight="bold",fontsize='15' )
+
+    # Save the figure
+    save_des = small_dir+'Clean_results/'+Storm+'/'+Exper_name+'/Vis_analyze/EnKF/norm_increment_'+var+'_'+DAtimes[0]+'_'+DAtimes[-1]+'.png'
+    plt.savefig( save_des )
+    print( 'Saving the figure: ', save_des )
+    plt.close()
+
+# Determine the colormap design
+def transform_Q( ave_var_overT ):
+   
+    # trasform values in ave_var_overT to a linearly increased function
+    # -------------------------------------------------------- 
+    # (before transformation) -1e-3,-1e-4,-1e-5,0,1e-5,1e-4,1e-3
+    # Step 1: 3,4,5,0,-5,-4,-3
+    # Step 2: -17,-16,-15,0,15,16,17
+    ave_trans_Q = np.zeros( np.shape(ave_var_overT) )
+    # Find the extreme values for two ends of the increment (in log)
+    nega_incre = []
+    posi_incre = []
+    for ir in range( np.shape(ave_var_overT)[0] ): #Note how iteration over a 2D array works like this!
+        for ic in range( np.shape(ave_var_overT)[1] ):
+            #print('original value: ', ave_var_overT[ir,ic])
+            if ave_var_overT[ir,ic] < 0:
+                nega_tmp = 0-math.log10(abs( ave_var_overT[ir,ic] )) 
+                nega_incre.append( nega_tmp )
+                ave_trans_Q[ir,ic] = nega_tmp - 20
+               #print('transformed value: ', ave_trans_Q[ir,ic])
+            elif ave_var_overT[ir,ic] > 0:
+                posi_tmp = math.log10( ave_var_overT[ir,ic] )
+                posi_incre.append( math.log10( ave_var_overT[ir,ic] ))
+                ave_trans_Q[ir,ic] = posi_tmp + 20
+                #print('transformed value: ', ave_trans_Q[ir,ic])
+            else:
+                ave_trans_Q[ir,ic] = 0
+   
+    nega_min = 3 #int(np.floor( np.min( nega_incre ) )) #eg., -1e-6.41183 > -1e-6 3
+    nega_max = 8 #int(np.ceil( np.max( nega_incre ) )) #eg., -1e-11.98404 > -1e-12
+    posi_min = -8 #int(np.floor( np.min( posi_incre ) )) #eg., 1e-11.78655 > 1e-12
+    posi_max = -3 #int(np.ceil( np.max( posi_incre ) )) #eg., 1e-7.4489 > 1e-7 -3
+    print('Min/Max of exponent in the negative range: ', nega_min,nega_max )
+    print('Min/Max of exponent in the positive range: ', posi_min,posi_max )
+
+    # Calculate the number of splitted colorbar
+    # from center to the positive end
+    n_posi = posi_max-posi_min+1#int(posi_max-posi_min+1) # one bar is white between 0 and the smallest positive value
+    n_nega = nega_max-nega_min+1#int(nega_max-nega_min+1) # one bar is white between 0 and the largest negative value
+    print( 'Number of positive bars:',n_posi )
+    print( 'Number of negative bars:',n_nega )
+    return [n_nega,nega_min,nega_max,n_posi,posi_min,posi_max,ave_trans_Q]
+
+# Plot increment itself
+def plot_var_incre_timeseries( ave_var_overT,ave_T_profile,geoHkm=None ):
+
+    # Set up figure
+    fig = plt.figure( figsize=(12,6), dpi=300 )
+    ax = plt.subplot(1,1,1)
+    # Set up coordinates
+    if not interp_P:
+        xv = [datetime.strptime( it,"%Y%m%d%H%M") for it in DAtimes]
+        #y_bottom = np.arange(0,10,1)
+        #y_middle = np.arange(10,15,0.5)
+        #y_top = np.arange(15,31,1)
+        #y_range = np.concatenate( (y_bottom,y_middle,y_top),axis=0 ) # control the scale
+        y_bottom = np.arange(0,5,0.5)
+        y_top = np.arange(5,31,1)
+        y_range = np.concatenate( (y_bottom,y_top),axis=0 )
+
+        y_axis_rg = range(len(y_range))
+        f_interp = interpolate.interp1d( y_range, y_axis_rg)
+        yv = f_interp( geoHkm )
+        xcoor, ycoor = np.meshgrid( xv, yv )
+    else:
+        xv = [datetime.strptime( it,"%Y%m%d%H%M") for it in DAtimes]#range( np.shape(ave_norm_overT)[0] )
+        yv = range( np.shape(ave_var_overT)[1])
+        xcoor, ycoor = np.meshgrid( xv, yv )
+    
+    if 'Q' in var_name: 
+        transformed = transform_Q( ave_var_overT )
+        # number of colorbars
+        n_nega = transformed[0]
+        n_posi = transformed[3]
+        Hydromap = HydroIncre( n_nega,n_posi )
+        # extreme values of colorbar
+        nega_min = transformed[1]
+        nega_min_linear = nega_min - 20
+        nega_max = transformed[2]
+        nega_max_linear = nega_max - 20
+        posi_min = transformed[4]
+        posi_min_linear = posi_min + 20
+        posi_max = transformed[5]
+        posi_max_linear = posi_max + 20
+
+        # transform again to make ave_trans_Q "linearly increased"
+        # From -17,-16,-15,0,15,16,17 to -3,-2,-1,0,1,2,3
+        ave_trans_Q = transformed[6]
+        #print( ave_trans_Q )
+        double_trans_Q =  np.zeros( np.shape(ave_trans_Q) )
+        for ir in range( np.shape(ave_trans_Q)[0] ):
+            for ic in range( np.shape(ave_trans_Q)[1] ):
+                if ave_trans_Q[ir,ic] > 0:
+                    double_trans_Q[ir,ic] = (ave_trans_Q[ir,ic]-(posi_min_linear-1))
+                elif ave_trans_Q[ir,ic] < 0:
+                    double_trans_Q[ir,ic] = (ave_trans_Q[ir,ic]-(nega_max_linear+1))
+                else:
+                    double_trans_Q[ir,ic] = 0
+        print(np.amin(double_trans_Q))
+        print(np.amax(double_trans_Q))
+        #print( double_trans_Q )
+        #bounds = list(range(nega_min_linear,nega_max_linear+1))+[0]+list(range(posi_min_linear,posi_max_linear+1))
+        #bounds = list(range( int(np.floor( np.amin( double_trans_Q ) )), int(np.ceil( np.amax( double_trans_Q ) )+1)))
+        bounds = [-6,-5,-4,-3,-2,-1,0,1,2,3,4,5,6]#list(range( int(np.floor( np.amin( double_trans_Q ) )), int(np.ceil( np.amax( double_trans_Q ) )+1)))
+        incre_contourf = ax.contourf( xcoor, ycoor, np.transpose( double_trans_Q ), cmap=Hydromap, levels=bounds,extend='both')
+        # Add color bar below the plot
+        color_bar = fig.colorbar(incre_contourf,orientation = 'horizontal',pad=0.15,ticks=bounds)
+        nega_side = list(range(nega_min,nega_max+1))
+        nega_label = ['-10^'+str(it) for it in nega_side]
+        posi_side = list(range(posi_min, posi_max+1))
+        posi_label = ['10^'+str(it) for it in posi_side]
+        color_bar.ax.set_xticklabels( nega_label+['0']+posi_label, rotation=45)
+        color_bar.ax.tick_params(labelsize=12)
+        color_bar.ax.set_xlabel('Increment: Xa-Xb',fontsize=15)
+    else:
+        if_all_posi = all( it[0] > 0 for it in ave_var_overT.tolist() )
+        if_all_nega = all( it[0] < 0 for it in ave_var_overT.tolist() )
+        if if_all_posi or if_all_nega is True:
+            cmap = 'jet'
+        else:
+            cmap = 'bwr'
+        bounds = np.linspace( int(np.floor(ave_var_overT.min())),int(np.ceil(ave_var_overT.max())),10 )
+        bounds_format = [ "{0:.3f}".format( item ) for item in bounds]
+        incre_contourf = ax.contourf( xcoor, ycoor, np.transpose( ave_var_overT ), cmap=cmap, vmin=ave_var_overT.min(), vmax=ave_var_overT.max(),levels=bounds_format,extend='both')
+        # Add color bar below the plot
+        color_bar = fig.colorbar(incre_contourf,orientation = 'horizontal',pad=0.15,ticks=bounds)
+        bounds_str =  [ str(item) for item in bounds_format ]
+        color_bar.ax.set_xticklabels( bounds_str, rotation=45)
+        color_bar.ax.tick_params(labelsize=12)
+        #color_bar.ax.set_xlabel('Domain-mean Increment',fontsize=15)
+
+    # Plot T profile
+    if not interp_P:
+        pass
+    else:
+        pass
+        #T_contour = ax.contour( xcoor[0:-5,:], ycoor[0:-5,:], np.transpose(ave_T_profile[:,0:-5]-273.15),colors='k')
+        #ax.clabel(T_contour, inline=True)
+
+    # Set X/Y labels
+    # set X label
+    start_time = datetime.strptime( DAtimes[0],"%Y%m%d%H%M")
+    end_time = datetime.strptime( DAtimes[-1],"%Y%m%d%H%M")
+    ax.set_xlim( start_time, end_time)
+    ax.tick_params(axis='x', labelrotation=45, )
+    # set Y label
+    if not interp_P:
+        ylabel_like = [0.0,1.0,2.0,3.0,4.0,5.0,10.0,15.0,20.0]
+        #ylabel_like = [0.0,5.0,10.0,11.0,12.0,13.0,14.0,15.0,20.0,25.0,30.0]
+        yticks = []
+        list_y_range = list(y_range)
+        for it in ylabel_like:
+            yticks.append( list_y_range.index(it) )
+        ax.set_yticks( yticks )
+        ax.set_yticklabels( [str(it) for it in ylabel_like],fontsize=15 )
+        ax.set_ylabel('Height (KM)',fontsize=15)
+        ax.set_ylim(ymin=0,ymax=25) # cut off data above 25km
+    else:
+        ax.set_yticks( yv[::10] )
+        ax.set_yticklabels( [str(it) for it in P_range[::10]],fontsize=15 )
+        ax.set_ylabel('Pressure (hPa)',fontsize=15)
+    #ax1 = ax.twinx()
+    #ax1.set_yticks( yv[::5] );
+    #ax1.set_yticklabels( [str(it) for it in yv[::5]],fontsize=15 )
+    #ax1.set_ylabel('Model Level',fontsize=15)
+
+	# Set title
+    if specify_area:
+    	if 'Q' in var_name:
+        	title_name = 'EnKF Increment: '+var_name+' (KG/KG) in the circle with R='+str(radius_threshold)+' KM'
+    	elif var_name == 'T':
+        	title_name = 'EnKF Increment: '+var_name+' (K) in the circle with R='+str(radius_threshold)+' KM'
+    	else:
+        	 title_name = 'EnKF Increment: '+var_name+' (M/S) in the circle with R='+str(radius_threshold)+' KM' 
+    else:
+        if 'Q' in var_name:
+            title_name = 'EnKF Increment: '+var_name+' (KG/KG) in the domain'
+        elif var_name == 'T':
+            title_name = 'EnKF Increment: '+var_name+' (K) in the domain'
+        else:
+    	    title_name = 'EnKF Increment: '+var_name+' (M/S) in the domain'
+
+    ax.set_title( title_name,fontweight="bold",fontsize='12' )
+    fig.suptitle(Storm+': '+Exper_name, fontsize=10, fontweight='bold')
+
+    # Save the figure
+    if not interp_P and specify_area:
+        save_des = small_dir+'Clean_results/'+Storm+'/'+Exper_name+'/Vis_analyze/EnKF/CircleMean_ML_increment_'+var_name+'_'+DAtimes[0]+'_'+DAtimes[-1]+'.png'
+    elif interp_P and not specify_area:
+        save_des = small_dir+'Clean_results/'+Storm+'/'+Exper_name+'/Vis_analyze/EnKF/DomainMean_Interp_increment_'+var_name+'_'+DAtimes[0]+'_'+DAtimes[-1]+'.png'
+    elif interp_P and specify_area:
+        save_des = small_dir+'Clean_results/'+Storm+'/'+Exper_name+'/Vis_analyze/EnKF/CircleMean_Interp_increment_'+var_name+'_'+DAtimes[0]+'_'+DAtimes[-1]+'.png'
+    else:
+        pass
+    plt.savefig( save_des )
+    print( 'Saving the figure: ', save_des )
+    plt.close()
+
+
+def eachVar_timeSeries_cal( ):
+
+    # Dimension
+    xmax = 297
+    ymax = 297
+    if 'Q' in var_name:
+        nLevel = 42 
+
+    if interp_P: # ---------- Interpolate to specified pressure levels ----------
+        # Construct a new array (using interpolation)
+        ave_var_overT = np.zeros( [len(DAtimes),len(P_range)] )
+        ave_T_profile = np.zeros( [len(DAtimes),len(P_range)] )
+    else:
+        # Construct a new array at model level
+        ave_var_overT = np.zeros( [len(DAtimes),nLevel] )
+        ave_T_profile = np.zeros( [len(DAtimes),nLevel] ) 
+
+    if specify_area:
+        # Read the best track position every 6 hours
+        d_btk = UD.read_bestrack(Storm)
+        # Read the hourly best track position 
+        dict_btk = UD.interpolate_locations( DAtimes, d_btk)
+
+    for DAtime in DAtimes:
+        print('At ', DAtime)
+
+        # Get the time index
+        t_idx = np.where([DAtime == it for it in DAtimes])[0]
+
+        # Read increment of variable of interest
+        wrf_dir = big_dir+Storm+'/'+Exper_name+'/fc/'+DAtime
+
+        # might only use data in a specified area
+        if specify_area:
+            # Find the best-track position 
+            btk_dt = [it_str for it_str in dict_btk['time'] ]#[datetime.strptime(it_str,"%Y%m%d%H%M") for it_str in dict_btk['time']]
+            bool_match = [DAtime == it for it in btk_dt]
+            if True in bool_match:
+                idx_btk = np.where( bool_match )[0][0] # the second[0] is due to the possibility of multiple records at the same time
+            else:
+                idx_btk  = None
+            # convert from ll to xy
+            wrf_file = wrf_dir+'/wrf_enkf_input_d03_mean'
+            ncdir = nc.Dataset( wrf_file )
+            tc_ij = ll_to_xy(ncdir, dict_btk['lat'][idx_btk], dict_btk['lon'][idx_btk])
+            # What ll_to_xy returns is not the xy coordinate itself but the grid index starting from 0. 
+            # (https://forum.mmm.ucar.edu/threads/what-does-wrf-python-function-ll_to_xy-returns.12248/)
+            tc_i = tc_ij.values[0]
+            tc_j = tc_ij.values[1]
+            idx_x = UD.find_circle_area_model_ij( wrf_file, tc_i, tc_j, radius_threshold, 3)
+        else:
+            idx_x = np.arange(xmax*ymax)
+ 
+        # Read increment of variable of interest
+        if 'Q' in var_name:
+            # Read mixting ratios of interest
+            #wrf_file = big_dir+Storm+'/'+Exper_name+'/fc/'+DAtime+'/wrf_d03_mean_increment'
+            xa_file = big_dir+Storm+'/'+Exper_name+'/fc/'+DAtime+'/wrf_enkf_output_d03_mean'
+            xa_ncdir = nc.Dataset(xa_file, 'r')
+            xb_file = big_dir+Storm+'/'+Exper_name+'/fc/'+DAtime+'/wrf_enkf_input_d03_mean'
+            xb_ncdir = nc.Dataset(xb_file, 'r')
+            #ncdir = nc.Dataset(wrf_file, 'r')
+            var = xa_ncdir.variables[var_name][0,:,:,:] - xb_ncdir.variables[var_name][0,:,:,:]# level,lat,lon
+            var = var.reshape( var.shape[0],-1)
+            var = var[:,idx_x] 
+        elif var_name == 'T':     
+            P1000MB=100000
+            R_D=287
+            CP=7*R_D/2
+            xa_file = big_dir+Storm+'/'+Exper_name+'/fc/'+DAtime+'/wrf_enkf_output_d03_mean'
+            xa_ncdir = nc.Dataset(xa_file, 'r')
+            xa_Pres = xa_ncdir.variables['P'][0,:,:,:] + xa_ncdir.variables['PB'][0,:,:,:]
+            xa_t = xa_ncdir.variables['T'][0,:,:,:]
+            xa_T = (xa_t+300.0)*( (xa_Pres/P1000MB)**(R_D/CP) )
+            xb_file = big_dir+Storm+'/'+Exper_name+'/fc/'+DAtime+'/wrf_enkf_input_d03_mean'
+            xb_ncdir = nc.Dataset(xb_file, 'r')
+            xb_Pres = xb_ncdir.variables['P'][0,:,:,:] + xb_ncdir.variables['PB'][0,:,:,:]
+            xb_t = xb_ncdir.variables['T'][0,:,:,:]
+            xb_T = (xb_t+300.0)*( (xb_Pres/P1000MB)**(R_D/CP) ) 
+            var = xa_T-xb_T
+            var = var.reshape( var.shape[0],-1)
+            var = var[:,idx_x]
+        else:
+            raise ValueError('Invalid variable!')
+
+        # Read T profile
+        P1000MB=100000
+        R_D=287
+        CP=7*R_D/2
+        xa_file = big_dir+Storm+'/'+Exper_name+'/fc/'+DAtime+'/wrf_enkf_output_d03_mean'
+        xa_ncdir = nc.Dataset(xa_file, 'r')
+        xa_Pres = xa_ncdir.variables['P'][0,:,:,:] + xa_ncdir.variables['PB'][0,:,:,:]
+        xa_t = xa_ncdir.variables['T'][0,:,:,:]
+        T = (xa_t+300.0)*( (xa_Pres/P1000MB)**(R_D/CP) ) # base_state_temperature in namelist.input
+        # Source:http://gradsusr.org/pipermail/gradsusr/2011-December/031698.html 
+        T = T.reshape( T.shape[0],-1)
+        T = T[:,idx_x]
+            
+        # Set up coordinate info
+        if interp_P: # Interpolate to P level of interest
+            # Read pressure levels
+            mean_xa = big_dir+Storm+'/'+Exper_name+'/fc/'+DAtime+'/wrf_enkf_output_d03_mean'
+            ncdir = nc.Dataset( mean_xa, 'r')
+            #PB = ncdir.variables['PB'][0,:,:,:]
+            #P = ncdir.variables['P'][0,:,:,:]
+            #P_hpa = (PB + P)/100
+            #P_hpa = P_hpa.reshape( P_hpa.shape[0],-1)
+            #P_hpa = P_hpa[:,idx_x] # only select value in the specified area
+            # Quality control: the P_hpa of lowest level is less than 850 mb 
+            #idx_bad = np.where( P_hpa[0,:] < 900 )[0]
+            #idx_all = range( P_hpa.shape[1] )
+            #idx_good = np.delete(idx_all, idx_bad)
+            #good_P_hpa = P_hpa[:,idx_good]
+            #good_T = T[:,idx_good]
+            #good_var = var[:,idx_good]
+            # Interpolate 
+            T_interp = np.zeros( [len(P_range),len(idx_good)] )  
+            var_interp = np.zeros( [len(P_range),len(idx_good)] ) 
+            start_time=time.process_time()
+            #for im in range( len(idx_good) ):
+                #fT_interp = interpolate.interp1d( good_P_hpa[:,im], good_T[:,im] )
+                #T_interp[:,im] = fT_interp( P_range )
+            #    f_interp = interpolate.interp1d( good_P_hpa[:,im], good_var[:,im] )
+            #    var_interp[:,im] = f_interp( P_range )
+            end_time = time.process_time()
+            print ('time needed for the interpolation: ', end_time-start_time, ' seconds')
+            # Process for mixing ratio
+            #T_mean = np.mean( T_interp,axis=1 )
+            var_mean = np.mean( var_interp,axis=1 )
+            idx_zero = np.where( abs(var_mean) <= 1e-8 )[0]
+            var_mean[idx_zero] = 0
+            # Perform domain mean
+            ave_var_overT[t_idx,:] = var_mean
+            #ave_T_profile[t_idx,:] = T_mean
+        else:
+            # Read height
+            mean_xa = big_dir+Storm+'/'+Exper_name+'/fc/'+DAtime+'/wrf_enkf_output_d03_mean'
+            ncdir = nc.Dataset( mean_xa, 'r')
+            PHB = ncdir.variables['PHB'][0,:,:,:]
+            PH = ncdir.variables['PH'][0,:,:,:]
+            geoHkm = (PHB+PH)/9.8/1000 # in km
+            geoHkm = geoHkm.reshape( geoHkm.shape[0],-1)
+            geoHkm = geoHkm[:,idx_x]
+            geoHkm_Dmean = np.mean( geoHkm, axis=1 )
+            geoHkm_half_eta = (geoHkm_Dmean[:-1]+geoHkm_Dmean[1:])/2
+            geoHkm_half_eta = np.ma.getdata(geoHkm_half_eta)
+            # Perform domain mean
+            T_mean = np.mean( T,axis=1 )
+            var_mean = np.mean( var,axis=1 )
+            idx_zero = np.where( abs(var_mean) <= 1e-8 )[0]
+            var_mean[idx_zero] = 0
+            ave_var_overT[t_idx,:] = var_mean
+            ave_T_profile[t_idx,:] = T_mean
+
+    # May save the data
+    if If_save:
+        # Metadata
+        current_datetime = datetime.now()
+        formatted_datetime = current_datetime.strftime('%Y-%m-%d %H:%M:%S')
+        # create data
+        if interp_P:
+            metadata = {'created_at':formatted_datetime, 'Interpolated_to': 'Pressure (hPa)','Interpolated_at':P_range}
+            # create a dictionary with metadata and data
+            meta_and_data = {'metadata':metadata,'ave_var_overT':ave_var_overT,'ave_T_profile':ave_T_profile} 
+            if not specify_area:
+                save_des = small_dir+'Clean_results/'+Storm+'/'+Exper_name+'/Data_analyze/EnKF/DomainMean/Interp_increment_'+var_name+'_'+DAtimes[0]+'_'+DAtimes[-1]+'.pickle'
+            else:
+                save_des = small_dir+'Clean_results/'+Storm+'/'+Exper_name+'/Data_analyze/EnKF/CircleMean/Interp_increment_'+var_name+'_'+DAtimes[0]+'_'+DAtimes[-1]+'.pickle'
+        else:
+            metadata = {'created_at':formatted_datetime}
+            save_des = small_dir+'Clean_results/'+Storm+'/'+Exper_name+'/Data_analyze/EnKF/ML_increment_'+var_name+'_'+DAtimes[0]+'_'+DAtimes[-1]+'.pickle'
+            meta_and_data = {'metadata':metadata,'ave_var_overT':ave_var_overT,'ave_T_profile':ave_T_profile,'geoHkm_half_eta':geoHkm_half_eta}  
+        # Write the dictionary to a pickle file
+        with open(save_des,'wb') as file:
+            pickle.dump( meta_and_data, file )
+        print( 'Saving the data: ', save_des )
+
+    # Plot the increament in a time series
+    if If_plot_series:
+        if interp_P:
+            plot_var_incre_timeseries( ave_var_overT,ave_T_profile )    
+        else:
+            plot_var_incre_timeseries( ave_var_overT,ave_T_profile,geoHkm_half_eta )
+
+
+# ------------------------------------------------------------------------------------------------------
+#           Object: increments per snapshot 
+# ------------------------------------------------------------------------------------------------------
+def plot_3D_snapshot( lat,lon,Interp_incre,ver_coor,):
+
+    # Read WRF domain
+    wrf_file = wrf_dir+'/wrf_enkf_input_d03_mean'
+    d_wrf_d03 = UD.read_wrf_domain( wrf_file )
+    
+    # Read location from TCvitals
+    if any( hh in DAtime[8:10] for hh in ['00','06','12','18']):
+        tc_lon, tc_lat, tc_slp = UD.read_TCvitals(small_dir,Storm, DAtime)
+
+    # ------------------ Plot -----------------------
+    fig, ax=plt.subplots(4, 5, subplot_kw={'projection': ccrs.PlateCarree()}, gridspec_kw = {'wspace':0.05, 'hspace':0.05}, linewidth=0.5, sharex='all', sharey='all',  figsize=(15,12), dpi=200)
+
+    # Define the domain
+    lat_min = d_wrf_d03['lat_min']
+    lat_max = d_wrf_d03['lat_max']
+    lon_min = d_wrf_d03['lon_min']
+    lon_max = d_wrf_d03['lon_max']
+
+    min_var = -0.5  #-0.5  # -0.015
+    max_var = 1.5 #1.5  # 0.015
+    for isub in range(20):
+        ax.flat[isub].set_extent([lon_min, lon_max, lat_min, lat_max], crs=ccrs.PlateCarree())
+        ax.flat[isub].coastlines(resolution='10m', color='black',linewidth=0.5)
+        if not interp_to_obs:
+            c = 1.5
+        else:
+            c = 5
+        #cs = ax.flat[isub].scatter(lon,lat,c,Interp_incre[isub,:],cmap='RdBu_r',edgecolors='none',transform=ccrs.PlateCarree(),)
+        # Normalizing so that 0 is the midpoint
+        norm = mcolors.TwoSlopeNorm(vmin=min_var, vcenter=0, vmax=max_var)
+        cs = ax.flat[isub].scatter(lon,lat,5,Interp_incre[isub,:],cmap='coolwarm',edgecolors='none',norm=norm,transform=ccrs.PlateCarree(),)
+        # Mark the observed location
+        #ax.flat[isub].scatter(lon_obs, lat_obs, c='red', s=10, marker='s', edgecolors='red', transform=ccrs.PlateCarree())
+        #if any( hh in DAtime[8:10] for hh in ['00','06','12','18'] ):
+        #    ax.flat[isub].scatter(tc_lon, tc_lat, s=3, marker='*', edgecolors='black', transform=ccrs.PlateCarree())
+
+    # Colorbar
+    cbaxes = fig.add_axes([0.91, 0.1, 0.03, 0.8])
+    #color_ticks = np.linspace(min_corr, max_corr, 5, endpoint=True)
+    cbar = fig.colorbar(cs, cax=cbaxes,fraction=0.046, pad=0.04, extend='both')
+    #cbar.set_ticks( color_ticks )
+    cbar.ax.tick_params(labelsize=18) #15
+
+    # Define the colorbar
+    #max_abs = 0.001 #max(np.amin(abs(Interp_incre)),np.amax(abs(Interp_incre)))
+    #min_var = -0.001#0-max_abs
+
+    #subplot title
+    font = {'size':15,}
+    for isub in range(20):
+        ax.flat[isub].set_title( str(ver_coor[isub])+' KM', font, fontweight='bold')
+
+    #title for all
+    if 'Q' in var_name:
+        title_name = Storm+': '+Exper_name+'\nIncrement of '+var_name+' (g/kg)'
+    fig.suptitle(title_name, fontsize=20, fontweight='bold')
+
+    # Axis labels
+    lon_ticks = list(range(math.ceil(lon_min)-2, math.ceil(lon_max)+2,2))
+    lat_ticks = list(range(math.ceil(lat_min)-2, math.ceil(lat_max)+2,2))
+    for i in range(4):
+        for j in range(5):
+            gl = ax[i,j].gridlines(crs=ccrs.PlateCarree(),draw_labels=False,linewidth=0.5, color='gray', alpha=0.5, linestyle='--')
+
+            gl.top_labels = False
+            gl.right_labels = False
+            if j == 0:
+                gl.left_labels = True
+            else:
+                gl.left_labels = False
+            if i == 3:
+                gl.bottom_labels = True
+            else:
+                gl.bottom_labels = False
+
+            gl.ylocator = mticker.FixedLocator(lat_ticks)
+            gl.xlocator = mticker.FixedLocator(lon_ticks)
+            gl.xformatter = LONGITUDE_FORMATTER
+            gl.yformatter = LATITUDE_FORMATTER
+            gl.xlabel_style = {'size': 10}
+            gl.ylabel_style = {'size': 15}
+
+
+    # Save the figure
+    if interp_to_obs:
+        save_des = small_dir+'Clean_results/'+Storm+'/'+Exper_name+'/Vis_analyze/EnKF/Interp_H_increment_os_'+var_name+'_'+DAtime+'.png'
+    else:
+        save_des = small_dir+'Clean_results/'+Storm+'/'+Exper_name+'/Vis_analyze/EnKF/Interp_H_increment_ms_'+var_name+'_'+DAtime+'.png'
+    plt.savefig( save_des )
+    print( 'Saving the figure: ', save_des )
+    plt.close()
+
+
+def incre_snapshot( DAtime, Exper_name, var_name, ver_coor):
+    
+    # Dimension of the domain
+    xmax = 297
+    ymax = 297
+    nLevel = 42
+
+    # Read the increment
+    if 'Q' in var_name:
+
+        # Use a threshold to avoid dividing by a number that is too small
+        epsilon=1e-6
+        # Read mixting ratios of interest
+        wrf_file =  wrf_dir + '/wrf_d03_mean_increment'
+        ncdir = nc.Dataset(wrf_file, 'r')
+        var = ncdir.variables[var_name][0,:,:,:]*1000 # level,lat,lon; g/kg
+        var[var < epsilon] = np.nan
+    else:
+        raise ValueError('Invalid variable!')
+
+    # Plot
+    # read model attributes
+    mean_xb = wrf_dir + '/wrf_enkf_input_d03_mean'
+    ncdir = nc.Dataset( mean_xb, 'r')
+    # make interpolation
+    if interp_P and not interp_H:
+        Interp_incre = np.zeros( [len(P_range),xmax*ymax] )
+
+    elif interp_H and not interp_P:
+        Interp_incre = vertical_interp( ncdir,var,ver_coor,interp_H,interp_P)
+        #Interp_incre = np.zeros( [len(ver_coor),xmax*ymax] )
+
+    # Plot
+    # Read lon and lat
+    xlon = ncdir.variables['XLONG'][0,:,:].flatten()
+    xlat = ncdir.variables['XLAT'][0,:,:].flatten()
+
+    if If_plot_snapshot and not interp_to_obs:
+        plot_3D_snapshot( xlat,xlon,Interp_incre,ver_coor )
+   
+    if If_plot_snapshot and interp_to_obs:
+        # Read assimilated obs 
+        file_Diag = big_dir+Storm+'/'+Exper_name+'/run/'+DAtime+'/enkf/d03/fort.10000'
+        d_obs = Diag.Find_IR( file_Diag, fort_v )
+        lon_obs = d_obs['lon']
+        lat_obs = d_obs['lat']
+        # interpolation
+        incre_obspace = np.zeros( shape=[len(ver_coor),len(d_obs['obs_type'])] )
+        start_time=time.process_time()
+        eng = matlab.engine.start_matlab()
+        for level in ver_coor:
+            il = ver_coor.index(level)
+            mvar_obspace = eng.griddata(matlab.double(xlon.tolist()), matlab.double(xlat.tolist()), matlab.double(Interp_incre[il,:].tolist()), matlab.double(lon_obs), matlab.double(lat_obs) )
+            incre_obspace[il,:] = np.array(mvar_obspace._data)
+        eng.quit()
+        end_time = time.process_time()
+        print ('time needed for the interpolation to obs space: ', end_time-start_time, ' seconds')
+        plot_snapshot( lat_obs,lon_obs,incre_obspace,ver_coor )
+    else:
+        pass
+
+    return None
+
+
+
+if __name__ == '__main__':
+
+    big_dir = '/scratch/06191/tg854905/Clean_Pro2_PSU_MW/'
+    small_dir =  '/work2/06191/tg854905/stampede2/Pro2_PSU_MW/'
+
+    # ---------- Configuration -------------------------
+    Storm = 'IRMA'
+    MP = 'THO'
+    DA = 'CONV'
+    v_interest = ['QSNOW','QVAPOR'] #'QICE'
+    fort_v = ['obs_type','lat','lon','obs']
+    
+    start_time_str = '201709030000'
+    end_time_str = '201709040000'
+    Consecutive_times = True
+    
+    interp_P = True
+    P_range = list(range( 900,10,-20 ))
+    interp_H = True
+    H_range = list(np.arange(1,21,1))
+
+    specify_area = False
+    radius_threshold = 300 #km
+    interp_to_obs = False
+    
+    If_ncdiff = False ### Default ###
+    If_cal_series = True
+    If_save = True
+    If_plot_snapshot = False
+    If_plot_series = True
+    # -------------------------------------------------------    
+    Exper_name = UD.generate_one_name( Storm,DA,MP )
+
+    # Identify DA times in the period of interest
+    if not Consecutive_times:
+        DAtimes = ['201709140000',]#'201708221800','201708230000','201708230600','201708231200']
+    else:
+        time_diff = datetime.strptime(end_time_str,"%Y%m%d%H%M") - datetime.strptime(start_time_str,"%Y%m%d%H%M")
+        time_diff_hour = time_diff.total_seconds() / 3600
+        time_interest_dt = [datetime.strptime(start_time_str,"%Y%m%d%H%M") + timedelta(hours=t) for t in list(range(0, int(time_diff_hour)+1, 1))]
+        DAtimes = [time_dt.strftime("%Y%m%d%H%M") for time_dt in time_interest_dt]
+
+    # Loop through each time to calculate the increment 
+    if If_ncdiff:
+        start_time=time.process_time()
+        for DAtime in DAtimes:
+            print("Getting the increment (posterior - prior) at "+DAtime)
+            wrf_dir = big_dir+Storm+'/'+Exper_name+'/fc/'+DAtime+'/'
+            Find_ncdiff( wrf_dir )
+        end_time = time.process_time()
+        print ('time needed: ', end_time-start_time, ' seconds')        
+
+    # Plot the increment per snapshot
+    if If_plot_snapshot:
+        print('------------ Plot the increment --------------')
+        for DAtime in DAtimes:
+            wrf_dir = big_dir+Storm+'/'+Exper_name+'/fc/'+DAtime+'/'
+            print('At '+DAtime)
+            for var_name in v_interest:
+                print('Plot '+var_name+'...')
+                if interp_H and not interp_P:
+                    ver_coor = H_range
+
+                incre_snapshot( DAtime, Exper_name, var_name, ver_coor)
+
+    # Calculate and Plot the time evolution of domain-averaged increments
+    if If_cal_series:
+        start_time=time.process_time()
+        for var_name in v_interest:
+            print('Calculate '+var_name+'...')
+            eachVar_timeSeries_cal( )
+        end_time = time.process_time()
+        print ('time needed: ', end_time-start_time, ' seconds') 
+        
+    # Plot the time evolution of domain-averaged increments
+    if If_plot_series:
+        for var_name in v_interest:
+            print('Plot '+var_name+'...')
+            if interp_P:
+                if specify_area:
+                    save_des = small_dir+'Clean_results/'+Storm+'/'+Exper_name+'/Data_analyze/EnKF/CircleMean/Interp_increment_'+var_name+'_'+DAtimes[0]+'_'+DAtimes[-1]+'.pickle'
+                else:
+                    save_des = small_dir+'Clean_results/'+Storm+'/'+Exper_name+'/Data_analyze/EnKF/DomainMean/Interp_increment_'+var_name+'_'+DAtimes[0]+'_'+DAtimes[-1]+'.pickle'
+                with open(save_des,'rb') as file:
+                    meta_and_data = pickle.load( file )
+                ave_var_overT = meta_and_data['ave_var_overT']
+                ave_T_profile = meta_and_data['ave_T_profile']
+                plot_var_incre_timeseries( ave_var_overT,ave_T_profile )
+            else:
+                save_des = small_dir+'Clean_results/'+Storm+'/'+Exper_name+'/Data_analyze/EnKF/ML_increment_'+var_name+'_'+DAtimes[0]+'_'+DAtimes[-1]+'.pickle'
+                with open(save_des,'rb') as file:
+                    meta_and_data = pickle.load( file )
+                ave_var_overT = meta_and_data['ave_var_overT']
+                ave_T_profile = meta_and_data['ave_T_profile']
+                geoHkm_half_eta = meta_and_data['geoHkm_half_eta']
+                plot_var_incre_timeseries( ave_var_overT,ave_T_profile,geoHkm_half_eta )
+

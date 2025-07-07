@@ -398,7 +398,7 @@ def explain_HroiCorr_Pres( wrf_dir, DAtime, var_name, key, x_mean):
     ax.scatter(mean_xb_lon, mean_xb_lat,c='#FF0000', s=15, marker='*',transform=ccrs.PlateCarree(),)
 
     # Mark the mslp in the ensemble mean 
-    #ax.scatter(x_mean[DAtime][0],x_mean[DAtime][1],15,x_mean[DAtime][2],cmap='bone',marker='o',vmin=min_mslp,vmax=max_mslp,transform=ccrs.PlateCarree())
+    ax.scatter(x_mean[DAtime][0],x_mean[DAtime][1],15,x_mean[DAtime][2],cmap='bone',marker='o',vmin=min_mslp,vmax=max_mslp,transform=ccrs.PlateCarree())
 
     # Colorbar
     cbaxes = fig.add_axes([0.9, 0.1, 0.03, 0.8])
@@ -464,9 +464,9 @@ def explain_HroiCorr_Pres( wrf_dir, DAtime, var_name, key, x_mean):
 
     # Save the figure
     if key == 'input':
-        save_des = plot_dir+'explain_'+DAtime+'_HroiCorr_obs_' + obs_type +'_model_' +  var_name + '_Xb_mslp.png'
+        save_des = plot_dir+'Xb_explain_'+DAtime+'_HroiCorr_obs_' + obs_type +'_model_' +  var_name + '_mslp.png'
     else:
-        save_des = plot_dir+'explain_'+DAtime+'_HroiCorr_obs_' + obs_type +'_model_' +  var_name + '_Xa_mslp.png'
+        save_des = plot_dir+'Xa_explain_'+DAtime+'_HroiCorr_obs_' + obs_type +'_model_' +  var_name + '_mslp.png'
     plt.savefig( save_des )
     print( 'Saving the figure: ', save_des )
     plt.close()
@@ -474,13 +474,13 @@ def explain_HroiCorr_Pres( wrf_dir, DAtime, var_name, key, x_mean):
 
 if __name__ == '__main__':
 
-    big_dir = '/scratch/06191/tg854905/Pro2_PSU_MW/'#'/expanse/lustre/scratch/zuy121/temp_project/Pro2_PSU_MW/' #'/scratch/06191/tg854905/Pro2_PSU_MW/'
+    big_dir = '/scratch/06191/tg854905/Clean_Pro2_PSU_MW/'#'/expanse/lustre/scratch/zuy121/temp_project/Pro2_PSU_MW/' #'/scratch/06191/tg854905/Pro2_PSU_MW/'
     small_dir = '/work2/06191/tg854905/stampede2/Pro2_PSU_MW/'#'/expanse/lustre/projects/pen116/zuy121/Pro2_PSU_MW/'  #'/work2/06191/tg854905/stampede2/Pro2_PSU_MW/'
 
     # ---------- Configuration -------------------------
-    Storm = 'IRMA'
-    DA = 'IR-WSM6Ens'
-    MP = 'THO'
+    Storm = 'MARIA'
+    DA = 'CONV'
+    MP = 'WSM6'
     fort_v = ['obs_type','lat','lon','obs']
     sensor = 'abi_gr'
 
@@ -490,14 +490,14 @@ if __name__ == '__main__':
         obs_type = 'slp' # Radiance
 
     # model variable
-    if Storm == 'IRMA':
+    if Storm == 'HARVEY':
         model_v = [ 'slp',]
     else:
         model_v = [ 'PSFC',]
     
     # time
-    start_time_str = '201709030600'
-    end_time_str = '201709030600'
+    start_time_str = '201709160000'
+    end_time_str = '201709170000'
     Consecutive_times = True
 
     # Number of ensemble members
@@ -561,7 +561,7 @@ if __name__ == '__main__':
                 if var_name == 'PSFC' or var_name == 'slp':
                     if not at_obs_res:
                         print('Finding the mslp for each EnKF member...')
-                        identify_mslp_ens( wrf_dir, 'input' )
+                        identify_mslp_ens( wrf_dir, 'output' )
                     else:
                         print('Finding the slp at the obs location for each EnKF member...')
                         identify_slp_ens_obsLoc( d_obs[DAtime], wrf_dir, 'input' )
@@ -575,14 +575,13 @@ if __name__ == '__main__':
         print('------------ Plot the horizontal correlation --------------')
 
         # Read mslp of the ensemble mean 
-        saved_dir = small_dir+Storm+'/'+Exper_name+'/Data_analyze/'
+        saved_dir = small_dir+'Clean_results/'+Storm+'/'+Exper_name+'/Data_analyze/'
         if Storm == 'HARVEY':
             x_mean = Read_mslp_EnsMean( saved_dir+'HPI_wrf_enkf_'+key+'_d03_mean.201708221200_201708231200.txt' )
         elif Storm == 'JOSE':
             x_mean = Read_mslp_EnsMean( saved_dir+'HPI_wrf_enkf_'+key+'_d03_mean.201709050000_201709060000.txt' )
         elif Storm == 'IRMA':
-            x_mean = None
-            #x_mean = Read_mslp_EnsMean( saved_dir+'HPI_wrf_enkf_'+key+'_d03_mean.201709030000_201709040000.txt' )
+            x_mean = Read_mslp_EnsMean( saved_dir+'HPI_wrf_enkf_'+key+'_d03_mean.201709030000_201709040000.txt' )
         elif Storm == 'MARIA':
             x_mean = Read_mslp_EnsMean( saved_dir+'HPI_wrf_enkf_'+key+'_d03_mean.201709160000_201709170000.txt' )
 
@@ -597,11 +596,11 @@ if __name__ == '__main__':
                 #var_dim = def_vardim( var_name )
 
                 if var_name == 'PSFC':
-                    plot_dir=small_dir+Storm+'/'+Exper_name+'/Vis_analyze/hori_Corr/explain_obs_slp/'
+                    plot_dir=small_dir+'Clean_results/'+Storm+'/'+Exper_name+'/Vis_analyze/hori_Corr/explain_obs_slp/'
                     explain_HroiCorr_Pres( wrf_dir, DAtime, var_name, key, x_mean)
 
                 if var_name == 'slp':
-                    plot_dir=small_dir+Storm+'/'+Exper_name+'/Vis_analyze/hori_Corr/explain_obs_slp/'
+                    plot_dir=small_dir+'Clean_results/'+Storm+'/'+Exper_name+'/Vis_analyze/hori_Corr/explain_obs_slp/'
                     explain_HroiCorr_Pres( wrf_dir, DAtime, var_name, key, x_mean)
 
                 #if var_dim == '2D':

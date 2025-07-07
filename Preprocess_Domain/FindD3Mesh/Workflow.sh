@@ -3,14 +3,15 @@
 
 #source ~/.bashrc
 source /home1/06191/tg854905/.bashrc
-module restore intel17  # Intel Compiler Version 19
+#module restore intel17  # Intel Compiler Version 19
+module restore intel
 
 #!!!!!!!!!!!!!!!!!! Attention !!!!!!!!!!!!!!!!!!!!!!!!!!!!
 PRED_SCRIPT_DIR=/work2/06191/tg854905/stampede2/Pro2_PSU_MW/SourceCode/Preprocess_Domain/FindD3Mesh
 
 #load configuration files, functions, parameters
-if [ -f config.IRMA ]; then
-  export CONFIG_FILE=$(pwd)/config.IRMA
+if [ -f config.HARVEY ]; then
+  export CONFIG_FILE=$(pwd)/config.HARVEY
   source "$CONFIG_FILE"
 fi
 if [ -f util.sh ]; then
@@ -64,11 +65,11 @@ while [[ $NEXTDATE -le $DATE_CYCLE_END ]]; do
     if [[ ! `tail -n2 geogrid.log |grep Successful` ]]; then
        echo "  Running geogrid.exe..."
        ln -sf $WPS_DIR/geogrid/src/geogrid.exe .
-
+       #./geogrid.exe >& geogrid.log  &
        cat > run_wps_real.sh << EOF
 #!/bin/bash -x
 #SBATCH -J GetDomain
-#SBATCH -p development
+#SBATCH -p skx-dev
 #SBATCH -N 1
 #SBATCH -n 48 
 #SBATCH -t 02:00:00
@@ -104,4 +105,4 @@ done
 echo CYCLING COMPLETE
 echo bottom "$MODULEPATH_ROOT"
 
-cp config.IRMA /work2/06191/tg854905/stampede2/Pro2_PSU_MW/Preprocess_Domain/${STORM_ID}/ 
+cp config.HARVEY /work2/06191/tg854905/stampede2/Pro2_PSU_MW/Preprocess_Domain/${STORM_ID}/ 

@@ -131,7 +131,7 @@ def Plot_two_metrics( IR_metric ):
     fig.suptitle( Storm+': Metrics of Tb (GOESR Ch8)', fontsize=15, fontweight='bold')
 
     # Save the figure
-    save_des = small_dir+Storm+'/'+Expers[0]+'/Vis_analyze/Tb/IR_metric_'+DAtimes[0]+'_'+DAtimes[-1]+'.png'
+    save_des = small_dir+'/Clean_results/'+Storm+'/'+Expers[0]+'/Vis_analyze/Tb/IR_metric_'+DAtimes[0]+'_'+DAtimes[-1]+'.png'
     plt.savefig( save_des )
     print( 'Saving the figure: ', save_des )
     plt.close()
@@ -206,7 +206,7 @@ def Plot_rmse( d_rmse ):
     ax.axhline(y=0.0,color='k',linestyle='-',linewidth='2')
     ax.legend(frameon=True,loc='upper right',fontsize='15') #24
     ax.grid(True,linestyle='--',alpha=0.5)
-    ax.set_ylabel('IR Bias (K)',fontsize=20)
+    ax.set_ylabel('IR RMSE (K)',fontsize=20)
 
     suptt = Storm + ': '
     #if limit:
@@ -214,12 +214,14 @@ def Plot_rmse( d_rmse ):
     #else:
     #    suptt = suptt + ' All-sky'
 
-    fig.suptitle( suptt+' IR-WSM6Ens', fontsize=15, fontweight='bold')
+    fig.suptitle( suptt+DA[0]+' experiments', fontsize=15, fontweight='bold')
 
     # title
-    ax.set_title( 'IR RMSE: mean{('+r'$\mathbf{\overline{H(X)}}$'+' - Obs)**2}',fontweight="bold",fontsize='15' )
+    title = 'IR RMSE: '+r'$\sqrt{\text{domain-mean}\left[ (\mathbf{\overline{H(X)}} - \text{Obs})^2 \right]}$'
+
+    ax.set_title( title,fontweight="bold",fontsize='15' )
     # saved name
-    des_name = small_dir+Storm+'/Vis_analyze/Tb/IR_RMSE_'+DAtimes[0]+'_'+DAtimes[-1]+'_'
+    des_name = small_dir+'/Clean_results/'+Storm+'/Vis_analyze/Tb/IR_RMSE_'+DAtimes[0]+'_'+DAtimes[-1]+'_'
     for ida in DA:
         des_name = des_name +ida+'_'
         for imp in MP:
@@ -300,12 +302,12 @@ def Plot_bias( d_bias ):
     #else:
     #    suptt = suptt + ' All-sky' 
     
-    fig.suptitle( suptt+' IR-WSM6Ens', fontsize=15, fontweight='bold')
+    fig.suptitle( suptt+DA[0]+' experiments', fontsize=15, fontweight='bold')
     
     # title
-    ax.set_title( 'IR Bias: mean{'+r'$\mathbf{\overline{H(X)}}$'+' - Obs}',fontweight="bold",fontsize='15' )
+    ax.set_title( 'IR Bias: domain-mean{'+r'$\mathbf{\overline{H(X)}}$'+' - Obs}',fontweight="bold",fontsize='15' )
     # saved name
-    des_name = small_dir+Storm+'/Vis_analyze/Tb/IR_Bias_'+DAtimes[0]+'_'+DAtimes[-1]+'_'
+    des_name = small_dir+'/Clean_results/'+Storm+'/Vis_analyze/Tb/IR_Bias_'+DAtimes[0]+'_'+DAtimes[-1]+'_'
     for ida in DA:
         des_name = des_name +ida+'_'
         for imp in MP:
@@ -357,12 +359,12 @@ def IR_metric( ida,imp ):
 if __name__ == '__main__':
 
 
-    big_dir = '/scratch/06191/tg854905/Pro2_PSU_MW/'
+    big_dir = '/scratch/06191/tg854905/Clean_Pro2_PSU_MW/'
     small_dir =  '/work2/06191/tg854905/stampede2/Pro2_PSU_MW/'
 
     # ---------- Configuration -------------------------
-    Storm = 'HARVEY'
-    DA = ['IR-WSM6Ens']
+    Storm = 'MARIA'
+    DA = ['CONV']
     MP = ['THO','WSM6']
 
     sensor = 'abi_gr'

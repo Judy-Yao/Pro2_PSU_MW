@@ -130,14 +130,14 @@ if __name__ == '__main__':
 
     # ------------Configuration------------------
     Storms =  ['HARVEY',]
-    MP = ['THO',]
+    MP = ['WSM6',]
     DA = ['MW']
 
     start_time_str = {'HARVEY':'201708221200','IRMA':'201709030000','JOSE':'201709050000','MARIA':'201709160000'}
     end_time_str = {'HARVEY':'201708231200','IRMA':'201709040000','JOSE':'201709060000','MARIA':'201709170000'}
 
     # action
-    analysis = True
+    analysis = False
 
     # -------------------------------------------
 

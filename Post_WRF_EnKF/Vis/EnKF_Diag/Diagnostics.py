@@ -252,6 +252,8 @@ def Find_IR( file_Diag, v_interest ):
         for it in idx_ir:
             if var == 'obs_type':
                 IR_list[idx_var].append( d_diag[var][it])
+            elif var == 'Hroi':
+                IR_list[idx_var].append( int(d_diag[var][it]))
             else:
                 IR_list[idx_var].append( float(d_diag[var][it]))
         IR_list[idx_var] = np.array( IR_list[idx_var] )

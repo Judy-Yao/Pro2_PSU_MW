@@ -166,7 +166,7 @@ def calc_mean_median( allFC_error ):
 def bin_allFc( allFC_error ):
 
     # parameters to bin track by distance and angle
-    num_r_bins = 5 # bin width: 50 km
+    num_r_bins = 5 # bin width: 100 km
     num_theta_bins = 12 # bin width: 30 degrees
     r_bins = np.linspace(0, max_radii, num_r_bins + 1)
     theta_bins = np.linspace(0,360, num_theta_bins + 1)
@@ -863,9 +863,11 @@ def plot_mslpVSvmax_track( allFC_error,hist_HPI ):
     for ida in DA:
         # Track
         ax['wsm6_track'][ida].set_rticks(yticks[:-1])
-        ax['wsm6_track'][ida].set_rlabel_position(90)
+        ax['wsm6_track'][ida].set_yticklabels("")
+        #ax['wsm6_track'][ida].set_rlabel_position(90)
         ax['tho_track'][ida].set_rticks(yticks[:-1])
-        ax['tho_track'][ida].set_rlabel_position(90)
+        ax['tho_track'][ida].set_yticklabels("")
+        #ax['tho_track'][ida].set_rlabel_position(90)
         if DA.index(ida) == 0:
             ax['wsm6_track'][ida].set_xticks(np.deg2rad([0,45,90,135,180,225,270,315]))
             ax['wsm6_track'][ida].set_xticklabels(['','NE', 'N', 'NW', 'W', 'SW','S/N', 'SE'])
@@ -1098,7 +1100,7 @@ if __name__ == '__main__':
 
     #--------Configuration------------
     Storms = ['HARVEY','IRMA','JOSE','MARIA']
-    DA = ['CONV','IR','IR+MW']
+    DA = ['CONV','IR','MW']
     MP = ['WSM6','THO'] #
 
     # if operate over the same number of samples for all forecasts
@@ -1145,7 +1147,7 @@ if __name__ == '__main__':
             hist_HPI = bin_allFc( allFC_error ) 
             #plot_mslpVSmslp( allFC_error,hist_HPI )
             #plot_mslpVSvmax( allFC_error,hist_HPI )
-            #plot_mslpVSvmax_track( allFC_error,hist_HPI )
+            plot_mslpVSvmax_track( allFC_error,hist_HPI )
             plot_mslpVSvmax_intensity( allFC_error,hist_HPI )
         else:
             pass

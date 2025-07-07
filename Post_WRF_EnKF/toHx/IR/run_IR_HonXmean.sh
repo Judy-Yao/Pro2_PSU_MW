@@ -3,31 +3,32 @@
 
 #####header for stampede######
 #SBATCH -J crtm
-#SBATCH -N 4
-#SBATCH --ntasks-per-node 48
+#SBATCH -N 1
+#SBATCH --ntasks-per-node 8
 #SBATCH -p skx-dev
 #SBATCH -t 00:30:00
 #SBATCH -o out_ir
 #SBATCH -e error_ir
 
 source util.sh
+module restore intel
 
 # Fill in the storm name and experiment name
-Storm=HARVEY
-Exper=IR-TuneWSM6-J_DA+J_WRF+J_init-SP-intel17-WSM6-24hr-hroi300
+Storm=IRMA
+Exper=CONV+IR_WSM6
 
 # Parent paths
-Big_dir=/scratch/06191/tg854905/Pro2_PSU_MW/
+Big_dir=/scratch/06191/tg854905/Clean_Pro2_PSU_MW/
 Small_dir=/work2/06191/tg854905/stampede2/Pro2_PSU_MW
 Code_dir=/home1/06191/tg854905/Pro2_PSU_MW/Post_WRF_EnKF/toHx/IR
 
 ############ User control parameters
-max_num_of_crtm=4   # Max number of CRTM.exe to run concurrently 
+max_num_of_crtm=1   # Max number of CRTM.exe to run concurrently 
                     # (make same as # of nodes requested)
-cores_per_crtm=48   # Number of cores given to each crtm.exe 
+cores_per_crtm=8   # Number of cores given to each crtm.exe 
                     # (make same as # of cores per node)
-date_st=201708221200        # Start date  
-date_ed=201708221200        # End date (24 forecast hrs can be done in < 2 hr w/4 nodes on skx queues)
+date_st=201709030000        # Start date  
+date_ed=201709030000        # End date (24 forecast hrs can be done in < 2 hr w/4 nodes on skx queues)
 time_int=60         # Time interval btwn cycles in minutes
 nE=1               # Number of ens members
 dom=3

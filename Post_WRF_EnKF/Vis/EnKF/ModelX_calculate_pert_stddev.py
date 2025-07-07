@@ -187,8 +187,8 @@ def Read_unstagger_WRF( ncdir, var_name ):
     elif var_name == 'Pres': # pa
         var = (ncdir.variables['P'][0,:,:,:]+ncdir.variables['PB'][0,:,:,:])
         return var
-    elif 'Q' in var_name: # kg/kg
-        var = ncdir.variables[var_name][0,:,:,:] 
+    elif 'Q' in var_name: # g/kg
+        var = ncdir.variables[var_name][0,:,:,:]*1000 
         return var
     # 2D variable
     elif var_name == 'PSFC':
@@ -222,7 +222,10 @@ def Cycling_pert_stddev_xb( DAtime, wrf_dir, var_name, If_save, dim=None ):
     xb_ens_pert = np.zeros( shape=[nLevel,num_ens+1,xmax*ymax] )
     xb_ens_pert[:] = np.nan
     # read the ensemble mean of xb
-    mean_xb = wrf_dir + '/wrf_enkf_input_d03_mean'
+    if bfAssi:
+        mean_xb = wrf_dir + '/wrf_enkf_input_d03_mean'
+    else:
+        mean_xb = wrf_dir + '/wrf_enkf_output_d03_mean'
     ncdir = nc.Dataset( mean_xb, 'r')
     var = Read_unstagger_WRF( ncdir, var_name )
     if dim == '3D' and if_interp:
@@ -234,7 +237,10 @@ def Cycling_pert_stddev_xb( DAtime, wrf_dir, var_name, If_save, dim=None ):
     xb_ens_pert[:,num_ens,:] = var.reshape(nLevel,xmax*ymax)
     
     # read the ensemble members of xb
-    file_xb = sorted( glob.glob(wrf_dir + '/wrf_enkf_input_d03_0*') )
+    if bfAssi:
+        file_xb = sorted( glob.glob(wrf_dir + '/wrf_enkf_input_d03_0*') )
+    else:
+        file_xb = sorted( glob.glob(wrf_dir + '/wrf_enkf_output_d03_0*') )
     for ifile in file_xb:
         idx = file_xb.index( ifile )
         ncdir = nc.Dataset( ifile, 'r')
@@ -253,9 +259,15 @@ def Cycling_pert_stddev_xb( DAtime, wrf_dir, var_name, If_save, dim=None ):
     # May save the perturbations
     if If_save:
         if if_interp:
-            des_path = wrf_dir+ "itp_xb_d03_"+dim+"_ensPert_" + DAtime + '_' + var_name + '.pickle'
+            if bfAssi:
+                des_path = wrf_dir+ "itp_xb_d03_"+dim+"_ensPert_" + DAtime + '_' + var_name + '_bfAssi.pickle'
+            else:
+                des_path = wrf_dir+ "itp_xb_d03_"+dim+"_ensPert_" + DAtime + '_' + var_name + '_afAssi.pickle'
         else:
-            des_path = wrf_dir+ "xb_d03_"+dim+"_ensPert_" + DAtime + '_' + var_name + '.pickle'
+            if bfAssi:
+                des_path = wrf_dir+ "xb_d03_"+dim+"_ensPert_" + DAtime + '_' + var_name + '_bfAssi.pickle'
+            else:
+                des_path = wrf_dir+ "xb_d03_"+dim+"_ensPert_" + DAtime + '_' + var_name + '_afAssi.pickle'
         f = open( des_path, 'wb' )
         pickle.dump( xb_ens_pert, f )
         f.close()
@@ -275,7 +287,16 @@ def Cycling_pert_stddev_xb( DAtime, wrf_dir, var_name, If_save, dim=None ):
 
     # May save the standard deviation
     if If_save:
-        des_path = wrf_dir+ "xb_d03_"+dim+"_ensStddev_" + DAtime + '_' +  var_name + '.pickle'
+        if if_interp:
+            if bfAssi:
+                des_path = wrf_dir+ "itp_xb_d03_"+dim+"_ensStddev_" + DAtime + '_' + var_name + '_bfAssi.pickle'
+            else:
+                des_path = wrf_dir+ "itp_xb_d03_"+dim+"_ensStddev_" + DAtime + '_' + var_name + '_afAssi.pickle'
+        else:
+            if bfAssi:
+                des_path = wrf_dir+ "xb_d03_"+dim+"_ensStddev_" + DAtime + '_' +  var_name + '_bfAssi.pickle'
+            else:
+                des_path = wrf_dir+ "xb_d03_"+dim+"_ensStddev_" + DAtime + '_' +  var_name + '_afAssi.pickle'
         f = open( des_path, 'wb' )
         pickle.dump( stddev_xb, f )
         f.close()
@@ -353,28 +374,31 @@ def CV3_pert_stddev_xb( DAtime, wrf_dir, var_name, If_save, dim=None ):
 
 if __name__ == '__main__':
 
-    big_dir = '/scratch/06191/tg854905/Pro2_PSU_MW/'
+    big_dir = '/scratch/06191/tg854905/Clean_Pro2_PSU_MW/'
     small_dir =  '/work2/06191/tg854905/stampede2/Pro2_PSU_MW/'
 
     # ---------- Configuration -------------------------
-    Storm = 'IRMA'
-    DA = 'CONV-WSM6Ens'
-    MP = 'THO'
+    Storm = 'MARIA'
+    DA = 'CONV'
+    MP = 'WSM6'
     # variables of interest
-    v_interest = ['U','V','W','Temp','Pres','QVAPOR','PSFC'] #[ 'PSFC']
+    v_interest = [ 'QSNOW']#['U','V','W','Temp','Pres','QVAPOR','PSFC'] #[ 'PSFC']
     # Which stage
     MakeEns = False # Ens generated from perturbing GFS field
     if MakeEns:
         times = set_time_for_MakeEns( Storm )
     else:
-        EndSpinup = True
+        EndSpinup = False
         if EndSpinup:
             times = set_time_for_EndSpinup( Storm ) 
         else:
-            start_time_str = '201709030000'
-            end_time_str = '201709030000'
+            start_time_str = '201709160000'
+            end_time_str = '201709160000'
             Consecutive_times = True
             times = set_time_for_cyclings( Storm,Consecutive_times,start_time_str,end_time_str)
+            
+            bfAssi = True
+
     # Number of ensemble members
     num_ens = 60
     # Dimension of the domain
@@ -382,7 +406,7 @@ if __name__ == '__main__':
     ymax = 297
  
     # vertical interpolation if needed
-    if_interp = False
+    if_interp = True
     if if_interp:
         interp_P = False
         P_range = np.arange( 995,49,-20 )

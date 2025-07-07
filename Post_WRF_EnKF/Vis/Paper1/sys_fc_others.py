@@ -21,7 +21,7 @@ from scipy import interpolate
 import copy
 
 import EnKF_Vmax as Vx #Vmax
-import EnKF_minSlp_track as SC #StormCenter
+import sys_EnKF_minSlp as SC #StormCenter
 import Util_data as UD
 
 matplotlib.rcParams['xtick.direction'] = 'in'
@@ -296,8 +296,8 @@ def plot_2by2_Means():
     colorset = storm_color()
     #marker_type= DA_marker()
     line_width = {'HARVEY':1.5,'IRMA':1.5,'JOSE':1.5,'MARIA':1.5, 'Mean':2}
-    Line_types = {'CONV':'-','IR':'--','IR+MW':':'}
-    alphas = {'CONV':0.5,'IR':0.7,'IR+MW':0.9}
+    Line_types = {'CONV':'-','IR':'--','MW':':'}
+    alphas = {'CONV':0.5,'IR':0.7,'MW':0.9}
 
     # Plot simulations
     for imp in MP:
@@ -590,7 +590,7 @@ def plot_4by2(  ):
 
     # Customization 
     Color_set = cst_color()
-    Line_types = {'CONV':'-','IR':'--','IR+MW':(0, (1, 1))}
+    Line_types = {'CONV':'-','IR':'--','MW':(0, (1, 1))}
 
     # Plot simulations
     for ist in Storms:
@@ -691,6 +691,135 @@ def plot_4by2(  ):
         des_name = small_dir+'/SYSTEMS/Vis_analyze/Paper1/sys_fc_precip.png'
     plt.savefig( des_name )
     print( 'Saving the figure to '+des_name )
+
+# layout: 
+# top row: CONV (time-accumulated rain)
+# bottom row: Exp - CONV (time-accumulated rain diff)
+def plot_conv_diff():
+
+    # Set up figure
+    fig = plt.figure( figsize=(6.5,7),dpi=200) # standard: 6.5,8.5
+    outer_grids = fig.add_gridspec(ncols=1,nrows=2,top=0.93,right=0.96,hspace=0.25)
+    # set up axis
+    ax = {}
+    ax['orig'] = fig.add_subplot( outer_grids[0] )
+    ax['diff'] = {}
+    ist_grids = outer_grids[1].subgridspec(1, 2, wspace=0.2)
+    for imp in MP:
+        ir = MP.index(imp)
+        ax['diff'][imp] = fig.add_subplot( ist_grids[ir] )
+
+    # Customization
+    colorset = storm_color()
+    #marker_type= DA_marker()
+    line_width = {'HARVEY':1.5,'IRMA':1.5,'JOSE':1.5,'MARIA':1.5, 'Mean':2}
+    Line_types_DA = {'IR':'-','MW':'--'}
+    Line_types_MP = {'WSM6':'-','THO':'--',}
+    alphas = {'CONV':0.5,'IR':0.7,'MW':0.9}
+
+    # Plot CONV simulations
+    # mean over storms
+    mean_sts = MEAN_overStorms()
+    lead_t = list(range(0,max(fc_srt_len.values())))
+
+    for imp in MP:
+        # Plot means for each storm
+        for ist in Storms:
+            lead_t = list(range(0,fc_srt_len[ist]))
+            ax['orig'].plot(lead_t,Means[ist][imp]['CONV']['Precip'],Line_types_MP[imp],color=colorset[ist],linewidth=line_width[ist],)
+        # Plot means for either WSM6 or THO experiments
+        ax['orig'].plot(lead_t,mean_sts[imp]['CONV']['Precip'],Line_types_MP[imp],color='black',linewidth=2)
+
+    # Plot Exper - CONV
+    for imp in MP:
+        for ist in Storms:
+            lead_t = list(range(0,fc_srt_len[ist]))
+            ax['diff'][imp].axhline(y=0, color='gray', linestyle='-',linewidth=1.5,alpha=0.5)
+            for ida in DA[1:]:
+                ax['diff'][imp].plot(lead_t,Means[ist][imp][ida]['Precip']-Means[ist][imp]['CONV']['Precip'],Line_types_DA[ida],color=colorset[ist],linewidth=2,alpha=alphas[ida])
+
+    # Manully add legends
+    # First row
+    lgd_00 = Storms + ['Mean']
+    legend_colors = list(colorset.values())
+    legend_colors.append( 'black' )
+    list_widths = list(line_width.values())
+    proxy_artists00 = [plt.Line2D([0], [0], color=color, lw=lw) for color,lw in zip( legend_colors,list_widths )]
+    # Add the first legend manually to the current Axes
+    legend00 = ax['orig'].legend(proxy_artists00,lgd_00,fontsize='10',loc='upper left')
+    ax['orig'].add_artist(legend00)
+
+    lgd_01 = MP
+    list_types_MP = list(Line_types_MP.values())
+    proxy_artists01 = [plt.Line2D([0], [0], color='black', linestyle=lt) for lt in list_types_MP]
+    legend01 = ax['orig'].legend(proxy_artists01,lgd_01,fontsize='10',loc='lower right')
+    ax['orig'].add_artist(legend01)
+
+    # Second row
+    lgd_10 = Storms
+    legend_colors = list(colorset.values())
+    proxy_artists10 = [plt.Line2D([0], [0], color=color ) for color in legend_colors ]
+    legend10 = ax['diff'][MP[0]].legend(proxy_artists10,lgd_10,fontsize='8',loc='lower left',ncol=1)
+    ax['diff'][MP[0]].add_artist(legend10)
+    legend10 = ax['diff'][MP[1]].legend(proxy_artists10,lgd_10,fontsize='8',loc='lower left',ncol=1)
+    ax['diff'][MP[1]].add_artist(legend10)
+
+    lgd_11 = DA[1:]
+    list_types = list(Line_types_DA.values())
+    proxy_artists11 = [plt.Line2D([0], [0], color='black', linestyle=lt) for lt in list_types ]
+    legend11 = ax['diff'][MP[0]].legend(proxy_artists11,lgd_11,fontsize='8',loc='upper left')
+    ax['diff'][MP[0]].add_artist(legend11)
+    legend11 = ax['diff'][MP[1]].legend(proxy_artists11,lgd_11,fontsize='8',loc='upper left')
+    ax['diff'][MP[1]].add_artist(legend11)
+
+    # Set axis attributes
+    ax['orig'].set_title(' (a) Time-accumulated Precip (TAP) for CONV Exps',fontsize='12')
+    ax['orig'].set_xlim( [-0.1,max(fc_srt_len.values())-1] )
+    ax['orig'].set_xticks([0,8,16,24,32] )
+    ax['orig'].set_xticklabels(['D0','D1','D2','D3','D4'])
+    ax['orig'].set_xlabel('Forecast Time (days)',fontsize=9)
+    ax['orig'].set_ylabel('CONV: Precip ($10^6$ mm)',fontsize=10)
+    # y axis
+    ax['orig'].set_ylim( [-0.1,85.1] )
+    # y ticks
+    orig_yticks = list(range(0,85+1,10))
+    ax['orig'].set_yticks( orig_yticks)
+    ax['orig'].set_yticklabels( [str(it) for it in orig_yticks],fontsize=9 )
+    # grid lines
+    ax['orig'].grid(True,linewidth=1, color='gray', alpha=0.3, linestyle='-')
+    for imp in MP:
+        # x axis
+        ax['diff'][imp].set_xlim( [-0.1,max(fc_srt_len.values())-1] )
+        ax['diff'][imp].set_xticks([0,8,16,24,32] )
+        ax['diff'][imp].set_xticklabels(['D0','D1','D2','D3','D4'])
+        ax['diff'][imp].set_xlabel('Forecast Time (days)',fontsize=9)
+        # y axis
+        ax['diff'][imp].set_ylim( [-30.1,10.1] )
+        # y ticks
+        diff_yticks = list(range(-30,10+1,5))
+        ax['diff'][imp].set_yticks( diff_yticks )
+        ax['diff'][imp].set_yticklabels( [str(it) for it in diff_yticks],fontsize=9 )
+        # y label
+        ax['diff'][imp].set_ylabel(imp+' - CONV: Precip ($10^6$ mm)',fontsize=10)
+        # grid lines
+        ax['diff'][imp].grid(True,linewidth=1, color='gray', alpha=0.3, linestyle='-')
+
+    fig.text(0.53, 0.5, '(b) Differences of TAP: DA Exps - CONV Exps', ha='center', va='center', fontsize=12)
+
+    #fig.text(0.03,0.73,'WSM6', fontsize=12, ha='center', va='center',rotation='vertical')
+    #fig.text(0.03,0.32,'THO', fontsize=12, ha='center', va='center',rotation='vertical')
+    #fig.text(0.07, 0.5, 'Time-accumulated Precip (TAP; $10^6$ mm)', ha='center', va='center', rotation='vertical', fontsize=10)
+    #fig.text(0.53, 0.5, 'Differences of TAP: Experiment - CONV ($10^6$ mm)', ha='center', va='center', rotation='vertical', fontsize=10)
+
+    # Save figure
+    des_name = small_dir+'/SYSTEMS/Vis_analyze/Paper1/sys_time_accumulated_fc_precip_withFCtime.png'
+    plt.savefig( des_name )
+    print( 'Saving the figure to '+des_name )
+
+
+
+
+
 
 
 
@@ -896,7 +1025,7 @@ if __name__ == '__main__':
 
     #--------Configuration------------
     Storms = ['HARVEY','IRMA','JOSE','MARIA']
-    DA = ['CONV','IR','IR+MW']
+    DA = ['CONV','IR','MW']
     MP = ['WSM6','THO'] #
 
     varnames = ['Precip',]
@@ -930,7 +1059,8 @@ if __name__ == '__main__':
     if Mean_timeAccu_wrt_time:
         # calculate with same samples
         fc_srt_len, Means = Time_accu_means()
-        plot_2by2_Means()
+        #plot_2by2_Means()
+        plot_conv_diff()
 
     # Plot
     start_time=time.process_time()

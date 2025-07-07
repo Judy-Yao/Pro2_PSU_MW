@@ -18,7 +18,8 @@ import subprocess
 import pickle
 
 import Util_data as UD
-import EnKF_minSLP_track as SC #StormCenter
+import sys_EnKF_minSlp as SC
+#import EnKF_minSLP_track as SC #StormCenter
 
 matplotlib.rcParams['xtick.direction'] = 'in'
 matplotlib.rcParams['ytick.direction'] = 'in'
@@ -471,14 +472,16 @@ def plot_cycle_mean( ivar,imp ):
             if ist == DA[0]:
                 x_ticks = [0,50,100,150,200]
                 ax[ida][ist].set_xticks( x_ticks )
-                ax[ida][ist].set_xticklabels([str(it) for it in x_ticks])
+                ax[ida][ist].set_xticklabels([])
+                #ax[ida][ist].set_xticklabels([str(it) for it in x_ticks])
             else:
-                x_ticks = [50,100,150,200]
+                x_ticks = [0,50,100,150,200]
                 ax[ida][ist].set_xticks( x_ticks )
-                ax[ida][ist].set_xticklabels([str(it) for it in x_ticks])
+                ax[ida][ist].set_xticklabels([])
+                #ax[ida][ist].set_xticklabels([str(it) for it in x_ticks])
             if ida == DA[-1]:
                 ax[ida][ist].set_xlabel('Radius (km)')
-                ax[ida][ist].set_xticklabels([str(it) for it in x_ticks])
+                #ax[ida][ist].set_xticklabels([str(it) for it in x_ticks])
             else:
                 ax[ida][ist].set_xticklabels([])
 
@@ -500,7 +503,10 @@ def plot_cycle_mean( ivar,imp ):
 
 
     # Save figure
-    des_name = small_dir+'SYSTEMS/Vis_analyze/Paper1/Storms_AZmean_'+imp+'_'+ivar+'.png'
+    if if_analysis:
+        des_name = small_dir+'SYSTEMS/Vis_analyze/Paper1/Xa_Storms_AZmean_'+imp+'_'+ivar+'.png'
+    else:
+        des_name = small_dir+'SYSTEMS/Vis_analyze/Paper1/Xb_Storms_AZmean_'+imp+'_'+ivar+'.png'
     plt.savefig( des_name )
     print( 'Saving the figure to '+des_name )
 
@@ -718,16 +724,16 @@ if __name__ == '__main__':
     #--------Configuration------------
     Storms = ['HARVEY','JOSE','MARIA','IRMA']
     MP = ['WSM6','THO']
-    DA = ['CONV','IR','IR+MW']
+    DA = ['CONV','IR','MW']
     # Xb or Xa
-    if_analysis = True
+    if_analysis = False
 
     # variables of interest
     var_names= ['WIND',]
     # time period
-    start_time_str = {'HARVEY':'201708221800','IRMA':'201709030600','JOSE':'201709050600','MARIA':'201709160600'}
+    start_time_str = {'HARVEY':'201708231200','IRMA':'201709040000','JOSE':'201709060000','MARIA':'201709170000'}
     end_time_str = {'HARVEY':'201708231200','IRMA':'201709040000','JOSE':'201709060000','MARIA':'201709170000'}
-    cycles = 25
+    cycles = 1 #25
     lead_t = list(range(0, cycles, 1))
 
     # vertical interpolation
@@ -743,7 +749,7 @@ if __name__ == '__main__':
 
     # Operation
     #!!!!!!!!!!!!!!!!!!!!!!
-    calculate_ave = False # default
+    calculate_ave = True # default
     #!!!!!!!!!!!!!!!!!!!!!!
     mean_all_cycles = True
     mean_all_storms = False

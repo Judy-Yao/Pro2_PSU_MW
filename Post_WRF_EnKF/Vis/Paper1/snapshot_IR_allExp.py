@@ -135,11 +135,11 @@ def plot_snapshot():
     # plot analyzed Tb for WSM6
     for ida in DA:
         for ist in Storms:
-            ax['WSM6_'+ida][ist].scatter(IR_simu[ist]['WSM6'][ida]['lon_obs'],IR_simu[ist]['WSM6'][ida]['lat_obs'],1.5,c=IR_simu[ist]['WSM6'][ida]['meanYa_obs'],edgecolors='none', cmap=IRcmap, vmin=min_tb, vmax=max_tb,transform=ccrs.PlateCarree())
+            ax['WSM6_'+ida][ist].scatter(IR_simu[ist]['WSM6'][ida]['lon_obs'],IR_simu[ist]['WSM6'][ida]['lat_obs'],1.5,c=IR_simu[ist]['WSM6'][ida]['meanYb_obs'],edgecolors='none', cmap=IRcmap, vmin=min_tb, vmax=max_tb,transform=ccrs.PlateCarree())
     # plot analyzed Tb for THO
     for ida in DA:
         for ist in Storms:
-            ax['THO_'+ida][ist].scatter(IR_simu[ist]['THO'][ida]['lon_obs'],IR_simu[ist]['THO'][ida]['lat_obs'],1.5,c=IR_simu[ist]['THO'][ida]['meanYa_obs'],edgecolors='none', cmap=IRcmap, vmin=min_tb, vmax=max_tb,transform=ccrs.PlateCarree())
+            ax['THO_'+ida][ist].scatter(IR_simu[ist]['THO'][ida]['lon_obs'],IR_simu[ist]['THO'][ida]['lat_obs'],1.5,c=IR_simu[ist]['THO'][ida]['meanYb_obs'],edgecolors='none', cmap=IRcmap, vmin=min_tb, vmax=max_tb,transform=ccrs.PlateCarree())
 
     # colorbar
     cbar_ax = fig.add_axes([0.10, 0.06, 0.78, 0.015])
@@ -200,7 +200,7 @@ def plot_snapshot():
 
 
     # Save figure
-    des_name = small_dir+'SYSTEMS/Vis_analyze/Paper1/snapshot_IR_sameas_MW.png'
+    des_name = small_dir+'SYSTEMS/Vis_analyze/Paper1/snapshot_IR_sameas_MW_Xb.png'
     plt.savefig( des_name )
     print( 'Saving the figure to '+des_name )
 
@@ -233,7 +233,7 @@ if __name__ == '__main__':
                 Exper_names[istorm][imp][ida] = UD.generate_one_name( istorm,ida,imp )
 
     # DA time of interest
-    DAtime = {'HARVEY':'201708221200','IRMA':'201709030000','JOSE':'201709050000','MARIA':'201709160000'}
+    DAtime = {'HARVEY':'201708230000','IRMA':'201709031200','JOSE':'201709051200','MARIA':'201709161300'}
     #DAtime = {}
     #for ist in Storms:
     #    tmp_time = datetime.strptime(start_time_str[ist],"%Y%m%d%H%M") + timedelta(hours=t_incre)

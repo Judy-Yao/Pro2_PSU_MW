@@ -58,10 +58,12 @@ begin
    asciiwrite("tcij",round(loc,3))
 end
 EOF
+module restore module_ncl
 ncl ll2ij.ncl
 tci=`cat tcij |head -n1`
 tcj=`cat tcij |tail -n1`
 cat tcij
+module restore intel
 #rm -f ll2ij.ncl tcij
 ######################
 

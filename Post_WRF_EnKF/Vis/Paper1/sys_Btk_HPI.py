@@ -73,12 +73,14 @@ def plot_btk():
             if time[i] == onse_RI[ist]:
                 marker = '+'
                 color = 'black'
-                markersize = 5
+                markersize = 8
+                ax[ist]['track'].plot(d_btk[ist]['lon'][i],d_btk[ist]['lat'][i],marker=marker,
+                        markersize=markersize,markeredgewidth=3,markeredgecolor=color,markerfacecolor=color,transform=ccrs.PlateCarree())
             else:
                 marker = 'o'
                 markersize=min_marker+slope*d_btk[ist]['vmax'][i]
-            ax[ist]['track'].plot(d_btk[ist]['lon'][i],d_btk[ist]['lat'][i],marker=marker,
-                markersize=markersize,markeredgecolor=color,markerfacecolor=color,transform=ccrs.PlateCarree())
+                ax[ist]['track'].plot(d_btk[ist]['lon'][i],d_btk[ist]['lat'][i],marker=marker,
+                        markersize=markersize,markeredgecolor=color,markerfacecolor=color,transform=ccrs.PlateCarree())
         # Mark EnKF window
         da_st = EnKF_wd[ist]['st']
         da_end = EnKF_wd[ist]['end']
@@ -114,9 +116,9 @@ def plot_btk():
         ax[ist]['its'].fill_between([dates[0], dates[-1]], 0, 42, color='#F1B3B3')
         ax[ist]['its'].text(dates[-5], 36, 'CAT 1', fontsize=6, fontweight='bold', color='blue')
         ax[ist]['its'].fill_between([dates[0], dates[-1]], 0, 32, color='#688FAD')
-        ax[ist]['its'].text(dates[-6], 24.5, 'TC Storm', fontsize=6, fontweight='bold', color='blue')
+        ax[ist]['its'].text(dates[-5], 24.5, 'TS', fontsize=6, fontweight='bold', color='blue')
         ax[ist]['its'].fill_between([dates[0], dates[-1]], 0, 17, color='#9FC1D3')
-        ax[ist]['its'].text(dates[-8], 12.5, 'TC Depression', fontsize=6, fontweight='bold', color='blue')
+        ax[ist]['its'].text(dates[-5], 12.5, 'TD', fontsize=6, fontweight='bold', color='blue')
         # plot Vmax
         ax[ist]['its'].plot(dates,d_btk[ist]['vmax'],color='black',linewidth=2.5,linestyle='-',label='Vmax',zorder=1)
         ax[ist]['its'].set_ylabel('Vmax($\mathregular{ms^{-1}}$)',fontsize=7)
@@ -125,7 +127,7 @@ def plot_btk():
         ax_mslp[ist].set_ylabel( 'MSLP(hPa)',fontsize=7)
         # Mark onset of RI
         time_ri = datetime.strptime(onse_RI[ist],"%Y%m%d%H%M")
-        ax[ist]['its'].scatter(time_ri,d_btk[ist]['vmax'][time==onse_RI[ist]],s=40,color='white',marker='+',zorder=3)
+        ax[ist]['its'].scatter(time_ri,d_btk[ist]['vmax'][time==onse_RI[ist]],s=50,color='white',marker='+',linewidths=2,zorder=3)
         # Mark EnKF window
         da_st = datetime.strptime(da_st,"%Y%m%d%H%M")
         da_end = datetime.strptime(da_end,"%Y%m%d%H%M")
@@ -209,7 +211,7 @@ def plot_btk():
 
 
     # Save figure
-    des_name = small_dir+'/SYSTEMS/Vis_analyze/Paper1/sys_Btk_storms.png'
+    des_name = small_dir+'Clean_results/SYSTEMS/Vis_analyze/Paper1/sys_Btk_storms.png'
     plt.savefig( des_name )
     print( 'Saving the figure to '+des_name )
 
@@ -218,7 +220,7 @@ def plot_btk():
 if __name__ == '__main__':
 
     big_dir = '/scratch/06191/tg854905/Clean_Pro2_PSU_MW/'
-    small_dir = '/work2/06191/tg854905/stampede2/Pro2_PSU_MW/Clean_results/'
+    small_dir = '/work2/06191/tg854905/stampede2/Pro2_PSU_MW/'
 
     #--------Configuration------------
     Storms = ['HARVEY','IRMA','JOSE','MARIA']
@@ -231,7 +233,7 @@ if __name__ == '__main__':
             'MARIA':{'st':'201709160000','end':'201709170000'},
     } #window
 
-    domain = {'HARVEY':{'lon_min':-100,'lon_max':-85,'lat_min':15,'lat_max':30},
+    domain = {'HARVEY':{'lon_min':-101,'lon_max':-83,'lat_min':15,'lat_max':32},
             'IRMA':{'lon_min':-75,'lon_max':-40,'lat_min':15,'lat_max':23},
             'JOSE': {'lon_min':-70,'lon_max':-30,'lat_min':9,'lat_max':20},
             'MARIA':{'lon_min':-75,'lon_max':-30,'lat_min':9,'lat_max':20}}

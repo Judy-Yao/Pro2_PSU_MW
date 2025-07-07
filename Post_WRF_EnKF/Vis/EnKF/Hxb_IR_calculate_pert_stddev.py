@@ -109,8 +109,8 @@ def vertical_interp( ncdir,array,levels,interp_H=None,interp_P=None):
             interp_arr[levels.index(ih),:,:] = interplevel(array, z, ih)
         end_time = time.process_time()
         print ('time needed for the interpolation: ', end_time-start_time, ' seconds')
-        print('Min of interpolated_arr: '+str(np.amin( interp_arr )))
-        print('Max of interpolated_arr: '+str(np.amax( interp_arr )))
+        print('Min of interpolated_arr: '+str(np.nanmin( interp_arr )))
+        print('Max of interpolated_arr: '+str(np.nanmax( interp_arr )))
         return interp_arr
     elif interp_P and not interp_H:
         pres = getvar(ncdir, 'pres', units='hPa')
@@ -121,8 +121,8 @@ def vertical_interp( ncdir,array,levels,interp_H=None,interp_P=None):
             interp_arr[levels.index(ih),:,:] = interplevel(array, pres, ih)
         end_time = time.process_time()
         print ('time needed for the interpolation: ', end_time-start_time, ' seconds')
-        print('Min of interpolated_arr: '+str(np.amin( interp_arr )))
-        print('Max of interpolated_arr: '+str(np.amax( interp_arr )))
+        print('Min of interpolated_arr: '+str(np.nanmin( interp_arr )))
+        print('Max of interpolated_arr: '+str(np.nanmax( interp_arr )))
         return interp_arr
     else:
         pass
@@ -339,7 +339,10 @@ def cal_pert_stddev_modelRes_Hxb( DAtime, sensor, Hx_dir, If_save, wrf_dir):
     hxb_ens[:] = np.nan
     hxb_ens[num_ens,:] = meanYb
     # Read the ensemble of Hxb at model locations
-    file_hxb = sorted( glob.glob(Hx_dir + '/TB_GOES_CRTM_input_mem0*.bin') )
+    if bfAssi:
+        file_hxb = sorted( glob.glob(Hx_dir + '/TB_GOES_CRTM_input_mem0*.bin') )
+    else:
+        file_hxb = sorted( glob.glob(Hx_dir + '/TB_GOES_CRTM_output_mem0*.bin') )
     for ifile in file_hxb:
         idx = file_hxb.index( ifile )
         tmp_control = np.fromfile( ifile,dtype='<f4') # <: little endian; f: float; 4: 4 bytes
@@ -351,7 +354,10 @@ def cal_pert_stddev_modelRes_Hxb( DAtime, sensor, Hx_dir, If_save, wrf_dir):
 
     # May save the perturbations
     if If_save:
-        des_path = Hx_dir+ "Hxb_ensPert_modelRes_" + DAtime + '_' +  sensor + '.pickle'
+        if bfAssi:
+            des_path = Hx_dir+ "Hxb_ensPert_modelRes_" + DAtime + '_' +  sensor + '_bfAssi.pickle'
+        else:
+            des_path = Hx_dir+ "Hxb_ensPert_modelRes_" + DAtime + '_' +  sensor + '_afAssi.pickle'
         f = open( des_path, 'wb' )
         pickle.dump( hxb_ens, f )
         f.close()
@@ -376,7 +382,10 @@ def cal_pert_stddev_modelRes_Hxb( DAtime, sensor, Hx_dir, If_save, wrf_dir):
 
     # May save the standard deviation
     if If_save:
-        des_path = Hx_dir+ "Hxb_ensStddev_modelRes_" + DAtime + '_' +  sensor + '.pickle'
+        if bfAssi:
+            des_path = Hx_dir+ "Hxb_ensStddev_modelRes_" + DAtime + '_' +  sensor + '_bfAssi.pickle'
+        else:
+            des_path = Hx_dir+ "Hxb_ensStddev_modelRes_" + DAtime + '_' +  sensor + '_afAssi.pickle'
         f = open( des_path, 'wb' )
         pickle.dump( stddev_hxb, f )
         f.close()
@@ -407,7 +416,8 @@ def cal_pert_stddev_obsRes_Hxb( DAtime, sensor, Hx_dir, If_save, fort_v,  wrf_di
         all_lines = f.readlines()
     for line in all_lines:
         split_line = line.split()
-        meanYb.append( float(split_line[4]) )
+        #meanYb.append( float(split_line[4]) )
+        meanYb.append( float(split_line[5]) )
     meanYb = np.array( meanYb )
 
     hxb_ens_os_pert = np.zeros( shape=[num_ens+1,len(meanYb)] ) # the 0 to last - 1 rows are ensemble perturbations, the last row is mean value
@@ -530,21 +540,24 @@ def cal_pert_stddev_obsRes_Hxb( DAtime, sensor, Hx_dir, If_save, fort_v,  wrf_di
 
 if __name__ == '__main__':
 
-    big_dir = '/scratch/06191/tg854905/Pro2_PSU_MW/'
+    big_dir = '/scratch/06191/tg854905/Clean_Pro2_PSU_MW/'
     small_dir =  '/work2/06191/tg854905/stampede2/Pro2_PSU_MW/'
 
     # ---------- Configuration -------------------------
     Storm = 'IRMA'
-    DA = 'IR-WSM6Ens'
-    MP = 'THO'
+    DA = 'CONV'
+    MP = 'WSM6'
 
     sensor = 'abi_gr'
     ch_list = ['8',]
     fort_v = ['obs_type','lat','lon','obs']
 
-    start_time_str = '201709030600'
-    end_time_str = '201709030600'
+    start_time_str = '201709030000'
+    end_time_str = '201709030000'
     Consecutive_times = True
+
+    # Before or after assimilation
+    bfAssi = True
 
     # Number of ensemble members
     num_ens = 60

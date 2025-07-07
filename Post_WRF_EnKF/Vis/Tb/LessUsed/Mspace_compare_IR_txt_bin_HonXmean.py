@@ -62,7 +62,7 @@ def plot_Tb( DAtime, d_obs ):
 
     # Read location from TCvitals
     if any( hh in DAtime[8:10] for hh in ['00','06','12','18']):
-        tc_lon, tc_lat, tc_slp = UD.read_TCvitals(Storm, DAtime)
+        tc_lon, tc_lat, tc_slp = UD.read_TCvitals(small_dir, Storm, DAtime)
         print( 'Location from TCvital: ', tc_lon, tc_lat )
 
     # ------------------ Plot -----------------------
@@ -133,27 +133,28 @@ def plot_Tb( DAtime, d_obs ):
         gl.xlabel_style = {'size': 4}
         gl.ylabel_style = {'size': 6}
 
-    des_name = small_dir+Storm+'/'+Exper_name+'/Vis_analyze/Tb/IR_HonXmean/'+DAtime+'_'+sensor+'_mspace_HonXmean.png'
+    #des_name = small_dir+'Clean_results/'+Storm+'/'+Exper_name+'/Vis_analyze/Tb/IR_HonXmean/'+DAtime+'_'+sensor+'_mspace_HonXmean.png'
+    des_name = 'test.png'
     plt.savefig( des_name, dpi=300)
     print('Saving the figure: ', des_name)
 
 
 if __name__ == '__main__':
 
-    big_dir = '/scratch/06191/tg854905/Pro2_PSU_MW/'
+    big_dir = '/scratch/06191/tg854905/Clean_Pro2_PSU_MW/'
     small_dir =  '/work2/06191/tg854905/stampede2/Pro2_PSU_MW/'
 
     # ---------- Configuration -------------------------
-    Storm = 'HARVEY'
+    Storm = 'IRMA'
     DA = 'IR'
-    MP = 'TuneWSM6'
+    MP = 'WSM6'
 
     sensor = 'abi_gr'
     ch_list = ['8',]
     fort_v = ['obs_type','lat','lon','obs']
 
-    start_time_str = '201708221200'
-    end_time_str = '201708221200'
+    start_time_str = '201709030000'
+    end_time_str = '201709030000'
     Consecutive_times = True
 
     If_plot = True
@@ -162,6 +163,7 @@ if __name__ == '__main__':
 
     # Create experiment names
     Exper_name =  UD.generate_one_name( Storm,DA,MP )
+    print( Exper_name)
 
     if not Consecutive_times:
         IR_times = ['201709041600',]

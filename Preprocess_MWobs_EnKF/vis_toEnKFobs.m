@@ -9,7 +9,7 @@ control.obs_dir = '../../Preprocess_Obs/toEnKFobs/MW/';
 control.output_dir = '../../Preprocess_Obs/Visual/toEnKFobs/MW/';
 control.geogrid_dir = '../../Preprocess_Domain/';
 % ---Storm 
-control.storm_phase = 'JOSE';
+control.storm_phase = 'HARVEY';
 % ---Satellite informaiton
 control.sensor_list = ["amsr2","atms","gmi","mhs","saphir","ssmi","ssmis"];
 control.freq_list = {{'18.7GHzV-Pol','89GHzV-Pol'},...
@@ -74,7 +74,7 @@ bt_str_all = bt_str_all(idx);
 loc_storm = strings(len_unique_BTrecord, 3); 
 for ir = 1:len_unique_BTrecord
     bt_str_per = strsplit(bt_str_all(ir));
-    loc_storm(ir,:) = bt_str_per(1,:); % time,lat,lon
+    loc_storm(ir,:) = bt_str_per(1,:) % time,lat,lon
 end
 
 % -------------- Handle MW so file ------------

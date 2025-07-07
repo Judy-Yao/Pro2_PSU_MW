@@ -354,11 +354,11 @@ def plot_hpi_df( Config ):
             else:
                 path = wrf_dir+'/'+Storm+'/'+Exper_name[imp][ida]+'/wrf_df/'
                 if os.path.exists( path ):
-                    fc_start_times[imp][ida] = ['201708221800','201708230000','201708230600','201708231200']
+                    #fc_start_times[imp][ida] = ['201708221800','201708230000','201708230600','201708231200']
                     #fc_start_times[imp][ida] = ['201709030600','201709031200','201709031800','201709040000']
                     #fc_start_times[imp][ida] = ['201709050600','201709051200','201709051800','201709060000'] 
                     #fc_start_times[imp][ida] = ['201709160600','201709161200','201709161800','201709170000']
-                    #fc_start_times[imp][ida] = sorted(fnmatch.filter(os.listdir(path),'20*'))
+                    fc_start_times[imp][ida] = sorted(fnmatch.filter(os.listdir(path),'20*00'))
                 else:
                     fc_start_times[imp][ida] = None
 
@@ -407,7 +407,7 @@ def plot_hpi_df( Config ):
     Ana_color = {'WSM6':'#eea990','THO':'#748b97'} #'#748b97'
    
     # Line types
-    lines = {'CONV':':','IR':'--','MW':'-',}
+    lines = {'CONV':'-','IR':'-','MW':'-',}
 
     # Customize labels ###### Chnage it every time !!!!!!!!!!!!!!! 
     #Labels = ['Stp2-Intel17 ','Eps-Intel19 ']
@@ -464,7 +464,7 @@ def plot_hpi_df( Config ):
     ax0.set_title( 'Track',fontsize = 15 )
     ax1.set_title( 'MSLP (hPa)',fontsize = 15 )
     ax2.set_title( 'Vmax ($\mathregular{ms^{-1}}$)',fontsize = 15 )
-    fig.suptitle('IRMA experiments',fontsize = 15)
+    fig.suptitle('JOSE experiments',fontsize = 15)
     #fig.suptitle('Different GSF-perturbed Ensemble from WSM6 experiments',fontsize = 15)
 
     # Save figure
@@ -566,6 +566,7 @@ def DiffL_error_eachInit(Storm,wrf_dir,exper,best_track,exper_inits,DF_model_end
         Diff_start_next6x = HPI_model['Diff_start_next6x']
 
         for it in fc_times_str:
+            #print(it)
             idx_t = fc_times_str.index(it)
             # special treatment to t0
             bool_t0 = Diff_start_next6x < 6
@@ -581,11 +582,15 @@ def DiffL_error_eachInit(Storm,wrf_dir,exper,best_track,exper_inits,DF_model_end
             #else:
             idx_m = int( np.where(bool_model)[0] )
             # error of track
+            #print('btk',best_track['lat'][idx_btk],best_track['lon'][idx_btk])
+            #print('model',HPI_model['lat'][idx_m],HPI_model['lon'][idx_m])
             dist, azi_btk = UD.twoP_inverse(best_track['lat'][idx_btk],best_track['lon'][idx_btk],HPI_model['lat'][idx_m],HPI_model['lon'][idx_m]) # km
             error_perInit[0,idx_t] = dist #km
             error_perInit[1,idx_t] = UD.azi_geo_to_math(azi_btk)  #math azimuth:degree
+            #print('error of track',error_perInit[0,idx_t])
             # error of min slp
             error_perInit[2,idx_t] = HPI_model['mslp'][idx_m]-best_track['mslp'][idx_btk]
+            #print('error of MSLP',error_perInit[2,idx_t])
             # error of max wind
             error_perInit[3,idx_t] = HPI_model['vmax'][idx_m]-best_track['vmax'][idx_btk]
         # assemble the dictionary
@@ -726,14 +731,14 @@ if __name__ == '__main__':
     small_dir = '/work2/06191/tg854905/stampede2/Pro2_PSU_MW/Clean_results/'
 
     #--------Configuration------------
-    Storm = 'HARVEY'
-    MP = ['THO','WSM6']
-    DA = ['CONV','IR',]
+    Storm = 'JOSE'
+    MP = ['THO',]
+    DA = ['CONV',]
     DF_model_start = '20170822180000' # Default value of DF_model_start. Especially useful when dealing with ensemble forecast
     mem_id = 'mean' # Default value of member id. Especially useful when dealing with deterministic forecast
     read_fc_wrfout = False # Feature that decides the way of reading HPI from model files
 
-    distinct_colors = False
+    distinct_colors = True
     Plot_analyses = False # Feature that plots the analyses of an experiment
     Plot_HPI = True
     Plot_abs_error = False

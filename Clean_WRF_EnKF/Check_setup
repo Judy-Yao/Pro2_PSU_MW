@@ -1,0 +1,84 @@
+
+######################################################
+# 1. Check if the correct microphysics scheme is used.
+######################################################
+
+- 1.1. Go to the /fc/$DATE_START, and chech the metadata. For example:
+  
+    login3.stampede3(1409)$ pwd
+    /scratch/06191/tg854905/Clean_Pro2_PSU_MW/HARVEY
+    login3.stampede3(1410)$ for file in $(ls *THO/fc/201708220000/wrfinput_d03_2017-08-22_12:00:00_060);do
+    > echo $file
+    > ncdump -h $file | grep MP_PHYSICS
+    > done
+
+- 1.2 Check the config file. For example:
+
+    login3.stampede3(1465)$ pwd
+    /work2/06191/tg854905/stampede2/Pro2_PSU_MW/SourceCode/Clean_WRF_EnKF/HARVEY
+    login3.stampede3(1466)$ for file in $(ls *THO/config*); do
+    > grep "MP_PHYSICS" $file
+    > echo %file
+    > done
+    login3.stampede3(1467)$ for file in $(ls *THO/config*); do
+    > echo $file
+    >  grep "MP_PHYSICS" $file
+    > done
+
+- 1.3 Check if the correct version of EnKF is used for one MP. For example,
+
+    login3.stampede3(1491)$ pwd
+    /work2/06191/tg854905/stampede2/Pro2_PSU_MW/SourceCode/Clean_WRF_EnKF/MARIA
+    login3.stampede3(1493)$ ls
+    CONV+IR_THO  CONV+IR_WSM6  CONV_THO  CONV_WSM6  hold_CONV+IR+MW_THO  hold_CONV+IR+MW_WSM6
+    login3.stampede3(1494)$ for file in $(ls *THO/config*); do
+    > echo $file
+    > grep "ENKF_DIR" $file
+    > done
+
+
+############################################################
+# 2. Check if the same initial ensemble perturbation is used.
+#############################################################
+- 2.1
+
+-2.2 Vim the difference between two txt files.
+
+ls */fc/verify_*
+
+
+
+
+######################################################
+# 3. Check the EnKF procedure.
+######################################################
+- 3.1 Check if "slp" is assimilated.
+
+    login4.stampede3(1303)$ for file in $(ls CONV*/run/*/enkf/d03/fort.10000); do
+    > echo $file
+    > grep "slp" $file
+    > done
+
+- 3.2 Check if "Radiance" is assimilated.
+
+    login4.stampede3(1348)$ for file in $(ls CONV*/run/*/enkf/d03/enkf.log); do 
+    > echo $file
+    > grep "radiance" $file
+    > done
+
+- 3.3 Check if "microwave" is assimilated.
+
+    login4.stampede3(1369)$ for file in $(ls CONV*/run/*/enkf/d03/enkf.log); do
+    > echo $file
+    > grep "microwave" $file
+    > done
+
+
+
+
+
+
+
+
+
+

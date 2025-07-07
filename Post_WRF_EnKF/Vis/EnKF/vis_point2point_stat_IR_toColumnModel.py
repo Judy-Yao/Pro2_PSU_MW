@@ -135,15 +135,21 @@ def Find_nearest_col( Hx_dir, wrf_dir, DAtime, sensor):
     return Idx_nearest    
 
 
-def cal_2Dcorr_IR_ColVar( DAtime, var_name):
+def cal_2Dcorr_IR_ColVar( DAtime, var_name, var_dim):
 
     # Read ensemble perturbations of xb
-    des_path = wrf_dir+ "xb_d03_3D_ensPert_" + DAtime + '_' + var_name +  '.pickle'
+    if bfAssi:
+        des_path = wrf_dir+ "xb_d03_"+var_dim+"_ensPert_" + DAtime + '_' + var_name +  '_bfAssi.pickle'
+    else:
+        des_path = wrf_dir+ "xb_d03_"+var_dim+"_ensPert_" + DAtime + '_' + var_name +  '_afAssi.pickle'
     with open( des_path,'rb' ) as f:
         xb_ens = pickle.load( f )
     print('Shape of xb_ens: '+ str(np.shape(xb_ens)))
     # Read ensemble standard deviation of xb
-    des_path = wrf_dir+ "xb_d03_3D_ensStddev_" + DAtime + '_' +  var_name + '.pickle'
+    if bfAssi:
+        des_path = wrf_dir+ "xb_d03_"+var_dim+"_ensStddev_" + DAtime + '_' +  var_name + '_bfAssi.pickle'
+    else:
+        des_path = wrf_dir+ "xb_d03_"+var_dim+"_ensStddev_" + DAtime + '_' +  var_name + '_afAssi.pickle'
     with open( des_path,'rb' ) as f:
         stddev_xb = pickle.load( f )
     print('Shape of stddev_xb: '+ str(np.shape(stddev_xb)))
@@ -151,7 +157,10 @@ def cal_2Dcorr_IR_ColVar( DAtime, var_name):
     if to_obs_res:
         des_path = Hx_dir+ "Hxb_ensPert_obsRes_" + DAtime + '_' +  sensor + '.pickle'
     else:
-        des_path = Hx_dir+ "Hxb_ensPert_modelRes_" + DAtime + '_' +  sensor + '.pickle'
+        if bfAssi:
+            des_path = Hx_dir+ "Hxb_ensPert_modelRes_" + DAtime + '_' +  sensor + '_bfAssi.pickle'
+        else:
+            des_path = Hx_dir+ "Hxb_ensPert_modelRes_" + DAtime + '_' +  sensor + '_afAssi.pickle'
     with open( des_path,'rb' ) as f:
         hxb_ens = pickle.load( f )
     print('Shape of hxb_ens: '+ str(np.shape(hxb_ens)))
@@ -159,7 +168,10 @@ def cal_2Dcorr_IR_ColVar( DAtime, var_name):
     if to_obs_res:
         des_path = Hx_dir+ "Hxb_ensStddev_obsRes_" + DAtime + '_' +  sensor + '.pickle'
     else:
-        des_path = Hx_dir+ "Hxb_ensStddev_modelRes_" + DAtime + '_' +  sensor + '.pickle'
+        if bfAssi:
+            des_path = Hx_dir+ "Hxb_ensStddev_modelRes_" + DAtime + '_' +  sensor + '_bfAssi.pickle'
+        else:
+            des_path = Hx_dir+ "Hxb_ensStddev_modelRes_" + DAtime + '_' +  sensor + '_afAssi.pickle'
     with open( des_path,'rb' ) as f:
         stddev_hxb = pickle.load( f )
     print('Shape of stddev_hxb: '+ str(np.shape(stddev_hxb)))
@@ -196,7 +208,10 @@ def cal_2Dcorr_IR_ColVar( DAtime, var_name):
         if to_obs_res:
             des_path = wrf_dir+ "d03_2Dcorr_obsRes_Hxb_" + DAtime + '_Column_' +  var_name + '.pickle'
         else:
-            des_path = wrf_dir+ "d03_2Dcorr_modelRes_Hxb_" + DAtime + '_Column_' +  var_name + '.pickle'
+            if bfAssi:
+                des_path = wrf_dir+ "d03_"+var_dim+"corr_modelRes_Hxb_" + DAtime + '_Column_' +  var_name + '_bfAssi.pickle'
+            else:
+                des_path = wrf_dir+ "d03_"+var_dim+"corr_modelRes_Hxb_" + DAtime + '_Column_' +  var_name + '_afAssi.pickle'
         f = open( des_path, 'wb' )
         pickle.dump( corr_xb_hxb, f )
         f.close()
@@ -204,6 +219,89 @@ def cal_2Dcorr_IR_ColVar( DAtime, var_name):
 
     return None
 
+def cal_3Dcorr_IR_ColVar( DAtime, var_name, var_dim, H_range):
+
+    # Read ensemble perturbations of xb
+    if bfAssi:
+        des_path = wrf_dir+ "itp_xb_d03_"+var_dim+"_ensPert_" + DAtime + '_' + var_name +  '_bfAssi.pickle'
+    else:
+        des_path = wrf_dir+ "itp_xb_d03_"+var_dim+"_ensPert_" + DAtime + '_' + var_name +  '_afAssi.pickle'
+    with open( des_path,'rb' ) as f:
+        xb_ens = pickle.load( f )
+    print('Shape of xb_ens: '+ str(np.shape(xb_ens)))
+    # Read ensemble standard deviation of xb
+    if bfAssi:
+        des_path = wrf_dir+ "itp_xb_d03_"+var_dim+"_ensStddev_" + DAtime + '_' +  var_name + '_bfAssi.pickle'
+    else:
+        des_path = wrf_dir+ "itp_xb_d03_"+var_dim+"_ensStddev_" + DAtime + '_' +  var_name + '_afAssi.pickle'
+    with open( des_path,'rb' ) as f:
+        stddev_xb = pickle.load( f )
+    print('Shape of stddev_xb: '+ str(np.shape(stddev_xb)))
+    # Read ensemble perturbations of Hxb
+    if to_obs_res:
+        des_path = Hx_dir+ "Hxb_ensPert_obsRes_" + DAtime + '_' +  sensor + '.pickle'
+    else:
+        if bfAssi:
+            des_path = Hx_dir+ "Hxb_ensPert_modelRes_" + DAtime + '_' +  sensor + '_bfAssi.pickle'
+        else:
+            des_path = Hx_dir+ "Hxb_ensPert_modelRes_" + DAtime + '_' +  sensor + '_afAssi.pickle'
+    with open( des_path,'rb' ) as f:
+        hxb_ens = pickle.load( f )
+    print('Shape of hxb_ens: '+ str(np.shape(hxb_ens)))
+    # Read ensemble stand deviation of Hxb
+    if to_obs_res:
+        des_path = Hx_dir+ "Hxb_ensStddev_obsRes_" + DAtime + '_' +  sensor + '.pickle'
+    else:
+        if bfAssi:
+            des_path = Hx_dir+ "Hxb_ensStddev_modelRes_" + DAtime + '_' +  sensor + '_bfAssi.pickle'
+        else:
+            des_path = Hx_dir+ "Hxb_ensStddev_modelRes_" + DAtime + '_' +  sensor + '_afAssi.pickle'
+    with open( des_path,'rb' ) as f:
+        stddev_hxb = pickle.load( f )
+    print('Shape of stddev_hxb: '+ str(np.shape(stddev_hxb)))
+
+    # Find the location of model grid of interest
+    if to_obs_res: # nearest for each obs
+        idx_xb = Find_nearest_col( Hx_dir, wrf_dir, DAtime, sensor)
+    else: # every model grid point
+        idx_xb = np.arange(xmax*ymax)
+
+    # Calculate the covariance between Xb and Hxb (a column of var and a Tb)
+    print('Calculating the covariance between Tbs and ' + var_name + '(a column of var and a Tb)......' )
+    start = time.perf_counter()
+    cov_xb_hxb = cross_Tb_toCol( xb_ens[:,:num_ens,idx_xb],hxb_ens[:num_ens,:] )
+    end = time.perf_counter()
+    print("Elapsed (after compilation) of covariance calculation = {}s".format((end - start)))
+    cov_xb_hxb = cov_xb_hxb / ( num_ens-1 )
+
+    # Check if there are any NaN values using assert
+    #assert not np.isnan(cov_xb_hxb).any()
+
+    # Calculate the correlation between Xb and Hxb
+    print('Calculating the correlation between Tbs and ' + var_name + '......' )
+    start = time.perf_counter()
+    corr_xb_hxb = corr_Tb_toCol( cov_xb_hxb,stddev_xb[:,idx_xb],stddev_hxb )
+    end = time.perf_counter()
+    print("Elapsed (after compilation) = {}s".format((end - start)))
+
+    # sanity check
+    assert  0 <= abs(corr_xb_hxb).any() and abs(corr_xb_hxb).any() <= 1
+
+    # May save the correlation
+    if If_save:
+        if to_obs_res:
+            des_path = wrf_dir+ "d03_2Dcorr_obsRes_Hxb_" + DAtime + '_Column_' +  var_name + '.pickle'
+        else:
+            if bfAssi:
+                des_path = wrf_dir+ "itp_d03_"+var_dim+"corr_modelRes_Hxb_" + DAtime + '_Column_' +  var_name + '_bfAssi.pickle'
+            else:
+                des_path = wrf_dir+ "itp_d03_"+var_dim+"corr_modelRes_Hxb_" + DAtime + '_Column_' +  var_name + '_afAssi.pickle'
+        f = open( des_path, 'wb' )
+        pickle.dump( corr_xb_hxb, f )
+        f.close()
+        print('Save '+des_path)
+
+    return None
 
 
 # ------------------------------------------------------------------------------------------------------
@@ -288,9 +386,12 @@ def plot_3Dcorr_snapshot( lat,lon,Interp_corr,ver_coor ):
 
    # Save the figure
     if to_obs_res and interp_H:
-        save_des = small_dir+Storm+'/'+Exper_name+'/Vis_analyze/Corr/Interp_H_corr_os_'+DAtime+'_'+var_name+'_'+sensor+'.png'
+        save_des = small_dir+'Clean_results/'+Storm+'/'+Exper_name+'/Vis_analyze/Corr/Interp_H_corr_os_'+DAtime+'_'+var_name+'_'+sensor+'.png'
     else:
-        save_des = small_dir+Storm+'/'+Exper_name+'/Vis_analyze/Corr/Interp_H_corr_ms_'+DAtime+'_'+var_name+'_'+sensor+'.png'
+        if bfAssi:
+            save_des = small_dir+'Clean_results/'+Storm+'/'+Exper_name+'/Vis_analyze/Corr/Interp_H_corr_ms_'+DAtime+'_'+var_name+'_'+sensor+'_bfAssi.png'
+        else:
+            save_des = small_dir+'Clean_results/'+Storm+'/'+Exper_name+'/Vis_analyze/Corr/Interp_H_corr_ms_'+DAtime+'_'+var_name+'_'+sensor+'_afAssi.png'
     plt.savefig( save_des )
     print( 'Saving the figure: ', save_des )
     plt.close()
@@ -329,11 +430,11 @@ def plot_2Dcorr_snapshot( lat,lon,corr_2d ):
         ax.scatter(tc_lon, tc_lat, s=3, marker='*', edgecolors='black', transform=ccrs.PlateCarree())
 
     # Colorbar
-    cbaxes = fig.add_axes([0.91, 0.1, 0.03, 0.8])
+    cbaxes = fig.add_axes([0.90, 0.1, 0.02, 0.8])
     color_ticks = np.linspace(min_corr, max_corr, 5, endpoint=True)
     cbar = fig.colorbar(cs, cax=cbaxes,fraction=0.046, pad=0.04, )
     cbar.set_ticks( color_ticks )
-    cbar.ax.tick_params(labelsize=11)
+    cbar.ax.tick_params(labelsize=13)
 
     #subplot title
     font = {'size':15,}
@@ -357,14 +458,17 @@ def plot_2Dcorr_snapshot( lat,lon,corr_2d ):
     gl.xlocator = mticker.FixedLocator(lon_ticks)
     gl.xformatter = LONGITUDE_FORMATTER
     gl.yformatter = LATITUDE_FORMATTER
-    gl.xlabel_style = {'size': 10}
-    gl.ylabel_style = {'size': 12}
+    gl.xlabel_style = {'size': 15}
+    gl.ylabel_style = {'size': 15}
 
    # Save the figure
     if to_obs_res:
-        save_des = small_dir+Storm+'/'+Exper_name+'/Vis_analyze/Corr/corr_os_'+DAtime+'_'+var_name+'_'+sensor+'.png'
+        save_des = small_dir+'Clean_results/'+Storm+'/'+Exper_name+'/Vis_analyze/Corr/corr_os_'+DAtime+'_'+var_name+'_'+sensor+'.png'
     else:
-        save_des = small_dir+Storm+'/'+Exper_name+'/Vis_analyze/Corr/corr_ms_'+DAtime+'_'+var_name+'_'+sensor+'.png'
+        if bfAssi:
+            save_des = small_dir+'Clean_results/'+Storm+'/'+Exper_name+'/Vis_analyze/Corr/corr_ms_'+DAtime+'_'+var_name+'_'+sensor+'_bfAssi.png'
+        else:
+            save_des = small_dir+'Clean_results/'+Storm+'/'+Exper_name+'/Vis_analyze/Corr/corr_ms_'+DAtime+'_'+var_name+'_'+sensor+'_afAssi.png'
     plt.savefig( save_des )
     print( 'Saving the figure: ', save_des )
     plt.close()
@@ -372,16 +476,30 @@ def plot_2Dcorr_snapshot( lat,lon,corr_2d ):
 
 def corr_snapshot( wrf_dir,DAtime,var_name,var_dim,ver_coor=None):
 
-    if var_dim == '3D':
-        nLevel = 42
-    elif var_dim == '2D':
+    if var_dim == '2D':
         nLevel = 1
+    elif var_dim == '3D':
+        if interp_H:
+            nLevel = len(H_range)
+        else:
+            nLevel = len(P_range)
+        #else:
+        #    nLevel = 42
 
     # Read correlations between a Tb and a column of model var
     if to_obs_res:
         des_path = wrf_dir+ "d03_2Dcorr_obsRes_Hxb_" + DAtime + '_Column_' +  var_name + '.pickle'
     else:
-        des_path = wrf_dir+ "d03_2Dcorr_modelRes_Hxb_" + DAtime + '_Column_' +  var_name + '.pickle'
+        if var_dim == '2D':
+            if bfAssi:
+                des_path = wrf_dir+ "d03_"+var_dim+"corr_modelRes_Hxb_" + DAtime + '_Column_' +  var_name + '_bfAssi.pickle'
+            else:
+                des_path = wrf_dir+ "d03_"+var_dim+"corr_modelRes_Hxb_" + DAtime + '_Column_' +  var_name + '_afAssi.pickle'
+        elif var_dim == '3D' and interp_H:
+            if bfAssi:
+                des_path = wrf_dir+ "itp_d03_"+var_dim+"corr_modelRes_Hxb_" + DAtime + '_Column_' +  var_name + '_bfAssi.pickle'
+            else:
+                des_path = wrf_dir+ "itp_d03_"+var_dim+"corr_modelRes_Hxb_" + DAtime + '_Column_' +  var_name + '_afAssi.pickle'
     with open( des_path,'rb' ) as f:
         corr_colxb_hxb = pickle.load( f )
     print('Shape of corr_colxb_hxb: '+ str(np.shape(corr_colxb_hxb)))
@@ -688,7 +806,10 @@ def plot_stddev_hxb_snapshot( DAtime ):
     if to_obs_res:
         des_path = Hx_dir+ "Hxb_ensStddev_obsRes_" + DAtime + '_' +  sensor + '.pickle'
     else:
-        des_path = Hx_dir+ "Hxb_ensStddev_modelRes_" + DAtime + '_' +  sensor + '.pickle'
+        if bfAssi:
+            des_path = Hx_dir+ "Hxb_ensStddev_modelRes_" + DAtime + '_' +  sensor + '_bfAssi.pickle'
+        else:
+            des_path = Hx_dir+ "Hxb_ensStddev_modelRes_" + DAtime + '_' +  sensor + '_afAssi.pickle'
     with open( des_path,'rb' ) as f:
         stddev_hxb = pickle.load( f )
     print('Shape of stddev_hxb: '+ str(np.shape(stddev_hxb)))
@@ -720,21 +841,21 @@ def plot_stddev_hxb_snapshot( DAtime ):
     lon_min = d_wrf_d03['lon_min']
     lon_max = d_wrf_d03['lon_max']
 
-    #min_corr = -0.5
-    #max_corr = 0.5
+    min_v = 0
+    max_v = 15
     ax.set_extent([lon_min, lon_max, lat_min, lat_max], crs=ccrs.PlateCarree())
     ax.coastlines(resolution='10m', color='black',linewidth=0.5)
-    cs = ax.scatter(xlon[idx_xb],xlat[idx_xb],15,stddev_hxb,cmap='gist_heat_r',edgecolors='none',transform=ccrs.PlateCarree(),)
+    cs = ax.scatter(xlon[idx_xb],xlat[idx_xb],15,stddev_hxb,cmap='gist_heat_r',edgecolors='none',vmin=min_v,vmax=max_v,transform=ccrs.PlateCarree(),)
     #cs = ax.scatter(lon,lat,15,corr_2d,cmap='RdBu_r',edgecolors='none',vmin=min_corr,vmax=max_corr,transform=ccrs.PlateCarree(),)
     if any( hh in DAtime[8:10] for hh in ['00','06','12','18'] ):
         ax.scatter(tc_lon, tc_lat, s=5, marker='*', edgecolors='blue', transform=ccrs.PlateCarree())
 
     # Colorbar
     cbaxes = fig.add_axes([0.91, 0.1, 0.03, 0.8])
-    #color_ticks = np.linspace(min_corr, max_corr, 5, endpoint=True)
+    color_ticks = np.linspace(min_v, max_v, 4,)
     cbar = fig.colorbar(cs, cax=cbaxes,fraction=0.046, pad=0.04, )
-    #cbar.set_ticks( color_ticks )
-    #cbar.ax.tick_params(labelsize=11)
+    cbar.set_ticks( color_ticks )
+    cbar.ax.tick_params(labelsize=11)
 
     #subplot title
     font = {'size':15,}
@@ -765,7 +886,10 @@ def plot_stddev_hxb_snapshot( DAtime ):
     if to_obs_res:
         save_des = plot_dir+'stddev_hxb_os_'+DAtime+'_IR_'+sensor+'.png'
     else:
-        save_des = plot_dir+'stddev_hxb_ms_'+DAtime+'_IR_'+sensor+'.png'
+        if bfAssi:
+            save_des = plot_dir+'stddev_hxb_ms_'+DAtime+'_IR_'+sensor+'_bfAssi.png'
+        else:
+            save_des = plot_dir+'stddev_hxb_ms_'+DAtime+'_IR_'+sensor+'_afAssi.png'
     
     plt.savefig( save_des )
     print( 'Saving the figure: ', save_des )
@@ -845,7 +969,10 @@ def plot_2D_stddev_xb_snapshot( lat,lon,stddev_xb_2d ):
     if to_obs_res:
         save_des = plot_dir+'stddev_xb_os_'+DAtime+'_'+var_name+'.png'
     else:
-        save_des = plot_dir+'stddev_xb_ms_'+DAtime+'_'+var_name+'.png'
+        if bfAssi:
+            save_des = plot_dir+'stddev_xb_ms_'+DAtime+'_'+var_name+'_bfAssi.png'
+        else:
+            save_des = plot_dir+'stddev_xb_ms_'+DAtime+'_'+var_name+'_afAssi.png'
     plt.savefig( save_des )
     print( 'Saving the figure: ', save_des )
     plt.close()
@@ -925,7 +1052,10 @@ def plot_3D_stddev_xb_snapshot( lat,lon,Interp_var,ver_coor,):
     if to_obs_res:
         save_des = plot_dir+'stddev_xb_os_'+DAtime+'_'+var_name+'.png'
     else:
-        save_des = plot_dir+'stddev_xb_ms_'+DAtime+'_'+var_name+'.png'
+        if bfAssi:
+            save_des = plot_dir+'stddev_xb_ms_'+DAtime+'_'+var_name+'_bfAssi.png'
+        else:
+            save_des = plot_dir+'stddev_xb_ms_'+DAtime+'_'+var_name+'_afAssi.png'
     plt.savefig( save_des )
     print( 'Saving the figure: ', save_des )
     plt.close()
@@ -939,7 +1069,10 @@ def stddev_xb_snapshot( wrf_dir,DAtime,var_name,var_dim,ver_coor=None):
         nLevel = 1
 
     # Read ensemble standard deviation of xb
-    des_path = wrf_dir+ "xb_d03_"+var_dim+"_ensStddev_" + DAtime + '_' +  var_name + '.pickle'
+    if bfAssi:
+        des_path = wrf_dir+ "xb_d03_"+var_dim+"_ensStddev_" + DAtime + '_' +  var_name + '_bfAssi.pickle'
+    else:
+        des_path = wrf_dir+ "xb_d03_"+var_dim+"_ensStddev_" + DAtime + '_' +  var_name + '_afAssi.pickle'
     with open( des_path,'rb' ) as f:
         stddev_xb = pickle.load( f )
     print('Shape of stddev_xb: '+ str(np.shape(stddev_xb)))
@@ -951,7 +1084,10 @@ def stddev_xb_snapshot( wrf_dir,DAtime,var_name,var_dim,ver_coor=None):
         idx_xb = np.arange(xmax*ymax)
 
     # Read WRF domain
-    wrf_file = big_dir+Storm+'/'+Exper_name+'/fc/'+DAtime+'/wrf_enkf_input_d03_mean'
+    if bfAssi:
+        wrf_file = big_dir+Storm+'/'+Exper_name+'/fc/'+DAtime+'/wrf_enkf_input_d03_mean'
+    else:
+        wrf_file = big_dir+Storm+'/'+Exper_name+'/fc/'+DAtime+'/wrf_enkf_output_d03_mean'
     ncdir = nc.Dataset( wrf_file, 'r')
     # read lon and lat
     xlon = ncdir.variables['XLONG'][0,:,:].flatten()
@@ -969,22 +1105,25 @@ def stddev_xb_snapshot( wrf_dir,DAtime,var_name,var_dim,ver_coor=None):
 
 if __name__ == '__main__':
 
-    big_dir = '/scratch/06191/tg854905/Pro2_PSU_MW/'#'/expanse/lustre/scratch/zuy121/temp_project/Pro2_PSU_MW/' #'/scratch/06191/tg854905/Pro2_PSU_MW/'
+    big_dir = '/scratch/06191/tg854905/Clean_Pro2_PSU_MW/'#'/expanse/lustre/scratch/zuy121/temp_project/Pro2_PSU_MW/' #'/scratch/06191/tg854905/Pro2_PSU_MW/'
     small_dir = '/work2/06191/tg854905/stampede2/Pro2_PSU_MW/'#'/expanse/lustre/projects/pen116/zuy121/Pro2_PSU_MW/'  #'/work2/06191/tg854905/stampede2/Pro2_PSU_MW/'
 
     # ---------- Configuration -------------------------
-    Storm = 'IRMA'
-    DA = 'IR-WSM6Ens'
-    MP = 'THO'
+    Storm = 'MARIA'
+    DA = 'CONV'
+    MP = 'WSM6'
 
     v_interest = [ 'QSNOW',] #[ 'PSFC',]#'rt_vo']
     sensor = 'abi_gr'
     ch_list = ['8',]
     fort_v = ['obs_type','lat','lon','obs']
 
-    start_time_str = '201709030600'
-    end_time_str = '201709030600'
+    start_time_str = '201709160000'
+    end_time_str = '201709160000'
     Consecutive_times = True
+
+    # before or after assimilation
+    bfAssi = True
 
     # Number of ensemble members
     num_ens = 60
@@ -1011,7 +1150,7 @@ if __name__ == '__main__':
     If_cal_corr = True #! The vertical interpolation has been performed in ModelX_calculate_pert_stddev.py 
     If_save = True
 
-    If_plot_stddev_hxb_snapshot = True
+    If_plot_stddev_hxb_snapshot = False
     If_plot_stddev_xb_snapshot = True
     
     If_plot_corr_snapshot = True
@@ -1036,12 +1175,17 @@ if __name__ == '__main__':
             wrf_dir = big_dir+Storm+'/'+Exper_name+'/fc/'+DAtime+'/'
             for var_name in v_interest:
                 print('Calculate '+var_name+'...')
-                cal_2Dcorr_IR_ColVar( DAtime, var_name)
+                var_dim = UD.def_vardim( var_name )
+                if var_dim == '2D':
+                    cal_2Dcorr_IR_ColVar( DAtime, var_name, var_dim)
+                else:
+                    if interp_H and not interp_P:
+                        cal_3Dcorr_IR_ColVar( DAtime, var_name, var_dim, H_range)
 
     # Plot the ensemble spread of hxb per snapshot
     if If_plot_stddev_hxb_snapshot:
         print('------------ Plot the ensemble spread of hxb --------------')
-        plot_dir = small_dir+Storm+'/'+Exper_name+'/Vis_analyze/Ens_stddev_hxb/'
+        plot_dir = small_dir+'/Clean_results/'+Storm+'/'+Exper_name+'/Vis_analyze/Ens_stddev_hxb/'
         plotdir_exists = os.path.exists( plot_dir )
         if plotdir_exists == False:
             os.mkdir(plot_dir)
@@ -1055,7 +1199,7 @@ if __name__ == '__main__':
     # Plot the ensemble spread of xb per snapshot
     if If_plot_stddev_xb_snapshot:
         print('------------ Plot the ensemble spread of xb --------------')
-        plot_dir = small_dir+Storm+'/'+Exper_name+'/Vis_analyze/Ens_stddev_xb/'
+        plot_dir = small_dir+'/Clean_results/'+Storm+'/'+Exper_name+'/Vis_analyze/Ens_stddev_xb/'
         plotdir_exists = os.path.exists( plot_dir )
         if plotdir_exists == False:
             os.mkdir(plot_dir)
@@ -1066,8 +1210,12 @@ if __name__ == '__main__':
             print('At '+DAtime)
             for var_name in v_interest:
                 print('Plot '+var_name+'...')
-                if interp_H and not interp_P:
-                    stddev_xb_snapshot( wrf_dir,DAtime,var_name,var_dim,H_range)
+                var_dim = UD.def_vardim( var_name )
+                if var_dim == '2D':
+                    stddev_xb_snapshot( wrf_dir,DAtime,var_name,var_dim)
+                else:
+                    if interp_H and not interp_P:
+                        stddev_xb_snapshot( wrf_dir,DAtime,var_name,var_dim,H_range)
 
     # Plot the correlations per snapshot
     if If_plot_corr_snapshot:

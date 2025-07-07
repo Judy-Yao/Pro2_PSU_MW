@@ -4,3 +4,5 @@ error_*
 out_*
 *.mpi
 *.mod
+MW.o*
+MW.e*

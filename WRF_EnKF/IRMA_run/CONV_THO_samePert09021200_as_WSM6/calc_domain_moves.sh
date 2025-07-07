@@ -215,6 +215,7 @@ for i in `seq 0 $((end_index-1))`; do
           echo 'Move one step/grid in j direction.'
         fi
       fi
+
     done
   else
     dt_from1stVital=`echo "$dt_from1stVital + $dmin_vitals" |bc`

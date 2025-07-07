@@ -6,13 +6,13 @@
 # Author: Zhu (Judy) Yao. July 27 - 28, 2022
 
 #####header for stampede######
-#SBATCH -J Harveymw
-#SBATCH -N 4
-#SBATCH --ntasks-per-node 48
+#SBATCH -J toMW2
+#SBATCH -N 3
+#SBATCH --ntasks-per-node 80
 #SBATCH -p icx
-#SBATCH -t 03:00:00
-#SBATCH -o out_mw
-#SBATCH -e error_mw
+#SBATCH -t 00:30:00
+#SBATCH -o MW.o%j
+#SBATCH -e MW.e%j
 #SBATCH --mail-type=ALL
 #SBATCH --mail-user=zuy121@psu.edu
 
@@ -26,18 +26,17 @@ module load phdf5/1.14.3 #phdf5/1.8.16
 
 # Fill in the storm name and experiment name
 Storm=HARVEY
-Exper=JerryRun/MW_WSM6
-Exper_obs=JerryRun/MW_WSM6
-
+Exper=CONV+IR+MW_WSM6_moreMW
+Exper_obs=CONV+IR+MW_WSM6_moreMW
 
 # Parent paths
-Big_dir=/scratch/06191/tg854905/Pro2_PSU_MW/
-Small_dir=/work2/06191/tg854905/stampede2/Pro2_PSU_MW
+Big_dir=/scratch/06191/tg854905/Clean_Pro2_PSU_MW/
+Small_dir=/work2/06191/tg854905/stampede2/Pro2_PSU_MW/Clean_results/
 Code_dir=/work2/06191/tg854905/stampede2/Pro2_PSU_MW/SourceCode/Post_WRF_EnKF/toHx/MW/newrt 
 
 ############ User control parameters
 date_st=201708221200        # Start date  
-date_ed=201708222300        # End date (24 forecast hrs can be done in < 2 hr w/4 nodes on skx queues
+date_ed=201708221200        # End date (24 forecast hrs can be done in < 2 hr w/4 nodes on skx queues
 nE=60               # Number of ens members
 dom=3                           # Domain you are running it on 
 state=("input" "output") # Input or output or both

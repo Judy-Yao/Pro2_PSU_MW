@@ -16,8 +16,10 @@ control.bestrack_dir = '../../Preprocess_Obs/raw_Obs/Bestrack/'; % directory whe
 control.output_dir = '../../Preprocess_Obs/toEnKFobs/MW/'; % directory into which the microwave-observation-preprocessing system (MOPS) outputs
 control.geogrid_dir = '../../Preprocess_Domain/';
 % ---Storm information
-control.storm_phase = {'JOSE',}; % !!! It is recommended to process ONE storm at a time in spite of MOPS's ability to process as many storms as possible.
-control.period = {{'201709050000','201709070000'},}; % Date range of case study (yyyymmddHHMM)
+control.storm_phase = {'HARVEY',}; % !!! It is recommended to process ONE storm at a time in spite of MOPS's ability to process as many storms as possible.
+control.period = {{'201708221100','201708231300'},}; % Date range of case study (yyyymmddHHMM) 
+%control.period = {{'201709152330','201709160000'},}; % Date range of case study (yyyymmddHHMM) 
+% For Irma: {'201709022330','201709040000'},
 
 % --- WRF simulation setup
 control.domain = 'd03';

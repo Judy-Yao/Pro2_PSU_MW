@@ -194,8 +194,8 @@ def plot_hist_1by2():
     var_its = ['mslp','vmax']
 
     # Set up figure
-    fig = plt.figure( figsize=(6.5,4.25),dpi=200) # standard: 6.5,8.5
-    grids = fig.add_gridspec(ncols=1,nrows=2,hspace=0.12)
+    fig = plt.figure( figsize=(6.5,4.45),dpi=200) # standard: 6.5,8.5
+    grids = fig.add_gridspec(ncols=1,nrows=2,hspace=0.25) #hspace=0.12
     ax = {}
     for iv in var_its:
         ax[iv] = fig.add_subplot( grids[ var_its.index(iv) ] )
@@ -212,16 +212,21 @@ def plot_hist_1by2():
                 print(iv)
                 bin_edges = hist_var[imp][ida][iv]['bin_edges']
                 x_axis = (bin_edges[:-1]+bin_edges[1:])/2
-                ax[iv].plot(x_axis,hist_var[imp][ida][iv]['hist'],color=colors[imp],linestyle=lines[ida],linewidth='2',alpha=alphas[imp],label=imp+':'+ida)
+                if ida == 'CONV':
+                     ax[iv].plot(x_axis,hist_var[imp][ida][iv]['hist'],color=colors[imp],linestyle=lines[ida],linewidth='2',alpha=0.3,label=imp+'_'+ida)
+                elif ida == 'IR':
+                    ax[iv].plot(x_axis,hist_var[imp][ida][iv]['hist'],color=colors[imp],linestyle=lines[ida],linewidth='2',alpha=0.6,label=imp+'_'+ida)
+                elif ida == 'MW':
+                    ax[iv].plot(x_axis,hist_var[imp][ida][iv]['hist'],color=colors[imp],linestyle=lines[ida],linewidth='3',alpha=alphas[imp],label=imp+'_'+ida)
                 ax[iv].grid(True,linewidth=1, color='gray', alpha=0.5, linestyle='-')
 
-    # Legend
-    lgd = ax[var_its[0]].legend(loc='upper left',ncol=2,fontsize='8')
-    #lgd_1 = [MP[0]+':'+ida for ida in DA]
-    #lgd_2 = [MP[1]+':'+ida for ida in DA]
-    #lines_DA = ax[var_its[0]].get_lines()
-    #legend1 = ax[var_its[0]].legend([lines_DA[i] for i in [0,1,2,]], lgd_1,fontsize='8',loc='upper left')
-    #legend2 = ax[var_its[1]].legend([lines_DA[i] for i in [3,4,5,]], lgd_2,fontsize='8',loc='upper right') 
+    ## Legend
+    #lgd = ax[var_its[0]].legend(loc='upper left',ncol=2,fontsize='8')
+    ##lgd_1 = [MP[0]+':'+ida for ida in DA]
+    ##lgd_2 = [MP[1]+':'+ida for ida in DA]
+    ##lines_DA = ax[var_its[0]].get_lines()
+    ##legend1 = ax[var_its[0]].legend([lines_DA[i] for i in [0,1,2,]], lgd_1,fontsize='8',loc='upper left')
+    ##legend2 = ax[var_its[1]].legend([lines_DA[i] for i in [3,4,5,]], lgd_2,fontsize='8',loc='upper right') 
 
 
     # axes attributes
@@ -234,14 +239,16 @@ def plot_hist_1by2():
             ax[iv].set_xticks( x_ticks )
 
 
-    # Set titles
+    # Set label names
+    fig.text(0.05,0.5,'Probability Distribution Function', fontsize=12, ha='center', va='center',rotation='vertical')
     for iv in var_its:
+        ax[iv].tick_params(axis='both', which='major', labelsize=15)
         if iv == 'track':
-            ax[iv].set_ylabel( 'Track Bias (km)',fontsize = 12 )
+            ax[iv].set_xlabel( 'Track Bias (km)',fontsize = 10 )
         elif iv == 'mslp':
-            ax[iv].set_ylabel( 'MSLP Bias (hPa)',fontsize = 12 )
+            ax[iv].set_xlabel( 'MSLP Bias (hPa)',fontsize = 10 )
         elif iv == 'vmax':
-            ax[iv].set_ylabel( 'Vmax Bias (m $\mathregular{s^{-1}}$)',fontsize = 12 )
+            ax[iv].set_xlabel( 'Vmax Bias (m $\mathregular{s^{-1}}$)',fontsize = 10 )
 
     # Save figure
     des_name = small_dir+'/Clean_results/SYSTEMS/Vis_analyze/Paper1/EnKF_HPI_hist.png'
@@ -300,13 +307,13 @@ def plot_EnKF_HPI():
                     print('Experiment does not exist!')
                     continue
                 # plot
-                plot_one( ax[ist]['ax0'],ax[ist]['ax1'],d_model[ist][imp][ida],colors[imp],lines[ida],2,imp+':'+ida)
+                plot_one( ax[ist]['ax0'],ax[ist]['ax1'],d_model[ist][imp][ida],colors[imp],lines[ida],2,imp+'_'+ida)
 
     # Manullay control Legend
     lgd = []
     for imp in MP:
         for ida in DA:
-            lgd.append(imp+':'+ida)
+            lgd.append(imp+'_'+ida)
 
     if if_btk:
         lgd = ['Best Track'] + lgd
@@ -334,6 +341,10 @@ def plot_EnKF_HPI():
         if Storms.index(ist) < len(Storms)-1:
             ax[ist]['ax0'].set_xticklabels([]) 
             ax[ist]['ax1'].set_xticklabels([])
+        else:
+            xtickll = [str(it+1) for it in lead_t[::4]]
+            ax[ist]['ax0'].set_xticklabels(xtickll)
+            ax[ist]['ax1'].set_xticklabels(xtickll)
         # y ticks
         if ist == 'IRMA':
             ax[ist]['ax0'].set_ylim([920,980])
@@ -361,19 +372,19 @@ def plot_EnKF_HPI():
     ax[Storms[-1]]['ax1'].set_xlabel('EnKF Cycle',fontsize=12)
 
     # Set panel labels
-    for ist in Storms:
-        if Storms.index(ist) == 0:
-            fig.text(0.13,0.94,'(a1)', fontsize=12, ha='center', va='center')
-            fig.text(0.59,0.94,'(a2)', fontsize=12, ha='center', va='center')
-        elif Storms.index(ist) == 1:
-            fig.text(0.13,0.71,'(b1)', fontsize=12, ha='center', va='center')
-            fig.text(0.59,0.71,'(b2)', fontsize=12, ha='center', va='center')
-        elif Storms.index(ist) == 2:
-            fig.text(0.13,0.48,'(c1)', fontsize=12, ha='center', va='center')
-            fig.text(0.59,0.48,'(c2)', fontsize=12, ha='center', va='center')
-        elif Storms.index(ist) == 3:
-            fig.text(0.13,0.25,'(d1)', fontsize=12, ha='center', va='center')
-            fig.text(0.59,0.25,'(d2)', fontsize=12, ha='center', va='center')
+    #for ist in Storms:
+    #    if Storms.index(ist) == 0:
+    #        fig.text(0.13,0.94,'(a1)', fontsize=12, ha='center', va='center')
+    #        fig.text(0.59,0.94,'(a2)', fontsize=12, ha='center', va='center')
+    #    elif Storms.index(ist) == 1:
+    #        fig.text(0.13,0.71,'(b1)', fontsize=12, ha='center', va='center')
+    #        fig.text(0.59,0.71,'(b2)', fontsize=12, ha='center', va='center')
+    #    elif Storms.index(ist) == 2:
+    #        fig.text(0.13,0.48,'(c1)', fontsize=12, ha='center', va='center')
+    #        fig.text(0.59,0.48,'(c2)', fontsize=12, ha='center', va='center')
+    #    elif Storms.index(ist) == 3:
+    #        fig.text(0.13,0.25,'(d1)', fontsize=12, ha='center', va='center')
+    #        fig.text(0.59,0.25,'(d2)', fontsize=12, ha='center', va='center')
 
 
     # Set titles
@@ -415,7 +426,7 @@ def plot_Precip():
     colors = {'WSM6': '#FF3333','THO':'#3333FF'}
 
     # Customize linestyle
-    lines = {'CONV':'-','IR':'--','IR+MW':(0, (1, 1))}
+    lines = {'CONV':'-','IR':'--','MW':(0, (1, 1))}
 
     # Set up figure
     fig = plt.figure( figsize=(6.5,8.5),dpi=200)
@@ -505,13 +516,13 @@ if __name__ == '__main__':
     lead_t = list(range(0, cycles, 1))
 
     # observation
-    if_tcvital = False
+    if_tcvital = True
     if_btk = True
 
     # EnKF HPI
     if_plot_HPI = True
-    plot_histogram = True
-    plot_evo_wrt_time = False
+    plot_histogram = False
+    plot_evo_wrt_time = True
     slp_xa = True
     Vmax_xa = True
     slp_xb = False

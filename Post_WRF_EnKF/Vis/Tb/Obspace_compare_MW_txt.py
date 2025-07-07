@@ -577,12 +577,12 @@ if __name__ == '__main__':
     small_dir =  '/work2/06191/tg854905/stampede2/Pro2_PSU_MW/Clean_results/'
 
     # ---------- Configuration -------------------------
-    Storm = 'JOSE'
+    Storm = 'MARIA'
     DA = 'CONV'
     MP = 'WSM6'
 
-    start_time_str = '201709051200'
-    end_time_str = '201709051200'
+    start_time_str = '201709161300'
+    end_time_str = '201709161300'
     Consecutive_times = True
 
     plot_full = True

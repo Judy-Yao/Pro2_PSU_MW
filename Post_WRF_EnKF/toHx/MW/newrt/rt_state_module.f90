@@ -415,7 +415,7 @@ contains
       call get_variable3d_local(fid,'QGRAUP',  xbeg1, xend1, ybeg1, yend1, 1, zmax,  time_idx, state%qgraup)
       if (state%mp_physics_name == 'Thompson08') then
         call get_variable3d_local(fid,'QNRAIN',   xbeg1, xend1, ybeg1, yend1, 1, zmax,  time_idx, state%nrain)
-        print *, state%nrain
+        !print *, state%nrain
       else if (state%mp_physics_name == 'NSSL') then
         call get_variable3d_local(fid,'QNRAIN',   xbeg1, xend1, ybeg1, yend1, 1, zmax,  time_idx, state%nrain)
         call get_variable3d_local(fid,'QNSNOW',   xbeg1, xend1, ybeg1, yend1, 1, zmax,  time_idx, state%nsnow)

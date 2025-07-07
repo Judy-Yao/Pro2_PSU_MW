@@ -1,0 +1,1 @@
+namelist_enkf_new.sh

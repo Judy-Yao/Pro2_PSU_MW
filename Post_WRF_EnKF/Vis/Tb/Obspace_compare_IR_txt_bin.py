@@ -24,7 +24,7 @@ def RMSE(simu, obs):
     return np.sqrt( ((simu - obs) ** 2).mean() )
 
 def Bias(simu, obs):
-    return  np.sum((simu - obs),0)/np.size(obs,0)
+    return  np.nansum((simu - obs),0)/np.size(obs,0)
 
 def mean_Yo_Hx(simu, obs):
     return  np.sum((obs - simu),0)/np.size(obs,0)
@@ -423,10 +423,11 @@ def plot_Tb(Storm, Exper_name, Hx_dir, DAtime, sensor, ch_list ):
     #subplot title
     matplotlib.rcParams['mathtext.fontset'] = 'custom'
     matplotlib.rcParams['mathtext.bf'] = 'STIXGeneral:italic:bold'
+
     font = {'size':9,}
     ax[0].set_title('Yo', font, fontweight='bold')
-    ax[1].set_title(r'$\mathbf{\overline{H(Xb)}}$', font, )
-    ax[2].set_title(r'$\mathbf{\overline{H(Xa)}}$', font)
+    ax[1].set_title(r"$\overline{\mathbf{H}(\mathbf{Xb})}$", font, )
+    ax[2].set_title(r'$\overline{H(Xa)}$', font)
 
     #title for all
     if not limit:
@@ -608,23 +609,23 @@ if __name__ == '__main__':
     small_dir =  '/work2/06191/tg854905/stampede2/Pro2_PSU_MW/Clean_results/'
 
     # ---------- Configuration -------------------------
-    Storm = 'HARVEY'
-    DA = 'MW'
-    MP = 'WSM6'
+    Storm = 'JOSE'
+    DA = 'IR'
+    MP = 'THO'
  
     sensor = 'abi_gr'
     ch_list = ['8',]
     fort_v = ['obs_type','lat','lon','obs']
 
-    start_time_str = '201708221800'
-    end_time_str = '201708230300'
+    start_time_str = '201709050000'
+    end_time_str = '201709050600'
     Consecutive_times = True
     
     # limitations
     limit = False
 
-    Interp_to_obs = True
-    plot_full = True
+    Interp_to_obs = False
+    plot_full = False
     plot_diff = True
     plot_scatter = True
     # ------------------------------------------------------   
@@ -632,7 +633,7 @@ if __name__ == '__main__':
 
     # Create experiment names
 
-    Exper_name = UD.generate_one_name( Storm,DA,MP )
+    Exper_name = 'CONV+IR-THO_MeanBiasRemoval' #UD.generate_one_name( Storm,DA,MP )
     Exper_obs =  UD.generate_one_name( Storm,'IR',MP )
     
     if not Consecutive_times:

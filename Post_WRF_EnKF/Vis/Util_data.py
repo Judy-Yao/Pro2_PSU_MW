@@ -1,6 +1,6 @@
 
 from numba import njit, prange
-import os,fnmatch # functions for interacting with the operating system
+import sys,os,fnmatch # functions for interacting with the operating system
 import numpy as np
 from wrf import getvar
 import time
@@ -19,10 +19,24 @@ R_D = 287.0
 R = 287.04
 CP = 7.0*R_D/2.0
 GAMMA = 0.0065
-#NX = 297
-#NY = 297
-#NZ = 42
+NX = 297
+NY = 297
+NZ = 42
 earth_radius_m = 6371200
+
+# ------------------------------------------------------------------------------------------------------
+#           Operation: Check python version
+# ------------------------------------------------------------------------------------------------------
+def check_version( required ):
+
+    # Get the current Python version
+    current_version = sys.version_info[:2]
+    # Check if the current Python version matches the required version
+    if current_version == required:
+        print(f"Correct Python version used: {sys.version}")
+    else:
+        print(f"Incorrect Python version! Expected {required[0]}.{required[1]}, but got {sys.version}")
+        sys.exit(1)  # Exit with a non-zero status to indicate an error
 
 # ------------------------------------------------------------------------------------------------------
 #           Operation: Basic Geography Modelling
@@ -148,13 +162,17 @@ def interpolate_locations( DAtimes, bestrack ):
 
 # Return the variable dimension
 def def_vardim( var_name ):
-    if var_name == 'PSFC':
+    if var_name == 'PSFC' or var_name == 'psfc':
         return '2D'
-    elif var_name == 'U':
+    elif var_name == 'U' or var_name == 'uwind':
         return '3D'
-    elif var_name == 'V':
+    elif var_name == 'V' or var_name == 'vwind':
         return '3D'
-    elif var_name == 'Temp':
+    elif var_name == 'wspd':
+        return '3D'
+    elif var_name == 'Temp' or var_name == 'tk':
+        return '3D'
+    elif var_name == 'td':
         return '3D'
     elif var_name == 'W':
         return '3D'
@@ -191,9 +209,6 @@ def generate_one_name( Storm,DA,MP ):
             return 'CONV_WSM6'
     else:
         raise ValueError('No corresponding MP!')
-
-
-
 # Automate the experiment name for one storm
 def old_generate_one_name( Storm,DA,MP ):
 
@@ -1091,7 +1106,7 @@ def t_surf_slp( level_flat,p,t,z,q,PCONST ):
     return t_surf, t_sea_level
 
 # Rewrite the f_computeslp function from WRF in python
-def compute_slp( ncdir ):
+def compute_slp( ncdir  ):
 
     ridiculous_mm5_test = True
     # specific constants for assumptions made in this routine:

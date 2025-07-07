@@ -20,11 +20,12 @@ source util.sh
 # Configuration
 #---------------------------------------------------------
 Storm=MARIA
-Exp_interest=("IR-J_DA+J_WRF+J_init-SP-intel17-WSM6-24hr-hroi900")
+Exp_interest=("CONV+IR_WSM6")
+#Exp_interest=("IR-J_DA+J_WRF+J_init-SP-intel17-WSM6-24hr-hroi900")
 #Exp_interest=("J_DA+J_WRF+J_init" "IR-J_DA+J_WRF+J_init" "J_DA+Y_WRF+J_init-IR+MW" "J_DA+Y_WRF+J_init-IR" "JerryRun") #IR+MW-J_DA+J_WRF+J_init-SP-intel19
 StartDate_spinup=201709151200
 StartDate_cycling=201709160000
-EndDate_cycling=201709180000
+EndDate_cycling=201709170000
 NUM_ENS=60
 MAX_DOM=3
 
@@ -32,7 +33,7 @@ if_refresh_fc=false
 if_refresh_all=true
 
 # Parent paths
-Big_dir=/scratch/06191/tg854905/Pro2_PSU_MW/
+Big_dir=/scratch/06191/tg854905/Clean_Pro2_PSU_MW/
 
 
 #---------------------------------------------------------

@@ -106,7 +106,7 @@ def plot_Tb( Storm, Exper_name, Hxb, Hxa, DAtime, sensor, ch_list, d_obs):
     head_tail = os.path.split( Hxb )
     mem = head_tail[1].replace('TB_GOES_CRTM_input_mem','')
     mem = mem.replace('_d03_2017-09-03_00:00.bin','')
-    des_name = small_dir+Storm+'/'+Exper_name+'/Vis_analyze/Tb/IR_60mem/'+DAtime+'_'+mem+'_mspace.png'
+    des_name = small_dir+'/Clean_results/'+Storm+'/'+Exper_name+'/Vis_analyze/Tb/IR_60mem/'+DAtime+'_'+mem+'_mspace.png'
     plt.savefig( des_name, dpi=300)
     plt.close()
     print('Saving the figure: ', des_name)
@@ -114,20 +114,20 @@ def plot_Tb( Storm, Exper_name, Hxb, Hxa, DAtime, sensor, ch_list, d_obs):
 
 if __name__ == '__main__':
 
-    big_dir = '/scratch/06191/tg854905/Pro2_PSU_MW/'
+    big_dir = '/scratch/06191/tg854905/Clean_Pro2_PSU_MW/'
     small_dir =  '/work2/06191/tg854905/stampede2/Pro2_PSU_MW/'
 
     # ---------- Configuration -------------------------
-    Storm = 'MARIA'
-    Exper_name = UD.generate_one_name( Storm,'CONV','THO' )
-    Exper_obs =  UD.generate_one_name( Storm,'IR','THO' )
+    Storm = 'IRMA'
+    Exper_name = UD.generate_one_name( Storm,'IR','WSM6' )
+    Exper_obs =  UD.generate_one_name( Storm,'IR','WSM6' )
     sensor = 'abi_gr'
     ch_list = ['8',]
     fort_v = ['obs_type','lat','lon','obs']
     num_ens = 60
 
-    start_time_str = '201709160000'
-    end_time_str = '201709160000'
+    start_time_str = '201709030100'
+    end_time_str = '201709030100'
     Consecutive_times = True
 
     If_plot = True

@@ -20,12 +20,11 @@ import time
 import subprocess
 import pickle
 
-import Read_Obspace_IR as ROIR
 from Util_Vis import HydroIncre
 import Util_data as UD
 #import matlab.engine
-import Diagnostics as Diag 
-from calculate_pert_stddev_x_IR import vertical_interp 
+import Diagnostics as Diag
+from Hxb_IR_calculate_pert_stddev import vertical_interp
 
 # Find the increment (posterior minus prior) in nc format and write it into another nc file
 def Find_ncdiff( wrf_dir ):
@@ -100,7 +99,7 @@ def plot_var_incre_norm_timeseries( small_dir, Storm, Exper_name, DAtimes, var, 
     ax.set_title( 'Domain-averaged '+var,fontweight="bold",fontsize='15' )
 
     # Save the figure
-    save_des = small_dir+Storm+'/'+Exper_name+'/Vis_analyze/EnKF/norm_increment_'+var+'_'+DAtimes[0]+'_'+DAtimes[-1]+'.png'
+    save_des = small_dir+'Clean_results/'+Storm+'/'+Exper_name+'/Vis_analyze/EnKF/norm_increment_'+var+'_'+DAtimes[0]+'_'+DAtimes[-1]+'.png'
     plt.savefig( save_des )
     print( 'Saving the figure: ', save_des )
     plt.close()
@@ -149,26 +148,26 @@ def transform_Q( ave_var_overT ):
     return [n_nega,nega_min,nega_max,n_posi,posi_min,posi_max,ave_trans_Q]
 
 # Plot increment itself
-def plot_var_incre_timeseries( ave_var_overT,ave_T_profile,geoHkm=None ):
+def plot_var_incre_timeseries( ave_var_overT,ave_T_profile,hgt_profile ):
 
+    print(np.shape( ave_var_overT ))
+    print(np.shape( ave_T_profile ))
+    print(np.shape(  hgt_profile))
     # Set up figure
     fig = plt.figure( figsize=(12,6), dpi=300 )
     ax = plt.subplot(1,1,1)
     # Set up coordinates
-    if not interp_P:
+    if not if_interp:
         xv = [datetime.strptime( it,"%Y%m%d%H%M") for it in DAtimes]
         #y_bottom = np.arange(0,10,1)
         #y_middle = np.arange(10,15,0.5)
         #y_top = np.arange(15,31,1)
         #y_range = np.concatenate( (y_bottom,y_middle,y_top),axis=0 ) # control the scale
-        y_bottom = np.arange(0,5,0.5)
-        y_top = np.arange(5,31,1)
-        y_range = np.concatenate( (y_bottom,y_top),axis=0 )
 
-        y_axis_rg = range(len(y_range))
-        f_interp = interpolate.interp1d( y_range, y_axis_rg)
-        yv = f_interp( geoHkm )
-        xcoor, ycoor = np.meshgrid( xv, yv )
+        #y_axis_rg = range(len(y_range))
+        #f_interp = interpolate.interp1d( y_range, y_axis_rg)
+        #yv = f_interp( geoHkm )
+        xcoor, ycoor = np.meshgrid( xv, hgt_profile )
     else:
         xv = [datetime.strptime( it,"%Y%m%d%H%M") for it in DAtimes]#range( np.shape(ave_norm_overT)[0] )
         yv = range( np.shape(ave_var_overT)[1])
@@ -237,7 +236,7 @@ def plot_var_incre_timeseries( ave_var_overT,ave_T_profile,geoHkm=None ):
         #color_bar.ax.set_xlabel('Domain-mean Increment',fontsize=15)
 
     # Plot T profile
-    if not interp_P:
+    if not if_interp:
         pass
     else:
         pass
@@ -251,18 +250,30 @@ def plot_var_incre_timeseries( ave_var_overT,ave_T_profile,geoHkm=None ):
     ax.set_xlim( start_time, end_time)
     ax.tick_params(axis='x', labelrotation=45, )
     # set Y label
-    if not interp_P:
+    if not if_interp:
+        #ylabel_like = [0.0,5.0,10.0,11.0,12.0,13.0,14.0,15.0,20.0,25.0,30.0]
+        #yticks = []
+        #list_y_range = list( hgt_profile )
+        #for it in ylabel_like:
+        #    yticks.append( list_y_range.index(it) )
+        #ax.set_yticks( yticks )
+        #ax.set_yticklabels( [str(it) for it in ylabel_like],fontsize=15 )
+        ax.set_ylabel('Height (KM)',fontsize=15)
+        ax.set_ylim(ymin=0,ymax=20) # cut off data above 25km
+        ax.tick_params(axis='y', labelsize=12)
+
+    elif interp_H:
         ylabel_like = [0.0,1.0,2.0,3.0,4.0,5.0,10.0,15.0,20.0]
         #ylabel_like = [0.0,5.0,10.0,11.0,12.0,13.0,14.0,15.0,20.0,25.0,30.0]
         yticks = []
-        list_y_range = list(y_range)
+        list_y_range = list(H_range)
         for it in ylabel_like:
             yticks.append( list_y_range.index(it) )
         ax.set_yticks( yticks )
         ax.set_yticklabels( [str(it) for it in ylabel_like],fontsize=15 )
         ax.set_ylabel('Height (KM)',fontsize=15)
-        ax.set_ylim(ymin=0,ymax=25) # cut off data above 25km
-    else:
+        ax.set_ylim(ymin=0,ymax=20) # cut off data above 25km
+    elif interp_P:
         ax.set_yticks( yv[::10] )
         ax.set_yticklabels( [str(it) for it in P_range[::10]],fontsize=15 )
         ax.set_ylabel('Pressure (hPa)',fontsize=15)
@@ -291,14 +302,21 @@ def plot_var_incre_timeseries( ave_var_overT,ave_T_profile,geoHkm=None ):
     fig.suptitle(Storm+': '+Exper_name, fontsize=10, fontweight='bold')
 
     # Save the figure
-    if not interp_P and specify_area:
-        save_des = small_dir+Storm+'/'+Exper_name+'/Vis_analyze/EnKF/CircleMean_ML_increment_'+var_name+'_'+DAtimes[0]+'_'+DAtimes[-1]+'.png'
-    elif interp_P and not specify_area:
-        save_des = small_dir+Storm+'/'+Exper_name+'/Vis_analyze/EnKF/DomainMean_Interp_increment_'+var_name+'_'+DAtimes[0]+'_'+DAtimes[-1]+'.png'
-    elif interp_P and specify_area:
-        save_des = small_dir+Storm+'/'+Exper_name+'/Vis_analyze/EnKF/CircleMean_Interp_increment_'+var_name+'_'+DAtimes[0]+'_'+DAtimes[-1]+'.png'
+    if specify_area:
+        if if_interp and interp_H:
+            save_des = plot_dir+'CircleMean_HInterp_increment_'+var_name+'_'+DAtimes[0]+'_'+DAtimes[-1]+'.png'
+        elif if_interp and interp_P:
+            save_des = plot_dir+'CircleMean_PInterp_increment_'+var_name+'_'+DAtimes[0]+'_'+DAtimes[-1]+'.png'
+        elif not if_interp:
+            save_des = plot_dir+'CircleMean_ML_increment_'+var_name+'_'+DAtimes[0]+'_'+DAtimes[-1]+'.png'
     else:
-        pass
+        if if_interp and interp_H:
+            save_des = plot_dir+'DomainMean_HInterp_increment_'+var_name+'_'+DAtimes[0]+'_'+DAtimes[-1]+'.png'
+        elif if_interp and interp_P:
+            save_des = plot_dir+'DomainMean_PInterp_increment_'+var_name+'_'+DAtimes[0]+'_'+DAtimes[-1]+'.png'
+        elif not if_interp:
+            save_des = plot_dir+'DomainMean_ML_increment_'+var_name+'_'+DAtimes[0]+'_'+DAtimes[-1]+'.png'
+
     plt.savefig( save_des )
     print( 'Saving the figure: ', save_des )
     plt.close()
@@ -309,17 +327,20 @@ def eachVar_timeSeries_cal( ):
     # Dimension
     xmax = 297
     ymax = 297
-    if 'Q' in var_name:
-        nLevel = 42 
-
-    if interp_P: # ---------- Interpolate to specified pressure levels ----------
-        # Construct a new array (using interpolation)
-        ave_var_overT = np.zeros( [len(DAtimes),len(P_range)] )
-        ave_T_profile = np.zeros( [len(DAtimes),len(P_range)] )
+    if if_interp:
+        if interp_H:
+            nLevel = len(H_range)
+        else:
+            nLevel = len(P_range)
     else:
-        # Construct a new array at model level
-        ave_var_overT = np.zeros( [len(DAtimes),nLevel] )
-        ave_T_profile = np.zeros( [len(DAtimes),nLevel] ) 
+        nLevel = 42
+
+    # Construct new arrays
+    ave_var_overT = np.zeros( [len(DAtimes),nLevel] )
+    ave_T_profile = np.zeros( [len(DAtimes),nLevel] )
+    if not if_interp:
+        ave_pres = np.zeros( [len(DAtimes),nLevel] )
+        ave_hgt = np.zeros( [len(DAtimes),nLevel] )
 
     if specify_area:
         # Read the best track position every 6 hours
@@ -357,132 +378,105 @@ def eachVar_timeSeries_cal( ):
         else:
             idx_x = np.arange(xmax*ymax)
  
-        # Read increment of variable of interest
+        # Calculate increment of variable of interest
+        xa_file = big_dir+Storm+'/'+Exper_name+'/fc/'+DAtime+'/wrf_enkf_output_d03_mean'
+        xb_file = big_dir+Storm+'/'+Exper_name+'/fc/'+DAtime+'/wrf_enkf_input_d03_mean'
+        xa_ncdir = nc.Dataset(xa_file, 'r')
+        xb_ncdir = nc.Dataset(xb_file, 'r')
         if 'Q' in var_name:
             # Read mixting ratios of interest
-            wrf_file = big_dir+Storm+'/'+Exper_name+'/fc/'+DAtime+'/wrf_d03_mean_increment'
-            ncdir = nc.Dataset(wrf_file, 'r')
-            var = ncdir.variables[var_name][0,:,:,:] # level,lat,lon
-            var = var.reshape( var.shape[0],-1)
-            var = var[:,idx_x] 
-        elif var_name == 'T':     
-            P1000MB=100000
-            R_D=287
-            CP=7*R_D/2
-            xa_file = big_dir+Storm+'/'+Exper_name+'/fc/'+DAtime+'/wrf_enkf_output_d03_mean'
-            xa_ncdir = nc.Dataset(xa_file, 'r')
-            xa_Pres = xa_ncdir.variables['P'][0,:,:,:] + xa_ncdir.variables['PB'][0,:,:,:]
-            xa_t = xa_ncdir.variables['T'][0,:,:,:]
-            xa_T = (xa_t+300.0)*( (xa_Pres/P1000MB)**(R_D/CP) )
-            xb_file = big_dir+Storm+'/'+Exper_name+'/fc/'+DAtime+'/wrf_enkf_input_d03_mean'
-            xb_ncdir = nc.Dataset(xb_file, 'r')
-            xb_Pres = xb_ncdir.variables['P'][0,:,:,:] + xb_ncdir.variables['PB'][0,:,:,:]
-            xb_t = xb_ncdir.variables['T'][0,:,:,:]
-            xb_T = (xb_t+300.0)*( (xb_Pres/P1000MB)**(R_D/CP) ) 
-            var = xa_T-xb_T
-            var = var.reshape( var.shape[0],-1)
-            var = var[:,idx_x]
+            xa_var = xa_ncdir.variables[var_name][0,:,:,:]
+            xb_var = xb_ncdir.variables[var_name][0,:,:,:]
+        elif var_name == 'T': # temperature
+            xa_var = getvar(xa_ncdir,'tk')
+            xb_var = getvar(xb_ncdir,'tk')
         else:
             raise ValueError('Invalid variable!')
-
-        # Read T profile
-        P1000MB=100000
-        R_D=287
-        CP=7*R_D/2
-        xa_file = big_dir+Storm+'/'+Exper_name+'/fc/'+DAtime+'/wrf_enkf_output_d03_mean'
-        xa_ncdir = nc.Dataset(xa_file, 'r')
-        xa_Pres = xa_ncdir.variables['P'][0,:,:,:] + xa_ncdir.variables['PB'][0,:,:,:]
-        xa_t = xa_ncdir.variables['T'][0,:,:,:]
-        T = (xa_t+300.0)*( (xa_Pres/P1000MB)**(R_D/CP) ) # base_state_temperature in namelist.input
-        # Source:http://gradsusr.org/pipermail/gradsusr/2011-December/031698.html 
-        T = T.reshape( T.shape[0],-1)
-        T = T[:,idx_x]
-            
-        # Set up coordinate info
-        if interp_P: # Interpolate to P level of interest
-            # Read pressure levels
-            mean_xa = big_dir+Storm+'/'+Exper_name+'/fc/'+DAtime+'/wrf_enkf_output_d03_mean'
-            ncdir = nc.Dataset( mean_xa, 'r')
-            PB = ncdir.variables['PB'][0,:,:,:]
-            P = ncdir.variables['P'][0,:,:,:]
-            P_hpa = (PB + P)/100
-            P_hpa = P_hpa.reshape( P_hpa.shape[0],-1)
-            P_hpa = P_hpa[:,idx_x] # only select value in the specified area
-            # Quality control: the P_hpa of lowest level is less than 850 mb 
-            idx_bad = np.where( P_hpa[0,:] < 900 )[0]
-            idx_all = range( P_hpa.shape[1] )
-            idx_good = np.delete(idx_all, idx_bad)
-            good_P_hpa = P_hpa[:,idx_good]
-            good_T = T[:,idx_good]
-            good_var = var[:,idx_good]
-            # Interpolate 
-            T_interp = np.zeros( [len(P_range),len(idx_good)] )  
-            var_interp = np.zeros( [len(P_range),len(idx_good)] ) 
-            start_time=time.process_time()
-            for im in range( len(idx_good) ):
-                #fT_interp = interpolate.interp1d( good_P_hpa[:,im], good_T[:,im] )
-                #T_interp[:,im] = fT_interp( P_range )
-                f_interp = interpolate.interp1d( good_P_hpa[:,im], good_var[:,im] )
-                var_interp[:,im] = f_interp( P_range )
-            end_time = time.process_time()
-            print ('time needed for the interpolation: ', end_time-start_time, ' seconds')
-            # Process for mixing ratio
-            #T_mean = np.mean( T_interp,axis=1 )
-            var_mean = np.mean( var_interp,axis=1 )
-            idx_zero = np.where( abs(var_mean) <= 1e-8 )[0]
-            var_mean[idx_zero] = 0
-            # Perform domain mean
-            ave_var_overT[t_idx,:] = var_mean
-            #ave_T_profile[t_idx,:] = T_mean
-        else:
-            # Read height
-            mean_xa = big_dir+Storm+'/'+Exper_name+'/fc/'+DAtime+'/wrf_enkf_output_d03_mean'
-            ncdir = nc.Dataset( mean_xa, 'r')
-            PHB = ncdir.variables['PHB'][0,:,:,:]
-            PH = ncdir.variables['PH'][0,:,:,:]
-            geoHkm = (PHB+PH)/9.8/1000 # in km
-            geoHkm = geoHkm.reshape( geoHkm.shape[0],-1)
-            geoHkm = geoHkm[:,idx_x]
-            geoHkm_Dmean = np.mean( geoHkm, axis=1 )
-            geoHkm_half_eta = (geoHkm_Dmean[:-1]+geoHkm_Dmean[1:])/2
-            geoHkm_half_eta = np.ma.getdata(geoHkm_half_eta)
-            # Perform domain mean
-            T_mean = np.mean( T,axis=1 )
-            var_mean = np.mean( var,axis=1 )
-            idx_zero = np.where( abs(var_mean) <= 1e-8 )[0]
-            var_mean[idx_zero] = 0
-            ave_var_overT[t_idx,:] = var_mean
-            ave_T_profile[t_idx,:] = T_mean
-
-    # May save the data
-    if If_save:
-        # Metadata
-        current_datetime = datetime.now()
-        formatted_datetime = current_datetime.strftime('%Y-%m-%d %H:%M:%S')
-        # create data
-        if interp_P:
-            metadata = {'created_at':formatted_datetime, 'Interpolated_to': 'Pressure (hPa)','Interpolated_at':P_range}
-            # create a dictionary with metadata and data
-            meta_and_data = {'metadata':metadata,'ave_var_overT':ave_var_overT,'ave_T_profile':ave_T_profile} 
-            if not specify_area:
-                save_des = small_dir+Storm+'/'+Exper_name+'/Data_analyze/EnKF/DomainMean/Interp_increment_'+var_name+'_'+DAtimes[0]+'_'+DAtimes[-1]+'.pickle'
+        # Perform interpolation if needed
+        if if_interp:
+            if interp_H:
+                xa_var = vertical_interp( xa_ncdir,xa_var,H_range,interp_H,interp_P)
+                xb_var = vertical_interp( xb_ncdir,xb_var,H_range,interp_H,interp_P)
+                var = xa_var - xb_var
             else:
-                save_des = small_dir+Storm+'/'+Exper_name+'/Data_analyze/EnKF/CircleMean/Interp_increment_'+var_name+'_'+DAtimes[0]+'_'+DAtimes[-1]+'.pickle'
+                xa_var = vertical_interp( xa_ncdir,xa_var,P_range,interp_H,interp_P)
+                xb_var = vertical_interp( xb_ncdir,xb_var,P_range,interp_H,interp_P)
+                var = xa_var - xb_var
         else:
-            metadata = {'created_at':formatted_datetime}
-            save_des = small_dir+Storm+'/'+Exper_name+'/Data_analyze/EnKF/ML_increment_'+var_name+'_'+DAtimes[0]+'_'+DAtimes[-1]+'.pickle'
-            meta_and_data = {'metadata':metadata,'ave_var_overT':ave_var_overT,'ave_T_profile':ave_T_profile,'geoHkm_half_eta':geoHkm_half_eta}  
-        # Write the dictionary to a pickle file
-        with open(save_des,'wb') as file:
-            pickle.dump( meta_and_data, file )
-        print( 'Saving the data: ', save_des )
+            var = xa_var - xb_var
+        # Calculate increments and domain average
+        var = var.reshape( var.shape[0],-1)
+        var = var[:,idx_x]
+        var_mean = np.nanmean( var,axis=1 )
+        # simple quality control
+        if 'Q' in var_name:
+            idx_zero = np.where( abs(var_mean) <= 1e-8 )[0]
+            var_mean[idx_zero] = 0
+        ave_var_overT[t_idx,:] = var_mean
+        # Read T profile and calculate domain average
+        T = getvar(xa_ncdir,'tk')
+        if if_interp:
+            if interp_H:
+                T = vertical_interp( xa_ncdir,T.values,H_range,interp_H,interp_P)
+                T = T.reshape( T.shape[0],-1)
+            else:
+                T = vertical_interp( xa_ncdir,T.values,P_range,interp_H,interp_P)
+                T = T.reshape( T.shape[0],-1)
+        else:
+            T = T.values.reshape( T.shape[0],-1)
+        # Source:http://gradsusr.org/pipermail/gradsusr/2011-December/031698.html 
+        T = T[:,idx_x]
+        T_mean = np.nanmean( T,axis=1 )
+        ave_T_profile[t_idx,:] = T_mean
+        # Record the vertical coor for non-interp
+        if not if_interp:
+            pres = getvar(xa_ncdir,'pressure')
+            pres = pres.values.reshape( pres.shape[0],-1)
+            pres = pres[:,idx_x]
+            pres_mean = np.nanmean( pres,axis=1 )
+            ave_pres[t_idx,:] = pres_mean
 
-    # Plot the increament in a time series
-    if If_plot_series:
-        if interp_P:
-            plot_var_incre_timeseries( ave_var_overT,ave_T_profile )    
+            hgt = getvar(xa_ncdir,'z',units='km')
+            hgt = hgt.values.reshape( hgt.shape[0],-1)
+            hgt = hgt[:,idx_x]
+            hgt_mean = np.nanmean( hgt,axis=1 ) 
+            ave_hgt[t_idx,:] = hgt_mean
+
+    # Metadata
+    current_datetime = datetime.now()
+    formatted_datetime = current_datetime.strftime('%Y-%m-%d %H:%M:%S')
+    # create data
+    if if_interp and interp_P:
+        metadata = {'created_at':formatted_datetime, 'Interpolated_to': 'Pressure (hPa)','Interpolated_at':P_range}
+        # create a dictionary with metadata and data
+        meta_and_data = {'metadata':metadata,'ave_var_overT':ave_var_overT,'ave_T_profile':ave_T_profile} 
+        if not specify_area:
+            save_des = data_dir+'PInterp_increment_'+var_name+'_'+DAtimes[0]+'_'+DAtimes[-1]+'.pickle'
         else:
-            plot_var_incre_timeseries( ave_var_overT,ave_T_profile,geoHkm_half_eta )
+            save_des = data_dir+'PInterp_increment_'+var_name+'_'+DAtimes[0]+'_'+DAtimes[-1]+'.pickle'
+
+    elif if_interp and interp_H:
+        metadata = {'created_at':formatted_datetime, 'Interpolated_to': 'Height (km)','Interpolated_at':H_range}
+        # create a dictionary with metadata and data
+        meta_and_data = {'metadata':metadata,'ave_var_overT':ave_var_overT,'ave_T_profile':ave_T_profile}
+        if not specify_area:
+            save_des = data_dir+'HInterp_increment_'+var_name+'_'+DAtimes[0]+'_'+DAtimes[-1]+'.pickle'
+        else:
+            save_des = data_dir+'HInterp_increment_'+var_name+'_'+DAtimes[0]+'_'+DAtimes[-1]+'.pickle'
+    elif not if_interp:
+        metadata = {'created_at':formatted_datetime}
+        if not specify_area:
+            save_des = small_dir+'Clean_results/'+Storm+'/'+Exper_name+'/Data_analyze/EnKF/DomainMean/ML_increment_'+var_name+'_'+DAtimes[0]+'_'+DAtimes[-1]+'.pickle'
+        else:
+            save_des = small_dir+'Clean_results/'+Storm+'/'+Exper_name+'/Data_analyze/EnKF/CircleMean/ML_increment_'+var_name+'_'+DAtimes[0]+'_'+DAtimes[-1]+'.pickle'
+        # vertical coordinate
+        ave_pres_overT = np.nanmean( ave_pres,axis=0 )
+        ave_hgt_overT = np.nanmean( ave_hgt,axis=0 )
+        meta_and_data = {'metadata':metadata,'ave_var_overT':ave_var_overT,'ave_T_profile':ave_T_profile,'Pressure':ave_pres_overT,'Height':ave_hgt_overT}  
+    # Write the dictionary to a pickle file
+    with open(save_des,'wb') as file:
+        pickle.dump( meta_and_data, file )
+    print( 'Saving the data: ', save_des )
 
 
 # ------------------------------------------------------------------------------------------------------
@@ -574,9 +568,9 @@ def plot_3D_snapshot( lat,lon,Interp_incre,ver_coor,):
 
     # Save the figure
     if interp_to_obs:
-        save_des = small_dir+Storm+'/'+Exper_name+'/Vis_analyze/EnKF/Interp_H_increment_os_'+var_name+'_'+DAtime+'.png'
+        save_des = small_dir+'Clean_results/'+Storm+'/'+Exper_name+'/Vis_analyze/EnKF/Interp_H_increment_os_'+var_name+'_'+DAtime+'.png'
     else:
-        save_des = small_dir+Storm+'/'+Exper_name+'/Vis_analyze/EnKF/Interp_H_increment_ms_'+var_name+'_'+DAtime+'.png'
+        save_des = small_dir+'Clean_results/'+Storm+'/'+Exper_name+'/Vis_analyze/EnKF/Interp_H_increment_ms_'+var_name+'_'+DAtime+'.png'
     plt.savefig( save_des )
     print( 'Saving the figure: ', save_des )
     plt.close()
@@ -649,32 +643,36 @@ def incre_snapshot( DAtime, Exper_name, var_name, ver_coor):
 
 if __name__ == '__main__':
 
-    big_dir = '/scratch/06191/tg854905/Pro2_PSU_MW/'
+    big_dir = '/scratch/06191/tg854905/Clean_Pro2_PSU_MW/'
     small_dir =  '/work2/06191/tg854905/stampede2/Pro2_PSU_MW/'
 
     # ---------- Configuration -------------------------
-    Storm = 'IRMA'
-    MP = 'THO'
-    DA = 'CONV'
-    v_interest = ['QSNOW','QVAPOR'] #'QICE'
+    Storm = 'MARIA'
+    MP = 'WSM6'
+    DA = 'IR'
+    v_interest = ['QGRAUP','QSNOW','QVAPOR','QICE','QRAIN',] #'QICE'
     fort_v = ['obs_type','lat','lon','obs']
     
-    start_time_str = '201709030000'
-    end_time_str = '201709040000'
+    start_time_str = '201709160000'
+    end_time_str = '201709170000'
     Consecutive_times = True
     
-    interp_P = True
-    P_range = list(range( 900,10,-20 ))
-    interp_H = True
-    H_range = list(np.arange(1,21,1))
-
+    # vertical interpolation if needed
+    if_interp = False
+    if if_interp:
+        interp_P = False
+        P_range = np.arange( 995,49,-20 )
+        interp_H = True
+        H_range = list(np.arange(0,21,1))
+    
+    # Specify area
     specify_area = False
     radius_threshold = 300 #km
     interp_to_obs = False
     
-    If_ncdiff = False
+    If_ncdiff = False ### Default ###
     If_cal_series = True
-    If_save = True
+    #If_save = True
     If_plot_snapshot = False
     If_plot_series = True
     # -------------------------------------------------------    
@@ -712,8 +710,23 @@ if __name__ == '__main__':
 
                 incre_snapshot( DAtime, Exper_name, var_name, ver_coor)
 
+    # Create dir for data
+    data_dir = small_dir+'Clean_results/'+Storm+'/'+Exper_name+'/Data_analyze/EnKF/'
+    datadir_exists = os.path.exists( data_dir )
+    if datadir_exists == False:
+        os.mkdir(data_dir)
+
+    if specify_area:
+        data_dir = data_dir+'CircleMean/'
+    else:
+        data_dir = data_dir+'DomainMean/'
+    datadir_exists = os.path.exists( data_dir )
+    if datadir_exists == False:
+        os.mkdir(data_dir)
+
     # Calculate and Plot the time evolution of domain-averaged increments
     if If_cal_series:
+
         start_time=time.process_time()
         for var_name in v_interest:
             print('Calculate '+var_name+'...')
@@ -722,25 +735,38 @@ if __name__ == '__main__':
         print ('time needed: ', end_time-start_time, ' seconds') 
         
     # Plot the time evolution of domain-averaged increments
+   # Create dir for data
+    plot_dir = small_dir+'Clean_results/'+Storm+'/'+Exper_name+'/Vis_analyze/EnKF/'
+    datadir_exists = os.path.exists( plot_dir )
+    if datadir_exists == False:
+        os.mkdir(plot_dir)
+
     if If_plot_series:
         for var_name in v_interest:
             print('Plot '+var_name+'...')
-            if interp_P:
-                if specify_area:
-                    save_des = small_dir+Storm+'/'+Exper_name+'/Data_analyze/EnKF/CircleMean/Interp_increment_'+var_name+'_'+DAtimes[0]+'_'+DAtimes[-1]+'.pickle'
-                else:
-                    save_des = small_dir+Storm+'/'+Exper_name+'/Data_analyze/EnKF/DomainMean/Interp_increment_'+var_name+'_'+DAtimes[0]+'_'+DAtimes[-1]+'.pickle'
+
+            if if_interp and interp_P:
+                save_des = data_dir+'PInterp_increment_'+var_name+'_'+DAtimes[0]+'_'+DAtimes[-1]+'.pickle'
                 with open(save_des,'rb') as file:
-                    meta_and_data = pickle.load( file )
+                     meta_and_data = pickle.load( file )
                 ave_var_overT = meta_and_data['ave_var_overT']
                 ave_T_profile = meta_and_data['ave_T_profile']
                 plot_var_incre_timeseries( ave_var_overT,ave_T_profile )
-            else:
-                save_des = small_dir+Storm+'/'+Exper_name+'/Data_analyze/EnKF/ML_increment_'+var_name+'_'+DAtimes[0]+'_'+DAtimes[-1]+'.pickle'
+
+            elif if_interp and interp_H:
+                save_des = data_dir+'HInterp_increment_'+var_name+'_'+DAtimes[0]+'_'+DAtimes[-1]+'.pickle'
+                with open(save_des,'rb') as file:
+                     meta_and_data = pickle.load( file )
+                ave_var_overT = meta_and_data['ave_var_overT']
+                ave_T_profile = meta_and_data['ave_T_profile']
+                plot_var_incre_timeseries( ave_var_overT,ave_T_profile )
+
+            elif not if_interp:
+                save_des = data_dir+'ML_increment_'+var_name+'_'+DAtimes[0]+'_'+DAtimes[-1]+'.pickle'
                 with open(save_des,'rb') as file:
                     meta_and_data = pickle.load( file )
                 ave_var_overT = meta_and_data['ave_var_overT']
                 ave_T_profile = meta_and_data['ave_T_profile']
-                geoHkm_half_eta = meta_and_data['geoHkm_half_eta']
-                plot_var_incre_timeseries( ave_var_overT,ave_T_profile,geoHkm_half_eta )
+                hgt_profile = meta_and_data['Height']
+                plot_var_incre_timeseries( ave_var_overT,ave_T_profile,hgt_profile )
 

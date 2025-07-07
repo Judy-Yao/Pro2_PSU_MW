@@ -372,7 +372,7 @@ def plot_2Dcorr_snapshot( lat,lon,corr,lon_obs,lat_obs ):
 
 
     # Save the figure
-    save_des = small_dir+Storm+'/'+Exper_name+'/Vis_analyze/hori_Corr/'+DAtime+'_HroiCorr_obs_' + obs_type +'_model_' +  var_name + '.png'
+    save_des = small_dir+'Clean_results/'+Storm+'/'+Exper_name+'/Vis_analyze/hori_Corr/'+DAtime+'_HroiCorr_obs_' + obs_type +'_model_' +  var_name + '.png'
     #save_des = small_dir+Storm+'/'+Exper_name+'/Vis_analyze/hori_Corr/Interp_H_corr_ms_'+DAtime+'_'+var_name+'_'+sensor+'.png'
     plt.savefig( save_des )
     print( 'Saving the figure: ', save_des )
@@ -453,7 +453,7 @@ def plot_3Dcorr_snapshot( lat,lon,Interp_corr,ver_coor,lon_obs,lat_obs):
             gl.ylabel_style = {'size': 15}
 
     # Save the figure
-    save_des = small_dir+Storm+'/'+Exper_name+'/Vis_analyze/hori_Corr/'+DAtime+'_Interp_H_HroiCorr_obs_' + obs_type +'_model_' +  var_name + '.png'
+    save_des = small_dir+'Clean_results/'+Storm+'/'+Exper_name+'/Vis_analyze/hori_Corr/'+DAtime+'_Interp_H_HroiCorr_obs_' + obs_type +'_model_' +  var_name + '.png'
     #save_des = small_dir+Storm+'/'+Exper_name+'/Vis_analyze/hori_Corr/Interp_H_corr_ms_'+DAtime+'_'+var_name+'_'+sensor+'.png'
     plt.savefig( save_des )
     print( 'Saving the figure: ', save_des )
@@ -462,13 +462,13 @@ def plot_3Dcorr_snapshot( lat,lon,Interp_corr,ver_coor,lon_obs,lat_obs):
 
 if __name__ == '__main__':
 
-    big_dir = '/scratch/06191/tg854905/Pro2_PSU_MW/' #'/expanse/lustre/scratch/zuy121/temp_project/Pro2_PSU_MW/' #'/scratch/06191/tg854905/Pro2_PSU_MW/'
+    big_dir = '/scratch/06191/tg854905/Clean_Pro2_PSU_MW/' #'/expanse/lustre/scratch/zuy121/temp_project/Pro2_PSU_MW/' #'/scratch/06191/tg854905/Pro2_PSU_MW/'
     small_dir = '/work2/06191/tg854905/stampede2/Pro2_PSU_MW/' #'/expanse/lustre/projects/pen116/zuy121/Pro2_PSU_MW/'  #'/work2/06191/tg854905/stampede2/Pro2_PSU_MW/'
 
     # ---------- Configuration -------------------------
-    Storm = 'IRMA'
-    DA = 'IR-WSM6Ens'
-    MP = 'THO'
+    Storm = 'JOSE'
+    DA = 'CONV'
+    MP = 'WSM6'
     fort_v = ['obs_type','lat','lon','obs']
     sensor = 'abi_gr'
 
@@ -481,8 +481,8 @@ if __name__ == '__main__':
     model_v = [ 'PSFC',]#'QSNOW','QCLOUD','QRAIN','QICE','QGRAUP']
     
     # time
-    start_time_str = '201709030600'
-    end_time_str = '201709030600'
+    start_time_str = '201709050000'
+    end_time_str = '201709060000'
     Consecutive_times = True
 
     # Number of ensemble members
